@@ -5,7 +5,7 @@ within a single project package without increasing the
 difficulty of project deployments. Flat is dual-licensed 
 under both the GPLv3 and MIT licenses.
 
-flat package manifest:
+see
 * DOC.md
  * Flat developers' guide.
 * INSTALL.md
