@@ -2,7 +2,7 @@
 Flat is an experimental routable framework for php. It was 
 designed to manage the development of multiple applications 
 within a single project without increasing the 
-complexity of project deployments. 
+complexity of application deployments. 
 
 see
 * DOC.md
