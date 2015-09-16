@@ -1,0 +1,66 @@
+####
+# nginx server rules for flat entry point 
+#    from flat/deploy/examples/nginx/server.txt 
+####
+####
+# replace 'SITE_TMPL_ROOT' with the template root relative to flat/app/tmpl
+#   for example, if you want to use the class 
+#      flat\app\tmpl\mysite (defined in flat/app/tmpl/mysite.php)
+#   replace 'SITE_TMPL_ROOT' with 'mysite', like:
+#        rewrite "^/$" /html-route.php/mysite break;  #(for 'home' page example)
+#        rewrite ^(.*)$ /html-route.php/SITE_TMPL_ROOT/$1 break; #(other pages example)
+#    
+# replace 'example.com' with your actual site's fqdn  
+# if enabling ssl, replace 'example_com' with the name corresponding to your certificate files
+####
+########
+## uncomment following to force https (but only if ssl will be configured)
+#server {
+#   listen 80 default_server;
+#   listen [::]:80 default_server ipv6only=on;
+#   server_name example.com;
+#   rewrite     ^   https://$server_name$request_uri? permanent;
+#}
+server {
+   ########
+   ## remove the following (listen 80) if 'force https' is enabled
+   listen 80 default_server;
+   listen [::]:80 default_server ipv6only=on;
+   
+   server_name example.com;
+   ########
+   ## uncomment following to configure ssl
+   #listen 443 ssl;
+   #ssl_certificate /etc/ssl/example_com-chained.pem;
+   #ssl_certificate_key /etc/ssl/private/example_com.key;
+   
+   root /usr/share/nginx/html;
+   index index.php index.html index.html
+   
+   error_page 404 /404.html;
+   error_page 500 502 503 504 /50x.html;
+   location = /50x.html {
+      root /usr/share/nginx/html;
+   }
+   location / {
+      if (!-e $request_filename) {
+         rewrite ^(.*)$ /html-route.php/SITE_TMPL_ROOT/$1 last;
+      }
+      rewrite "^/$" /html-route.php/SITE_TMPL_ROOT last;
+   }
+   location ~ [^/]\.php(/|$) {
+      fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+      if (!-f $document_root$fastcgi_script_name) {
+         return 404;
+      }
+      fastcgi_param PATH_INFO $fastcgi_path_info;
+      fastcgi_pass unix:/var/run/php5-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+   }
+   # deny access to .htaccess files if any may be present
+   #
+   location ~ /\.ht {
+      deny all;
+   }
+}

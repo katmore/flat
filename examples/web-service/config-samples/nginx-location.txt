@@ -1,0 +1,16 @@
+###
+# nginx location rule for flat entry point
+# 
+# replace 'SITE_TMPL_ROOT' with the template root relative to flat/app/tmpl
+#   for example, if you want to use the class 
+#      flat\app\tmpl\mysite (defined in flat/app/tmpl/mysite.php)
+#   replace 'SITE_TMPL_ROOT' with 'mysite', like:
+#        rewrite "^/$" /html-route.php/mysite break;  #(for 'home' page example)
+#        rewrite ^(.*)$ /html-route.php/SITE_TMPL_ROOT/$1 break; #(other pages example)      
+###
+location / {
+   if (!-e $request_filename) {
+      rewrite ^(.*)$ /html-route.php/SITE_TMPL_ROOT/$1 last;
+   }
+   rewrite "^/$" /html-route.php/SITE_TMPL_ROOT last;
+}

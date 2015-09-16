@@ -1,0 +1,14 @@
+remove all vendor libs (including this folder) from flat-master
+
+place into a new repository flat-vendor
+
+the flat-vendor repo has the following structure:
+
+   all packages we have in vendor in flat-master currently
+      flat/src/vendor/erusev/* (parsedown lib for \flat\core\md\convert)
+      flat/src/vendor/neitanod/* (utf8 handling lib for \flat\core\util\utf8)
+      flat/src/vendor/tedious/* (js minifier lib only used by \flat\deploy\minify in 'flat' repo)
+   
+   all packages that are 100% dependant on above packages
+      flat/src/core/util/utf8.php (\flat\core\util\utf8 class) -completed phpDoc preparation
+      flat/src/core/md (\flat\core\md\convert class and its exclusive dependancies within namespace) -phpDoc already done

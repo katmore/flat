@@ -1,0 +1,29 @@
+####
+## web service for blueimp jQuery File Upload Plugin
+##	  part of the blueimp jquery/php file uploading lib.
+##	  It contains only the php upload web service
+##	  which accepts file uploads and provides json responses.
+## 
+## Full originating source (both javascript and php)
+##	  https://github.com/blueimp/jQuery-File-Upload
+##
+## installation hints...
+####
+# no outside dependancies. full source included in blueimp/src.
+# class autoloader is registered by:
+# flat/deploy/vendor/blueimp/autoload.php
+# (and should not need to be modified).
+####
+# For relevant deployment configuration, such as system path to 
+# place uploaded files, see: 
+# flat/deploy/config/deploy/upload.php
+####
+# The upload webservice entry point is provided by: 
+# flat/deploy/vendor/blueimp/upload.php
+# 
+# By default, the file flat/deploy/upload.php invokes this 
+# blueimp upload service.
+#
+# The web server must be configured to make one of those
+# files publically available.
+####

@@ -1,0 +1,21 @@
+###
+# flat route entry point
+# replace 'SITE_TMPL_ROOT' with the template root relative to flat/app/tmpl
+#   for example, if you want to use the class 
+#      flat\app\tmpl\mysite (defined in flat/app/tmpl/mysite.php)
+#   replace 'SITE_TMPL_ROOT' with 'mysite', like:
+#        RewriteRule (.*) route.php/mysite  [QSA,L] #(for 'home' page example)
+#        RewriteRule (.*) route.php/mysite/$1  [QSA,L] #(other pages example)      
+###
+RewriteEngine on
+
+RewriteBase /
+
+#Flat router for default resource (ie: "Home Page")
+RewriteCond %{REQUEST_URI}  "^/$"
+RewriteRule (.*) html-route.php/SITE_TMPL_ROOT  [QSA,L]
+
+#Flat router for other resources (ie: other "pages" relative to SITE_TMPL_ROOT)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (.*) html-route.php/SITE_TMPL_ROOT/$1  [QSA,L]
