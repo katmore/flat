@@ -29,6 +29,12 @@
    
 5. See flat/examples/cli for executing/deploying command line scripts.
 
-[the flat framework](https://github.com/katmore/flat)
+### Copyright Notice
+The flat framework. 
 Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
-[For licensing info, See LICENSE.txt](LICENSE.txt)
+https://github.com/katmore/flat
+
+The flat framework is copyrighted free software.
+You can redistribute it and/or modify it under either the terms and conditions of the
+"The MIT License (MIT)" (see the file MIT-LICENSE.txt); or the terms and conditions
+of the "GPL v3 License" (see the file GPL-LICENSE.txt).
