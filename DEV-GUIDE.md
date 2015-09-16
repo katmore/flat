@@ -1,7 +1,7 @@
 # Developers Guide
 ## a guide to developing applications with the flat framework
 
-### Folders/Files and Namespaces
+### Folders, Files and Namespaces
 
  * /flat/app
   * Application configuration; the way an application is defined in flat.
