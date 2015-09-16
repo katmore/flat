@@ -1,6 +1,6 @@
 ####
 # nginx server rules for flat entry point 
-#    from flat/deploy/examples/nginx/server.txt 
+#    from flat/deploy/examples/web-service/config-samples/nginx-server.txt 
 ####
 ####
 # replace 'SITE_TMPL_ROOT' with the template root relative to flat/app/tmpl
