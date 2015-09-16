@@ -23,9 +23,9 @@
 
    4.1. Copy (or link) the contents of flat/asset to the publically accessible web root.
    
-   4.2. See flat/examples/web-service/README.txt if deploying a website or RESTful api service.
+   4.2. Create an entry point based on instructions in [flat/examples/web-service/README.txt](examples/web-service/README.txt)
    
-   4.3. See the files in flat/examples/web-service/config-samples for apache and nginx configuration.
+   4.3. See the files in [flat/examples/web-service/config-samples](examples/web-service/config-samples) for [apache .htaccess](examples/web-service/config-samples/apache2-htaccess.txt) and nginx [location rules](examples/web-service/config-samples/nginx-location.txt) and [server rules](examples/web-service/config-samples/nginx-server.txt).
    
 5. See flat/examples/cli for executing/deploying command line scripts.
 
