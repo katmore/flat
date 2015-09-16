@@ -4,22 +4,22 @@
 ### Folders/Files and Namespaces
 
  * /flat/app
-Application configuration; the way an application is defined in flat.
+  * Application configuration; the way an application is defined in flat.
 
  * /flat/asset
-Static assets required by an application.
+   * Static assets required by an application.
 
  * /flat/design
-Templating files.
+  * Templating files.
 
  * /flat/deploy
-Deployment configuration. 
+  * Deployment configuration. 
 
  * /flat/src/flat
-Packages comprising the flat framework.
+  * Packages comprising the flat framework.
 
- *# /flat/src/flat/core
-Core packages comprise the common basis for the flat framework.
+ * /flat/src/flat/core
+  * Core packages comprise the common basis for the flat framework.
 Mostly comprised of commonly shared functionality like controllers and meta-class types, 
 these packages are roughly analogous to symfony's "Common" namespace.
 
