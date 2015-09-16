@@ -1,18 +1,6 @@
 # Developers Guide
 ## a guide to developing applications with the flat framework
 
-### Copyright Notice
-This document is a guide for programmers developing applications for "The flat framework".
-
-The flat framework. 
-Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
-https://github.com/katmore/flat
-
-The flat framework is copyrighted free software.
-You can redistribute it and/or modify it under either the terms and conditions of the
-"The MIT License (MIT)" (see the file MIT-LICENSE.txt); or the terms and conditions
-of the "GPL v3 License" (see the file GPL-LICENSE.txt).
-
 ### Folders/Files and Namespaces
 PSR-4
 
@@ -36,22 +24,6 @@ Core packages comprise the common basis for the flat framework.
 Mostly comprised of commonly shared functionality like controllers and meta-class types, 
 these packages are roughly analogous to symfony's "Common" namespace.
 
-### Mindset of lead developer
-# Developers Guide
-## a guide to developing applications with the flat framework
-
-### Copyright Notice
-This document is a guide for programmers developing applications for "The flat framework".
-
-The flat framework. 
-Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
-https://github.com/katmore/flat
-
-The flat framework is copyrighted free software.
-You can redistribute it and/or modify it under either the terms and conditions of the
-"The MIT License (MIT)" (see the file MIT-LICENSE.txt); or the terms and conditions
-of the "GPL v3 License" (see the file GPL-LICENSE.txt).
-
 ### Folders/Files and Namespaces
 PSR-4
 
@@ -61,6 +33,7 @@ Application configuration; the way an application is defined in flat.
 #### /flat/asset
 Static assets required by an application.
 
+### Flat development background
 The following rants and aphorisms explain my mindset when developing flat.
 A few may be mutually exclusive, some make little sense or may be disturbing.
 
@@ -95,3 +68,13 @@ A few may be mutually exclusive, some make little sense or may be disturbing.
 * I hate having to work really hard to manage, maintain, and determine dependencies anywhere in a project.
 
 * I tend to like shorter rather than longer words.
+
+### Copyright Notice
+The flat framework. 
+Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
+https://github.com/katmore/flat
+
+The flat framework is copyrighted free software.
+You can redistribute it and/or modify it under either the terms and conditions of the
+"The MIT License (MIT)" (see the file MIT-LICENSE.txt); or the terms and conditions
+of the "GPL v3 License" (see the file GPL-LICENSE.txt).
