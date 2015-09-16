@@ -36,8 +36,7 @@ namespace flat;
  * can be bound to make interfaces for
  *    HTTP, native (PHP), cli, etc
  * 
- * @package    core
- * @subpackage api
+ * @package    flat\api
  * @author     D. Bird <retran@gmail.com>
  * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
  * @version    0.1.0-alpha

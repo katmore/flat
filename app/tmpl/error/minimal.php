@@ -37,8 +37,7 @@ namespace flat\app\tmpl\error;
 /**
  * minimalist error documents
  * 
- * @package    example
- * @subpackage app
+ * @package    flat\appExample
  * @author     D. Bird <retran@gmail.com>
  * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
  * 

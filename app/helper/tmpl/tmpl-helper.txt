@@ -1,0 +1,2 @@
+Contains helper classes that resolve corresponding to the \flat\app\tmpl namespace
+with the default example html routing rules.
