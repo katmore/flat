@@ -30,6 +30,5 @@
 5. See flat/examples/cli for executing/deploying command line scripts.
 
 [the flat framework](https://github.com/katmore/flat)
-
 Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
 [For licensing info, See LICENSE.txt](LICENSE.txt)
