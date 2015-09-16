@@ -2,36 +2,26 @@
 ## a guide to developing applications with the flat framework
 
 ### Folders/Files and Namespaces
-PSR-4
 
-#### /flat/app
+ * /flat/app
 Application configuration; the way an application is defined in flat.
 
-#### /flat/asset
+ * /flat/asset
 Static assets required by an application.
 
-#### /flat/design
+ * /flat/design
 Templating files.
 
-#### /flat/deploy
+ * /flat/deploy
 Deployment configuration. 
 
-#### /flat/src/flat
+ * /flat/src/flat
 Packages comprising the flat framework.
 
-##### /flat/src/flat/core
+ *# /flat/src/flat/core
 Core packages comprise the common basis for the flat framework.
 Mostly comprised of commonly shared functionality like controllers and meta-class types, 
 these packages are roughly analogous to symfony's "Common" namespace.
-
-### Folders/Files and Namespaces
-PSR-4
-
-#### /flat/app
-Application configuration; the way an application is defined in flat.
-
-#### /flat/asset
-Static assets required by an application.
 
 ### Flat development background
 The following rants and aphorisms explain my mindset when developing flat.
