@@ -32,8 +32,60 @@
  */
 namespace flat\lib\exception;
 class app_error extends \flat\lib\exception {
-   public function __construct($details="") {
-      if (!empty($details)) $details = ": $details";
+   public function get_data() {
+      return $this->_data;
+   }
+   public function get_details() {
+      return $this->_details;
+   }
+   public function get_data_details() {
+      if (!is_null($this->_data)) {
+         $data = $this->_data;
+         if (is_scalar($data)) {
+            if (is_bool($data)) {
+               if ($data) {
+                  return "data: (bool) true";
+               } else {
+                  return "data: (bool) false";
+               }
+            }
+            if (is_int($data) || is_string($data)) {
+               return $data;
+            }
+            return "data: (".gettype($data).") $data";
+         } else {
+            if (is_class($data) || is_array($data)) {
+               if ($json = json_encode($data)) {
+                  if (is_class($data)) $json = json_encode((array) $data);
+                  if (strlen($json)>10) $json = substr($json,0,10)."(truncated)...}";
+                  return "data: (".get_class($data).") $json";
+               }
+               return "data: (".get_class($data).")";
+            }
+            return "data: (".gettype($data).")";
+         }
+      }
+   }
+   private $_data;
+   private $_details;
+   public function __construct($details="",$data=null) {
+      if (!empty($details)) {
+         $this->_details = $details;
+         $details = ": $details";
+      }
+      $this->_data = $data;
+      $data_details = $this->get_data_details();
+      if (!empty($data_details)) {
+         if (substr($data_details,0,1)!=".") $details .= ".";
+         if (substr($data_details,1,1)!=" ") $details .= " ";
+         $details .= $data_details;
+      }
       parent::__construct("\\flat\\lib error".$details);
    }
 }
+
+
+
+
+
+

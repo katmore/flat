@@ -137,7 +137,7 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
     * @throws \flat\core\controller\tmpl\exception\bad_design when cannot resolve design definition 
     * @todo .md (markdown) templates
     */
-   public static function display($design,$data=NULL,$check_only=false) {
+   public static function display($design,$data=null,$check_only=false) {
       
       
       /*
@@ -224,8 +224,7 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
          $loader = function($filename,$data) {
             require($filename);
          };
-         $loader($file,$data);
-         //require($file);
+         $loader($file,new \flat\tmpl\data($data));
          return;
          
       }

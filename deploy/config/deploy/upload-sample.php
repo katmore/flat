@@ -9,6 +9,7 @@
  * 
  * @see \flat\api
  */
+//$config['basedir'] = "/var/www/html/blueimp";
 $config['basedir'] = realpath(__DIR__."/../../vendor/blueimp/files");
 $config['system'] = gethostname();
 /**

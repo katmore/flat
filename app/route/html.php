@@ -52,7 +52,8 @@ namespace flat\app\route;
  * 
  * @see \flat\deploy\html
  * 
- * @package    flat\appExample
+ * @package    example
+ * @subpackage app
  * @author     D. Bird <retran@gmail.com>
  * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
  * @version    0.1.0-alpha

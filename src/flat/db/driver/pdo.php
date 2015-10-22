@@ -32,7 +32,7 @@ abstract class pdo extends \flat\db implements \flat\db\driver {
     * provides a PDO object based on previously obtained connection parameters.
     *    uses a cached connection, or establishes new connection as needed.
     * 
-    * @return \PDO
+    * @return \flat\db\driver\pdo\pdo
     * 
     * @uses \flat\db\driver\pdo::connect()
     * @uses flat\db\driver\pdo::_load_pdo()

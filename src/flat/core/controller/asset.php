@@ -76,12 +76,12 @@ class asset implements
          throw new \flat\lib\exception\app_error("resource ".$this->get_system()."is not a css file");
       }
       ?>
-      <!--START flat/app/asset/vendor: <?=$this->get_url();?>-->
+      <!--START asset: <?=$this->get_url();?>-->
       <style>
       <?=file_get_contents($this->get_system());?>
       
       </style>
-      <!--END flat/app/asset/vendor: <?=$this->get_url();?>-->
+      <!--END vendor: <?=$this->get_url();?>-->
       <?php
     }
       /**
@@ -101,12 +101,12 @@ class asset implements
             throw new \flat\lib\exception\app_error("resource ".$this->get_system()."is not a javascript file");
          }
    ?>
-   <!--START flat/app/asset/vendor: <?=$this->get_url();?>-->
+   <!--START asset::print_script(<?=$this->get_url();?>)-->
    <script>
    <?=file_get_contents($this->get_system());?>
    
    </script>
-   <!--END flat/app/asset/vendor: <?=$this->get_url();?>-->
+   <!--END asset::print_script(<?=$this->get_url();?>)-->
    <?php
       }
       
@@ -122,7 +122,7 @@ class asset implements
          if (substr($this->get_url(),-3)!=".js") {
             throw new \flat\lib\exception\app_error("resource ".$this->get_url()."is not a javascript file");
          }
-         ?><!--vendor::script_tag()--><script src="<?=$this->get_url();?>"></script><?php
+         ?><!--asset::script_tag()--><script src="<?=$this->get_url();?>"></script><?php
       }   
       
       public function style_link() {
@@ -130,9 +130,9 @@ class asset implements
           * <link href="<?=lib::asset('styles.css')?>" rel="stylesheet">
           */
          if (substr($this->get_url(),-4)!=".css") {
-            throw new \flat\lib\exception\app_error("resource ".$this->get_url()."is not a javascript file");
+            throw new \flat\lib\exception\app_error("resource ".$this->get_url()."is not a css file");
          }
-         ?><!--vendor::style_link()--><link href="<?=$this->get_url();?>" rel="stylesheet"><?php
+         ?><!--asset::style_link()--><link href="<?=$this->get_url();?>" rel="stylesheet"><?php
       }
    
    /**

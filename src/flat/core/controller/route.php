@@ -215,7 +215,7 @@ class route implements \flat\core\controller, \flat\core\collectable {
                   }
                   
                   if ($r->isInstantiable() && $r->implementsInterface("\\flat\\core\\routable")) {
-                     //echo "$app_className created, weight: ".$route_rule->weight."\n";
+                     
                      /*
                       * run each class (they'll be factories doing events or something...)
                       */
@@ -226,19 +226,31 @@ class route implements \flat\core\controller, \flat\core\collectable {
                      if ($app_object instanceof \flat\core\resolver) {
                         $app_object->set_resource($resource);
                      }
+                     
                      if ($app_object instanceof \flat\core\resolver\unresolved_consumer) {
                         $app_object->set_unresolved(
                            trim(str_replace($app_resource,"",$resource),"\\")
                         );
                      }
+                     
                      if ($app_object instanceof \flat\core\input\consumer) {
                         $app_object->set_input(
                            new \flat\input\map($param->input)
                         );
                      }
+                     
+                     if ($app_object instanceof \flat\route\ignorable) {
+                     
+                        if ($app_object->is_route_ignored()===true) {
+                           continue;
+                        }
+                     }                     
+                     
                      if ($app_object instanceof \flat\core\resolver\prepared) {
                         $app_object->set_prepared_on();
                      }
+                     
+
   
                      $appcol->add( $app_object  );
                      $last_weight_added = $route_rule->weight;
