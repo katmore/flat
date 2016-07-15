@@ -6,7 +6,7 @@ trait mapper  {
    /**
     * iterates through class properties (as given) invoking a callback function on each one.
     */
-   protected function each_property(callable $callback,array $property_list=NULL,array $options=null) {
+   protected function each_property(callable $callback,array $property_list=null,array $options=null) {
       $option = array(
          'get_private_property'=>false,
          'get_protected_property'=>false,
@@ -52,7 +52,7 @@ trait mapper  {
       
       foreach ($prop as $rp) {
          $ret = $callback($rp->getValue($this),$rp->getName());
-         if ($ret!==NULL) {
+         if ($ret!==null) {
             if ($rp->isPrivate()) {
                if (!empty($option['set_private_property'])) {
                   $rp->setAccessible(true);
@@ -124,7 +124,7 @@ trait mapper  {
       return $rp->getValue($this);
    }
 
-   protected function set_property_value($property,$value,array $options=NULL) {
+   protected function set_property_value($property,$value,array $options=null) {
       $option = array(
          'ignore_cannot_set'=>false,
          'set_private_property'=>false,
@@ -200,25 +200,30 @@ trait mapper  {
       
    }
 
-   public function get_as_assoc($object=NULL,$get_private_properties=false) {
+   protected function _object_to_assoc($object=null,$get_private_properties=false) {
       $object = $this->_get_object($object);
       $array = array();
       $rc = new \ReflectionClass($object);
       $props = $rc->getProperties();
       foreach($props as $rp) {
-         if ($rp->isPrivate() || $rp->isProtected()) {
-            if ($get_private_properties===true) {
-               $rp->setAcessible(true);
+         if (!empty($rp->getName())) {
+            if ($rp->isPrivate() || $rp->isProtected()) {
+               if ($get_private_properties===true) {
+                  $rp->setAcessible(true);
+                  $array[$rp->getName()]=$rp->getValue($object);
+               }
+            } else {
                $array[$rp->getName()]=$rp->getValue($object);
             }
-         } else {
-            $array[$rp->getName()]=$rp->getValue($object);
          }
       }
       return $array;
    }
+   public function get_as_assoc($object=null,$get_private_properties=false) {
+      return $this->_object_to_assoc($object,$get_private_properties);
+   }
 
-   public function get_as_stdClass($object=NULL,$get_private_properties=false) {
+   public function get_as_stdClass($object=null,$get_private_properties=false) {
       $object = $this->_get_object($object);
       $stdClass = new \stdClass();
       $rc = new \ReflectionClass($object);
@@ -238,7 +243,7 @@ trait mapper  {
       return $stdClass;
    }
 
-   public function args_to_properties(array $args,array $arg_list,array $options=NULL) {
+   public function args_to_properties(array $args,array $arg_list,array $options=null) {
       // echo "<pre>mappable:args_to_properties args:
       // ";
       // var_dump($args);
@@ -304,16 +309,16 @@ trait mapper  {
       //\flat\core\debug::dump($list,"list");
    }
 
-   public function object_to_properties( $object,array $options=NULL) {
+   public function object_to_properties( $object,array $options=null) {
  
       foreach ($object as $key=>$value) $this->set_property_value($key,$value,$options);
    }
 
-   public function list_to_properties(array $list,array $options=NULL) {
+   public function list_to_properties(array $list,array $options=null) {
       foreach ($list as $key=>$value) $this->set_property_value($key,$value,$options);
 
    }
-   public function params_to_properties(array $params,array $options=NULL) {
+   public function params_to_properties(array $params,array $options=null) {
       $build_list = false;
       if (count($params)) {
          foreach ($params as $key=>$val) {

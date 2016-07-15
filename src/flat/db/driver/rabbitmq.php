@@ -87,7 +87,7 @@ class rabbitmq extends \flat\db implements
       }
    }
    /**
-    * @return \namespace PhpAmqpLib\Channel\AMQPChannel
+    * @return \PhpAmqpLib\Channel\AMQPChannel
     */
    public function get_channel() {
       return self::_load_channel($this->_param);

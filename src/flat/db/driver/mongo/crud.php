@@ -7,14 +7,14 @@
  * Copyright (c) 2012-2015 Doug Bird. 
  *    All Rights Reserved. 
  * 
-
  * 
  * @license see /flat/LICENSE.txt
  */
 namespace flat\db\driver\mongo;
 
 use \flat\data\generic;
-use flat\data\flat\data;
+use \flat\data\flat\data;
+use \flat\db\driver\mongo\db\exception;
 
 /**
  * CRUD ops on mongo
@@ -30,6 +30,7 @@ class crud extends \flat\db\driver\mongo
    implements 
    \flat\db\driver\mongo\op\read
    ,\flat\db\driver\mongo\op\update   
+   ,\flat\db\crud
 {
    
    /**
@@ -79,7 +80,7 @@ class crud extends \flat\db\driver\mongo
     * 
     * @return mixed
     * 
-    * @param \flat\data $data document to be inserted
+    * @param array|object $data document to be inserted
     * @param array $option (optional) assoc array of options:
     *    string $option['collection_ns'] specify a collection namespace suffix.
     *    string $option['upsert'] upsert criteria: inserts document if this criteria
@@ -92,7 +93,8 @@ class crud extends \flat\db\driver\mongo
     * @see \MongoCollection::insert() for possible exceptions
     * 
     */
-   public function create(\flat\data $data,array $option=NULL) {
+   public function create( $data,array $option=NULL) {
+      
       $upsert = NULL;
       if (isset($option['upsert'])) {
          if (is_array($option['upsert'])) {
@@ -115,7 +117,16 @@ class crud extends \flat\db\driver\mongo
          $col = $this->get_collection();
       }
       try {
-         $data_create = $data->get_as_assoc();
+         if (!is_object($data) && !is_array($data)) {
+            throw new \flat\db\driver\mongo\record\bad_param(
+               "data","must be array or object"
+            );
+         }
+         if ($data instanceof \flat\data) {
+            $data_create = $data->get_as_assoc();
+         } else {
+            $data_create = (new \flat\data\generic($data))->get_as_assoc();
+         }
          if ($upsert!==NULL) {
             $doc = $col->findAndModify(
                $upsert,
@@ -129,6 +140,7 @@ class crud extends \flat\db\driver\mongo
             );
             return $doc['_id'];
          } else {
+            
             $w = $col->insert($data_create,array('w'=>1));
             return $data_create['_id'];
          }
@@ -213,6 +225,20 @@ class crud extends \flat\db\driver\mongo
                   if (!empty($param['not_modified_exception'])) $count_only = false;
                   return $this->get_affected_records(array('count_only'=>$count_only));
                }           
+            } else
+            if (!empty($param['op'])) {
+               $op = $param['op'];
+               if (!is_object($op) && !is_array($op)) {
+                  throw new \flat\db\driver\mongo\record\bad_param(
+                     "op","must be array or object"
+                  );
+               }
+               $col->update($find,$op);
+               if (!empty($param['count']) || !empty($param['not_modified_exception'])) {
+                  $count_only = true;
+                  if (!empty($param['not_modified_exception'])) $count_only = false;
+                  return $this->get_affected_records(array('count_only'=>$count_only));
+               }           
             } else {
                throw new \flat\db\driver\mongo\record\not_modified(
                   "if given 'key' param, must have either a 'record' or 'data' param"
@@ -232,22 +258,27 @@ class crud extends \flat\db\driver\mongo
     * retrieve records from collection
     * 
     * @param array $param assoc array of parameters:
-    *    array $param['key'] (optional) assoc field=>value find critera.
-    *    int $param['limit'] (optional) max number of records to retrieve from resultset,
-    *       ignored if less than 1.
-    *    int $param['skip'] (optional) how many records to skip in resultset,
-    *       ignored if less than 1.
-    *    string[] $param['starts_with'] (optional) array( (string) field => (string) pattern )
+    * <ul>
+    *    <li><b>array $param['key']</b> (optional) assoc field=>value find critera.</li>
+    *    <li><b>int $param['limit']</b> (optional) max number of records to retrieve from resultset,
+    *       ignored if less than 1.</li>
+    *    <li><b>int $param['skip']</b> (optional) how many records to skip in resultset,
+    *       ignored if less than 1.</li>
+    *    <li><b>string[] $param['starts_with']</b> (optional) array( (string) field => (string) pattern )
     *       find records where given 'field' starts with 'pattern',
-    *       ignored if field and pattern are not strings.
-    *    string | \flat\data $param['record'] (optional) type of record to created for result
+    *       ignored if field and pattern are not strings.</li>
+    *    <li><b>string | \flat\data $param['record']</b> (optional) type of record to created for result
     *       members. "stdClass" puts each match is a \stdClass object. "assoc" puts each match
     *       into an associative array. if value is a (string) "\full\class\name" where it is the 
     *       full namespaced class name of a \flat\data child, puts each match into an instance of 
     *       given class. if value is a \flat\data object, each match is mapped into a clone of
-    *       given object.
-    *    string $param['collection_ns'] (optional) specify a collection namespace suffix
-    * @return array|array[]
+    *       given object.</li>
+    *    <li><b>string $param['collection_ns']</b> (optional) specify a collection namespace suffix.</li>
+    *    <li><b>array $param['sort']</b> assoc array of document field and directions to sort.</li>
+    *    <li><b>callback $param['callback']</b> optional callback for each result. if specified,
+    *       return value is void. </li>
+    * </ul>
+    * @return array|array[]|void
     * @see \flat\db\driver\mongo\op\read part of the mongo read interface
     * 
     * @throws \flat\db\driver\mongo\record\not_found no record retrieved with given criteria
@@ -268,6 +299,7 @@ class crud extends \flat\db\driver\mongo
       $result = "assoc";
       $sort = null;
       $col_ns = null;
+      $callback = null;
       if (!empty($param['collection_ns'])) {
          $col_ns = $param['collection_ns'];
       }
@@ -350,7 +382,9 @@ class crud extends \flat\db\driver\mongo
          }
             
       }
-      
+      if (!empty($param['callback']) && is_callable($param['callback'])) {
+         $callback = $param['callback'];
+      }
       if (!$col_ns) {
          $col = $this->get_collection();
       } else {
@@ -402,7 +436,7 @@ class crud extends \flat\db\driver\mongo
                $res = (object) $doc;
             } else
             if ($type == "assoc") {
-               $res = $doc;
+               $res = (array) $doc;
             } else
             if ($type == "dataclass") {
                $res = new $result($doc);
@@ -410,9 +444,15 @@ class crud extends \flat\db\driver\mongo
                $res = clone $result;
                $res->map($doc);
             }
-            $arr[] = $res;
+            if ($callback) {
+               $callback($res);
+            } else {
+               $arr[] = $res;
+            }
          }
-         return $arr;
+         if (!$callback) {
+            return $arr;
+         }
       } else {
          $doc = $cur->getNext();
          if (isset($doc['_id'])) $doc['_id'] = (string) $doc['_id'];
@@ -428,7 +468,11 @@ class crud extends \flat\db\driver\mongo
             $res = clone $result;
             $res->map($doc);
          }
-         return $res;
+         if ($callback) {
+            $callback($res);
+         } else {
+            return $res;
+         }
       }
    }      
    
@@ -447,10 +491,12 @@ class crud extends \flat\db\driver\mongo
     * 
     * @param array $find criteria for record retrieval
     * @param array $opt (optional) assoc array of options:
-    *    int $opt['skip'] default 0. number of records to skip in resultset. 
+    *    int $opt['skip'] default 0. number of records to skip in resultset.
     *       ignored if $opt['start'] is given.
-    *    array $opt['start'] ignored by default. criteria for starting 
-    *       point where resultset begins. 
+    *    array $opt['start'] ignored by default. Specifies a key/value match for where starting point of 
+    *       resultset begins. IT IS NOT THE NUMBER OF RECORDS TO SKIP. Note, that unlike 'skip', this option
+    *       is ultimately processed on the client side, within this method.
+    *    this is perfomed "client side" (within this method). 
     *    int $opt['limit'] default 10. maximum records to retrieve.
     *    string | \flat\data $opt['result'] specify result item data class or object to clone for
     *       result items. 

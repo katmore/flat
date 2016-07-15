@@ -32,7 +32,17 @@
  */
 namespace flat\core\rand\exception;
 class failed extends \flat\core\rand\exception {
-   public function __construct($len) {
-      parent::__construct("failed to create random string $len long");
+   public function get_len() {
+      return $this->_len;
+   }
+   private $_len;
+   public function __construct($len=null) {
+      $this->_len = $len;
+      if (!empty($len) && is_int($len)) {
+         $len = " of $len length";
+      } else {
+         $len = "";
+      }
+      parent::__construct("failed to create random value$len");
    }
 } 

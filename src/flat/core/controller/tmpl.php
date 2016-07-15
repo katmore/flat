@@ -84,8 +84,11 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
     * @see \flat\core\controller\tmpl::display() for possible exceptions.
     */
    final public static function format($design,array $flags=NULL,array $params=NULL) {
-      $data = NULL;
-      if (!empty($params['data'])) $data = $params['data'];
+      $data = null;
+      if (is_array($params) && isset($params['data'])) {
+         $data = $params['data'];
+      }
+
       
       if ($flags && (false!==($idx = array_search('silent_fail',$flags)))) {
          try {
@@ -96,11 +99,16 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
             return "";
          }
       } else {
+//          if (get_called_class()=='flat\app\mail\tmpl\activepitch\artist') {
+//             throw new \Exception(print_r($data,true));
+//          }         
          ob_start();
          static::display($design,$data);
          $ob = ob_get_clean();
       }
-      
+//       if (get_called_class()=='flat\app\mail\tmpl\activepitch\artist') {
+//          throw new \Exception('asdf');
+//       }
       
       /**
        * $var string strip_tags should be first
@@ -213,6 +221,7 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
        */
       if (empty($file)) {
          $file_base = str_replace("flat\\design","",$design);
+         
          $file_base = \flat\core\config::get("design/basedir")."/".str_replace("\\","/",$file_base);
          $file = $file_base.".php";
       }
@@ -221,10 +230,14 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
          /*
           * load in closure for clean scope
           */
-         $loader = function($filename,$data) {
-            require($filename);
-         };
-         $loader($file,new \flat\tmpl\data($data));
+//          $loader = function($filename,$data) {
+//             require($filename);
+//          };
+         //$loader($file,new \flat\tmpl\data($data));
+         $data = new \flat\tmpl\data((array) $data);
+         call_user_func(function() use($file,$data) {
+            require($file);
+         });
          return;
          
       }
@@ -350,6 +363,7 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
     * 
     */
    private function _get_design_from_root() {
+
       // $r = new \ReflectionClass($this);
       // $app_base = $this::root_app_base."\\".$r->getShortName();
       // $design_base = $this::root_design_base."\\".$r->getShortName();
@@ -361,9 +375,13 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
       //\flat\core\debug::dump($ns_suffix,"ns_suffix");
       
       
-      $design_class = "\\".$this::root_design_base.$ns_suffix;
+      $design_class = "\\".$this::root_design_base."\\".$ns_suffix;
+      $design_class = str_replace("\\\\","\\",$design_class);
       //\flat\core\debug::dump($design_class,"design_class");
+      //echo $this::root_design_base;
+   
       return $design_class;
+      
    }
    /**
     * part of the \flat\core\resolver\prepared interface

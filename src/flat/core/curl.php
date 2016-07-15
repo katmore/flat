@@ -10,6 +10,8 @@ class curl {
    /**
     * curl execution
     * 
+    * @return \flat\core\curl\response
+    * 
     * @param string | curl\config $config:
     *    string $config['url'] URL to visit.
     *    string $config['request_method'] (optional) HTTP request method, defaults to "GET". 

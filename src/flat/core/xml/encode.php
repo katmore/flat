@@ -6,8 +6,8 @@
  * Purpose:
  *    create XML document from given data, and vice versa
  * 
- * Dependancies:
- *    NO DEPENDANCIES to serialize data into XML
+ * Dependencies:
+ *    no dependencies in order to serialize data into XML
  *       encode::serialize()
  * 
  *    \flat\core\xml\dom and SPL dom extension (\DOMDocument) to unserialize XML into an object
@@ -173,11 +173,11 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
             // //return 'data:application/json;base64,'.base64_encode($structure);
             // return 'data:application/json;'.htmlspecialchars($structure,ENT_QUOTES | ENT_SUBSTITUTE);
          } else {
-            return htmlspecialchars($className, ENT_QUOTES | ENT_SUBSTITUTE);
+            return htmlspecialchars($className, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8');
          }
       } else {
          //$type = gettype($input);
-         return htmlspecialchars(gettype($input), ENT_QUOTES | ENT_SUBSTITUTE);
+         return htmlspecialchars(gettype($input), ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8');
       }
    }
    
@@ -187,23 +187,27 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
       
       if (!is_array($options)) $options=array();
       foreach (array(
-      'top_node'=>'flat',
-      'default_node'=>'data',
+      'top_node'=>'fx:data',
+      'default_node'=>'fx:data',
       'indent_size'=>3,
       'dump_ok'=>false,
       'checksum'=>array('md5'),
       'meta'=>true,
+      'meta_attr'=>null,
       'xsi_type_detect'=>true,
       ) as $opt=>$val) if (!isset($options[$opt])) $options[$opt]=$val;
       
       $meta = "";
       $metatag = "";
       if ($options['meta']===true) {
-         //htmlspecialchars($key, ENT_QUOTES& ENT_SUBSTITUTE)
+         //meta
+         if (!empty($options['meta_attr'] && is_string($options['meta_attr']))) {
+            $meta = ' fx:meta="'.$options['meta_attr'].'"';
+         } else
          if ($meta = self::_get_meta_value($input)) {
-            $meta = ' extxs:meta="'.$meta.'"';
+            $meta = ' fx:meta="'.$meta.'"';
          } else {
-            $meta = " extxs:meta=\"extxs:structure\"";
+            $meta = " fx:meta=\"extxs:structure\"";
             $structure = new \stdClass();
             $structure->structure = self::_get_structure($input);
             $metatag = self::_data_to_xml(
@@ -231,12 +235,12 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
       } else
       if ($options['meta']!==false) {
          if (is_scalar($options['meta'])) {
-            $meta=' extxs:meta="'.htmlspecialchars($options['meta'], ENT_QUOTES | ENT_SUBSTITUTE).'"';
+            $meta=' fx:meta="'.htmlspecialchars($options['meta'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8').'"';
          } else {
             if ($meta = self::_get_meta_value($input)) {
-               $meta = ' extxs:meta="'.$meta.'"';
+               $meta = ' fx:meta="'.$meta.'"';
             } else {
-               $meta = " extxs:meta=\"extxs:structure";
+               $meta = " fx:meta=\"extxs:structure";
                $structure = new \stdClass();
                $structure->structure = self::_get_structure($input);               
                $metatag = self::_data_to_xml(
@@ -295,7 +299,13 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
       if (is_null($input)) {
          $ftypeattr .= 'xsi:nil="true"';
       } else {
-         $ftypeattr .= self::_get_xsi_attr(self::_get_xsi_type($input));
+         //$ftypeattr .= self::_get_xsi_attr(self::_get_xsi_type($input));
+         if (is_object($input)) {
+            //$ftypeattr .= ' extxs:ObjectType="'.get_class($input).'"';
+            $ftypeattr .= self::_get_object_type_attrs($input);
+         } elseif (is_array($input)) {
+            $ftypeattr .= self::_get_array_type_attrs($input);
+         }
       }
       $xml .=" fx:flat-xml-ver=\"".self::flat_xml_ver."\" xmlns:fx=\"".self::xmlns."\" xmlns=\"".self::xmlns."-object\"$ftypeattr>\n";
       
@@ -366,7 +376,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                    return "extxs:NumericStringFloat";
                 }
                 
-                return "extns:NumericString";
+                return "extxs:NumericString";
              }
              
              if ($param['DateTime'] ) {
@@ -398,7 +408,15 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
           }
        } else {
           if (is_array($data)) {
-             if ($param['Array']) return "extxs:Array";
+             if ($param['Array']) {
+                $i=0;
+                foreach($data as $k=>$v) {
+                   if ($i>9) break 1;
+                   if (!is_int($k)) return "extxs:Hashmap";
+                   $i++;
+                }
+                 return "extxs:Array";
+             }
           } else
           if (is_object($data)) {
              if ($param['Object']) return "extxs:Object";
@@ -407,7 +425,42 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
           }
        }
    }
-
+   private static function _get_object_type_attrs($value) {
+      if (!is_object($value)) return "";
+      $type = get_class($value);
+      if ($type=='stdClass') {
+         $type = "Generic";
+      } else {
+         $type = "\\$type";
+      }
+      //" xsi:type=\"extxs:Object\" extxs:ObjectType=\"".get_class($value)."\"";
+      return " xsi:type=\"extxs:Object\" extxs:ObjectType=\"$type\"";
+   }
+   private static function _get_array_type_attrs($value) {
+      if (!is_array($value)) return "";
+      $all_same_type = true;
+      $last_type = null;
+      $first_value = true;
+      $i=0;
+      foreach($value as $k=>$v) {
+         if ($i>9) break 1;
+         if (!is_int($k)) {
+            return " xsi:type=\"extxs:Hashmap\"";
+         }
+         if (!$first_value && (self::_get_xsi_type($v,['string'=>true])!=$last_type)) {
+            $all_same_type = false;
+            break 1;
+         }
+         $last_type = self::_get_xsi_type($v,['string'=>true]);
+         $i++;
+      }
+      if ($all_same_type) {
+         $array_type = $last_type;
+         return " xsi:type=\"extxs:Array\" extxs:ArrayType=\"".$array_type."[".count($value)."]\"";
+      } else {
+         return " xsi:type=\"extxs:Array\" extxs:ArrayType=\"extxs:Mixed[".count($value)."]\"";
+      }      
+   }
     private static function _data_to_xml($data, $default_node, $indent_level=1, $indent_size=3, $dump_ok=true,$checksum=array('md5'),array $options=null) {
         
         $ns = "";
@@ -424,7 +477,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                     if (empty($options['namespace_identifyer'])) {
                        $nsid = self::xmlns."-".$options['namespace'];
                     } else {
-                       $nsid = htmlspecialchars($options['namespace_identifyer'],ENT_QUOTES | ENT_SUBSTITUTE);
+                       $nsid = htmlspecialchars($options['namespace_identifyer'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8');
                     }
                     $nsidattr= " xmlns:".$options['namespace']."=\"$nsid\"";
                     $options['namespace_child']=true;
@@ -465,7 +518,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                 if ($key != $node) {
                   
                   
-                  if (!$keyval = htmlspecialchars($key, ENT_QUOTES | ENT_SUBSTITUTE)) {
+                  if (!$keyval = htmlspecialchars($key, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8')) {
                      if ($keyval = base64_encode($keyval)) {
                         $keyval = "data:application/octet-stream;base64,$keyval";
                      } else {
@@ -491,24 +544,10 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                 if (is_array($value) || is_object($value)) {
                    $indent_level++;
                    if (is_array($value)) {
-                      $all_same_type = true;
-                      $last_type = null;
-                      $first_value = true;
-                      foreach($value as $v) {
-                         if (!$first_value && (self::_get_xsi_type($v,['string'=>true])!=$last_type)) {
-                            $all_same_type = false;
-                            break 1;
-                         }
-                         $last_type = self::_get_xsi_type($v,['string'=>true]);
-                      }
-                      if ($all_same_type) {
-                         $array_type = $last_type;
-                         $xml .= " xsi:type=\"extxs:Array\" extxs:ArrayType=\"".$array_type."[".count($value)."]\"";
-                      } else {
-                         $xml .= " xsi:type=\"extxs:Array\" extxs:ArrayType=\"extxs:Mixed[".count($value)."]\"";
-                      }
+                      $xml .= self::_get_array_type_attrs($value);
                    } else {
-                      $xml .= " xsi:type=\"extxs:Object\" extxs:ObjectType=\"".get_class($value)."\"";
+                      //$xml .= " xsi:type=\"extxs:Object\" extxs:ObjectType=\"".get_class($value)."\"";
+                      $xml .= self::_get_object_type_attrs($value);
                    }
                    $xml .= ">\n".
                      self::_data_to_xml($value, $default_node,$indent_level,$indent_size,$dump_ok,$checksum,$options);
@@ -523,6 +562,9 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                       $xml .= "/>\n";
                    } else {
                       if (empty($value)) {
+                         if (is_string($value)) {
+                            $xml .= ' xs:string';
+                         }
                          // ob_start();
                          // var_dump($value);
                          // $empty=" empty=\"".htmlspecialchars(trim(ob_get_clean()),ENT_QUOTES | ENT_SUBSTITUTE)."\"";
@@ -546,7 +588,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
             
         } else {
            if (empty($data)) return "<!--empty-->";
-           if ($xml = htmlspecialchars($data, ENT_QUOTES | ENT_SUBSTITUTE,'UTF-8')) return trim($xml);
+           if ($xml = htmlspecialchars($data, ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8')) return trim($xml);
             $checksum_attr = "";
             foreach ($checksum as $algo) {
                if ($hash = hash($algo,$input)) {
@@ -565,7 +607,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
             var_dump($data);
             $dump = ob_get_clean();
             $encoding = "";
-            if ($data = htmlspecialchars($dump, ENT_QUOTES | ENT_SUBSTITUTE)) {
+            if ($data = htmlspecialchars($dump, ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8')) {
                $encoding = " extxs:encoding=\"none\"";
                $dump = $data;
             } else {

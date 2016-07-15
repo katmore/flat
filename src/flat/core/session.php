@@ -23,7 +23,122 @@ namespace flat\core;
  */
 class session {
    
-   const root_key = 'flat\core\session';
+   const root_ns = 'flat\core\session';
+   const nonce_subns = 'nonce';
+   const keyval_subns = 'keyval';
+   const refresh_subns='refresh';
+   const nonce_len = 16;
+   
+   /**
+    * consumes specified nonce; thus making it unconsumable thereafter.
+    *    returns associated data if it was specified for the nonce;
+    *    otherwise, returns void. 
+    * @return mixed
+    * 
+    * @param string $key logical namespace key for nonce
+    * @param int $ttl (OPTIONAL) number of seconds from creation time
+    *    until the nonce is no longer valid
+    * 
+    * @throws \flat\core\session\exception\bad_key
+    * @static
+    */
+   public static function consume_nonce($key,$nonce) {
+      self::_nonce_enforce($key);
+      if (!isset($_SESSION[self::root_ns."/".self::nonce_subns][$key][$nonce])) {
+         throw new session\exception\nonce_not_found();
+      }
+      $meta = new session\nonce_meta((array) $_SESSION[self::root_ns."/".self::nonce_subns][$key][$nonce]);
+      if (!$meta instanceof session\nonce_meta) {
+         var_dump($meta);
+         die(__FILE__);
+         throw new session\exception\invalid_nonce_data();
+      }
+      if ($meta->consumed) {
+         throw new session\exception\nonce_consumed();
+      }
+      if (!is_null($meta->ttl)) {
+         if (!is_int($meta->ttl)) {
+            throw new \flat\lib\exception\app_error(
+               "bad ttl value: expected integer, got '".gettype($meta->ttl). "' instead"
+            );
+         }
+         $created = strtotime($meta->created);
+         if ((time() - $created)>$meta->ttl) {
+            throw new session\exception\nonce_expired($meta->ttl);
+         }
+      }
+      $_SESSION[self::root_ns."/".self::nonce_subns][$key][$nonce]->consumed = true;
+      if (!is_null($meta->data)) {
+         return $meta->data;
+      }
+   }
+   /**
+    * enforces key and ttl parameters for usage by nonce and
+    *    ensures a usable session exists (starts one if not present).
+    * 
+    * @param string $key logical namespace key for nonce
+    * @param int $ttl (OPTIONAL) number of seconds from creation time
+    *    until the nonce is no longer valid
+    * @throws \flat\core\session\exception\bad_key
+    * @static
+    * @return void
+    * @see \flat\core\session::generate_nonce()
+    * @see \flat\core\session::consume_nonce()
+    */
+   private static function _nonce_enforce($key,$ttl=null) {
+      if (empty($key)) {
+         throw new session\exception\bad_key("must be non-empty value");
+      }
+      if (!is_string($key)) {
+         throw new session\exception\bad_key("must be string");
+      }
+      if (!is_null($ttl)) {
+         if (!is_int($ttl)) {
+            throw new \flat\lib\exception\bad_param("ttl", "must be integer if specified");
+         }
+      }
+      self::start(['refresh']);
+   }
+   /**
+    * generates a nonce and saves it to a session
+    * 
+    * @param string $key logical namespace key for nonce
+    * @param int $ttl (OPTIONAL) number of seconds from creation time
+    *    until the nonce is no longer valid
+    * @param mixed $data (OPTIONAL) data to associate with this nonce
+    * @return string
+    * @static
+    * @throws \flat\core\session\exception\bad_key
+    * 
+    */
+   public static function generate_nonce($key,$ttl=null,$data=null) {
+      self::_nonce_enforce($key,$ttl);
+      /*
+       * get random byes from openssl_random_pseudo_bytes
+       */
+      $nonce = base64_encode(
+         openssl_random_pseudo_bytes(self::nonce_len,$strong)
+      );
+      if (!$strong) {
+         throw new \flat\lib\exception\app_error(
+            'openssl_random_pseudo_bytes \crypto_strong is false'
+         );
+      }
+      $meta = [
+         'consumed'=>false,
+         'created'=>date("c")
+      ];
+      if (!is_null($data)) {
+         $meta['data'] = $data;
+      }
+      if (!is_null($ttl)) {
+         $meta['ttl'] = $ttl;
+      }
+      $_SESSION[self::root_ns."/".self::nonce_subns][$key][$nonce]=json_decode(json_encode((new session\nonce_meta($meta))));
+      return $nonce;
+   }
+   
+   
    /**
     * sets a $key/val in session
     * 
@@ -36,8 +151,12 @@ class session {
             "must be string or numeric value"
          );
       }
-      self::start(array('refresh'));
-      $_SESSION[self::root_key][$key]=$val;
+      self::start(['refresh']);
+      if ($val===null) {
+         unset($_SESSION[self::root_ns."/".self::keyval_subns][$key]);
+      } else {
+         $_SESSION[self::root_ns."/".self::keyval_subns][$key]=$val;
+      }
    }
    
    /**
@@ -49,23 +168,37 @@ class session {
    
    /**
     * retrieves a key/val from session.
-    *    returns NULL if no value
+    *    returns null if no value
     * 
-    * @return mixed | NULL
+    * @return mixed | null
     */
    public static function get($key) {
-      self::start(array('refresh'));
-      if (isset($_SESSION[self::root_key][$key])) return $_SESSION[self::root_key][$key];
-      return NULL;
+      self::start(['refresh']);
+      if (isset($_SESSION[self::root_ns."/".self::keyval_subns][$key])) {
+         return $_SESSION[self::root_ns."/".self::keyval_subns][$key];
+      }
+      return null;
    }
 
    /**
-    * starts session if not yet started
+    * starts session if not yet started then verifies the $_SESSION
+    *    variable is accessible.
+    *    returns true if session was not existing and successfully started.
+    *    returns void if session already existed.
+    * @return bool | void
     * @static
+    * @throws \flat\core\session\exception\no_session_var
     */
    protected static function _start() {
+      $newstart = false;
       if (session_status() == \PHP_SESSION_NONE) {
-         return session_start();
+         $newstart = session_start();
+      }
+      if (!isset($_SESSION)) {
+         throw new session\exception\no_session_var();
+      }
+      if ($newstart) {
+         return true;
       }
    }
    
@@ -76,7 +209,7 @@ class session {
    public static function destroy() {
       self::_start();
       if (session_status() == \PHP_SESSION_ACTIVE) {
-         $_SESSION = array();
+         $_SESSION = [];
          session_regenerate_id(true);
          if (ini_get("session.use_cookies")) {
              $params = session_get_cookie_params();
@@ -88,46 +221,54 @@ class session {
          session_destroy();
       }
    }
-   
-   const refresh_key='flat\core\session\refresh';
    /**
+    * creates an assoc array containing current time information
+    *    and saves it to a session element as specified 
+    * 
     * @static
     * @return void
-    * @param string $key session key to update with current time
+    * @param string $key (OPTIONAL) session key to update with current time.
+    *    default is self::root_ns."/".self::refresh_subns
+    *    
     */
-   public static function refresh($key=self::refresh_key) {
-      if (!empty($key)) {
-         if (is_scalar($key)) {
-            $refresh = array(
-               'time_float'=>microtime(true),
-               'date'=>date("c")
-            );
-            
-            $_SESSION[$key] = $refresh;
+   public static function refresh($key=null) {
+      self::_start();
+      if (is_null($key)) {
+         $key = self::root_ns."/".self::refresh_subns;
+      } else
+      if (!is_string($key)) {
+         throw new session\exception\bad_key("must be string");
+      } else {
+         if (substr($key,0,strlen(self::root_ns))==self::root_ns) {
+            throw new session\exception\bad_key("cannot collide with session root namespace: ".self::root_ns);
          }
       }
+      $_SESSION[$key] = [
+         'time_float'=>microtime(true),
+         'date'=>date("c")
+      ];     
    }
+   
    /**
     * really starts php session, optionally destroying an old one beforehand
     * 
     * @param string[] $flags optional flags:
     *    
-    * @return void
+    * @return string session id
     * @static
     */
-   public static function start(array $flags=array('refresh')) {
+   public static function start(array $flags=['refresh']) {
       
       if (in_array('destroy',$flags)) self::destroy();
       
       
       if (self::_start()) {
-                  
          if (in_array('refresh',$flags)) {
             self::refresh();
          }
       }
       
-      if (!isset($_SESSION)) throw new session\exception\no_session_var();
+      return session_id();
    }
    /**
     * starts session if not already, and returns data object containing id. 
@@ -138,14 +279,14 @@ class session {
     */
    public static function load($session_data=false) {
       self::start();
-      if (!$session_data) return new \flat\data\generic(array(
+      if (!$session_data) return new \flat\data\generic([
          'id'=>session_id()
-      ));
+      ]);
       
-      return new \flat\data\generic(array(
+      return new \flat\data\generic([
          'id'=>session_id(),
          'data'=>(object) \flat\core\util\deepcopy::arr($_SESSION)
-      ));
+      ]);
    }
 }
 

@@ -31,18 +31,82 @@
  * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
  */
 namespace flat\cloud\authorize;
+
+use \net\authorize\api\contract\v1\AnetApiResponseType;
+use \net\authorize\api\contract\v1\MessagesType;
+/**
+ * Exception populated with details of an authorize.net response error
+ */
 class response_error extends exception {
+   /**
+    * @var string
+    *    Authorize.net error message code
+    */   
    private $_message_code;
+   /**
+    * @var string
+    *    Authorize.net error message text
+    */   
    private $_message_text;
+   /**
+    * @return string
+    *    Authorize.net error message text
+    */
    public function get_message_text() {
       return $this->_message_text;
    }
+   /**
+    * @return string
+    *    Authorize.net error message code
+    */
    public function get_message_code() {
       return $this->_message_code;
    }
-   public function __construct($message_code,$message_text) {
-      $this->_message_code = $message_code;
-      $this->_message_text = $message_text;
-      parent::__construct("authorize.net response error '".$message_code."': ".$message_text);
+
+   /**
+    * @return \net\authorize\api\contract\v1\AnetApiResponseType
+    */
+   public function get_response() {
+      return $this->_response;
+   }
+   /**
+    * @var \net\authorize\api\contract\v1\AnetApiResponseType
+    */
+   private $_response;
+   /**
+    * Creates an exception corresponding to an authorize.net response
+    * 
+    * @param \net\authorize\api\contract\v1\AnetApiResponseType $response
+    */
+   public function __construct($msg,$msg_code=null) {
+      $exmsg_suffix = "";
+      if ($msg instanceof AnetApiResponseType) {
+         $this->_response = $msg;
+         if ($this->_response->getMessages() instanceof MessagesType) {
+            $this->_message_code = $this->_response->getMessages()->getMessage()[0]->getCode();
+            $this->_message_text = $this->_response->getMessages()->getMessage()[0]->getText();
+         }  
+      } else {
+         $this->_message_text = $msg;
+         $this->_message_code = $msg;
+      }
+      if (!empty($this->_message_code) && is_scalar($this->_message_code) && !is_bool($this->_message_code)) {
+         $exmsg_suffix .= " '{$this->_message_code}'";
+      }
+      if (!empty($this->_message_text) && is_string($this->_message_text)) {
+         $exmsg_suffix .= ": ".$this->_message_text;
+      }
+      // echo "Response : " . $response->getMessages()->getMessage()[0]->getCode() . "  " .$response->getMessages()->getMessage()[0]->getText() . "\n";
+      parent::__construct("authorize.net response error$exmsg_suffix");
    }
 }
+
+
+
+
+
+
+
+
+
+

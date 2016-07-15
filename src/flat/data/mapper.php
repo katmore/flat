@@ -524,8 +524,8 @@ trait mapper {
     * @final
     * @return string
     */
-   final public function to_json() {
-      return json_encode($this);
+   final public function to_json($options = null) {
+      return json_encode($this, $options);
    }
    
    /**
@@ -675,13 +675,21 @@ trait mapper {
     *    array('data'=>$data,'key_prefix'=>$key_prefix, etc...)
     */
    final public function map() {
+      if ($this->_purged_done) {
+         
+         foreach($this->_purged as $k=>$v) {
+            $this->$k = $v;
+         }
+         
+      }      
       $args = func_get_args();
-      
-      if (count($args)==1 && is_a($args[0],"\\flat\\data\\rules")) {
+      //if (count($args)==1 && is_a($args[0],"\\flat\\data\\rules")) {
+      if (count($args)==1 && is_object($args[0]) && ($args[0] instanceof \flat\data\rules)) {
          $rule = $args[0];
-      } else
-      $rule = new \flat\data\rules($args);
-      //var_dump($rule);die("flat data rule");
+      } else {
+         $rule = new \flat\data\rules($args);
+      }
+      
       /*
        * sanity check: data rule must exist
        */
@@ -701,7 +709,7 @@ trait mapper {
             "must be array if given"
          );
       }
-      
+
       /*
        * remove key prefix(es)
        */
@@ -721,10 +729,14 @@ trait mapper {
          if ($flags && $default!=NULL && in_array('default_on_empty',$flags))
          foreach($map as $k=>&$v) if (empty($v) && isset($default[$k]) ) $v=$default[$k];
       }
+          
       parent::__construct($map);
       $this->_apply_interfaces($map,$rule);
+
    }
    private function _apply_interfaces(array $data=NULL,data\rules $rules=NULL) {
+      
+
       
       $r = new \ReflectionClass($this);
       
@@ -771,16 +783,32 @@ trait mapper {
          $this->data_ready();
       }
       
+      //$r = new \ReflectionClass(get_class($this));
       /*
        * remove pesky protected properties ;)
        */
+      
       foreach( $r->getProperties(\ReflectionProperty::IS_PROTECTED) as $rp) {
          //unset($this->$rp->name);
          $name = $rp->name;
          //var_dump($name);die('flat data die');
+         if (!$this->_purged_done) {
+            $this->_purged[$name] = $this->$name;
+            
+         }
          unset($this->$name);
       }
+      
+      if ($this->_purged_done) {
+         foreach($this->_purged as $k=>$v) {
+            if (isset($this->$k)) unset($this->$k);
+         }
+      } else {
+         $this->_purged_done = true;
+      }
    }
+   private $_purged_done = false;
+   private $_purged=[];
    /**
     * provide argument(s) to map values from
     * 
@@ -809,7 +837,7 @@ trait mapper {
             $this->map($args[0]);
             return;
          } else
-         if (is_array($args[0])) {
+         if (is_array($args[0])) {       
             $data = $args[0];
             parent::__construct($args[0]);
             return $this->_apply_interfaces($data);

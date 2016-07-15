@@ -65,13 +65,15 @@ class exception extends \flat\api\exception {
     * @see \flat\api\response\exception::get_response()
     */
    public function __construct($data) {
-      if (is_a($data,"\\flat\\api\\response")) {
+      
+      //if (is_a($data,"\\flat\\api\\response")) {
+      if (isset($data) && ($data instanceof \flat\api\response)) {
          $response = $data;
       } else {
-         if (is_scalar($data) && (!empty($data))) {
+         if (!empty($data) && is_scalar($data)) {
             $message = (string) $data;
          } else {
-            $message = "error indicated";
+            $message = "an unknown error has occurred";
             $trace = debug_backtrace();
             if (!empty($trace[1]['class'])) {
                $r = new \ReflectionClass($trace[1]['class']);

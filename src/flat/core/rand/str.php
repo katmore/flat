@@ -45,6 +45,7 @@ class str implements \flat\core\generator {
    /**
     * generates a random string from given parameters
     * 
+    * @param int $len length of random string
     * @param array $options assoc config parameters:
     *    bool $options['use_upperalpha'] (optional) default true, 
     *       if true, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" chars are included potential 
@@ -70,14 +71,21 @@ class str implements \flat\core\generator {
     */   
    public static function load($len=NULL,array $options=NULL) {
       $config = array('len'=>$len);
-      foreach ( array(
-         'charpool',
-         'use_upperalpha',
-         'use_loweralpha',
-         'use_digits'
-      ) as $key ) {
-         if (isset($options[$key]))
-            $config[$key] = $options[$key];
+      if (is_array($options)) {
+         foreach ( array(
+            'charpool',
+            'use_upperalpha',
+            'use_loweralpha',
+            'use_digits'
+         ) as $key ) {
+            if (isset($options[$key])) {
+               $config[$key] = $options[$key];
+            } else {
+               if (in_array($key,$options,true)) {
+                  $config[$key] = true;
+               }
+            }
+         }
       }
 
       if (isset($options['load_object']) && $options['load_object']) {
@@ -187,7 +195,7 @@ class str implements \flat\core\generator {
       
       $this->len = self::default_len;
       if (!empty($config['len'])) {
-         if (is_int($config['len'])) {
+         if (is_int($config['len']) || ((int) sprintf("%d",$config['len']) == $config['len'])) {
             if ($config['len']>=self::min_len) {
                 $this->len = $config['len'];
             }

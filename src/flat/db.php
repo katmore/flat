@@ -32,7 +32,7 @@
  */
 namespace flat;
 /**
- * database retrieval class ideal to correspend with \flat\data classes
+ * database retrieval class ideal to correspend with \flat\db classes
  * 
  * @package    flat\db
  * @author     D. Bird <retran@gmail.com>

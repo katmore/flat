@@ -36,21 +36,49 @@ use \flat\core\curl\exception;
 
 class config {
    
-   
+   /**
+    * @var \flat\core\curl\request
+    */
    public $request;
    
+   
+   /**
+    * @var string
+    *    request method, ie: GET, POST, PUT, DELETE 
+    */
    public $request_method = "GET";
    
+   /**
+    * @var string
+    *    referrer URL string to provide to HTTP host
+    */
    public $referrer;
    
+   /**
+    * @var string
+    *    user agent string to provide to HTTP host
+    */
    public $user_agent = config::default_user_agent;
    
+   /**
+    * @var int number of seconds until cached URL response data 
+    *    is expired 
+    */
    public $cache_ttl = 0;
    
+   /**
+    * @var int number of seconds for curl timeout
+    */
    public $timeout = 5;
    
+   /**
+    * @var int number of seconds to wait for connection
+    */
    public $connect_timeout = 5;
    
+   /**
+    * @var string path to save cache
+    */
    public $cache_dir;
    
    const default_user_agent = "flat/curl";

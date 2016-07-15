@@ -94,7 +94,7 @@ class route implements \flat\core\controller, \flat\core\collectable {
       }
       
       if (is_object($param->route_factory)) {
-         if (!is_a($param->route_factory,"\\flat\\route\\factory")) {
+         if (!$param->route_factory instanceof \flat\route\factory) {
             throw new route\exception\bad_resource(
                "route_factory must be (string) ".
                "{\\flat\\route\\factory child class name} OR ".
@@ -258,7 +258,8 @@ class route implements \flat\core\controller, \flat\core\collectable {
                      if ($app_object instanceof \flat\core\controller\route\restful_status) {
                         //\flat\core\debug::dump("restful_status");
                         
-                        if (is_callable($param->restful_status_callback)) {
+                        
+                        if (isset($param->restful_status_callback) && is_callable($param->restful_status_callback)) {
                            $h = $param->restful_status_callback;
 
                            $status = new route\restful_status\callback_data(

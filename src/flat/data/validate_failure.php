@@ -10,13 +10,16 @@ class validate_failure extends \flat\core\exception {
    /**
     * one or more \flat\data fields associated with failure 
     *    (public properties of \flat\data object are 'fields')
-    * @return string | string[]
+    * @return string[]
     */
    public function get_field() {
       return $this->_field;
    }
    public function get_message() {
       return $this->_message;
+   }
+   public function add_field($field) {
+      $this->_field[]=$field;
    }
    public function __construct($field,$message=null) {
       $this->_field = [];

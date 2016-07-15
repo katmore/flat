@@ -12,6 +12,7 @@
  * @license see /flat/LICENSE.txt
  */
 namespace flat\db\driver;
+use flat\core\uuid;
 /**
  * operations for mongo client
  * 
@@ -30,7 +31,10 @@ abstract class pdo extends \flat\db implements \flat\db\driver {
    private $_param;
    /**
     * provides a PDO object based on previously obtained connection parameters.
-    *    uses a cached connection, or establishes new connection as needed.
+    *    uses a cached PDO object, or establishes a new one as needed.
+    * 
+    * @param bool $force_new Optional, default false. When this value is (bool) true, a new PDO object 
+    *    is always established.
     * 
     * @return \flat\db\driver\pdo\pdo
     * 
@@ -39,9 +43,11 @@ abstract class pdo extends \flat\db implements \flat\db\driver {
     * 
     * @throws \flat\db\driver\pdo\exception\missing_connection_params
     */
-   public function get_pdo() {
+   public function get_pdo($force_new=false) {
       if (!$this->_param) throw new \flat\db\driver\pdo\exception\missing_connection_params();
-      return pdo::_load_pdo($this->_param);
+      $param = $this->_param;
+      if ($force_new) $param['force_new'] = true;
+      return pdo::_load_pdo($param);
    }
    /**
     * @var \PDO[] $_pdo array of cached pdo objects, 
@@ -50,8 +56,8 @@ abstract class pdo extends \flat\db implements \flat\db\driver {
     */
    private static $_pdo;
    private static function _param_to_hash(array $param=NULL) {
-      if (!$param) return md5("");
-      return md5(json_encode(self::_param_to_pdo_param($param)));
+      if (!$param) return crc32("");
+      return crc32(json_encode(self::_param_to_pdo_param($param)));
    }
    private static function _param_to_pdo_param(array $param=NULL) {
       
@@ -160,19 +166,24 @@ abstract class pdo extends \flat\db implements \flat\db\driver {
       /*
        * compute param hash
        */
-      $hash = self::_param_to_hash($pdo);
+      if (isset($param['force_new']) && $param['force_new']===true) {
+         $hash = null;
+         $pdo['options'][\PDO::ATTR_PERSISTENT]=false;
+      } else {
+         $hash = self::_param_to_hash($pdo);
+      }
       
       /**
        * return already established connection
        * @todo perform test on connection to see if timed or errored out
        */
-      if (isset(self::$_pdo[$hash])) return self::$_pdo[$hash];
+      if ($hash && isset(self::$_pdo[$hash])) return self::$_pdo[$hash];
       
       try {
          /*
           * create new pdo object
           */
-         $pdo = self::$_pdo[$hash] = new pdo\pdo(
+         $pdo = new pdo\pdo(
             $pdo['dsn'], 
             $pdo['username'],
             $pdo['password'],
@@ -183,7 +194,7 @@ abstract class pdo extends \flat\db implements \flat\db\driver {
       }
       
       $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
+      if ($hash) self::$_pdo[$hash] = $pdo;
       return $pdo;
    }
    /**
@@ -193,10 +204,12 @@ abstract class pdo extends \flat\db implements \flat\db\driver {
     *    string $param['dsn'] dsn like 'mysql:host=localhost;dbname=testdb',
     *    string $param['username'] username
     *    string $param['password'] password
-    *    array $param['options']
+    *    array $param['options'] A key=>value array of PDO driver-specific connection options.
+    *    bool $param['force_new'] If true, a new PDO object is instantiated even when connection params are 
+    *       identical to previously instantiated PDO object.
     * 
     * @uses \flat\db\driver\pdo\connection_params
-    * @return \PDO
+    * @return \flat\db\driver\pdo\pdo
     */
    final public function connect(array $param=NULL) {
       
@@ -207,10 +220,14 @@ abstract class pdo extends \flat\db implements \flat\db\driver {
             $v = $this->$method();
          }
       }
-      
+      $force_new = false;
+      if (!empty($param['force_new']) && $param['force_new']===true) {
+         unset($param['force_new']);
+         $force_new = true;
+      }
       $this->_param = $param;
+      return $this->get_pdo($force_new);
       
-      return $this->get_pdo();
    }
 
    public function command(array $param=NULL) {

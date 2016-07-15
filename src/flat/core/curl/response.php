@@ -65,6 +65,7 @@ class response {
       if ($demand_result && count($result)<1) {
          throw new exception\no_xpath_results($xquery,"url: ".$this->request->url_string);
       }
+      if (empty($result)) return [];
       return $result;
    }
    
@@ -144,19 +145,117 @@ class response {
     return $isAllowed;
   }
    
+   private $_purge_save = false;
    public function __destruct() {
       
       curl_close($this->_ch);
       
-      if ($this->_tmp_cookie_file)
+      if ($this->_tmp_cookie_file) {
          unlink($this->_tmp_cookie_file);
+      }
+      
+      if ($this->_purge_save && $this->_save) {
+         unlink($this->_save);
+      }
    }
    
-   public function __construct(config $config, array $flags=array('use_robots'), $cookie_file=NULL) {
+   private $_save = false;
+   /**
+    * provides filename of response data.
+    *    if a file has not been created, one will be made.
+    * 
+    * @return string
+    */
+   public function get_file($path=null) {
+      if (empty($this->_save)) {
+         if (empty($path)) {
+            $this->_save = $path = tempnam(sys_get_temp_dir(), "flat-curl-");
+            $this->_purge_save = true;
+         }
+         file_put_contents($path, $this->_doc);
+         return $path;
+      }
+      if (!empty($path)) {
+         copy($this->_save,$path);
+         return $path;
+      }
+      return $this->_save;
+   }
+   const use_robots_default = true;
+   /**
+    * 
+    * @param mixed $param
+    * @param array $flags OPTIONAL
+    * @param string $cookie_file OPTIONAL
+    */
+   public function __construct( $param, array $flags=array('use_robots'), $cookie_file=NULL) {
       
-      $request = $config->request;
-      $use_robots = true;
+      /* most common use-type...?
+         new \flat\core\curl\config(
+            new \flat\core\curl\request($company_logos_cdn)
+         ),
+       */
+      
+      $use_robots = self::use_robots_default;
       $use_dom = false;
+      $save = false;      
+      $save_file = null;
+      
+      if ($param instanceof config) {
+         $config = $param;
+      } else {
+         if (is_scalar($param)) {
+            $config = new config(
+               new request($param)
+            );
+         } elseif (is_array($param)) {
+            $requestp=[
+               'url'=>null,
+               'data'=>null,
+               'data_encoding'=>"urlencoded",
+               'data_content_type'=>null,
+            ];
+            foreach($requestp as $k=>&$v) {
+               if (isset($param[$k])) {
+                  $v = $param[$k];
+               }
+            }
+            $configp = [
+               'request_method'=>null,
+               'user_agent'=>null,
+               'referrer'=>null,
+            ];
+            foreach($configp as $k=>&$v) {
+               if (isset($param[$k])) {
+                  $v = $param[$k];
+               }
+            }     
+            $config = new config(
+               new request(
+                  $requestp['url'],
+                  $requestp['data'],
+                  $requestp['data_encoding'],
+                  $requestp['data_content_type']
+               ),
+               $configp['request_method'],
+               $configp['user_agent'],
+               $configp['referrer']
+            );
+            if (!empty($param['save_file']) && is_string($param['save_file'])) {
+               $save = true;
+               $save_file = $param['save_file'];
+            }
+            if (!empty($param['save']) && is_string($param['save'])) {
+               $save = true;
+               $save_file = $param['save'];
+            }            
+         }
+      }
+      $request = $config->request;
+      
+      if (in_array('save',$flags)) {
+         $save = true;
+      }
 
       if (in_array('use_dom',$flags)) {
          $use_dom=true;
@@ -182,7 +281,7 @@ class response {
       
       if ($accept_cookies) {
          if (empty($cookie_file)) {
-            $this->_tmp_cookie_file = $cookie_file = tempnam ( sys_get_temp_dir(),"curl");
+            $this->_tmp_cookie_file = $cookie_file = tempnam ( sys_get_temp_dir(),"flat_curl_cookie_");
          } else {
             if (!is_string($cookie_file)) throw new exception\bad_param("cookie_file","must be string");
             if (!is_writable($cookie_file)) throw new exception\bad_param("cookie_file","must be writable file if provided");
@@ -219,10 +318,29 @@ class response {
       
       curl_setopt($ch, \CURLOPT_CONNECTTIMEOUT ,5);
       curl_setopt($ch, \CURLOPT_TIMEOUT, $config->timeout);
-      curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true);
+      
       curl_setopt($ch, \CURLOPT_FOLLOWLOCATION, true);
-      if (false === ($this->_doc = curl_exec($ch))) {
-         throw new exception\curlexec_error($ch,$request->url_string);
+      
+      if (!empty($save)) {
+         $use_dom=false;
+         if (!empty($save_file)) {
+            $path = $save_file;
+         } else {
+            $path = tempnam(sys_get_temp_dir(), "flat-curl-");
+            $this->_purge_save = true;
+         }
+         if (!($fh = fopen($path,"wb"))) {
+            throw new exception\system_error("error opening file: $path");
+         }
+         curl_setopt($ch, \CURLOPT_FILE, $fh);
+         curl_exec($ch);
+         fclose($fh);
+         $this->_save = $path;
+      } else {
+         curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true);
+         if (false === ($this->_doc = curl_exec($ch))) {
+            throw new exception\curlexec_error($ch,$request->url_string);
+         }
       }
       $this->filetime = curl_getinfo($ch, \CURLINFO_FILETIME);
       if (curl_errno($ch)!=0) {
@@ -233,8 +351,6 @@ class response {
       }
       $this->status_code = $this->info['http_code'];
 
-      
-      
       /*
        * if usedom indicated
        */

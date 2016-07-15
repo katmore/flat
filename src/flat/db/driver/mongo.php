@@ -337,14 +337,14 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
       $hash = md5(json_encode($hash));
 //       var_dump($param);
 //       die('mongo driver die');
-      //\flat\core\debug::dump($hash,"client hash");
+      ////\flat\core\debug::dump($hash,"client hash");
       /**
        * @var bool $new determine if need to create a new \MongoClient
        *    (establish new connection(s))
        */
       $new = false;
       if (isset(self::$_client[$hash])) {
-         //\flat\core\debug::msg("client exists... checking if need reconnect");
+         ////\flat\core\debug::msg("client exists... checking if need reconnect");
          $client = self::$_client[$hash];
          
          $ping = null;
@@ -353,7 +353,7 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
          } else {
             $conn = self::$_client[$hash]->getConnections();
             if (empty($conn)) {
-               \flat\core\debug::msg("no array returned from \\MongoClient->getConnections()");
+               //\flat\core\debug::msg("no array returned from \\MongoClient->getConnections()");
                $new = true;
             } else {
                $most_recent_ping = 0;
@@ -367,11 +367,11 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
                            $most_recent_ping = $conn['last_ping'];
                         }
                      } else {
-                        \flat\core\debug::dump($c,"no mongo last_ping");
+                        //\flat\core\debug::dump($c,"no mongo last_ping");
                         
                      }
                   } else {
-                     \flat\core\debug::dump($c,"no 'connection' assoc key array returned from \\MongoClient->getConnections()");
+                     //\flat\core\debug::dump($c,"no 'connection' assoc key array returned from \\MongoClient->getConnections()");
                   }
                }
                if (!empty($most_recent_ping)) $ping = $most_recent_ping;
@@ -380,33 +380,33 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
          $new_ping = false;
          if (empty($ping)) {
             $new_ping = true;
-            \flat\core\debug::msg("no last ping determined, must try ping command");
+            //\flat\core\debug::msg("no last ping determined, must try ping command");
          } else
          if (((time()+$ping_offset) - ($ping)) > self::client_ping_expire) {
             $new_ping = true;
-            \flat\core\debug::msg("ping expired, must try ping command");
+            ////\flat\core\debug::msg("ping expired, must try ping command");
          }
          if ($new_ping) {
-            \flat\core\debug::msg("doing ping command...");
+            ////\flat\core\debug::msg("doing ping command...");
             try {
                $doc = $client->selectDB(self::test_collection)->command(array("ping"=>1));
                if (empty($doc)) {
-                  \flat\core\debug::msg("empty response for mongo ping command");
+                  ////\flat\core\debug::msg("empty response for mongo ping command");
                   $new = true;
                } else {
-                  \flat\core\debug::dump($doc,"mongo ping response");
+                  ////\flat\core\debug::dump($doc,"mongo ping response");
                   if (isset($doc['ok'])) {
                      if ($doc['ok']!=1) {
-                        \flat\core\debug::dump($doc['ok'],"'ok' field not '1' in response");
+                        //\flat\core\debug::dump($doc['ok'],"'ok' field not '1' in response");
                         $new = true;
                      }
                   } else {
-                     \flat\core\debug::msg("missing 'ok' field in response");
+                     ////\flat\core\debug::msg("missing 'ok' field in response");
                      $new = true;
                   }
                }
             } catch (\Exception $e) {
-               \flat\core\debug::dump($e,"ping failed");
+               ////\flat\core\debug::dump($e,"ping failed");
                $new = true;
             }
          }         
@@ -423,7 +423,7 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
           * @uses int $param['connect_attempts'] (optional) number of reconnection attempts.
           * @uses \flat\db\driver\mongo::connect_attempts default
           */
-         //\flat\core\debug::msg("reconnecting");
+         ////\flat\core\debug::msg("reconnecting");
          $attempts=self::connect_attempts;
          if (!empty($param['connect_attempts'])) {
             if (is_numeric($param['connect_attempts'])) {
@@ -443,7 +443,7 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
                $success = true;
                break 1;
             } catch (\MongoConnectionException $e) {
-               //\flat\core\debug::dump($e,"connection error: $i");
+               ////\flat\core\debug::dump($e,"connection error: $i");
                //throw $e;
                if (!$first_ex) $first_ex = $e;
                $last_ex = $e;
@@ -457,7 +457,7 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
             throw new mongo\db\exception\connect_failure($msg);
          }
       } else {
-         //\flat\core\debug::dump($ping,"existing connection ok");
+         ////\flat\core\debug::dump($ping,"existing connection ok");
       }
       
       self::$_client_ping[$hash] = time()+$ping_offset;

@@ -15,7 +15,7 @@ namespace flat\cloud\aws\client_provider\from_config;
 /**
  * namespace alias for AWS
  */
-use Aws\S3\S3Client;
+use \Aws\S3\S3Client;
 /**
  * s3 configuration for \flat\app extending
  * 

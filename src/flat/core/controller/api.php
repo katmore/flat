@@ -46,6 +46,87 @@
 
 namespace flat\core\controller;
 abstract class api implements  \flat\core\input\consumer, \flat\core\controller {
+   
+   final public function __construct($param=null, $callback=null) {
+      if ($param!==null) {
+         $method=null;$input=null;$response_handler=null;$response_cb=null;
+         if (is_array($param)) {
+            if (array_key_exists('method', $param)) $method = $param['method'];
+            if (array_key_exists('input', $param)) $input = $param['input'];
+            if (array_key_exists('response_handler', $param)) $response_handler = $param['response_handler'];
+         }elseif(is_string($param)) {
+            $method=$param;
+         }
+         if (is_array($input) || is_object($input)) {
+            $input = new \flat\input\map($input);
+         } elseif (is_scalar($input)) {
+            $input = new \flat\input\map(['data'=>$input]);
+         } else {
+            $input = new \flat\input\map([]);
+         }
+         if (is_callable($callback)) {
+            $response_cb=$callback;
+         }elseif (is_array($callback) && (array_key_exists('always', $callback))) {
+            $response_cb = $callback['always'];
+         }
+         $callback_ok = null;
+         $callback_error = null;
+         if (is_array($callback) && (array_key_exists('ok', $callback))) {
+            $callback_ok = $callback['ok'];
+         }elseif (is_array($callback) && (array_key_exists('success', $callback))) {
+            $callback_ok = $callback['success'];
+         }
+         if (is_array($callback) && (array_key_exists('error', $callback))) {
+            $callback_error = $callback['error'];
+         }
+         $error_callback_invoked = false;
+         $response=null;
+         try {
+            $response = $this->set_input($input,$method,$response_handler);
+         } catch (\Exception $e) {
+            if ($e instanceof \flat\api\response\exception) {
+               $response = $e->get_response();
+            }            
+            if (is_callable($callback_error)) {
+               $msg = $e->getMessage();
+               if ($e instanceof \flat\api\response\exception) {
+                  $data = $e->get_response();
+                  if ($data instanceof \flat\api\response\error) {
+                     $msg = $data->message;
+                     $data = $data->data;
+                  }
+               }
+               $error_callback_invoked = true;
+               $callback_error($response,$msg,$data,$e);
+            } else {
+               throw $e;
+            }
+            if (is_callable($response_cb) && ($response!==null)) {
+               $response_cb($response,$e);
+            } elseif (!$error_callback_invoked) {
+               throw $e;
+            }
+            return;
+         }
+         if (!$error_callback_invoked && ($response instanceof \flat\api\response\error) && is_callable($callback_error)) {
+            $msg = $data->message;
+            $data = $data->data;
+            $error_callback_invoked = true;
+            $callback_error($response,$msg,$data);
+         }
+         $status_sub = substr((string) $response->get_status()->get_code(),0,1);
+         if (!$error_callback_invoked && (($status_sub == 4) || ($status_sub == 5)) && is_callable($callback_error)) {
+            $error_callback_invoked = true;
+            $callback_error($response,$msg,$data,$e);
+         }
+         if (!$error_callback_invoked && ($status_sub==2) && is_callable($callback_ok) && ($response instanceof \flat\api\response)) {
+            $callback_ok($response);
+         }
+         if (is_callable($response_cb)) {
+            $response_cb($response);
+         }
+      }
+   }
    private static $response_handler;
    final static public function set_response_handler(callable $handler) {
       self::$response_handler=$handler;
@@ -60,7 +141,7 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
          );
       }
    }
-   final public function set_input(\flat\input $input,$method="") {
+   final public function set_input(\flat\input $input,$method="",$response_handler=null) {
       if (empty($method)) $method = self::$_method;
       if (empty($method)) throw new api\exception\missing_method();
       $r = new \ReflectionClass($this);
@@ -72,53 +153,39 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
             );
          }
       }
-      /*
-       * if is \flat\api\validator...
-       *    get validate collection
-       */
-      if ($this instanceof \flat\core\util\validate\collector) {
-         $col = $this->get_validate_collection();
-         if (is_a($col,"\\flat\\core\\util\\validate\\factory")) {
-            /*
-             * apply validation
-             */
-         }
+      
+      if ($response_handler===null) {
+         $response_handler = self::$response_handler;
       }
       
-      
-      
-
       if ($r->implementsInterface("\\flat\\api\\method\\any")) {
          try {
             $response = $this->any_method($input);
          } catch (\flat\api\response\exception $e) {
             $response = $e->get_response();
          }
-         if (is_a($response,"\\flat\api\\response")) {
-            $response_handler = self::$response_handler;
+         if ($response instanceof \flat\api\response) {
             if (is_callable($response_handler)) {
-               return $response_handler($response);
+               return $response_handler($response,"any");
             }
-            return $response;
          }         
       }
 
-      //GET_method(\flat\input $input)
       $f = $method."_method";
       try {
          $response = $this->$f($input);
       } catch (\flat\api\response\exception $e) {
          $response = $e->get_response();
       }       
-      if (!is_a($response,"\\flat\api\\response")) {
+      if (!$response instanceof \flat\api\response) {
          throw new api\exception\bad_response(
             get_class($this),
             $method
          );
       }
-      $response_handler = self::$response_handler;
+      
       if (is_callable($response_handler)) {
-         return $response_handler($response);
+         return $response_handler($response,$method);
       }
       return $response; 
    }

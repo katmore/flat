@@ -1,7 +1,5 @@
 ###
 # flat route entry point
-#   from flat/examples/web-service/config-samples/apache2-htaccess.txt
-#
 # replace 'SITE_TMPL_ROOT' with the template root relative to flat/app/tmpl
 #   for example, if you want to use the class 
 #      flat\app\tmpl\mysite (defined in flat/app/tmpl/mysite.php)

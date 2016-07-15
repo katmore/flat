@@ -36,8 +36,13 @@ class not_found extends \flat\data\exception {
       return $this->_details;
    }
    private $_details;
-   public function __construct($details="") {
+   public function get_data() {
+      return $this->_data;
+   }
+   private $_data;   
+   public function __construct($details="",array $data=null) {
       $this->_details = $details;
+      $this->_data = $data;
       if (!empty($details)) $details = ": $details";
       parent::__construct("data not found".$details);
    }

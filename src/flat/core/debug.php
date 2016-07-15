@@ -22,9 +22,121 @@ namespace flat\core;
  * 
  */
 class debug extends \flat\core {
+   
+   /**
+    * @var callable
+    * @static
+    */
+   private static $_kill_handler;
+   
+   /**
+    * Sets handler for when debug::kill() event.
+    * 
+    * @param callable $handler callback definition:
+    *    function(array $caller_summary,string $msg)
+    *       string $caller_summary['file'] kill caller file path. 
+    *       int $caller_summary['line'] kill caller line of file.
+    *       string $caller_summary['class']
+    *       string $caller_summary['
+    *    callback signature: function($caller_summary,$msg) {}; 
+    * @static
+    */
+   public static function set_kill_handler(callable $handler) {
+      self::$_kill_handler = $handler;
+   }
+   
+   /**
+    * Triggers "kill" handler intended to display caller information
+    *    and ends script execution. Default kill handler displays
+    *    caller summary and kill message.
+    * 
+    * @static
+    * @param string $msg message
+    * @param array $options
+    * 
+    */
+   public static function kill($msg=null,array $options=null) {
+
+      if (!is_array($options)) $options = [];
+      
+      $param = self::_args2param("kill",$options);
+      
+      if (!is_string($msg)) {
+         $msg = print_r($msg,true);
+      }
+      
+      if (empty($msg)) $msg = "";
+      
+      foreach(['file','line','class','function','type','object'] as $prop) {
+         if (!empty($param['caller']->$prop)) {
+            $caller_summary[$prop]=$param['caller']->$prop;
+         } else { 
+            $caller_summary[$prop]='';
+         }
+      }
+      
+      /*
+       * determine if there are any options to pass to the kill handler
+       */
+      $h_options = [];
+      foreach(['exit_status'] as $hopt) {
+         if (isset($options[$hopt])) {
+             $h_options = $options[$hopt];
+         } 
+      }
+      /*
+       * sanitize exit_status handler option
+       */
+      if (
+            isset($h_options['exit_status']) &&
+            (
+                  !is_string($h_options['exit_status']) && 
+                  !is_int($h_options['exit_status'])
+            )
+      ) {
+         unset($h_options['exit_status']);
+      }      
+      
+      /*
+       * define the fallback kill handler if none exists
+       */
+      if (empty(self::$_kill_handler)) {
+         self::$_kill_handler = function($caller_summary,$msg,$fh_options) {
+            $tpos=3;
+            echo "\n<pre style='text-align: left;' data-role='debug-kill'><code>(start debug kill handler)\n";
+            if (!empty($msg)) echo str_repeat(" ",$tpos)."<strong>message:</strong> $msg\n";
+            echo str_repeat(" ",$tpos)."<strong>caller summary:</strong>\n";
+            $tpos +=3;
+            foreach($caller_summary as $k=>$v) echo str_repeat(" ",$tpos)."$k: $v\n";
+            $tpos -=3;
+            
+            $exit_status = null;
+            if (isset($fh_options['exit_status'])) {
+               $exit_status = $fh_options['exit_status'];
+            }
+            
+            //$status_string = (($exit_status)?$exit_status:"{none}");
+            echo str_repeat(" ",$tpos)."<strong>exit status:</strong> ".(($exit_status)?$exit_status:"{none}")."\n";
+            
+            echo("(end debug kill handler)</code></pre>\n");            
+            
+            exit($exit_status);
+            
+            
+         };
+      }
+    
+      
+      $handler = self::$_kill_handler;
+      $handler($caller_summary,$msg,$h_options);
+      echo("\nend script: /flat/core/debug::kill()\n");
+      if (isset($fh_options['exit_status'])) $exit_status = $h_options['exit_status'];
+      exit($exit_status);      
+      
+   }
+   
    /**
     * @var bool $_suppress when true some methods will not do anything useful.
-    * @access private
     * @static
     */
    private static $_suppress=false;
@@ -66,11 +178,23 @@ class debug extends \flat\core {
    public static function set_suppress_off() {
       self::$_suppress=false;
    }
-   private static function _args2param($label,$options,$default_label) {
-      $param = array(
+   /**
+    * 
+    */
+   private static function _args2param($label,$options,$default_label=null) {
+      if (!is_string($label)) {
+         if (is_string($default_label)) {
+            $label = $default_label;
+         } else {
+            $label = "debug";
+         }  
+      }
+      $param = [
          'trigger_error'=>false,
-         'callers_offset'=>0
-      );
+         'callers_offset'=>1,
+         'label'=>$label,
+         'show_args'=>false,
+      ];
       if (!empty($options)) {
          if (is_int($options)) {
             $param['callers_offset'] = $options;
@@ -94,17 +218,44 @@ class debug extends \flat\core {
          }
       }
       $callers_offset=$param['callers_offset'];
+      
       $callers=debug_backtrace();
+
+      
       $caller = new \stdClass();
-      $caller->file = $callers[1+$callers_offset]['file'];
-      $caller->line = $callers[1+$callers_offset]['line'];
-      foreach($callers[1+$callers_offset] as $prop=>$val) {
-         if ($prop!='file'&& $prop!='line') {
-            $caller->$prop = $val;
+      $caller->file = $callers[$callers_offset]['file'];
+      $caller->line = $callers[$callers_offset]['line'];
+      
+//       $caller->type = "mooo";
+//       $caller->class = null;
+      
+      /*
+       * some caller info is correlated more usefully by
+       *    increasing the offset 
+       */
+      foreach (['class','function','object','type'] as $key) {
+         $caller->$key = null;
+      }
+      
+      if (isset($callers[1+$callers_offset])) {
+         foreach($callers[1+$callers_offset] as $prop=>$val) {
+            if (!isset($caller->$prop)) $caller->$prop = $val;
          }
       }
+      if ($caller->object && !is_string($caller->object)) {
+         if (is_object($caller->object)) {
+            $ohash = spl_object_hash($caller->object);
+            $oid = ltrim(substr($ohash,0,16),"0").ltrim(substr($ohash,16),"0");
+            $caller->object = "object(".get_class($caller->object).")#spl-$oid";
+         } else {
+            $caller->object = gettype($caller->object);
+         }
+      }
+      
+      if (!$param['show_args'] && isset($caller->args)) unset($caller->args);
+      
       $param['caller'] = $caller;
-      if (!is_string($label)) $label = $default_label;
+      
       
       if ($param['trigger_error']!==false) {
          if (empty($param['error_msg'])) {
@@ -129,7 +280,7 @@ class debug extends \flat\core {
     *       if value = E_USER_ERROR|E_USER_WARNING|E_USER_NOTICE.
     * @static
     */
-   public static function dump($data,$label=NULL,$options=0) {
+   public static function dump($data,$label=null,$options=0) {
       
       if (self::$_suppress) return;
       if (!\flat\core\config::get("debug/active")) return;
@@ -215,7 +366,7 @@ class debug extends \flat\core {
          
       } else {
          
-         echo str_replace("\n",PHP_EOL,"$line").PHP_EOL;
+         echo str_replace("\n",PHP_EOL,"$data").PHP_EOL;
       }      
    }
    
@@ -246,7 +397,7 @@ class debug extends \flat\core {
    const data2str_array_format = "{array count: %count% elements}";
    const data2str_object_format = "{object class: %class%}";
    const data2str_empty_string = "{empty string}";
-   const data2str_null = "{NULL}";
+   const data2str_null = "{null}";
    const data2str_other_format = "{non-scalar %typename%}";
    const data2str_truncate = "{orig length: %len% truncated %typename%} %truncated%";
    const data2str_maxlen = 40;
@@ -303,7 +454,7 @@ class debug extends \flat\core {
          return str_replace('%count%',count($data),self::data2str_object_format);
       } else 
       if (empty($data)) {
-         if ($data===NULL) return self::data2str_null;
+         if ($data===null) return self::data2str_null;
          return self::data2str_empty;
       }
       return str_replace('%typename%',gettype($data),self::data2str_other_format);
@@ -328,7 +479,7 @@ class debug extends \flat\core {
       
       if (!is_scalar($data)) {
          $param['callers_offset']++;
-         return self::dump($data,NULL,$param);
+         return self::dump($data,null,$param);
       }
       
       $data = new debug\display_data($data,$param['caller']);

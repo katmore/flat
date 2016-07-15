@@ -41,16 +41,30 @@ class encode implements \flat\core\serializer {
          'parent_element'=>'ul',
          'child_element'=>'li'
       );
-      $type = gettype($input);
-      $type_info = $type;
-      if (is_object($type)) $type_info = get_class($input);
+
       $html = "";
-      $html .= '<' . $param['top_element'] . ' data-meta="'.htmlspecialchars($type_info, ENT_QUOTES).'">'."\n";
-      $html .= self::_data_to_html($input,$param['parent_element'],$param['child_element'] );
-      $html .= '</' . $param['top_element'] . '>'."\n";
+      //$html .= '<' . $param['top_element'] . ' data-meta="'.htmlspecialchars($type_info, ENT_QUOTES).'">'."\n";
+      $html .= self::_data_to_html($input,$param['parent_element'],$param['child_element'],0 );
+      //$html .= '</' . $param['top_element'] . '>'."\n";
 
       return $html;
     }
+   protected static function _get_meta_value($input) {
+      if (is_object($input)) {
+         if ("stdClass" == ($className= get_class($input))) {
+            return "object";
+            //data:application/json;base64,$dump
+            // $structure = json_encode(self::_get_structure( $input));
+            // //return 'data:application/json;base64,'.base64_encode($structure);
+            // return 'data:application/json;'.htmlspecialchars($structure,ENT_QUOTES | ENT_SUBSTITUTE);
+         } else {
+            return htmlspecialchars($className, ENT_QUOTES | ENT_SUBSTITUTE);
+         }
+      } else {
+         //$type = gettype($input);
+         return htmlspecialchars(gettype($input), ENT_QUOTES | ENT_SUBSTITUTE);
+      }
+   }
    private static function _ident($level=1,$size=3) {
       $ident="";
       for($i=0;$i<$size*$level;$i++) $ident.=" ";
@@ -60,16 +74,20 @@ class encode implements \flat\core\serializer {
         
         if ($index = is_array($data) || is_object($data)) {
            $i=0;
-            $html = self::_ident($indent_level,$indent_size)."<$parent_element>\n";
+            $html = self::_ident($indent_level,$indent_size)."<$parent_element data-type=\"".self::_get_meta_value($data)."\">\n";
             foreach ($data as $key=>$value) {
                $indent_level++;
                 $html .= self::_ident($indent_level,$indent_size)."<$child_element ";
                 if ($index) $html .= "data-index=\"$i\" ";
-                $html .= "data-key=\"".htmlspecialchars($key, ENT_QUOTES)."\">";
-                
-                $html .= "<span role=\"key\">".htmlspecialchars($key, ENT_QUOTES)."</span>".":&nbsp;".
-                  "<span role=\"data\">". self::_data_to_html($value, $parent_element,$child_element,$indent_level);
-                $html .= "</$child_element></span><!--/data: (".htmlspecialchars($key, ENT_QUOTES).")-->\n";
+                $html .= "data-key=\"".htmlspecialchars($key, ENT_QUOTES)."\" data-role=\"item\">";
+                if (sprintf("%d",$key)!=$key) {
+                   $html .= "<span data-role=\"item-key\">".htmlspecialchars($key, ENT_QUOTES)."</span>".":&nbsp;";
+                } else {
+                   $html .= "&nbsp;";
+                }
+                $html .= 
+                  "<span data-role=\"item-value\">". self::_data_to_html($value, $parent_element,$child_element,$indent_level);
+                $html .= "</$child_element></span><!--/data-item: (".htmlspecialchars($key, ENT_QUOTES).")-->\n";
                 $indent_level--;
                 $i++;
             }

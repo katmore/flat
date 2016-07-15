@@ -91,7 +91,8 @@ class scalar extends \flat\data implements \flat\core\serializer {
          is_scalar($value->data['value'])
       ) {
          parent::__construct(array('value'=>$value->data['value']));
-      } else throw new scalar\exception\bad_value();
+      } 
+         //else throw new scalar\exception\bad_value();
    }
 
 }

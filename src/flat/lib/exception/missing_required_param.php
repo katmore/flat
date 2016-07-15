@@ -32,7 +32,54 @@
  */
 namespace flat\lib\exception;
 class missing_required_param extends \flat\lib\exception {
-   public function __construct($key) {
-      parent::__construct("missing required param: $key");
+   /**
+    * @return string[] list of missing parameters
+    */
+   public function get_required_keys() {
+      return $this->_key;
+   }
+   private $_key;
+   /**
+    * @param string | string[] $key specify one or more names of missing parameters
+    */
+   public function __construct($key=null) {
+      $keyp = $key;
+      
+      if (is_string($key)) {
+         $keyp = explode(",",$key);
+      } elseif(is_scalar($key) && !is_bool($key)) {
+         $keyp=[$key];
+      }
+      
+      $key_list = [];
+      if (is_array($keyp)) {
+         foreach($keyp as $k=>$v) {
+
+            if (is_scalar($k) && !is_bool($k) && !is_int($k)) {
+               $key_list[] = (string) $k;
+            } elseif (
+                (is_scalar($v) && !is_bool($v)) || 
+                (
+                ( !is_array( $v ) ) &&
+                ( ( !is_object( $v ) && settype( $v, 'string' ) !== false ) ||
+                ( is_object( $v ) && method_exists( $v, '__toString' ) ) )
+                )
+            ) {
+               $key_list[] = (string) $v;
+            }
+         }
+         $this->_key = $key_list;
+      }
+      
+      if (count($key_list)==1) {
+         foreach($key_list as $v) $keyname=$v;
+         parent::__construct("missing required param: $keyname");
+      } elseif (count($key_list)==0) {
+         parent::__construct("missing an unknown required param");
+      } else {
+         parent::__construct("must specify one or more of the following params: ".implode(",",$key_list));
+      }
    }
 }
+
+

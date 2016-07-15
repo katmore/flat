@@ -31,9 +31,6 @@
  * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
  */
 namespace flat;
-use \flat\core\xml\encode as xmlencode;
-use \flat\core\html\encode as htmlencode;
-use \flat\core\util\validate;
 /**
  * facilitates structuring, mapping, and transforming data
  * 
@@ -45,13 +42,7 @@ use \flat\core\util\validate;
  * @property $type property may exist magically depending on inherited class interface
  * @abstract
  */
-abstract class data extends \flat\core\mappable\constructor 
-   implements 
-   \flat\core\app,
-   \flat\core\mappable\property\ignore_non_existing_set 
-{
-   use data\mapper;
-}
+abstract class data extends \flat\core\controller\data{}
 
 
 

@@ -43,7 +43,7 @@ namespace flat\core\controller;
 class asset implements 
    \flat\core\controller {
 
-   protected static $_data_to_refs=true;
+   protected static $_data_to_refs=false;
    public static function data_to_refs_on() {
       self::$_data_to_refs = true;
    }
@@ -58,6 +58,15 @@ class asset implements
       }
       echo "data:$mtype;base64,";
       echo base64_encode(file_get_contents($this->get_system()));
+   }
+   /**
+    * @return bool
+    */
+   public function exists_on_system() {
+      if (file_exists($this->get_system()) && is_file($this->get_system())) {
+         return true;
+      }
+      return false;
    }
    /**
     * prints a style tag with contents of resource's system path (file).
@@ -94,11 +103,19 @@ class asset implements
        */
       public function print_script($always=false) {
          if (static::$_data_to_refs && !$always) {
+            //die(__FILE__);
             $this->script_tag();
             return;
          }
          if (substr($this->get_system(),-3)!=".js") {
-            throw new \flat\lib\exception\app_error("resource ".$this->get_system()."is not a javascript file");
+            throw new \flat\lib\exception\app_error("resource ".$this->get_system()." is not a javascript file");
+         }
+         if (!is_file($this->get_system())) {
+            throw new \flat\lib\exception\app_error("resource ".$this->get_system()." does not exist");
+            ?>
+            <!--NOT-FOUND asset::print_script(<?=$this->get_url();?>)-->            
+            <?php
+            return;
          }
    ?>
    <!--START asset::print_script(<?=$this->get_url();?>)-->
@@ -196,7 +213,7 @@ class asset implements
    /**
     * loads asset object.
     *
-    * @return string
+    * @return \flat\core\controller\asset
     *
     * @param string $resource
     *           (optional) specify resource to be resolved into asset
@@ -385,6 +402,30 @@ class asset implements
    }
 
    /**
+    * @var callable
+    * @see asset::set_resolved_handler()
+    */
+   private static $_resolved_handler;
+   /**
+    * 
+    */
+   
+   /**
+    * sets a handler invoked for each resolved asset.
+    * 
+    * @return void
+    * @param callable $handler
+    *    callback signature: function(\flat\core\controller\asset $asset, $resource)
+    * 
+    */
+   public static function set_resolved_handler(callable $handler) {
+      
+      self::$_resolved_handler = $handler;
+      
+   }
+   
+   
+   /**
     *
     * @param string $resource
     *           (optional) specify resource to be resolved into asset
@@ -399,7 +440,18 @@ class asset implements
             $this->resource = $transform;
          }
       }
-   
+      
+      if (self::$_resolved_handler) {
+         //$resolved_hash = get_class($this).":".$this->resource;
+         //if (!in_array($resolved_hash,self::$_resolved_list)) {
+            $handler = self::$_resolved_handler;
+            $asset = $this;
+            $ret = $handler($asset,$this->resource);
+            if (!empty($ret) && is_string($ret)) {
+               $this->resource = $ret;
+            }
+         //}
+      }
    }
 
 }

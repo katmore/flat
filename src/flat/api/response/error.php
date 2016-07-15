@@ -33,7 +33,8 @@
  */
 namespace flat\api\response;
 class error extends \flat\api\response {
-   
+   public $message;
+   public $data;
    public function __construct($message="",$data=NULL,$trace_offset=0) {
       if (empty($message)) {
          $trace = debug_backtrace();
@@ -44,7 +45,14 @@ class error extends \flat\api\response {
       } else {
          $this->message = $message;
       }
-      if (!empty($data)) $this->data = $data;
+      if (!empty($data)) {
+         $this->data = json_decode(json_encode($data));
+         if (!isset($this->data->message)) {
+            $this->data->message = $message;
+         } else {
+            $this->data->{'message-'.uniqid()} = $message;
+         }
+      }
       $this->_set_status(new \flat\api\status\server_error());
    }
 

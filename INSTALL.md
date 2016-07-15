@@ -3,15 +3,7 @@
 
 2. Use PHP composer (composer.phar) to install dependancies and class autoloader...
 
-   2.1. Install composer if needed. (you can do the following as root if using linux or similar system)...
-   
-      `#$ cd /usr/local/sbin`
-      
-      `#$ curl -s https://getcomposer.org/installer | php`
-      
-      `#$ chmod +x composer.phar`
-
-   2.2. Run composer install command from the flat/deploy directory...
+   Run composer install command from the flat/deploy directory...
    
       `#$ cd flat/deploy`
       

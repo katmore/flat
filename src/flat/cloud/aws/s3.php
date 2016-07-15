@@ -71,13 +71,15 @@ class s3 extends \flat\cloud\aws {
     * @return void
     * @static
     */
-   public static function body_upload($client,$bucket,$data,$key,$prefix=null) {
-
-      $result = $client->putObject(array(
-          'Bucket' => $bucket,
-          'Key'    => self::_canonicalize_key($key,$prefix),
-          'Body'   => $data
-      ));
+   public static function body_upload($client,$bucket,$data,$key,$prefix=null,$contentType=null) {
+      
+      $objConfig = [
+         'Bucket'     => $bucket,
+         'Key'        => self::_canonicalize_key($key,$prefix),
+         'Body'   => $data,
+      ];
+      if (!empty($contentType)) $objConfig['ContentType'] = $contentType;      
+      $result = $client->putObject($objConfig);
       // We can poll the object until it is accessible
       $client->waitUntil('ObjectExists', array(
           'Bucket' => $bucket,
@@ -231,11 +233,15 @@ class s3 extends \flat\cloud\aws {
    protected $contentType;
    protected $prefix;
    
+   public function set_contentType($contentType) {
+      $this->contentType = $contentType;
+   }
    /**
     * 
-    * @return void
-    * 
-    * @param string $key s3 object key
+    * @param array | string $param s3 OPTIONAL object key or assoc array of parameters
+    *    using ['param_name'=>'value'] format, the following param_names are allowed:
+    *    'key','file','prefix','operation','contentType','bucket','client'. The parameter
+    *    descriptions are the same as the optional arguments in this constructor definition. 
     * @param string $file (optional) system filename (for upload or saving into)
     * @param strsing $prefix (optional) s3 object name prefix
     * @param string $operation (optional) set to "upload" to upload given file
@@ -250,8 +256,8 @@ class s3 extends \flat\cloud\aws {
     * 
     * @see \flat\cloud\aws::_get_client() for potential exceptions
     */
-   public function __construct($key=null,$file=null,$prefix=null,$operation=null,$contentType=null,$bucket=null,$client=null) {
-      $param = new \flat\core\util\map(
+   public function __construct($param=null,$file=null,$prefix=null,$operation=null,$contentType=null,$bucket=null,$client=null) {
+         $param = new \flat\core\util\map(
          func_get_args(),
          array(
             'key'=>null,

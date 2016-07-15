@@ -31,7 +31,7 @@
  * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
  */
 namespace flat\core;
-use Symfony\Component\EventDispatcher\Tests\CallableClass;
+
 class cli {
    /**
     * string indentation to display per 'n' tabs
@@ -70,8 +70,6 @@ class cli {
     */
    private static $_param;
    
-
-   
    /**
     * provides a reportable 'command' from given argv array.
     * 
@@ -81,43 +79,27 @@ class cli {
    private static function _argv_to_command(array $argv) {
       if (isset($argv[0])) return $argv[0];
    }
-   
-//    /**
-//     * @var int status code to report
-//     * @static
-//     */
-//    private static $_status_code=0;   
-//    /**
-//     * provides the reported status code.
-//     * 
-//     * @static
-//     * @return int
-//     */
-//    public static function get_status_code() {
-//       return self::$_status_code;
-//    }
-//    /**
-//     * sets the reported status code.
-//     * 
-//     * @param int $status status code
-//     * @return void
-//     * @static
-//     */
-//    public static function set_status_code($status_code) {
-//       self::$_status_code = (int) $status_code;
-//    }
    /**
-    * Sets the cli params from given array. Convenient way to convert the argv array to param list.
+    * Entry point method;
+    * Sets the cli argument list which maps to the cli command, params, switches, 
+    * and options.    
     * 
     * @param array $argv argv array
     * @param int $param_start_idx (optional) starting index in argv array to use 
     *    for cli parameters. default value: (int) 2.
     * 
     * @return void
+    * 
+    * @uses cli::get_option()
+    * @uses cli::get_command()
+    * @uses cli::is_switch_on()
+    * @uses cli::get_param()
+    * @uses cli::each_arg()
+    * 
     * @static
     */
    public static function set_argv(array $argv,$param_start_idx=2) {
-      self::$_command = self::_argv_to_command( $argv);
+      self::$_command = (isset($argv[0])) ? $argv[0] : "";
       self::$_param = [];
       self::$_argv = $argv;
       if (count($argv) && (count($argv)>$param_start_idx)) {
@@ -132,10 +114,38 @@ class cli {
       }
    }
    
+   /**
+    * @var callable
+    *    function invoked to get value of the next "line" of "cli input"
+    */
    private static $_input_handler;
+   
+   /**
+    * Entry point method; 
+    *    Activates a callback handler function invoked to get the value of the next "line" of
+    *    "cli input" ideally corresponding stdin (or some interface equivelent).
+    *    
+    * @param callable $handler A handler function which is assumed to provide whatever the next "line" 
+    *    of "cli input" is; it must either return (string) or (null) value.
+    *    This handler is used by cli application functions to determine if any "cli input" remains 
+    *    and to get the value of the next  "line" of "cli input" . It is up to this handler implement buffering of input 
+    *    and to tracking of current "line" position as approprate for the entry point interface.
+    *    A return value of (null) by this handler indicates that no remaining "line(s)" of "cli input" 
+    *    exist.  Callback signature: function() {};
+    */
    public static function set_input_line_handler(callable $handler) {
       self::$_input_handler = $handler;
    }
+   /**
+    * Application method; 
+    *    Invokes the specified function for each "line" of "cli input" that exists as provided by the 
+    *    entry porint line handler.
+    * 
+    * @param callable $line_callback Function invoked for each "line" of "cli input", the 
+    *    value of the "line" is passed in the $line arugment.
+    *    Callback defintion: function(string | null $line).
+    *    Callback signature: function($line) {};
+    */
    public static function each_input_line(callable $line_callback) {
       if (is_callable(self::$_input_handler)) {
          $handler = self::$_input_handler;
@@ -146,7 +156,9 @@ class cli {
       }
    }
    /**
+    * Application method;
     * Determines if a parameter with given name was provided as cli param.
+    * 
     * @param string $switch_name name of the switch to look for in the params, ie: "--my-switch-name"
     * @param string $char_alias one character long string that is an alias for given switch name, ie: "-s".
     * 
@@ -154,6 +166,7 @@ class cli {
     * @static
     */
    public static function is_switch_on($switch_name,$char_alias=NULL) {
+      if (!is_array(self::$_argv)) return false;
       foreach (self::$_argv as $p) {
          if (substr($p,0,2)=="--") {
             if (substr($p,2)==$switch_name) {
@@ -166,10 +179,21 @@ class cli {
       }
    }
    /**
-    * Provides the value of parameter as specified by option name (ie: "--my-option='my option value'") 
-    *    as it exists in cli params.
+    * Application method;
+    * Provides the value of an optional named cli parameter as specified in argument list.
+    *       1. --name=value style: 
+    *          name and value are delinated by '=' char.
+    *             ex: --my-option='my option value'
+    *                or
+    *             ex: --my-option=my_option_value
+    *       2. --name value style:
+    *          key and value are delinated by a space, ie: --my-option 'my option value'.
+    *       or single-. An empty string return value indicates
+    *    that the optional parameter was specified without a value or literally an empty string.
+    *    A null value indicates the option was not specified.
     * 
     * @return string | null
+    * @param string $option_name option name (ie: "--my-option='my option value'")
     * @static
     */
    public static function get_option($option_name,$char_alias=null) {
@@ -199,11 +223,13 @@ class cli {
             if (false !== (strpos($p,$char_alias))) $expect_char_val = true;
          }
       }
+      return null;
    }
    /**
-    * Provides the value of given parameter.
+    * Application function:
+    *    Provides the value of a "cli param".
     * 
-    * @param int $idx specify parameter index
+    * @param int $idx specifies the "cli param" index position. 
     * @return string
     * @static
     */
@@ -213,7 +239,27 @@ class cli {
       }
    }
    /**
-    * Provides the currently active cli command
+    * Application function:
+    *    Invokes the specified callback function for each item that
+    *    exists in the active "cli argument list" as specified by the
+    *    cli entry point interface.
+    *    
+    * 
+    * @param callable $callback callback invoked for each parameter;
+    *    callback signature: (void) function(string $argval) {};
+    * @static
+    * @return void
+    */
+   public static function each_arg(callable $callback) {
+      if (!is_array(self::$_argv)) return;
+      if (!count(self::$_argv)) return;
+      foreach(self::$_argv as $arg) {
+         $callback($arg);
+      }
+   }
+   /**
+    * Application function:
+    *    Provides the cli command as indicated by the cli argument list. 
     * 
     * @return string
     * @static
@@ -222,33 +268,47 @@ class cli {
       //if (empty(self::$_command)) return self::command;
       return self::$_command;
    }
+   
    /**
-    * provides the reported width of the current console interface. 
-    *    returns (bool) false if unavailable.
-    * 
-    * @return int | bool
+    * @var callable 
+    *    function invoked to determine "cli line width"
+    */
+   private static $_width_handler;
+   /**
+    * Entry point method;
+    *    Sets a handler which is invoked when the "cli line width" is needed by an
+    *    an application function; for example, when displaying a line of text.  
+    *    
+    * @param callable $handler Function invoked each time "cli line width" is needed.
+    *    Must return (null) or (int) value. (int) return value indicates
+    *    "cli line width" in columns. Callback defintion: (null | int) function().
+    *    Callback signature function() { return (int) $cols | null };
+    * @return void
     * @static
     */
-   private static function _width() {
-      if (self::$_cols===NULL) {
-         if ($tput_cols = (int) sprintf("%d",trim(exec('tput cols',$output,$return)))) {
-            if (!$return && ($tput_cols > self::min_cols)) {
-               self::$_cols = $tput_cols;
-            }
-         }
-         if (empty(self::$_cols)) {
-            self::$_cols = false;
-         }
-      }
-      return self::$_cols;
+   public static function set_width_handler(callable $handler) {
+      self::$_width_handler = $handler;
    }
+   
    /**
-    * @var callable | null
-    *    callback function to be invoked when an error line has been provided
+    * Application method;
+    *    Returns (bool) true if quiet mode is active, (bool) false otherwise.
+    */
+   public static function is_quiet() {
+      if (self::is_switch_on("quiet","q")) {
+         return true;
+      }
+      return false;
+   }   
+   
+   /**
+    * @var callable
+    *    Invoked when an "cli error line" has been provided.
     * @static
     */
-   private static $_error_line_handler=null;
+   private static $_error_line_handler;
    /**
+    * Entry point method.
     * Sets a callback function to be invoked when error line text has been provided.
     *    Callback signature: function(string $text,array $options=null) {};
     * 
@@ -260,10 +320,17 @@ class cli {
    public static function set_error_line_handler(callable $handler) {
       self::$_error_line_handler = $handler;
    }
+   
+   /**
+    * @var callable
+    *    Invoked with a "cli line" has been provided.
+    */
    private static $_line_handler;
    /**
-    * Sets a callback function to be invoked each time line text has been provided.
-    *    Callback signature: function(string $text,array $options=null) {};
+    * Entry point method;
+    *    Sets the handler invoked each time a "cli line" has been provided
+    *       by the cli application.
+    *       Callback signature: function(string $text,array $options=null) {};
     *
     * @param callable $handler
     *
@@ -273,12 +340,18 @@ class cli {
    public static function set_line_handler(callable $handler) {
       self::$_line_handler = $handler;
    }
+   /**
+    * @var callable handler invoked to print strings
+    */
    private static $_print_handler;
    /**
-    * Sets a callback function to be invoked each time a string to be printed has been provided.
-    *    Callback signature: function(string $string) {};
-    *
-    * @param callable $handler
+    * Entry point method;
+    *    Specifies a handler invoked each time a "cli print string" has been provided by 
+    *    the cli application.
+    *    
+    * @param callable $handler Callback invoked to handle "cli print" events; 
+    *    The handler is passed the string to be printed as the first argument.
+    *    Callback definition: (void) function(string $string) {};
     *
     * @return void
     * @static
@@ -286,29 +359,40 @@ class cli {
    public static function set_print_handler(callable $handler) {
       self::$_print_handler = $handler;
    }
+
    
    /**
-    * Prints a string.
+    * Application method;
+    *    Prints a string.
+    *    Provides a "cli print string" to the cli entry point interface.
+    * 
+    * @param string $string specifies the "cli print string".
+    * @param array $options (optional) assoc array of options.
     * 
     * @static
     * @return void
     */
-   public static function print_string($string) {
+   public static function print_string($string,array $options=null) {
       if (is_callable(self::$_print_handler)) {
          $handler = self::$_print_handler;
-         $handler($string);
+         $handler($string,$options);
          return;
       }
       echo $string;
    }
    
+   /**
+    * @var callable
+    *    invoked when an "cli dump expression" has been provided.
+    */
    private static $_dump_handler;
    
    /**
-    * Sets a callback function to be invoked each time an expression to be dumped has been provided.
-    *    Callback signature: function(...mixed $expr) {};
+    * Entry point method;
+    *    Specifies a handler invoked a "cli dump expression" has been provided
+    *    by a cli application.
     *
-    * @param callable $handler
+    * @param callable $handler Callback signature: (void) function(...mixed $expr) {};
     *
     * @return void
     * @static
@@ -317,21 +401,24 @@ class cli {
       self::$_dump_handler = $handler;
    }
    /**
-    * displays a dump of given variable
+    * Application method;
+    *    Displays a dump of given expression.
+    *    Provides a "cli dump expression" to the cli entry point interface.
     * 
-    * @param $expr,... expression to dump
+    * @param $expr,... expression to dump, such as in php native var_dump().
     */
-   public static function var_dump($expr) {
+   public static function var_dump(...$expr) {
       if (self::$_dump_handler) {
          $handler = self::$_dump_handler;
          call_user_func_array($handler,func_get_args());
          return;
       }
-      var_dump(func_get_args());
+      call_user_func_array("var_dump",func_get_args());
    }
    
    /**
-    * Prints a string according to given format.
+    * Application method;
+    *    Prints a string according to given format.
     * 
     * @param string $format string/format to print
     * @param mixed $args,... OPTIONAL args
@@ -339,14 +426,21 @@ class cli {
     * @see sprintf()
     * @return void 
     */
-   public static function printf($format) {
+   public static function printf($format,...$args) {
       $param_arr = func_get_args();
+      if (!count($param_arr)) {
+         $param_arr = [""];
+      }
+      if (count($param_arr)==1) {
+         $param_arr[0] = str_replace("%","%%",$param_arr[0]);
+      }
       $sprintf = "sprintf";
-      self::print_string(call_user_func_array($sprintf, func_get_args()));
+      self::print_string(call_user_func_array($sprintf, $param_arr));
    }
    
    /**
-    * Displays a line of text with optional indentation.
+    * Application method;
+    *    Displays a line of text with optional indentation.
     * 
     * @param string $text (optional) text to display.
     * @param array $options (optional) assoc array of optional parameters:
@@ -358,6 +452,7 @@ class cli {
     */
    public static function line($text="",$options=null) {
       $tabs = 0;
+      $not_quiet_only = false;
       if (!is_array($options)) {
          if (is_int($options)) $tabs = $options['tabs'];
       } else {
@@ -369,7 +464,7 @@ class cli {
       
       $error = false;
       if (is_array($options)) {
-         if (!empty($options['error']) || in_array('error',$options)) {
+         if (!empty($options['error']) || in_array('error',$options,true)) {
             if (is_callable(self::$_error_line_handler)) {
                $handler = self::$_error_line_handler;
                $handler($text,$cbopt);
@@ -380,12 +475,9 @@ class cli {
             } else {
                $error = true;
             }
-            //$text = \PHP_EOL."ERROR MSG:".\PHP_EOL.$text;
-            //$tabs=0;
          }         
       }
       $cbopt['error']=$error;
-      
       if (is_callable(self::$_line_handler)) {
          $handler = self::$_line_handler;
          $handler($text,$cbopt);
@@ -393,13 +485,27 @@ class cli {
       }
       
       if ($error===false) {
-         echo self::get_wrapped_line($text,$cbopt);
+         if (!self::is_quiet() || !$not_quiet_only) { 
+            echo self::get_wrapped_line($text,$cbopt);
+         }
          return;
       } 
       echo \PHP_EOL."ERROR MSG:".\PHP_EOL;
       echo self::get_wrapped_line($text);
       echo \PHP_EOL;
    }
+   
+   /**
+    * Application function;
+    *    Formats a string as specified by wrapping as appropriate for the
+    *    currently active "cli width".
+    * 
+    * @param string $text string to format
+    * @param int | array $options Tab indentation count or assoc array of options:
+    *    int $options['tab'] Tab indentation count.  
+    * 
+    * @return string
+    */
    public static function get_wrapped_line($text="",$options=null) {
       $tabs = 0;
       if (!is_array($options)) {
@@ -409,19 +515,27 @@ class cli {
             $tabs = $options['tabs'];
          }
       }
-      $tabstring = "";
+      $identstring = "";
       if ((int)$tabs>0) {
          $tabcount = 1 * (int) $tabs;
          for($i=0;$i<$tabcount;$i++) {
-            $tabstring.=self::tabstring;
+            $identstring.=self::tabstring;
          }
       }
-      $text = str_replace("\t",self::tabstring,$text);
-      if (self::_width()) {
-         return wordwrap ( $tabstring.$text, self::$_cols-strlen($tabstring) , \PHP_EOL.$tabstring ,true).\PHP_EOL;
-      } else {
-         return $text.\PHP_EOL;
-      }      
+      $text = str_replace("\t",$identstring,$text);
+      if (!is_callable(self::$_width_handler)) {
+         self::$_width_handler = function() {
+            $tput_cols = exec('tput cols',$output,$return);
+            if ($return===0) return (int) sprintf("%d",trim($tput_cols));
+            return null;
+         };
+      }
+      $width_handler = self::$_width_handler;
+      $width = $width_handler();
+      if (is_int($width) && ($width >= self::min_cols)) {
+         return wordwrap ( $identstring.$text, $width-strlen($identstring) , \PHP_EOL.$identstring ,true).\PHP_EOL;
+      }
+      return $text.\PHP_EOL;
    }
 
 }
