@@ -6,7 +6,7 @@
  * /flat/app
   * Application configuration; the way an application is defined in flat.
 
- * /flat/asset
+ * /flat/web/asset
    * Static assets required by an application.
 
  * /flat/design
