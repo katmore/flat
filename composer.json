@@ -1,4 +1,7 @@
 {
+   "name": "katmore/flat",
+   "description" : "experimental framework for php",
+   "homepage":"https://github.com/katmore/flat",
     "autoload": {
         "psr-4": {
             "flat\\":        "src/flat",
