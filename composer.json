@@ -1,0 +1,13 @@
+{
+    "autoload": {
+        "psr-4": {
+            "flat\\":        "src/flat",
+            "flat\\deploy\\": "deploy",
+            "flat\\app\\": "app"
+        }
+    },
+	"license": [
+       "MIT",
+       "GPL-3.0+"
+    ]
+}

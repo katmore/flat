@@ -1,9 +1,0 @@
-{
-    "autoload": {
-        "psr-4": {
-            "flat\\":        "../src/flat",
-            "flat\\deploy\\": "./",
-            "flat\\app\\": "../app/"
-        }
-    }
-}
