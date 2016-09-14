@@ -11,7 +11,9 @@ trait controller {
     */
    final public function rewind()
    {
-      reset($this->member);
+      if ($this->member) {
+         reset($this->member);
+      }
    }
    
    /**
@@ -22,7 +24,11 @@ trait controller {
    {
       // $var = current($this->member);
       // return $var;
-      return current($this->member)->get_data();
+      if ($this->member) {
+         
+         return current($this->member)->get_data();
+      
+      }
    }
    
    /**
@@ -34,7 +40,9 @@ trait controller {
       // $var = key($this->member);
       // return $var;
       if (!is_array($this->index)) return;
-      return array_search(current($this->member),$this->index,true);
+      if ($this->member) {
+         return array_search(current($this->member),$this->index,true);
+      }
    }
    
    /**
@@ -45,7 +53,9 @@ trait controller {
    {
       // $var = next($this->member);
       // return $var;
-      return next($this->member);
+      if ($this->member) {
+         return next($this->member);
+      }
    }
    
    /**
@@ -54,6 +64,7 @@ trait controller {
     */
    final public function valid()
    {
+      if (!$this->member) FALSE;
       $key = key($this->member);
       $var = ($key !== NULL && $key !== FALSE);
       return $var;
