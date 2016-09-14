@@ -434,7 +434,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
          $type = "\\$type";
       }
       //" xsi:type=\"extxs:Object\" extxs:ObjectType=\"".get_class($value)."\"";
-      return " xsi:type=\"extxs:Object\" extxs:ObjectType=\"$type\"";
+      return " xsi:type=\"extxs:Object\" extxs:ObjectType=\"".preg_replace('/[\x00-\x1F\x80-\xFF]/', '',$type)."\"";
    }
    private static function _get_array_type_attrs($value) {
       if (!is_array($value)) return "";
