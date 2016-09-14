@@ -563,7 +563,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                    } else {
                       if (empty($value)) {
                          if (is_string($value)) {
-                            $xml .= ' xs:string';
+                            $xml .= ' extxs:EmptyString';
                          }
                          // ob_start();
                          // var_dump($value);
