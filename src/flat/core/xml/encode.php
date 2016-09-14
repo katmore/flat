@@ -100,6 +100,8 @@
  *       Adapted for the flat framework. 
  */
 namespace flat\core\xml;
+use flat\input;
+
 class encode implements \flat\core\serializer,\flat\core\status\beta {
    const flat_xml_ver="0.2";
    const xmlns = 'https://github.com/katmore/flat/wiki/xmlns';
@@ -154,6 +156,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
       $structure = new \stdClass();
       
       if ('scalar'!=($structure->type = self::_get_type($input))) {
+         if (is_array($input) || is_object($input))
          foreach ($input as $key=>$val) {
             $structure->node = new \stdClass();
             if ('scalar'!=($structure->node->$key = self::_get_type($val))) {
@@ -630,9 +633,6 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
     }
 
 }
-
-
-
 
 
 
