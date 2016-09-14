@@ -39,7 +39,7 @@ class app_error extends \flat\lib\exception {
    public function get_details() {
       return $this->_details;
    }
-   const summary_max_len = 40;
+   const summary_max_len = 500;
    /**
     * provides a summary of the data associated with this exception instance as follows:
     *    <ul>
@@ -81,7 +81,7 @@ class app_error extends \flat\lib\exception {
             return "data: (".gettype($data).") $data";
          } else {
             if (is_object($data) || is_array($data)) {
-               if ($json = json_encode($data)) {
+               if ($json = str_replace('\\/','/',json_encode($data,\JSON_PRETTY_PRINT))) {
                   if (is_object($data)) $json = json_encode((array) $data);
                   if (strlen($json)>self::summary_max_len) $json = substr($json,0,self::summary_max_len)."(truncated)...}";
                   if (is_object($data)) {
@@ -106,7 +106,7 @@ class app_error extends \flat\lib\exception {
     * @param string $details error detail message
     * @param mixed $data optional data to associate with this error
     * @param bool $include_data_summary if true, a summary of the data will be included in the exception message
-    * @param mixed 
+    * 
     */
    public function __construct($details="",$data=null,$include_data_summary=false) {
       $this->_data = $data;

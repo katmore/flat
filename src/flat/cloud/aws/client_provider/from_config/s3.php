@@ -26,17 +26,26 @@ use \Aws\S3\S3Client;
  * 
  */
 class s3 extends \flat\cloud\aws\client_provider\from_config {
+   /**
+    * @return \Aws\S3\S3Client
+    */
    protected function _client_from_config($config_ns) {
-      return S3Client::factory(array(
-         /**
-          * @var string $key AWS key
-          */      
-         'key'    => $key = \flat\core\config::get($config_ns.'/key'),
-         /**
-          * @var string $secret AWS secret
-          */             
-         'secret' => $secret = \flat\core\config::get($config_ns.'/secret')
-      ));
+      return new S3Client([
+         'credentials' => [
+            /**
+             * @var string $key AWS key
+             */      
+            'key'    => $key = \flat\core\config::get($config_ns.'/key'),
+            /**
+             * @var string $secret AWS secret
+             */             
+            'secret' => $secret = \flat\core\config::get($config_ns.'/secret'),
+         ],
+         
+         'region'=> $secret = \flat\core\config::get($config_ns.'/region'),
+         
+         'version'=>"2006-03-01",
+      ]);
    }
 }
 

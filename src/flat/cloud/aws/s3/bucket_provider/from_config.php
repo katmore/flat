@@ -33,6 +33,9 @@
 namespace flat\cloud\aws\s3\bucket_provider;
 class from_config {
    private $_bucket;
+   /**
+    * @return string bucket name
+    */
    public function get_bucket() {
       return $this->_bucket;
    }
@@ -42,9 +45,12 @@ class from_config {
     *    ex: "app/db/myapp/my/package"
     */
    public function __construct($config_ns) {
-      /**
-       * @var string $secret AWS secret
-       */
       $this->_bucket = \flat\core\config::get($config_ns.'/bucket');   
    }
 }
+
+
+
+
+
+

@@ -41,12 +41,19 @@ class error extends \flat\core\exception {
    public function is_display_usage_on() {
       return $this->_display_usage;
    }
+   public function get_data() {
+      return $this->_data;
+   }
+   private $_data=[];
    private $_details;
    private $_status;
    private $_display_usage;
-   public function __construct($details,$status=1,$display_usage=true) {
+   public function __construct($details,$status=1,$display_usage=true,array $data=null) {
       $this->_details = $details;
       $this->_status = $status;
+      if (!empty($data) && is_array($data)) {
+         $this->_data = $data;
+      }
       if ($display_usage) {
          $this->_display_usage = true;
       } else {
