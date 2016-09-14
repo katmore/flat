@@ -450,16 +450,16 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
          if (!is_int($k)) {
             return " xsi:type=\"extxs:Hashmap\"";
          }
-         if (!$first_value && (self::_get_xsi_type($v,['string'=>true])!=$last_type)) {
+         if (!$first_value && (self::_get_xsi_type($v,['string'=>true])!==$last_type)) {
             $all_same_type = false;
             break 1;
          }
+         $first_value = false;
          $last_type = self::_get_xsi_type($v,['string'=>true]);
          $i++;
       }
       if ($all_same_type) {
-         $array_type = $last_type;
-         return " xsi:type=\"extxs:Array\" extxs:ArrayType=\"".$array_type."[".count($value)."]\"";
+         return " xsi:type=\"extxs:Array\" extxs:ArrayType=\"".$last_type."[".count($value)."]\"";
       } else {
          return " xsi:type=\"extxs:Array\" extxs:ArrayType=\"extxs:Mixed[".count($value)."]\"";
       }      
