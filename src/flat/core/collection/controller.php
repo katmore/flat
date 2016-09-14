@@ -64,7 +64,7 @@ trait controller {
     */
    final public function valid()
    {
-      if (!$this->member) FALSE;
+      if (!$this->member) return false;
       $key = key($this->member);
       $var = ($key !== NULL && $key !== FALSE);
       return $var;
