@@ -153,7 +153,7 @@ trait mapper  {
          $rp = $property;
       } else {
          if (!is_string($property = (string) $property)) throw new mappable\exception\bad_property_name();
-         if (property_exists($this, $property)) {
+         if (property_exists(get_class($this), $property)) {
             $rp = new \ReflectionProperty($this,$property);
          } else 
          if (method_exists($this, $property)) {
