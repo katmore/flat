@@ -8,7 +8,7 @@ with a flexible but not overly-complex deployment architecture.
  * Flat developers' guide. Explains purpose of various directories and files, namespace conventions, and basics of developing with flat.
 * [INSTALL.md](INSTALL.md)
  * Guide to installing / deploying a flat application.
-* [LICENSE.txt](LICENSE.txt)
+* [LICENSE](LICENSE)
  * Full Copyright and licensing information. 
 
 ### Copyright Notice
