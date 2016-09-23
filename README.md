@@ -9,7 +9,7 @@ with a flexible but not overly-complex deployment architecture.
 * [INSTALL.md](INSTALL.md)
  * Guide to installing / deploying a flat application.
 * [LICENSE](LICENSE)
- * Copyright and licensing information. 
+ * Copyright and licensing conditions. 
 
 ### Copyright Notice
 The flat framework. 
