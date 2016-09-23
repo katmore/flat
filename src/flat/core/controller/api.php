@@ -145,48 +145,42 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
       if (empty($method)) $method = self::$_method;
       if (empty($method)) throw new api\exception\missing_method();
       $r = new \ReflectionClass($this);
-      $interface = "\\flat\\api\\method\\".$method;
-      if (!$r->implementsInterface($interface)) {
-         if (!$r->implementsInterface("\\flat\\api\\method\\any")) {
-            throw new api\exception\method_mismatch(
-               $method
-            );
-         }
-      }
       
       if ($response_handler===null) {
          $response_handler = self::$response_handler;
       }
+	  $response = null;
       
-      if ($r->implementsInterface("\\flat\\api\\method\\any")) {
+      if ($this instanceof \flat\api\method\any) {
          try {
             $response = $this->any_method($input);
          } catch (\flat\api\response\exception $e) {
             $response = $e->get_response();
-         }
-         if ($response instanceof \flat\api\response) {
-            if (is_callable($response_handler)) {
-               return $response_handler($response,"any");
-            }
-         }         
+         }       
       }
-
-      $f = $method."_method";
-      try {
-         $response = $this->$f($input);
-      } catch (\flat\api\response\exception $e) {
-         $response = $e->get_response();
-      }       
-      if (!$response instanceof \flat\api\response) {
-         throw new api\exception\bad_response(
-            get_class($this),
-            $method
-         );
-      }
-      
-      if (is_callable($response_handler)) {
-         return $response_handler($response,$method);
-      }
+	  if (!$response instanceof \flat\api\response) {
+		  if ($r->implementsInterface("\\flat\\api\\method\\".$method)) {
+			  $f = $method."_method";
+			  try {
+				 $response = $this->$f($input);
+			  } catch (\flat\api\response\exception $e) {
+				 $response = $e->get_response();
+			  }       
+			  if (!$response instanceof \flat\api\response) {
+				 throw new api\exception\bad_response(
+					get_class($this),
+					$method
+				 );
+			  }
+		  }
+		  
+	  }
+	  
+	  if ($response instanceof \flat\api\response) {
+		  if (is_callable($response_handler)) {
+			 return $response_handler($response,$method);
+		  }
+	  }
       return $response; 
    }
 
