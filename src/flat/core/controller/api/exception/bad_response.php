@@ -32,11 +32,27 @@
  */
 namespace flat\core\controller\api\exception;
 class bad_response extends \flat\core\controller\api\exception {
+	/**
+	 * @return string api class name that failed response enforcement
+	 */
+	public function get_api_class() {
+		return $this->_api_class;
+	}
+	/**
+	 * @return string REST method that failed response enforcement (GET, POST, PUT, DELETE, etc.) 
+	 */	
+	public function get_method() {
+		return $this->_method;
+	}
+	/**
+	 * @param string $api_class api class name that failed response enforcement
+	 * @param string $method REST method that failed response enforcement (GET, POST, PUT, DELETE, etc.) 
+	 */		
    public function __construct($api_class,$method) {
       
       parent::__construct(
-         "api definition $api_class::$method"."_method() ".
-         "must return a \\flat\api\\response object"
+         "api definition $api_class ".
+         "did not return a \\flat\api\\response object for method ".$method
       );
    }
 }
