@@ -230,7 +230,7 @@ trait mapper  {
       $props = $rc->getProperties();
       foreach($props as $rp) {
          $name = $rp->getName();
-         if (!property_exists($object,$name)) continue;
+		 if (!isset($object->$name)) continue;
          if ($rp->isPrivate() || $rp->isProtected()) {
             if ($get_private_properties===true) {
                $rp->setAcessible(true);
