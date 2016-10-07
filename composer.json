@@ -3,9 +3,9 @@
    "description" : "experimental framework for php",
    "homepage":"https://github.com/katmore/flat",
    "dist": {
-        "url": "https://github.com/katmore/flat.git",
+        "url": "git@github.com:katmore/flat.git",
         "type": "git"
-    },    
+    }, 
     "autoload": {
         "psr-4": {
             "flat\\":        "src/flat",
