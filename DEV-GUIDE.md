@@ -23,6 +23,46 @@
 Mostly comprised of commonly shared functionality like controllers and meta-class types, 
 these packages are roughly analogous to symfony's "Common" namespace.
 
+## goals: isolated, naive and routable
+
+* isolated
+   * HTML designers should only have to design.
+   * Content creators should only have to focus on content.
+   * Programmers should only have to focus on their own code.
+   * System administrators should only have to focus on deployment and operation.
+   * The framework should be transparent to the end user.
+   
+* naive
+   * any particular task should require no more complexity, knowledge, data access than would be required without the framework
+   * most novel tasks should become significantly less complex to accomplish
+   * very little knowledge about potential deployment enviornments should be required
+   
+* routable
+   * Finding where 'something' is should never be a matter of searching through tons of file contents.
+   * Determining how to make 'something' accessible should not be confusing.
+
+## other directives
+* establish design patterns
+   * incorporate well established design patterns
+   * accomodate a range of design patterns for use of the framework
+   
+* naming coventions
+   * keep namespaces free of clutter, make it easy for others to use and apply the framework
+   * names should be as brief as possible without becoming mysterious
+   
+* severely limit external dependancies
+   * all functionality needed for operating modern web apps should be self-contanied
+    
+* deployment complexity should match the enviornment complexity
+   * deployment should be as simple as copying the files to webroot and editing a config file, if the site is for a local plumber 
+   * should accomidate the deployment of a multi-server High Availability enviornment without any hidden 'gotchas' other than editing config as appropriate
+    
+* avoid bloat
+   * computational resources required should correlate positively with the complexity of the desired task
+   
+* retentive
+   * should not have to express a decision for identical problems more than one time
+   
 ### Flat development background
 The following rants and aphorisms explain my mindset when developing flat.
 A few may be mutually exclusive, some make little sense or may be disturbing.
