@@ -234,7 +234,6 @@ trait mapper  {
          if ($rp->isPrivate() || $rp->isProtected()) {
             if ($get_private_properties===true) {
                $rp->setAcessible(true);
-               
                $stdClass->$name=$rp->getValue($object);
             }
          } else {
