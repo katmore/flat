@@ -13,12 +13,10 @@ See the [developers' guide](DEV-GUIDE.md) for a brief primer the goals behind th
 ## Legal
 ### Copyright
 The Flat Framework. https://github.com/katmore/flat
-
 Copyright (c) 2012-2016 Doug Bird. All Rights Reserved.
 
 ### License
 The Flat Framework is copyrighted free software.
 You may redistribute and modify it under either the terms and conditions of the
 "The MIT License (MIT)"; or the terms and conditions of the "GPL v3 License".
-
 See [LICENSE](https://github.com/katmore/flat/blob/master/LICENSE) and [GPLv3](https://github.com/katmore/flat/blob/master/GPLv3).
