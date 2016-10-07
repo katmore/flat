@@ -22,4 +22,19 @@ abstract class data extends \flat\core\mappable\constructor
          return (array) json_decode(json_encode($object));
       }
    }
+   /**
+    * serialize this object to standard class
+    *
+    * @param null $object IGNORED for \flat\data object.
+    *
+    * @param null $get_private_properties IGNORED for \flat\data object.
+    *
+    * @return Array
+    */
+   public function get_as_stdClass($object=null,$get_private_properties=false) {
+      $object = $this;
+      if (is_object($object) && ($object instanceof \flat\data)) {
+         return (object) json_decode(json_encode($object));
+      }
+   }
 }
