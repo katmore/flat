@@ -3,7 +3,7 @@
    "description" : "experimental framework for php",
    "homepage":"https://github.com/katmore/flat",
    "dist": {
-        "url": "https://github.com/katmore/flat",
+        "url": "https://github.com/katmore/flat.git",
         "type": "git"
     },    
     "autoload": {
