@@ -7,7 +7,7 @@ with a flexible but not overly-complex deployment architecture.
 Installation instructions are contained in [INSTALL.md](INSTALL.md).
 
 ## Developing with the Flat Framwork
-See the [developers' guide'](DEV-GUIDE.md) for a brief primer the goals behind the flat framework along usage instructions and examples.
+See the [developers' guide](DEV-GUIDE.md) for a brief primer the goals behind the flat framework along usage instructions and examples.
 
 ## Legal
 ### Copyright
