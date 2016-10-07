@@ -1,13 +1,13 @@
 # flat: an experimental framework for php
 Flat is an experimental routable framework for php. It was 
 designed to manage the development of multiple applications 
-with a flexible but not overly-complex deployment architecture.
-See [the developers' guide](DEV-GUIDE.md) for more background regarding the motivation and goals behind the development of flat.
+within flexible and portable deployment senarios.
+The [the developers' guide](DEV-GUIDE.md) contains a background narritive regarding the motivation and goals behind the development of flat.
 
 ## Installation
 Installation instructions are contained in [INSTALL.md](INSTALL.md).
 
-## Developing with the Flat Framwork
+## Usage
 See the [developers' guide](DEV-GUIDE.md) for usage instructions and examples.
 
 ## Legal
