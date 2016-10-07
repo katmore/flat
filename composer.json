@@ -12,5 +12,34 @@
 	"license": [
        "MIT",
        "GPL-3.0+"
-    ]
+    ],
+    "require": {
+        "php" : ">=7.0.1",
+        "mongodb/mongodb": "^1.0.0",
+        "ext-pdo_mysql" : "*", 
+        "ext-curl" : "*",
+        "ext-mbstring" : "*",
+        "ext-zlib" : "*",
+        "ext-fileinfo" : "*",   
+        "ext-filter" : "*",   
+        "ext-gettext" : "*",   
+        "ext-hash" : "*",   
+        "ext-iconv" : "*",          
+        "ext-imagick" : "*",
+        "ext-gd" : "*",        
+        "ext-gmp" : "*",
+        "ext-bcmath" : "*",    
+        "ext-calendar" : "*",
+        "ext-ctype" : "*",      
+        "ext-exif" : "*",
+        "ext-json" : "*",
+        "ext-ssh2" : "*",  
+        "ext-posix" : "*",
+        "ext-readline" : "*",
+        "ext-simplexml" : "*",        
+        "ext-dom" : "*" ,
+        "ext-xml" : "*",
+        "ext-xmlreader" : "*",
+        "ext-xmlwriter" : "*"        
+     }    
 }
