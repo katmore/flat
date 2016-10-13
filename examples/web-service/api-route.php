@@ -8,6 +8,7 @@
  * It creates a router that creates objects
  *    based on rules in the /flat/app/route/api class definition.
  */
+return (function() {
 /*
  *    set value of $flat_deploy_dir to actual path of the flat/deploy directory
  *    example: 
@@ -110,24 +111,26 @@ if (! is_file("$flat_deploy_dir/api.php") || !is_readable("$flat_deploy_dir/api.
       $error['msg']= "we are experiencing difficulties";
       $error['suggestion'] = "if this problem persists, contact support or your system administrator.";
    }
-   if (isset($_SERVER['SERVER_PROTOCOL'])) {
-      header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-      header("Content-Type:text/xml");
+   http_response_code(500);
+   header("Content-Type:application/xml;charset=utf-8");
       echo 
-'<?xml version="1.0"?>
+'<?xml version="1.0" encoding="UTF-8"?>
 <error>
 ';
       foreach($error as $key=>$val) {
+         $elem = preg_replace("/[^a-zA-Z0-9]/","",$key);
+         if (is_numeric(substr($elem, 0, 1))) $elem = "_".$elem;
          echo "
-   <$key>".htmlentities($val)."</$key>";
+   <$elem>".htmlspecialchars($val, ENT_NOQUOTES, "UTF-8")."</$elem>";
       }
       echo
 '
 </error>';
-   }
+   
    ?>
    <?php
    exit(1);
 }
 require ("$flat_deploy_dir/api.php");
 return new \flat\deploy\api();
+})();

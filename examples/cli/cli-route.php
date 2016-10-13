@@ -1,12 +1,12 @@
 <?php
 //
-// -- this file originally from flat/examples/web-service/html-route.php
+// -- this file originally from flat/examples/web-service/api-route.php
 //
 /*
- * html-route.php
- * This file is an html templating entry point.
- * It creates a router that creates objects 
- *    based on rules in the /flat/app/route/html class definition.
+ * api-route.php
+ * This file is an api entry point.
+ * It creates a router that creates objects
+ *    based on rules in the /flat/app/route/api class definition.
  */
 return (function() {
 /*
@@ -25,7 +25,7 @@ $flat_deploy_dir = "/path/to/flat/deploy";
 $display_error_details = true;
 /*
  * HTTP SERVER CONFIGURATION: 
- *    successful flat html routing is dependant on the HTTP server configuration.
+ *    successful flat api routing is dependant on the HTTP server configuration.
  *    please consult the following files:
  *       flat/examples/web-server/config-samples/apache2-htaccess.txt
  *       flat/examples/web-server/config-samples/nginx-location.txt
@@ -99,10 +99,10 @@ $display_error_details = true;
  * 
  */
 if ($display_error_details) ini_set("display_errors","1");
-if (! is_file("$flat_deploy_dir/html.php") || !is_readable("$flat_deploy_dir/html.php")) {
+if (! is_file("$flat_deploy_dir/api.php") || !is_readable("$flat_deploy_dir/api.php")) {
    $error=[];
    if ($display_error_details) {
-      $error['msg'] = "file '$flat_deploy_dir/html.php' not found";
+      $error['msg'] = "$flat_deploy_dir/api.php not found";
       $error['suggestion'] = "please edit the file \n\t'".__FILE__."'\n".
             "set the value of the variable\n".
             "\t\$flat_deploy_dir\n".
@@ -111,24 +111,11 @@ if (! is_file("$flat_deploy_dir/html.php") || !is_readable("$flat_deploy_dir/htm
       $error['msg']= "we are experiencing difficulties";
       $error['suggestion'] = "if this problem persists, contact support or your system administrator.";
    }
-   if (isset($_SERVER['SERVER_PROTOCOL'])) {
-      header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-      header("Content-Type:text/html");
+   foreach($error as $key=>$val) {
+      echo "$key: $val\n";
    }
-   ?>
-<!DOCTYPE html>
-<html>
-   <body>
-      <h1>Error</h1>
-      <?php
-      foreach($error as $key=>$val) {
-         echo "<div data-error-info='$key'>".str_replace("\t","&nbsp;&nbsp;&nbsp;",nl2br(htmlentities($val)))."</div>\n";
-      }?>
-   </body>
-</html>
-   <?php
    exit(1);
 }
-require ("$flat_deploy_dir/html.php");
-return new \flat\deploy\html();
+require ("$flat_deploy_dir/api.php");
+return new \flat\deploy\api();
 })();

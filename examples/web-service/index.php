@@ -11,8 +11,9 @@
 /**
  * placeholder index for flat web-services
  *
- * PHP version >=5.6
+ * PHP version >=7.0.0
  */
+return (function() {
 /**
  * @var string $reporoot_url
  *    URL to flat framework source repo
@@ -100,3 +101,5 @@ $path_href_prefix = (isset($_SERVER['REQUEST_URI'])) ? parse_url($_SERVER['REQUE
          </span>
    </body>
 </html>
+<?php
+})();

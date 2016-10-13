@@ -1,16 +1,122 @@
 ###
-# nginx location rule for flat entry point
-# 
-# replace 'SITE_TMPL_ROOT' with the template root relative to flat/app/tmpl
-#   for example, if you want to use the class 
-#      flat\app\tmpl\mysite (defined in flat/app/tmpl/mysite.php)
-#   replace 'SITE_TMPL_ROOT' with 'mysite', like:
-#        rewrite "^/$" /html-route.php/mysite break;  #(for 'home' page example)
-#        rewrite ^(.*)$ /html-route.php/SITE_TMPL_ROOT/$1 break; #(other pages example)      
-###
-location / {
-   if (!-e $request_filename) {
-      rewrite ^(.*)$ /html-route.php/SITE_TMPL_ROOT/$1 last;
+## nginx location rules for flat entry point for mapping URLs to template views
+## Examples for your nginx site configuration file, such as:
+##    /nginx/etc/sites-available/mysite
+################################################################################
+## For this example, we assume using php-fpm with a local system file 
+## structure as follows:
+##    /var/www/html : website root (copy the 'html-route.php' file here)
+##    /var/www/flat : location of flat package.
+##    /nginx/etc/sites-available/mysite : path to your nginx site config file
+##    /var/run/php/php7.0-fpm.sock : path to the php-fpm socket you're using
+################################################################################
+## Step 1:
+## Ensure site root is properly configured, also create a rule to 
+## allow a URL with path info after a .php file to work.
+##    ie: http://example.com/html-route.php/mysite/my_page
+## Placing the '/mysite/my_page' PATH_INFO server info var in PHP.
+################################################################################
+## Step 1 config:
+### (editing /nginx/etc/sites-available/mysite)  
+# root /var/www/html; ## (your site root containing a copy of the 'html-route.php' file.
+# fastcgi_split_path_info ^(.+?\.php)(/.*)$; ## http://example.com/html-route.php/mysite will work
+################################################################################
+## Step 2: 
+## Ensure existence of location rule specifying a sane resource 
+## matching priority. If a URL matches an existing filename within our 'root'
+## (such as images or other assets), resolve to that file instead of 
+## resolving to our @flat location rule. 
+################################################################################
+## Step 2 config: 
+### (editing /nginx/etc/sites-available/mysite)  
+# location / {
+#    try_files $uri $uri/ @flat; ## the @flat location is defined below
+# }
+################################################################################
+## Step 3:
+## Create location rule for mapping a URL to your template in the 
+## following manner: 
+##    http://example.com/my_page
+##       --TO--   
+##    /flat/design/tmpl/mysite/my_page.php
+################################################################################
+## Step 3: (cont'd)
+## The idea above involves using flat tmpl class:
+##    flat\app\tmpl\mysite (defined in flat/app/tmpl/mysite.php)
+## to a resolve to the design file:
+##    flat\design\tmpl\mysite\my_page.php
+################################################################################
+## Step 3 config: 
+### (editing /nginx/etc/sites-available/mysite)  
+# location @flat {
+#     rewrite "^/$" /html-route.php/mysite last;  ## the URL 'http://example.com' maps the flat\app\tmpl\mysite class
+#     rewrite ^/(.*)$ /html-route.php/mysite/$1 last; ## the URL 'http://example.com/my_page' also maps the flat\app\tmpl\mysite class
+# }  
+################################################################################
+## End Steps.
+################################################################################
+## Below is an example containing snippets for your nginx server config block
+## It contains placeholders for existing / other things that would be 
+## configured.
+## Replace the <SITE_TMPL_ROOT> with your actual template root to flat/app/tmpl
+## In the Steps above; <SITE_TMPL_ROOT> is "mysite" (without quotes) 
+################################################################################
+## Begin nginx server config block snippets:
+################################################################################
+server {
+   #.....
+   #..... placeholder for other stuff in your nginx server config block
+   #.....
+   #.....
+   #.....
+   root /var/www/html; ## (site root containing a copy of the 'html-route.php' file.
+   #.....
+   #.... placeholder for other stuff in your nginx server config block
+   #.....
+   #.....
+   #.....
+   fastcgi_split_path_info ^(.+?\.php)(/.*)$; ## makes http://example.com/html-route.php/mysite will work
+   location ~ /\. {
+      return 403; ## disallow listings
    }
-   rewrite "^/$" /html-route.php/SITE_TMPL_ROOT last;
-}
+   #.....
+   #.... placeholder for other stuff in your nginx server config block
+   #.....
+   #.....
+   #.....   
+   location / {
+      try_files $uri $uri/ @flat;
+   }
+   #.....
+   #.... placeholder for other stuff in your nginx server config block
+   #.....
+   #.....
+   #.....   
+   location @flat {
+      rewrite "^/$" /html-route.php/<SITE_TMPL_ROOT> last; ## the URL 'http://example.com' maps the flat\app\tmpl\mysite class
+      rewrite ^/(.*)$ /html-route.php/<SITE_TMPL_ROOT>/$1 last; ## the URL 'http://example.com/my_page' also maps the flat\app\tmpl\mysite class
+   }
+   #.....
+   #.... placeholder for other stuff in your nginx server config block
+   #.....
+   #.....
+   #.....   
+   location ~ [^/]\.php(/|$) { ## note the '~' (squiggly)!
+      #.....
+      #.... other php-fpm/fastcgi configuration would be above/below
+      #.... this placeholder.
+      #.....
+      #.....
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; ## ensure 'http://example.com/my_page' maps to 'html-route.php' with PATH_INFO
+      fastcgi_param   PATH_INFO         $fastcgi_path_info; ## ensure PATH_INFO param will exist
+      include fastcgi_params;
+      #.....
+      #.... other php-fpm/fastcgi configuration would be above/below
+      #.... this placeholder.
+      #.....
+      #.....      
+   } ## end .php file location block
+} ## end 'server' configuration block
+################################################################################
+## End nginx server config block snippets:
+################################################################################
