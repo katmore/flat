@@ -31,7 +31,7 @@
  * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
  */
 namespace flat\cloud\authorize\customer;
-class payment_profile 
+abstract class payment_profile 
    extends \flat\data 
    
 {
