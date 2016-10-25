@@ -32,17 +32,61 @@
  */
 namespace flat\api;
 class response extends \flat\core\mappable {
+   /**
+    * @var \flat\api\status
+    *    status object associated witht the response.
+    */
    private $_status;
+   /**
+    * @param \flat\api\status $status Status object to associate with the response.
+    * @return void
+    */
    final protected function _set_status(\flat\api\status $status) {
       $this->_status = $status;
    }
-   final public function get_status() {
-      if (!is_a($this->_status,"\\flat\\api\\status")) {
-         throw new response\exception\bad_response(
-            "did not get response object did not contain status as expected"
-         );
+   /**
+    * Provides the status object associatd with the response.
+    * 
+    * @return \flat\api\status
+    * @throws \flat\api\response\exception\bad_response
+    */
+   public function get_status() :\flat\api\status {
+      if (!$this->_status instanceof \flat\api\status) {
+         throw new \flat\api\response\invalid_status($this, $this->_status);
       }      
       return $this->_status;
+   }
+   /**
+    * @var string[]
+    *    Any headers that have been associated with the response.
+    */
+   private $_header_string;
+   /**
+    * Provides header string values associated with the response, should any exist.
+    * @return string[]
+    */
+   public function get_header_strings() : array {
+      return array_values($this->_header_string) || [];
+   }
+   
+   /**
+    * @var \flat\api\response_header[]
+    */
+   private $_header;
+   /**
+    * @return \flat\api\response_header[]
+    */
+   public function get_headers() : array {
+      return $this->_header || [];
+   }
+   /**
+    * Associate a header to the response.
+    * @param string $header header string
+    * @return void
+    */
+   final protected function _add_header(\flat\api\response_header $header) {
+      $this->_header_string[$header->get_field()]=$header->get_header_string();
+      $this->_header[$header->get_field()] = $header;
    }
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * \flat\api\response\error definition
+ * \flat\api\method\OPTIONS definition
  *
  * PHP version >=5.6
  *
@@ -31,29 +31,7 @@
  * @author     D. Bird <retran@gmail.com>
  * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
  */
-namespace flat\api\response;
-class error extends \flat\api\response {
-   public $message;
-   public $data;
-   public function __construct($message="",$data=NULL,$trace_offset=0) {
-      if (empty($message)) {
-         $trace = debug_backtrace();
-         if (!empty($trace[1+$trace_offset]['class'])) {
-            $r = new \ReflectionClass($trace[1+$trace_offset]['class']);
-            $this->message = "error indicated by ".$trace[1+$trace_offset]['class'];
-         }
-      } else {
-         $this->message = $message;
-      }
-      if (!empty($data)) {
-         $this->data = json_decode(json_encode($data));
-         if (!isset($this->data->message)) {
-            $this->data->message = $message;
-         } else {
-            $this->data->{'message-'.uniqid()} = $message;
-         }
-      }
-      $this->_set_status(new \flat\api\status\server_error);
-   }
-
+namespace flat\api\method;
+interface OPTIONS extends \flat\api\method {
+   public function DELETE_method(\flat\input $input);
 }

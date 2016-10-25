@@ -127,61 +127,153 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
          }
       }
    }
+   /**
+    * @var string
+    */
    private static $response_handler;
+   /**
+    * @return void
+    * 
+    */
    final static public function set_response_handler(callable $handler) {
       self::$response_handler=$handler;
    }
+   
+   /**
+    * @var string fallback 'request method' when not specified by the input.
+    */
    private static $_method;
-   final static public function set_method($method) {
-      if (interface_exists("\\flat\\api\\method\\$method")) {
-         self::$_method = $method;
-      } else {
-         throw new api\exception\unknown_method(
-            $_method
-         );
+   /**
+    * string[] list of methods recognized by the api controller
+    */
+   const VALID_METHOD_LIST = ['DELETE','GET','TRACE','OPTIONS','POST','PUT','HEAD'];
+   /**
+    * Sets the fallback 'request method' when not specified by the input.
+    * 
+    * @param string $method request method; Must be one of the following:
+    *   GET, PUT, POST, DELETE, TRACE, HEAD, or OPTIONS.
+    * 
+    * @return void
+    * 
+    * @throws \flat\core\controller\api\exception\unknown_method
+    */
+   final static public function set_method(string $method) {
+      if (!in_array($method,self::VALID_METHOD_LIST,true)) {
+         throw new api\exception\unknown_method($method);
       }
    }
-   final public function set_input(\flat\input $input,$method="",$response_handler=null) {
-      if (empty($method)) $method = self::$_method;
-      if (empty($method)) throw new api\exception\missing_method();
+   /**
+    * @var string
+    *    request method corresponding to the current 'input', if any.
+    */
+   private $_request_method;
+   /**
+    * @return string request method corresponding to the current 'input'.
+    * @throws \flat\core\controller\api\exception\missing_method
+    */
+   final protected function _get_request_method() :string {
+      if (empty($this->_request_method)) throw new api\exception\missing_method();
+      return (string) $this->_request_method;
+   }
+   
+   /**
+    * @var bool
+    *    true if the request method corresponding to the current 'input'
+    *    was set to HEAD.
+    */
+   private $_HEAD_request;
+   /**
+    * @return bool
+    *    Determines if the request method corresponding to the current 'input'
+    *    was set to HEAD ('HEAD' methods are always invoked as 'GET')
+    */
+   final protected function _is_HEAD_request() : bool {
+      return !! $this->_HEAD_request;
+   }
+   /**
+    * Passes an input object to the the interface call associated 
+    *    with a request method. Optionally, invokes a callback with the 
+    *    once a response is resolved from the interface.
+    * 
+    * @return \flat\api\response
+    * 
+    * @param \flat\input $input
+    * @param string $method (optional) Specify the request method to associate with this input. By default,
+    *    uses the 'fallback method' specified by calling the static \flat\core\controller\api::set_method().
+    *    
+    * @param callable $response_handler (optional) callback invoked after response object is resolved.
+    *    callback signature: function(\flat\api\response $response,string $request_method).
+    *    If the callback returns a \flat\api\response object, this object becomes returned value.  
+    *    
+    * @throws \flat\core\controller\api\exception\missing_method
+    * @throws \flat\core\controller\api\exception\unknown_method
+    * @throws \flat\core\controller\api\exception\bad_response
+    * 
+    * 
+    */
+   final public function set_input(\flat\input $input,string $method=null,callable $response_handler=null) :\flat\api\response {
+      if (empty($method)) {
+         $method = self::$_method;
+      } 
+      $invoked_method = $method;
+      if ($method=='HEAD') {
+         $invoked_method = 'GET';
+         $this->_HEAD_request = true;
+      }
+      
+      if ($method=='TRACE') {
+         return new \flat\api\response\ok($input->get_as_assoc());
+      }
+      
+      $this->_input_method = $invoked_method;
+      
+      if (!in_array($method,self::VALID_METHOD_LIST,true)) {
+         throw new api\exception\unknown_method($method);
+      }
+
+      if (empty($invoked_method)) throw new api\exception\missing_method();
       $r = new \ReflectionClass($this);
       
       if ($response_handler===null) {
          $response_handler = self::$response_handler;
       }
 	  $response = null;
-      
+	  
       if ($this instanceof \flat\api\method\any) {
          try {
             $response = $this->any_method($input);
          } catch (\flat\api\response\exception $e) {
             $response = $e->get_response();
-         }       
+         }
       }
-	  if (!$response instanceof \flat\api\response) {
-		  if ($r->implementsInterface("\\flat\\api\\method\\".$method)) {
-			  $f = $method."_method";
+	   if (!$response instanceof \flat\api\response) {
+		  if ($r->implementsInterface('\flat\api\method') && $r->implementsInterface('\flat\api\method\\'.$invoked_method)) {
+			  $f = $invoked_method."_method";
 			  try {
 				 $response = $this->$f($input);
 			  } catch (\flat\api\response\exception $e) {
 				 $response = $e->get_response();
-			  }       
+			  }
 			  if (!$response instanceof \flat\api\response) {
 				 throw new api\exception\bad_response(
 					get_class($this),
-					$method
+					$invoked_method
 				 );
 			  }
 		  }
-		  
-	  }
+	   }
 	  
-	  if ($response instanceof \flat\api\response) {
-		  if (is_callable($response_handler)) {
-			 return $response_handler($response,$method);
-		  }
-	  }
-      return $response; 
+      if ($response instanceof \flat\api\response) {
+         if (is_callable($response_handler)) {
+            $handler_return = $response_handler($response,$method);
+            if ($handler_return instanceof \flat\api\response) {
+               $response = $handler_return;
+            }
+         }
+        return $response;
+      } else {
+        return new \flat\api\response\no_interface;
+      }
    }
 
 }
