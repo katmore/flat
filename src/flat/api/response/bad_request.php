@@ -34,13 +34,15 @@
 namespace flat\api\response;
 class bad_request extends \flat\api\response {
     
-   public function __construct($message="",$data=NULL,$trace_offset=0) {
+   public function __construct($message="",$data=null,int $trace_offset=0) {
       if (empty($message)) {
          $trace = debug_backtrace();
-         if (!empty($trace[1+$trace_offset]['class'])) {
-            // $r = new \ReflectionClass($trace[1]['class']);
-            // $this->message = " forbidden by ".$r->getShortName();
-            $this->message = "forbidden by ".$trace[1+$trace_offset]['class'];
+         if (isset($trace[1+$trace_offset]) && !empty($trace[1+$trace_offset]['class'])) {
+            try {
+               $this->message = "Bad request indicated by ".(new \ReflectionClass($trace[1+$trace_offset]['class']))->getShortName();
+            } catch (\Exception $e) {
+               $this->message = "Bad request indicated";
+            }
          }
       } else {
          $this->message = $message;
