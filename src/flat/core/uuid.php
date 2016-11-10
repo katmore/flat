@@ -256,6 +256,9 @@ class uuid implements \flat\core\generator {
      $this->_name = $name;
      $this->_namespace = $namespace;
   }
+  public function __get() {
+     return (string) self::get($this->_version,$this->_namespace,$this->_name);
+  }
 }
 
 
