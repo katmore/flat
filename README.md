@@ -1,14 +1,14 @@
 # flat: an experimental framework for php
-Flat is an experimental routable framework for php. It was 
-designed to manage the development of multiple applications 
-within flexible and portable deployment senarios.
-The [the developers' guide](DEV-GUIDE.md) contains a background narritive regarding the motivation and goals behind the development of flat.
+Flat is an experimental application routing framework for php.
 
 ## Installation
-Installation instructions are contained in [INSTALL.md](INSTALL.md).
+The easiest way to get going with **flat** is to copy the [*flat boilerplate webapp*](https://github.com/katmore/flat-webapp).
 
-## Usage
-See the [developers' guide](DEV-GUIDE.md) for usage instructions and examples.
+Using Composer...
+
+```bash
+composer create-project katmore/flat-webapp my_project_dir
+```
 
 ## Legal
 ### Copyright
