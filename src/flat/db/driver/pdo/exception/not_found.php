@@ -32,8 +32,19 @@
  */
 namespace flat\db\driver\pdo\exception;
 class not_found extends \flat\db\driver\pdo\exception {
+   public function get_criteria_keys_used() : array {
+      return $this->_criteria_keys_used;
+   }
+   /**
+    * @var array
+    */
+   private $_criteria_keys_used=[];
    public function __construct($criteria_keys_used) {
-      if (!empty($details)) $details = ": $details";
-      parent::__construct("used criteria ".implode(", ", array_keys($criteria_keys_used)));
+      $msg = "record not found";
+      if (is_array($criteria_keys_used)) {
+         $this->_criteria_keys_used = $criteria_keys_used;
+         $msg.=" used criteria: ".implode(", ", array_keys($criteria_keys_used));
+      }
+      parent::__construct($msg);
    }
 }
