@@ -69,7 +69,7 @@ class config {
    /**
     * @var int number of seconds for curl timeout
     */
-   public $timeout = 5;
+   public $timeout = 300;
    
    /**
     * @var int number of seconds to wait for connection
