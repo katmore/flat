@@ -99,7 +99,9 @@ class cli {
     * @static
     */
    public static function set_argv(array $argv,$param_start_idx=2) {
-      self::$_command = (isset($argv[0])) ? $argv[0] : "";
+      if (!is_int($param_start_idx)) $param_start_idx=2;  
+      $cmdarg = $param_start_idx-1;
+      self::$_command = (isset($argv[$cmdarg])) ? $argv[$cmdarg] : "";
       self::$_param = [];
       self::$_argv = $argv;
       if (count($argv) && (count($argv)>$param_start_idx)) {
