@@ -12,21 +12,32 @@ Architecturally, it facilitates a broad swathe of design patterns using a client
  * Command line scripts: convenience classes to faciliate creation of recurring (cron), deamons, and ad-hoc scripts
 
 ## Installation
+*Flat* can be the basis of a **new project** or added to an **existing project**
+
+### New Projects
 The easiest way to get going with **flat** is to copy the [*flat boilerplate webapp*](https://github.com/katmore/flat-webapp).
 
- Step 1. Composer 'create-project'...
+**Step 1. Composer 'create-project'** (*flat boilerplate webapp*)...
 
 ```bash
 composer create-project katmore/flat-webapp my_project_dir
 ```
-(copies this repo and configures php dependencies)
+*(copies this repo and configures php dependencies)*
 
- Step 2. Bower update...
+ **Step 2. Bower update**
 ```bash
 cd my_project_dir
 bower update
 ```
-(installs static dependencies)
+*(installs static dependencies)*
+
+### Existing Projects
+**Step 1. Composer install** (*flat boilerplate webapp*)...
+```bash
+cd my_project_dir
+composer require katmore/flat
+```
+*(copies this repo and configures php dependencies)*
 
 ## Architecture
 The components of *flat* architecture facilitate a *client-server* process flow...
