@@ -2,9 +2,9 @@
 /**
  * \flat\fbook definition 
  *
- * PHP version >=5.6
+ * PHP version >=7.1
  * 
- * Copyright (c) 2012-2015 Doug Bird. 
+ * Copyright (c) 2012-2017 Doug Bird. 
  *    All Rights Reserved. 
  * 
 

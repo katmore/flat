@@ -24,7 +24,7 @@ composer create-project katmore/flat-webapp my_project_dir
 ```
 *(copies this repo and configures php dependencies)*
 
- **Step 2. Bower update**
+**Step 2. Bower update**
 ```bash
 cd my_project_dir
 bower update
@@ -32,12 +32,17 @@ bower update
 *(installs static dependencies)*
 
 ### Existing Projects
-**Step 1. Composer install** (*flat boilerplate webapp*)...
+**Step 1. Using composer**
 ```bash
 cd my_project_dir
 composer require katmore/flat
 ```
-*(copies this repo and configures php dependencies)*
+
+**Step 2. Bower update**
+```bash
+cd my_project_dir
+bower update
+```
 
 ## Architecture
 The components of *flat* architecture facilitate a *client-server* process flow...

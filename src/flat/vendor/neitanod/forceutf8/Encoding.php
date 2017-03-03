@@ -1,10 +1,10 @@
 <?php
 /**
- * \flat\__SUB_NAMESPACE__\ns_shortname definition 
+ * class definition 
  *
- * PHP version >=5.6
+ * PHP version >=7.1
  * 
- * Copyright (c) 2012-2015 Doug Bird. 
+ * Copyright (c) 2012-2017 Doug Bird. 
  *    All Rights Reserved. 
  * 
  * BY ACCESSING THE CONTENTS OF THIS SOURCE FILE IN ANY WAY YOU AGREE TO BE 
@@ -17,11 +17,11 @@
  * ALL WORKS HEREIN ARE CONSIDERED TO BE TRADE SECRETS, AND AS SUCH ARE AFFORDED 
  * ALL CRIMINAL AND CIVIL PROTECTIONS AS APPLICABLE.
  * 
- * @copyright Copyright (c) 2008 Sebastián Grignoli All rights reserved.
+ * @copyright Copyright (c) 2008 SebastiÃ¡n Grignoli All rights reserved.
  */
 namespace flat\vendor\neitanod\forceutf8;
 /**
- * @author   "Sebastián Grignoli" <grignoli@gmail.com>
+ * @author   "SebastiÃ¡n Grignoli" <grignoli@gmail.com>
  * @package  Encoding
  * @version  2.0
  * @link     https://github.com/neitanod/forceutf8
@@ -129,15 +129,15 @@ class Encoding {
    *
    * It may fail to convert characters to UTF-8 if they fall into one of these scenarios:
    *
-   * 1) when any of these characters:   ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß
+   * 1) when any of these characters:   Ã€Ã�Ã‚ÃƒÃ„Ã…Ã†Ã‡ÃˆÃ‰ÃŠÃ‹ÃŒÃ�ÃŽÃ�Ã�Ã‘Ã’Ã“Ã”Ã•Ã–Ã—Ã˜Ã™ÃšÃ›ÃœÃ�ÃžÃŸ
    *    are followed by any of these:  ("group B")
-   *                                    ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶•¸¹º»¼½¾¿
-   * For example:   %ABREPRESENT%C9%BB. «REPRESENTÉ»
-   * The "«" (%AB) character will be converted, but the "É" followed by "»" (%C9%BB)
+   *                                    Â¡Â¢Â£Â¤Â¥Â¦Â§Â¨Â©ÂªÂ«Â¬Â­Â®Â¯Â°Â±Â²Â³Â´ÂµÂ¶â€¢Â¸Â¹ÂºÂ»Â¼Â½Â¾Â¿
+   * For example:   %ABREPRESENT%C9%BB. Â«REPRESENTÃ‰Â»
+   * The "Â«" (%AB) character will be converted, but the "Ã‰" followed by "Â»" (%C9%BB)
    * is also a valid unicode character, and will be left unchanged.
    *
-   * 2) when any of these: àáâãäåæçèéêëìíîï  are followed by TWO chars from group B,
-   * 3) when any of these: ðñòó  are followed by THREE chars from group B.
+   * 2) when any of these: Ã Ã¡Ã¢Ã£Ã¤Ã¥Ã¦Ã§Ã¨Ã©ÃªÃ«Ã¬Ã­Ã®Ã¯  are followed by TWO chars from group B,
+   * 3) when any of these: Ã°Ã±Ã²Ã³  are followed by THREE chars from group B.
    *
    * @name toUTF8
    * @param string $text  Any string.

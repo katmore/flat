@@ -2,7 +2,7 @@
 /**
  * \flat\vendor\erusev\parsedown vendor dependency loader and wrapper class for ParsedownExtra
  *
- * PHP version >=5.6
+ * PHP version >=7.1
  * 
  */
 namespace flat\vendor\erusev\src;

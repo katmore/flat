@@ -2,7 +2,7 @@
 /**
  * \flat\core\util\image\dim class
 *
-* PHP version >=5.6
+* PHP version >=7.1
 *
 * Copyright (c) 2012-2015 Doug Bird.
 *    All Rights Reserved.
@@ -25,7 +25,7 @@ namespace flat\core\util\image;
  *
  * @package    flat\core\util\image
  * @author     D. Bird <retran@gmail.com>
- * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
+ * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  * @version    0.1.0-alpha
  *
  * @todo impelment alpha, dpi properties

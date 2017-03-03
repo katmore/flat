@@ -2,9 +2,9 @@
 /**
  * \flat\core\controller\tmpl\exception\bad_design class 
  *
- * PHP version >=5.6
+ * PHP version >=7.1
  * 
- * Copyright (c) 2012-2015 Doug Bird. 
+ * Copyright (c) 2012-2017 Doug Bird. 
  *    All Rights Reserved. 
  * 
  * BY ACCESSING THE CONTENTS OF THIS SOURCE FILE IN ANY WAY YOU AGREE TO BE 
@@ -25,7 +25,7 @@ namespace flat\core\controller\tmpl\exception;
  * 
  * @package    flat\__SUB_PACKAGE__
  * @author     D. Bird <retran@gmail.com>
- * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
+ * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  * @version    0.1.0-alpha
  * 
  */

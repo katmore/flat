@@ -2,14 +2,14 @@
 /**
  * class definition 
  *
- * PHP version >=5.6
+ * PHP version >=7.1
  * 
- * Copyright (c) 2012-2015 Doug Bird. 
+ * Copyright (c) 2012-2017 Doug Bird. 
  *    All Rights Reserved. 
  * 
  * COPYRIGHT NOTICE:
  * The flat framework. https://github.com/katmore/flat
- * Copyright (C) 2012-2015  Doug Bird.
+ * Copyright (c) 2012-2017  Doug Bird.
  * ALL RIGHTS RESERVED. THIS COPYRIGHT APPLIES TO THE ENTIRE CONTENTS OF THE WORKS HEREIN
  * UNLESS A DIFFERENT COPYRIGHT NOTICE IS EXPLICITLY PROVIDED WITH AN EXPLANATION OF WHERE
  * THAT DIFFERENT COPYRIGHT APPLIES. WHERE SUCH A DIFFERENT COPYRIGHT NOTICE IS PROVIDED
@@ -28,7 +28,7 @@
  * @license GNU General Public License, version 3 (GPL-3.0) http://opensource.org/licenses/GPL-3.0
  * @link https://github.com/katmore/flat
  * @author     D. Bird <retran@gmail.com>
- * @copyright  Copyright (c) 2012-2015 Doug Bird. All Rights Reserved.
+ * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\data\stringify;
 interface xml extends \flat\data\stringify{

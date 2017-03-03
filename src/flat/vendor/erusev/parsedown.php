@@ -2,7 +2,7 @@
 /**
  * \flat\vendor\erusev\parsedown wrapper class for Parsedown
  *
- * PHP version >=5.6
+ * PHP version >=7.1
  * 
  */
 namespace flat\vendor\erusev;
