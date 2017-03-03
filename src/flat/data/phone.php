@@ -18,26 +18,26 @@ implements \flat\data\ready
     
    /**
     * @var string
-    *    NAMP local number
+    *    NANP local number
     */
    public $local_number;
     
    /**
     * @var string
-    *    NAMP Station Code
+    *    NANP Station Code
     *    (last 4 digits) if phone number
-    *    is from NAMP country, (null) otherwise
+    *    is from NANP country, (null) otherwise
     */
    public $station_code;
     
    /**
     * @var string
-    *    E.164 subscriber number (same as NAMP station code)
+    *    E.164 subscriber number (same as NANP station code)
     */
    public $subscriber_number;
    /**
     * @var string
-    *    NAMP zone derived from $value, if any.
+    *    NANP zone derived from $value, if any.
     */
    public $exchange_code;
     
@@ -297,7 +297,7 @@ implements \flat\data\ready
                $this->string = $this->e164_intl;
             }
              
-         } /*endif $phoneNumber is NOT zone 1 (NAMP)*/
+         } /*endif $phoneNumber is NOT zone 1 (NANP)*/
 
       }/*endif $phoneNumber longer than 10*/
        
@@ -330,7 +330,7 @@ implements \flat\data\ready
          $nextThree = substr($phoneNumber, 0, 3);
          $lastFour = substr($phoneNumber, 3, 4);
           
-         $this->local_number = $this->namp = $phoneNumber = $nextThree.'-'.$lastFour;
+         $this->local_number = $this->nanp = $phoneNumber = $nextThree.'-'.$lastFour;
          $this->exchange_code = $nextThree;
          $this->notation = 'NANP-local';
          $this->e164_sn = $this->station_code = $this->subscriber_number = $lastFour;
