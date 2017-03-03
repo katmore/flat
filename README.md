@@ -5,14 +5,28 @@ The purpose in creating *flat* is to have a framework which conceptualizes the o
 
 Architecturally, it facilitates a broad swathe of design patterns using a client-server process flow.
 
+## Features
+ * HTML templating: convenience classes facilitating sophisticated templating
+ * Front-End Routing: flexible dynamic routing for the HTML views
+ * Back-End Webservice: convienence classes to faciliate actual RESTful APIs
+ * Command line scripts: convenience classes to faciliate creation of recurring (cron), deamons, and ad-hoc scripts
+
 ## Installation
 The easiest way to get going with **flat** is to copy the [*flat boilerplate webapp*](https://github.com/katmore/flat-webapp).
 
-Using Composer...
+ Step 1. Composer 'create-project'...
 
 ```bash
 composer create-project katmore/flat-webapp my_project_dir
 ```
+(copies this repo and configures php dependencies)
+
+ Step 2. Bower update...
+```bash
+cd my_project_dir
+bower update
+```
+(installs static dependencies)
 
 ## Architecture
 The components of *flat* architecture facilitate a *client-server* process flow...
