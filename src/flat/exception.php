@@ -3,7 +3,7 @@ namespace flat;
 
 use flat\core\exception\controller;
 
-abstract class exception {
+abstract class exception extends \Exception {
    use controller;
    
    public function __construct($msg,$code=0) {
