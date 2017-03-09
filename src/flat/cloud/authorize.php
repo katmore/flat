@@ -37,8 +37,6 @@ use \net\authorize\api\controller\base\ApiOperationBase;
 use \flat\cloud\authorize\response_error;
 use \net\authorize\api\contract\v1\AnetApiResponseType;
 
-use \net\authorize\util\LogFactory;
-
 
 /**
  * Authorize.net API call handler.
@@ -147,12 +145,6 @@ abstract class authorize {
     *
     */
    protected function _executeWithApiResponse(ApiOperationBase $controller) {
-       
-      if (!defined('AUTHORIZENET_LOG_FILE')) {
-         define("AUTHORIZENET_LOG_FILE", '/phplog');
-      }
-       
-      $logger = LogFactory::getLog(get_called_class());
        
       try {
          $response = $controller->executeWithApiResponse( $this->_get_end_point() );
