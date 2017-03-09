@@ -41,83 +41,71 @@ use \net\authorize\api\contract\v1\AnetApiResponseType;
 /**
  * Authorize.net API call handler.
  *
- * You can use the following code-block as a stub to implement an API call handler...<br>
- *    <i>(stub example is for the <b>Get Customer Profile IDs)</b> API call)
+ * You can use the following boilerplate code to implement an API call handler...<br>
+ *    <i>(boilerplate is for the "<b>Get Customer Profile IDs</b>" API call, adjust accordingly)</i>
  *    <br>
- *    (see: http://developer.authorize.net/api/reference/#customer-profiles-get-customer-profile-ids)</i>
+ *    <i>(see: http://developer.authorize.net/api/reference/#customer-profiles-get-customer-profile-ids)</i>
  <pre><code>
- &nbsp;&nbsp;&nbsp;//
- &nbsp;&nbsp;&nbsp;// ---START CODE EXAMPLE---
- &nbsp;&nbsp;&nbsp;//
- &nbsp;&nbsp;&nbsp;new class() extends \flat\app\cloud\activepitch\authorize {
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public function __construct() {
+ //
+ // ---START CODE EXAMPLE---
+ //
+ new class() extends \flat\app\cloud\activepitch\authorize {
+ &nbsp;&nbsp;&nbsp;public function __construct() {
+ &nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$request = new \net\authorize\api\contract\v1\GetCustomerProfileIdsRequest();
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$request->setMerchantAuthentication($this->_load_MerchantAuthentication());
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$request = new \net\authorize\api\contract\v1\GetCustomerProfileIdsRequest();
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$request->setMerchantAuthentication($this->_load_MerchantAuthentication());
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$response = $this->_executeWithApiResponse(
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new \net\authorize\api\controller\GetCustomerProfileIdsController($request)
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!$response instanceof \net\authorize\api\contract\v1\GetCustomerProfileIdsResponse) {
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw new \flat\cloud\authorize\unexpected_response (
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"expected GetCustomerProfileIdsResponse, instead got: " . get_class($response)
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$response = $this->_executeWithApiResponse(
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new \net\authorize\api\controller\GetCustomerProfileIdsController($request)
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!$response instanceof \net\authorize\api\contract\v1\GetCustomerProfileIdsResponse) {
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw new \flat\cloud\authorize\unexpected_response (
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"expected GetCustomerProfileIdsResponse, instead got: " . get_class($response)
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
  &nbsp;&nbsp;&nbsp;
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const CONFIG_NS_PREFIX= 'app/cloud/activepitch/authorize';
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;protected function _get_transaction_key() {
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "my-transaction-key";
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+ &nbsp;&nbsp;&nbsp;}
  &nbsp;&nbsp;&nbsp;
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;protected function _get_login_id() {
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "my-login-id";
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;protected function _get_end_point() {
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return \net\authorize\api\constants\ANetEnvironment::SANDBOX;
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;protected function _get_log_file() {
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "";
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
- &nbsp;&nbsp;&nbsp;};
- &nbsp;&nbsp;&nbsp;//
- &nbsp;&nbsp;&nbsp;// ---END CODE EXAMPLE---
- &nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;protected function _get_transaction_key() {
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "my-transaction-key";
+ &nbsp;&nbsp;&nbsp;}
+ &nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;protected function _get_login_id() {
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "my-login-id";
+ &nbsp;&nbsp;&nbsp;}
+ &nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;protected function _get_end_point() {
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return \net\authorize\api\constants\ANetEnvironment::SANDBOX;
+ &nbsp;&nbsp;&nbsp;}
+ &nbsp;&nbsp;&nbsp;
+ };
+ //
+ // ---END CODE EXAMPLE---
+ //&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  </code></pre>
  */
 abstract class authorize {
-    
+
    /**
     * Specifies the merchant's transaction key.
     *
     * @return string
     */
    abstract protected function _get_transaction_key();
-    
+
    /**
     * Specifies the merchant's API login ID.
     *
     * @return string
     */
    abstract protected function _get_login_id();
-    
+
    /**
     * Specifies the API end point URL
     * @return string
     */
    abstract protected function _get_end_point();
-    
-   /**
-    * Specifies the API end point URL
-    * @return string
-    */
-   abstract protected function _get_log_file();
 
    /**
     * prepares merchant authentication object
@@ -160,7 +148,7 @@ abstract class authorize {
        
       throw new response_error($response);
    }
-    
+
 }
 
 
