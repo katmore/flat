@@ -31,7 +31,40 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\cloud;
-
+/**
+ * Authorize.net API call handler.
+ *
+ * You can use the following code-block as a stub to implement an API call handler...<br>
+ *    <i>(stub example is for the <b>Get Customer Profile IDs)</b> API call)
+ *    <br>
+ *    (see: http://developer.authorize.net/api/reference/#customer-profiles-get-customer-profile-ids)</i>
+ <pre><code>
+ &nbsp;&nbsp;&nbsp;//
+ &nbsp;&nbsp;&nbsp;// ---START CODE EXAMPLE---
+ &nbsp;&nbsp;&nbsp;//
+ &nbsp;&nbsp;&nbsp;new class() extends \flat\app\cloud\activepitch\authorize {
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public function __construct() {
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$request = new \net\authorize\api\contract\v1\GetCustomerProfileIdsRequest();
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$request->setMerchantAuthentication($this->_load_MerchantAuthentication());
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$response = $this->_executeWithApiResponse(
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new \net\authorize\api\controller\GetCustomerProfileIdsController($request)
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!$response instanceof \net\authorize\api\contract\v1\GetCustomerProfileIdsResponse) {
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw new \flat\cloud\authorize\unexpected_response (
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"expected GetCustomerProfileIdsResponse, instead got: " . get_class($response)
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+ &nbsp;&nbsp;&nbsp;};
+ &nbsp;&nbsp;&nbsp;//
+ &nbsp;&nbsp;&nbsp;// ---END CODE EXAMPLE---
+ &nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ </code></pre>
+ */
 abstract class authorize {
    
    /**
