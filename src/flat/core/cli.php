@@ -41,7 +41,7 @@ class cli {
     * int text wrapping logic will ignore reported column counts less than this amount
     */
    const min_cols = 20;
-    
+
    /**
     * string default command to report
     */
@@ -51,31 +51,31 @@ class cli {
     * @static
     */
    private static $_cols=null;
-    
+
    /**
     * @var string resource
     * @static
     */
    private static $_resource;
-    
+
    /**
     * @var string command to report
     * @static
     */
    private static $_command;
-    
+
    /**
     * @var string[] the argv array provided
     * @static
     */
    private static $_argv;
-    
+
    /**
     * @var string[] parameter list
     * @static
     */
    private static $_param;
-    
+
    /**
     * provides a reportable 'command' from given argv array.
     *
@@ -123,13 +123,13 @@ class cli {
          }
       }
    }
-    
+
    /**
     * @var callable
     *    function invoked to get value of the next "line" of "cli input"
     */
    private static $_input_handler;
-    
+
    /**
     * Entry point method;
     *    Activates a callback handler function invoked to get the value of the next "line" of
@@ -159,7 +159,7 @@ class cli {
    public static function each_input_line(callable $line_callback) {
       if (is_callable(self::$_input_handler)) {
          $handler = self::$_input_handler;
-          
+
          while($line = $handler()) {
             $line_callback($line);
          }
@@ -187,6 +187,7 @@ class cli {
                if (false !==(strpos($p,$char_alias))) return true;
             }
       }
+      return false;
    }
    /**
     * Application method;
@@ -278,7 +279,7 @@ class cli {
       //if (empty(self::$_command)) return self::command;
       return self::$_command;
    }
-    
+
    /**
     * Application function:
     *    Provides the resource as indicated by the cli argument list.
@@ -290,7 +291,7 @@ class cli {
       //if (empty(self::$_command)) return self::command;
       return self::$_resource;
    }
-    
+
    /**
     * @var callable
     *    function invoked to determine "cli line width"
@@ -311,7 +312,7 @@ class cli {
    public static function set_width_handler(callable $handler) {
       self::$_width_handler = $handler;
    }
-    
+
    /**
     * Application method;
     *    Returns (bool) true if quiet mode is active, (bool) false otherwise.
@@ -322,7 +323,7 @@ class cli {
       }
       return false;
    }
-    
+
    /**
     * @var callable
     *    Invoked when an "cli error line" has been provided.
@@ -342,7 +343,7 @@ class cli {
    public static function set_error_line_handler(callable $handler) {
       self::$_error_line_handler = $handler;
    }
-    
+
    /**
     * @var callable
     *    Invoked with a "cli line" has been provided.
@@ -382,7 +383,7 @@ class cli {
       self::$_print_handler = $handler;
    }
 
-    
+
    /**
     * Application method;
     *    Prints a string.
@@ -402,13 +403,13 @@ class cli {
       }
       echo $string;
    }
-    
+
    /**
     * @var callable
     *    invoked when an "cli dump expression" has been provided.
     */
    private static $_dump_handler;
-    
+
    /**
     * Entry point method;
     *    Specifies a handler invoked a "cli dump expression" has been provided
@@ -437,7 +438,7 @@ class cli {
       }
       call_user_func_array("var_dump",func_get_args());
    }
-    
+
    /**
     * Application method;
     *    Prints a string according to given format.
@@ -459,7 +460,7 @@ class cli {
       $sprintf = "sprintf";
       self::print_string(call_user_func_array($sprintf, $param_arr));
    }
-    
+
    /**
     * Application method;
     *    Displays a line of text with optional indentation.
@@ -516,7 +517,7 @@ class cli {
       echo self::get_wrapped_line($text);
       echo \PHP_EOL;
    }
-    
+
    /**
     * Application function;
     *    Formats a string as specified by wrapping as appropriate for the
