@@ -477,7 +477,7 @@ class cli {
       $tabs = 0;
       $not_quiet_only = false;
       if (!is_array($options)) {
-         if (is_int($options)) $tabs = $options['tabs'];
+         if (is_int($options)) $tabs = $options;
       } else {
          if (!empty($options['tabs'])) {
             $tabs = $options['tabs'];
