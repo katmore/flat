@@ -108,7 +108,7 @@ class cli {
       if (!is_int($param_start_idx) || ($param_start_idx<0)) $param_start_idx=2;
       if (!is_int($resource_idx) || ($resource_idx<0)) $resource_idx=1;
       if (($cmdarg = $param_start_idx-3)<0) $cmdarg = 0;
-      self::$_command = (isset($argv[$cmdarg])) ? $argv[$cmdarg] : "";
+      self::$_command = (isset($argv[$cmdarg])) ? pathinfo($argv[$cmdarg],\PATHINFO_BASENAME) : self::command;
       self::$_resource = (isset($argv[$resource_idx])) ? $argv[$resource_idx] : "";
       self::$_param = [];
       self::$_argv = $argv;
@@ -122,6 +122,13 @@ class cli {
             }
          }
       }
+   }
+    
+   /**
+    * Sets the reported 'command'
+    */
+   public static function set_command(string $command) {
+      self::$_command = $command;
    }
 
    /**
@@ -270,7 +277,7 @@ class cli {
    }
    /**
     * Application function:
-    *    Provides the cli command as indicated by the cli argument list.
+    *    Provides reported cli command.
     *
     * @return string
     * @static
