@@ -1,31 +1,17 @@
-<?php
+﻿<?php
 /**
  * class definition 
  *
  * PHP version >=7.1
  * 
- * Copyright (c) 2012-2017 Doug Bird. 
- *    All Rights Reserved. 
- * 
- * BY ACCESSING THE CONTENTS OF THIS SOURCE FILE IN ANY WAY YOU AGREE TO BE 
- * BOUND BY THE PROVISIONS OF THE "SOURCE FILE ACCESS AGREEMENT", A COPY OF 
- * WHICH CAN IS FOUND IN THE FILE 'LICENSE.txt'.
- * 
- * NO LICENSE, EXPRESS OR IMPLIED, BY THE COPYRIGHT OWNERS
- * OR OTHERWISE, IS GRANTED TO ANY INTELLECTUAL PROPERTY IN THIS SOURCE FILE.
- *
- * ALL WORKS HEREIN ARE CONSIDERED TO BE TRADE SECRETS, AND AS SUCH ARE AFFORDED 
- * ALL CRIMINAL AND CIVIL PROTECTIONS AS APPLICABLE.
- * 
- * @copyright Copyright (c) 2008 SebastiÃ¡n Grignoli All rights reserved.
+ * @copyright Copyright (c) 2008 Sebastian Grignoli All rights reserved.
  */
 namespace flat\vendor\neitanod\forceutf8;
 /**
- * @author   "SebastiÃ¡n Grignoli" <grignoli@gmail.com>
+ * @author   "Sebastian Grignoli" <grignoli@gmail.com>
  * @package  Encoding
  * @version  2.0
  * @link     https://github.com/neitanod/forceutf8
- * @example  https://github.com/neitanod/forceutf8
  * @license  Revised BSD
   */
 class Encoding {
@@ -129,15 +115,15 @@ class Encoding {
    *
    * It may fail to convert characters to UTF-8 if they fall into one of these scenarios:
    *
-   * 1) when any of these characters:   Ã€Ã�Ã‚ÃƒÃ„Ã…Ã†Ã‡ÃˆÃ‰ÃŠÃ‹ÃŒÃ�ÃŽÃ�Ã�Ã‘Ã’Ã“Ã”Ã•Ã–Ã—Ã˜Ã™ÃšÃ›ÃœÃ�ÃžÃŸ
+   * 1) when any of these characters:   Ãƒâ‚¬Ãƒï¿½Ãƒâ€šÃƒÆ’Ãƒâ€žÃƒâ€¦Ãƒâ€ Ãƒâ€¡ÃƒË†Ãƒâ€°ÃƒÅ Ãƒâ€¹ÃƒÅ’Ãƒï¿½ÃƒÅ½Ãƒï¿½Ãƒï¿½Ãƒâ€˜Ãƒâ€™Ãƒâ€œÃƒâ€Ãƒâ€¢Ãƒâ€“Ãƒâ€”ÃƒËœÃƒâ„¢ÃƒÅ¡Ãƒâ€ºÃƒÅ“Ãƒï¿½ÃƒÅ¾ÃƒÅ¸
    *    are followed by any of these:  ("group B")
-   *                                    Â¡Â¢Â£Â¤Â¥Â¦Â§Â¨Â©ÂªÂ«Â¬Â­Â®Â¯Â°Â±Â²Â³Â´ÂµÂ¶â€¢Â¸Â¹ÂºÂ»Â¼Â½Â¾Â¿
-   * For example:   %ABREPRESENT%C9%BB. Â«REPRESENTÃ‰Â»
-   * The "Â«" (%AB) character will be converted, but the "Ã‰" followed by "Â»" (%C9%BB)
+   *                                    Ã‚Â¡Ã‚Â¢Ã‚Â£Ã‚Â¤Ã‚Â¥Ã‚Â¦Ã‚Â§Ã‚Â¨Ã‚Â©Ã‚ÂªÃ‚Â«Ã‚Â¬Ã‚Â­Ã‚Â®Ã‚Â¯Ã‚Â°Ã‚Â±Ã‚Â²Ã‚Â³Ã‚Â´Ã‚ÂµÃ‚Â¶Ã¢â‚¬Â¢Ã‚Â¸Ã‚Â¹Ã‚ÂºÃ‚Â»Ã‚Â¼Ã‚Â½Ã‚Â¾Ã‚Â¿
+   * For example:   %ABREPRESENT%C9%BB. Ã‚Â«REPRESENTÃƒâ€°Ã‚Â»
+   * The "Ã‚Â«" (%AB) character will be converted, but the "Ãƒâ€°" followed by "Ã‚Â»" (%C9%BB)
    * is also a valid unicode character, and will be left unchanged.
    *
-   * 2) when any of these: Ã Ã¡Ã¢Ã£Ã¤Ã¥Ã¦Ã§Ã¨Ã©ÃªÃ«Ã¬Ã­Ã®Ã¯  are followed by TWO chars from group B,
-   * 3) when any of these: Ã°Ã±Ã²Ã³  are followed by THREE chars from group B.
+   * 2) when any of these: ÃƒÂ ÃƒÂ¡ÃƒÂ¢ÃƒÂ£ÃƒÂ¤ÃƒÂ¥ÃƒÂ¦ÃƒÂ§ÃƒÂ¨ÃƒÂ©ÃƒÂªÃƒÂ«ÃƒÂ¬ÃƒÂ­ÃƒÂ®ÃƒÂ¯  are followed by TWO chars from group B,
+   * 3) when any of these: ÃƒÂ°ÃƒÂ±ÃƒÂ²ÃƒÂ³  are followed by THREE chars from group B.
    *
    * @name toUTF8
    * @param string $text  Any string.

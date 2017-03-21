@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * \flat\view class definition 
  *
