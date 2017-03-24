@@ -1,4 +1,6 @@
-# flat: an experimental framework for php
+# Flat
+**The Flat Framework**
+
 *Flat* is an experimental framework for php.
 
 The purpose in creating *flat* is to have a framework which conceptualizes the organization of an application project as set of hierarchical resources.
@@ -128,7 +130,8 @@ if (class_exists($check_class)) {
 
 ## Legal
 ### Copyright
-The Flat Framework. https://github.com/katmore/flat
+The Flat Framework - https://github.com/katmore/flat
+
 Copyright (c) 2012-2016 Doug Bird. All Rights Reserved.
 
 ### License
