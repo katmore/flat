@@ -32,14 +32,13 @@
 *
 *
 */
-
 namespace flat\core\controller;
 /**
  * Interface neutral controller for defining RESTful responses to flat routes.
  *
  */
 abstract class api implements  \flat\core\input\consumer, \flat\core\controller {
-    
+
    final public function __construct($param=null, $callback=null) {
       if ($param!==null) {
          $method=null;$input=null;$response_handler=null;$response_cb=null;
@@ -131,7 +130,7 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
    final static public function set_response_handler(callable $handler) {
       self::$response_handler=$handler;
    }
-    
+
    /**
     * @var string fallback 'request method' when not specified by the input.
     */
@@ -156,6 +155,21 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
       }
       self::$_method = $method;
    }
+    
+   /**
+    * @var string
+    */
+   private static $_media_type = "";
+   public static function set_accept_mtype(string $media_type) :void {
+      self::$_media_type = $media_type;
+   }
+    
+   /**
+    * @var string
+    */
+   public static function get_accept_mtype() : string {
+      return self::$_media_type;
+   }
    /**
     * @var string
     *    request method corresponding to the current 'input', if any.
@@ -169,7 +183,7 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
       if (empty($this->_request_method)) throw new api\exception\missing_method();
       return (string) $this->_request_method;
    }
-    
+
    /**
     * @var bool
     *    true if the request method corresponding to the current 'input'
@@ -209,7 +223,7 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
       //       var_dump(get_called_class());
       //       die(__FILE__);
       if (empty($method)) {
-          
+
          $method = self::$_method;
       }
       $invoked_method = $method;
@@ -274,15 +288,6 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
    }
 
 }
-
-
-
-
-
-
-
-
-
 
 
 
