@@ -4,9 +4,7 @@
    "homepage":"https://github.com/katmore/flat",
     "autoload": {
         "psr-4": {
-            "flat\\":        "src/flat",
-            "flat\\deploy\\": "deploy",
-            "flat\\app\\": "app"
+            "flat\\":        "src/flat"
         }
     },
 	"license": [
