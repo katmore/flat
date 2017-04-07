@@ -49,7 +49,7 @@ use \net\authorize\api\contract\v1\AnetApiResponseType;
  //
  // ---START CODE EXAMPLE---
  //
- new class() extends \flat\app\cloud\activepitch\authorize {
+ new class() extends \actvp\cloud\activepitch\authorize {
  &nbsp;&nbsp;&nbsp;public function __construct() {
  &nbsp;&nbsp;&nbsp;
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$request = new \net\authorize\api\contract\v1\GetCustomerProfileIdsRequest();

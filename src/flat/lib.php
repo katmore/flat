@@ -32,8 +32,8 @@
  */
 namespace flat;
 /**
- * ideal for a structure of business logic within \flat\app. 
- *    children of this class should not be resolved within \flat\app\route
+ * ideal for a structure of business logic within \actvp. 
+ *    children of this class should not be resolved within \actvp\route
  *    but ideal for being used by resolved classes.
  * 
  * @package    flat\lib

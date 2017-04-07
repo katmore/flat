@@ -13,9 +13,9 @@
  */
 namespace flat\core;
 /**
- * class intended for extending within \flat\app
+ * class intended for extending within \actvp
  * 
- * @package    flat\app
+ * @package    actvp
  * @author     D. Bird <retran@gmail.com>
  * @copyright  Copyright (c) 2012-2014 Doug Bird. All Rights Reserved.
  * @version    0.1.0-alpha

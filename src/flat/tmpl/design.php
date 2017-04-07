@@ -33,7 +33,7 @@
 namespace flat\tmpl;
 /**
  * interface to indicate to the template controller that
- * a template (in flat\app\tmpl) should resolve to an
+ * a template (in actvp\tmpl) should resolve to an
  * explicit design path (rather than deriving from the resolution
  * by correlating the resource path to the namespace) 
  * 

@@ -20,8 +20,8 @@ namespace flat\data;
  * save and retrieve \flat\data objects from persistent storage
  *
  * when driver not given to class functions:
- *    if \flat\data object is defined in \flat\app\data:
- *       checks if object has interface of \flat\app\
+ *    if \flat\data object is defined in \actvp\data:
+ *       checks if object has interface of \actvp\
  * 
  *    --otherwise--
  * 

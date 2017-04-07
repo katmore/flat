@@ -33,7 +33,7 @@
 namespace flat\core\controller;
 /**
  * parent class which resolves a given resource into objects based on rules defined in
- *    \flat\app\route also, each object may have various processes invoked
+ *    \actvp\route also, each object may have various processes invoked
  *    according to a resolved object's defined interfaces.
  *
  * @package    flat\route
@@ -56,7 +56,7 @@ class route implements \flat\core\controller, \flat\core\collectable {
     *
     *
     * @throws \flat\core\controller\route\exception\no_route if
-    *    \flat\app\route does not have route factory correlating to the
+    *    \actvp\route does not have route factory correlating to the
     *    namespace shortName of this \flat\core\controller\route\__NAMESPACE_SHORTNAME__
     *    (shortName is name of the class extending the \flat\core\controller\route)
     * @throws \flat\core\exception child of \flat\core\exception depending on the error
@@ -133,7 +133,7 @@ class route implements \flat\core\controller, \flat\core\collectable {
             //\flat\core\debug::dump($route,"route");
          }
       /*
-       * create an event factory for all the \flat\app controllers to use
+       * create an event factory for all the \actvp controllers to use
        */
       $event = new \flat\core\app\event\factory();
       //var_dump( $param );

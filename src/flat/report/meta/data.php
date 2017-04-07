@@ -43,7 +43,7 @@
  */
 namespace flat\report\meta;
 class data extends \flat\core\data {
-   public $source; //(object) \flat\app\db
+   public $source; //(object) \actvp\db
    public $result_class="\\stdClass"; //(string) classname for result data
    public $agg_class="\\stdClass"; //(string) classname for result data
    public $collection=false; //(bool) wheather save results items in a collection

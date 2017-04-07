@@ -99,14 +99,14 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
             return "";
          }
       } else {
-//          if (get_called_class()=='flat\app\mail\tmpl\activepitch\artist') {
+//          if (get_called_class()=='actvp\mail\tmpl\activepitch\artist') {
 //             throw new \Exception(print_r($data,true));
 //          }         
          ob_start();
          static::display($design,$data);
          $ob = ob_get_clean();
       }
-//       if (get_called_class()=='flat\app\mail\tmpl\activepitch\artist') {
+//       if (get_called_class()=='actvp\mail\tmpl\activepitch\artist') {
 //          throw new \Exception('asdf');
 //       }
       

@@ -47,14 +47,14 @@ class encode implements \flat\core\serializer {
       }
       $nl = $param['newline'];
       if (is_object($input)) {
-         $type = str_replace('flat\app','',get_class($input));
+         $type = str_replace('actvp','',get_class($input));
       } else {
          $type = gettype($input);
       }
       $text = "";
       //$text = "$type:$nl";
       $text .= self::data_to_text($input,$param['newline'],$param['ident_level'],$param['ident_size'],$param['ident_char'] );
-      return $text.$nl;
+      return trim($text.$nl);
     }
    private static function _ident($level=1,$size=3,$char=" ") {
       $ident="";

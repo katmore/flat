@@ -32,7 +32,7 @@
  */
 namespace flat;
 /**
- * facilitate report generation from a \flat\app\db definition
+ * facilitate report generation from a \actvp\db definition
  * 
  * @package    flat\report
  * @author     D. Bird <retran@gmail.com>
@@ -63,7 +63,7 @@ abstract class report implements \flat\core\app , \flat\core\routable {
     * prepare report
     * 
     * @param string|array $source (optional) if empty, defaults to corresponding 
-    *    class name in \flat\app\db. if $source is string of \flat\db 
+    *    class name in \actvp\db. if $source is string of \flat\db 
     *    child class name, will use that as source. if $source is array, will 
     *    use that as collection by mapping it. if $source is 
     *    \flat\data\collection class, will use that as source. 
@@ -89,7 +89,7 @@ abstract class report implements \flat\core\app , \flat\core\routable {
          // } 
          // if (empty($source)) {
             // $r = new \ReflectionClass($this);
-            // $source = "\\flat\\app\\db\\".\flat\app\meta::ns."\\".$r->getShortName();
+            // $source = "\\flat\\app\\db\\".\actvp\meta::ns."\\".$r->getShortName();
          // }
          // $this->meta = new \flat\report\meta\data(
             // array("source"=>$source)
