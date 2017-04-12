@@ -1,12 +1,12 @@
 <?php
 /**
- * class definition 
+ * class definition
  *
  * PHP version >=7.1
- * 
- * Copyright (c) 2012-2017 Doug Bird. 
- *    All Rights Reserved. 
- * 
+ *
+ * Copyright (c) 2012-2017 Doug Bird.
+ *    All Rights Reserved.
+ *
  * COPYRIGHT NOTICE:
  * The flat framework. https://github.com/katmore/flat
  * Copyright (c) 2012-2017  Doug Bird.
@@ -14,16 +14,16 @@
  * UNLESS A DIFFERENT COPYRIGHT NOTICE IS EXPLICITLY PROVIDED WITH AN EXPLANATION OF WHERE
  * THAT DIFFERENT COPYRIGHT APPLIES. WHERE SUCH A DIFFERENT COPYRIGHT NOTICE IS PROVIDED
  * IT SHALL APPLY EXCLUSIVELY TO THE MATERIAL AS DETAILED WITHIN THE NOTICE.
- * 
+ *
  * The flat framework is copyrighted free software.
  * You can redistribute it and/or modify it under either the terms and conditions of the
  * "The MIT License (MIT)" (see the file MIT-LICENSE.txt); or the terms and conditions
  * of the "GPL v3 License" (see the file GPL-LICENSE.txt).
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * @license The MIT License (MIT) http://opensource.org/licenses/MIT
  * @license GNU General Public License, version 3 (GPL-3.0) http://opensource.org/licenses/GPL-3.0
  * @link https://github.com/katmore/flat
@@ -57,11 +57,18 @@ class response {
       return $this->_doc;
    }
    public function simplexpath($xquery,$demand_result=true) {
-      //var_dump($this->_simplexml);die('core curl respones');
       if (empty($this->_simplexml)) $this->_init_dom();
       if (false === ($result =   $this->_simplexml->xpath($xquery))) {
-         throw new exception\xpath_error($xquery,"url: ".$this->request->url_string);
+         $details = [];
+         if (count($xmlerr = libxml_get_errors())) {
+            $xmlerr = array_pop($xmlerr);
+            if (($xmlerr instanceof \LibXMLError) && !empty($xmlerr->message)) {
+               $details []= $xmlerr->message;
+            }
+         }
+         throw new exception\xpath_error($xquery,implode(", ",$details));
       }
+      //error_reporting($old_reporting);
       if ($demand_result && count($result)<1) {
          throw new exception\no_xpath_results($xquery,"url: ".$this->request->url_string);
       }
@@ -75,11 +82,11 @@ class response {
    
    public static function is_robots_allowed($url,$useragent) {
       $parsed = request::parse_url($url);
-
+      
       $agents = array(preg_quote('*'));
       $agents[] = preg_quote($useragent, '/');
       $agents = implode('|', $agents);
-
+      
       $robots_url = "{$parsed['scheme']}://{$parsed['host']}/robots.txt";
       $handle = curl_init($robots_url);
       curl_setopt($handle,  \CURLOPT_RETURNTRANSFER, TRUE);
@@ -93,57 +100,57 @@ class response {
       }
       curl_close($handle);
       
-   
+      
       // if there isn't a robots, then we're allowed in
       if(empty($robotstxt)) return true;
-
+      
       $rules = array();
       $ruleApplies = false;
       foreach($robotstxt as $line) {
-        // skip blank lines
-      if(!$line = trim($line)) continue;
-   
+         // skip blank lines
+         if(!$line = trim($line)) continue;
+         
          // following rules only apply if User-agent matches $useragent or '*'
-      if(preg_match('/^\s*User-agent: (.*)/i', $line, $match)) {
-         $ruleApplies = preg_match("/($agents)/i", $match[1]);
-         continue;
+         if(preg_match('/^\s*User-agent: (.*)/i', $line, $match)) {
+            $ruleApplies = preg_match("/($agents)/i", $match[1]);
+            continue;
+         }
+         
+         if($ruleApplies) {
+            $rule_parts = explode(':', $line, 2);
+            if (!empty($rule_parts[0])) {
+               $type = trim(strtolower($rule_parts[0]));
+            }
+            if (!empty($rule_parts[1])) {
+               $rule = trim($rule_parts[1]);
+            }
+            // add rules that apply to array for testing
+            $rules[] = array(
+               'type' => $type,
+               'match' => preg_quote($rule, '/'),
+            );
+         }
       }
       
-      if($ruleApplies) {
-        $rule_parts = explode(':', $line, 2);
-        if (!empty($rule_parts[0])) {
-         $type = trim(strtolower($rule_parts[0]));
-        }
-        if (!empty($rule_parts[1])) {
-         $rule = trim($rule_parts[1]);
-        }        
-        // add rules that apply to array for testing
-        $rules[] = array(
-          'type' => $type,
-          'match' => preg_quote($rule, '/'),
-        );
+      $isAllowed = true;
+      $currentStrength = 0;
+      foreach($rules as $rule) {
+         // check if page hits on a rule
+         if(preg_match("/^{$rule['match']}/", $parsed['path'])) {
+            // prefer longer (more specific) rules and Allow trumps Disallow if rules same length
+            $strength = strlen($rule['match']);
+            if($currentStrength < $strength) {
+               $currentStrength = $strength;
+               $isAllowed = ($rule['type'] == 'allow') ? true : false;
+            } elseif($currentStrength == $strength && $rule['type'] == 'allow') {
+               $currentStrength = $strength;
+               $isAllowed = true;
+            }
+         }
       }
-    }
-
-    $isAllowed = true;
-    $currentStrength = 0;
-    foreach($rules as $rule) {
-      // check if page hits on a rule
-      if(preg_match("/^{$rule['match']}/", $parsed['path'])) {
-        // prefer longer (more specific) rules and Allow trumps Disallow if rules same length
-        $strength = strlen($rule['match']);
-        if($currentStrength < $strength) {
-          $currentStrength = $strength;
-          $isAllowed = ($rule['type'] == 'allow') ? true : false;
-        } elseif($currentStrength == $strength && $rule['type'] == 'allow') {
-          $currentStrength = $strength;
-          $isAllowed = true;
-        }
-      }
-    }
-
-    return $isAllowed;
-  }
+      
+      return $isAllowed;
+   }
    
    private $_purge_save = false;
    public function __destruct() {
@@ -163,7 +170,7 @@ class response {
    /**
     * provides filename of response data.
     *    if a file has not been created, one will be made.
-    * 
+    *
     * @return string
     */
    public function get_file($path=null) {
@@ -183,7 +190,7 @@ class response {
    }
    const use_robots_default = true;
    /**
-    * 
+    *
     * @param mixed $param
     * @param array $flags OPTIONAL
     * @param string $cookie_file OPTIONAL
@@ -191,14 +198,14 @@ class response {
    public function __construct( $param, array $flags=array('use_robots'), $cookie_file=NULL) {
       
       /* most common use-type...?
-         new \flat\core\curl\config(
-            new \flat\core\curl\request($company_logos_cdn)
-         ),
+       new \flat\core\curl\config(
+       new \flat\core\curl\request($company_logos_cdn)
+       ),
        */
       
       $use_robots = self::use_robots_default;
       $use_dom = false;
-      $save = false;      
+      $save = false;
       $save_file = null;
       
       if ($param instanceof config) {
@@ -206,8 +213,8 @@ class response {
       } else {
          if (is_scalar($param)) {
             $config = new config(
-               new request($param)
-            );
+                  new request($param)
+                  );
          } elseif (is_array($param)) {
             $requestp=[
                'url'=>null,
@@ -229,18 +236,18 @@ class response {
                if (isset($param[$k])) {
                   $v = $param[$k];
                }
-            }     
+            }
             $config = new config(
-               new request(
-                  $requestp['url'],
-                  $requestp['data'],
-                  $requestp['data_encoding'],
-                  $requestp['data_content_type']
-               ),
-               $configp['request_method'],
-               $configp['user_agent'],
-               $configp['referrer']
-            );
+                  new request(
+                        $requestp['url'],
+                        $requestp['data'],
+                        $requestp['data_encoding'],
+                        $requestp['data_content_type']
+                        ),
+                  $configp['request_method'],
+                  $configp['user_agent'],
+                  $configp['referrer']
+                  );
             if (!empty($param['save_file']) && is_string($param['save_file'])) {
                $save = true;
                $save_file = $param['save_file'];
@@ -248,7 +255,7 @@ class response {
             if (!empty($param['save']) && is_string($param['save'])) {
                $save = true;
                $save_file = $param['save'];
-            }            
+            }
          }
       }
       $request = $config->request;
@@ -256,7 +263,7 @@ class response {
       if (in_array('save',$flags)) {
          $save = true;
       }
-
+      
       if (in_array('use_dom',$flags)) {
          $use_dom=true;
       }
@@ -291,13 +298,13 @@ class response {
       
       //var_dump($config->request->url);die('core curl response');
       if ($use_robots) self::_check_robots_allowed(
-         $config->request->url_string,
-         $config->user_agent
-      );
+            $config->request->url_string,
+            $config->user_agent
+            );
       
       //var_dump($request->url);die('curl response (die)');
       $url = $request->url_string;
-       
+      
       $this->_ch = $ch = curl_init($url);
       
       curl_setopt($ch, \CURLOPT_USERAGENT, $config->user_agent);
@@ -310,10 +317,10 @@ class response {
       
       if (!empty($request->data)) {
          curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, $config->request_method);
-         curl_setopt($ch, \CURLOPT_HTTPHEADER, array(                                                                          
-             'Content-Type: '.$request->content_type,                                                                                
-             'Content-Length: ' . strlen($request->data))                                                                       
-         );
+         curl_setopt($ch, \CURLOPT_HTTPHEADER, array(
+            'Content-Type: '.$request->content_type,
+            'Content-Length: ' . strlen($request->data))
+               );
       }
       
       curl_setopt($ch, \CURLOPT_CONNECTTIMEOUT ,5);
@@ -350,7 +357,7 @@ class response {
          throw new exception\missing_curlinfo();
       }
       $this->status_code = $this->info['http_code'];
-
+      
       /*
        * if usedom indicated
        */
@@ -362,7 +369,7 @@ class response {
    }
    private function _init_dom() {
       /*
-       * tell libxml not be a whiney 
+       * tell libxml not be a whiney
        */
       libxml_use_internal_errors(true);
       
