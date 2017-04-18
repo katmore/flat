@@ -50,7 +50,23 @@ namespace flat\core;
 
 abstract class exception extends \Exception{
    use exception\controller;
-   
+   private $_exception_data = [];
+   protected function _set_exception_data(array $data) {
+      $data = json_decode(json_encode($data));
+      if (is_array($data)) {
+         $this->_exception_data = [
+            'data'=>$data,
+         ];
+      } else {
+         $this->_exception_data = json_decode(json_encode($data),\JSON_OBJECT_AS_ARRAY);
+      }
+   }
+   /**
+    * @return \stdClass
+    */
+   public function get_exception_data() : \stdClass {
+      return (object) $_exception_data;
+   }
    public function __construct($msg,$code=0) {
       if (!is_int($code)) $code = 0;
       /*
