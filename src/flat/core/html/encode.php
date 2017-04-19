@@ -88,6 +88,12 @@ class encode implements \flat\core\serializer {
             $value_type_str = "";
             if (is_scalar($value)) {
                $value_type_str = 'data-type="'.gettype($value).'"';
+               if (is_bool($value)) {
+                  $value_type_str .= ' data-boolean-value="'.($value?'true':'false').'"';
+               }
+            }
+            if (is_null($value)) {
+               $value_type_str = 'data-type="null"';
             }
             $html .=
             "<span data-role=\"item-value\" $value_type_str>". self::_data_to_html($value, $parent_element,$child_element,$indent_level);
@@ -102,9 +108,9 @@ class encode implements \flat\core\serializer {
          if (is_scalar($data) && ctype_print(str_replace(array("\n","\r"),"",(string) $data))) {
             return htmlspecialchars($data, ENT_QUOTES);
          } else {
-            if (is_bool($data)) {
-               return ($data?"true":"false");
-            }
+            //               if (is_bool($data)) {
+            //                  return ($data?"true":"false");
+            //               }
             ob_start();
             var_dump($data);
             $dump = ob_get_clean();
