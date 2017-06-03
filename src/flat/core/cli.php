@@ -482,7 +482,7 @@ class cli {
     */
    public static function line($text="",$options=null) {
       $tabs = 0;
-      $not_quiet_only = false;
+      //$not_quiet_only = false;
       if (!is_array($options)) {
          if (is_int($options)) $tabs = $options;
       } else {
@@ -515,7 +515,7 @@ class cli {
       }
 
       if ($error===false) {
-         if (!self::is_quiet() || !$not_quiet_only) {
+         if (!self::is_quiet()) {
             echo self::get_wrapped_line($text,$cbopt);
          }
          return;
