@@ -789,12 +789,14 @@ trait mapper {
        */
       
       foreach( $r->getProperties(\ReflectionProperty::IS_PROTECTED) as $rp) {
+         
+         if ($rp->isStatic()) continue;
+         
          //unset($this->$rp->name);
          $name = $rp->name;
          //var_dump($name);die('flat data die');
          if (!$this->_purged_done) {
             $this->_purged[$name] = $this->$name;
-            
          }
          unset($this->$name);
       }
