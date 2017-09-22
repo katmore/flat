@@ -130,10 +130,19 @@ implements \flat\data\ready
     * @return float
     */
    public function ratio() {
-      //    var_dump($this->w * 1.0 / $this->h);
-      //    die();
+         if($this->w > 0 && $this->h > 0){
+
+            //    var_dump('w', $this->w);
+            //    var_dump($this->h);
+            //    var_dump($this->w * 1.0 / $this->h);
+            //    die();
+            return (float) $this->w * 1.0 / $this->h;
+         }
+         else{
+               return (float) 1;
+         }
       
-      return (float) ($this->w * 1.0 / $this->h ? $this->w * 1.0 / $this->h : 1);
+      // return (float) ($this->w * 1.0 / $this->h ? $this->w * 1.0 / $this->h : 1);
       // return 1;
    }
     
