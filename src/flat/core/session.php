@@ -189,9 +189,12 @@ class session {
     * @static
     * @throws \flat\core\session\exception\no_session_var
     */
-   protected static function _start() {
+   protected static function _start(string $session_id="") {
       $newstart = false;
       if (session_status() == \PHP_SESSION_NONE) {
+         if (!empty($session_id)) {
+            session_id($session_id);
+         }
          $newstart = session_start();
       }
       if (!isset($_SESSION)) {
@@ -252,17 +255,30 @@ class session {
    /**
     * really starts php session, optionally destroying an old one beforehand
     * 
-    * @param string[] $flags optional flags:
+    * @param string[] $flags optionally specify any of the following flags an array element string value:
+    * <ul>
+    *    <li><b>destroy</b>: destroy any existing session data</li>
+    *    <li><b>refresh</b>: updates the session meta-data activity with current time</li>
+    *    <li><b>no-cookies</b>: do not utilize PHP's built-in "session cookie" methodology</li>
+    * </ul>
     *    
     * @return string session id
     * @static
     */
-   public static function start(array $flags=['refresh']) {
+   public static function start(array $flags=['refresh'], string $session_id="") {
       
       if (in_array('destroy',$flags)) self::destroy();
       
-      
-      if (self::_start()) {
+      if (in_array('no-cookies',$flags)) {
+         if (empty($session_id)) {
+            throw new session\exception\bad_config("'session_id' cannot be empty when 'no-cookies' flag is specified");
+         }
+         ini_set("session.use_cookies", 0);
+         ini_set("session.use_only_cookies", 0);
+         ini_set("session.cache_limiter", "");
+      }
+
+      if (self::_start($session_id)) {
          if (in_array('refresh',$flags)) {
             self::refresh();
          }
