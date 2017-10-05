@@ -262,22 +262,26 @@ class session {
     *    <li><b>no-cookies</b>: do not utilize PHP's built-in "session cookie" methodology</li>
     * </ul>
     * @param string $session_id specify a session id. a non-empty value is required if the "no-cookies" flag is specified
-    
+    * 
     * @return string session id
     * @static
     */
    public static function start(array $flags=['refresh'], string $session_id="") {
       
-      if (in_array('destroy',$flags)) self::destroy();
       
       if (in_array('no-cookies',$flags)) {
+         
          if (empty($session_id)) {
             throw new session\exception\bad_config("'session_id' cannot be empty when 'no-cookies' flag is specified");
          }
+         
          ini_set("session.use_cookies", 0);
          ini_set("session.use_only_cookies", 0);
          ini_set("session.cache_limiter", "");
       }
+      
+      if (in_array('destroy',$flags)) self::destroy();
+
 
       if (self::_start($session_id)) {
          if (in_array('refresh',$flags)) {
