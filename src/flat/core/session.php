@@ -261,7 +261,8 @@ class session {
     *    <li><b>refresh</b>: updates the session meta-data activity with current time</li>
     *    <li><b>no-cookies</b>: do not utilize PHP's built-in "session cookie" methodology</li>
     * </ul>
-    *    
+    * @param string $session_id specify a session id. a non-empty value is required if the "no-cookies" flag is specified
+    
     * @return string session id
     * @static
     */
