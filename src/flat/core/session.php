@@ -205,6 +205,12 @@ class session {
       }
    }
    
+   private static $_destroy_listener = [];
+   
+   public static function add_destroy_listener(callable $listener) {
+      self::$_destroy_listener []=$listener;
+   }
+   
    /**
     * destroys current session
     * @return void
@@ -213,15 +219,24 @@ class session {
       self::_start();
       if (session_status() == \PHP_SESSION_ACTIVE) {
          $_SESSION = [];
-         session_regenerate_id(true);
          if (ini_get("session.use_cookies")) {
-             $params = session_get_cookie_params();
-             setcookie(session_name(), '', time() - 42000,
-                 $params["path"], $params["domain"],
-                 $params["secure"], $params["httponly"]
-             );
-         }         
+            session_regenerate_id(true);
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+         }
          session_destroy();
+         if (count(self::$_destroy_listener)) {
+            $flags = [];
+            if (ini_get("session.use_cookies")) {
+               $flags []= 'no-cookies';
+            }
+            foreach(self::$_destroy_listener as $listener) {
+               $listener($flags);
+            }
+         }
       }
    }
    /**
