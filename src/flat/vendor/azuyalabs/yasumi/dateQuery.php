@@ -115,8 +115,8 @@ class dateQuery {
          $year = $this->_year = date('Y',$date);
       }
       $this->_provider_id = $provider."_".$year;
-      if (! $this->_provider_map[$this->_provider_id]) {
-         $this->_provider = $this->_provider_map[$this->_provider_id] = Yasumi::create($provider, $year);
+      if (empty(static::$_provider_map[$this->_provider_id])) {
+         $this->_provider = static::$_provider_map[$this->_provider_id] = Yasumi::create($provider, $year);
       }
    }
    
