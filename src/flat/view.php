@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * \flat\view class definition 
  *
@@ -31,4 +31,4 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat;
-abstract class view extends \flat\core\controller\view implements \flat\core\app \flat\core\routable {}
+abstract class view extends \flat\core\controller\view implements \flat\core\app, \flat\core\routable {}
