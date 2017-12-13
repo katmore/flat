@@ -554,11 +554,7 @@ class cli {
       }
       $text = str_replace("\t",$identstring,$text);
       if (!is_callable(self::$_width_handler)) {
-         self::$_width_handler = function() {
-            $tput_cols = exec('tput cols',$output,$return);
-            if ($return===0) return (int) sprintf("%d",trim($tput_cols));
-            return null;
-         };
+         return $text.\PHP_EOL;
       }
       $width_handler = self::$_width_handler;
       $width = $width_handler();
