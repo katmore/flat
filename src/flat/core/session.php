@@ -195,7 +195,13 @@ class session {
          if (!empty($session_id)) {
             session_id($session_id);
          }
-         $newstart = session_start();
+         for($i=0;$i<100;$i++) {
+            $newstart = @session_start();
+            if ($newstart) {
+               break 1;
+            }
+            usleep(10000);
+         }
       }
       if (!isset($_SESSION)) {
          throw new session\exception\no_session_var();
