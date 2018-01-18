@@ -132,7 +132,7 @@ if (class_exists($check_class)) {
 ### Copyright
 The Flat Framework - https://github.com/katmore/flat
 
-Copyright (c) 2012-2016 Doug Bird. All Rights Reserved.
+Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
 
 ### License
 The Flat Framework is copyrighted free software.
