@@ -55,6 +55,13 @@ class config extends \flat\core {
     * @access private
     * @var string[] array of loaded config files
     */
+   private static $ref_loaded = [];
+   
+   /**
+    * @static
+    * @access private
+    * @var string[] array of loaded config files
+    */
    private static $loaded;
    
    /**
@@ -71,6 +78,12 @@ class config extends \flat\core {
     */    
    private static $searched;
 
+   /**
+    * @static
+    * @access private
+    * @var string[] array of config keys already searched for, successful or not
+    */
+   private static $ref_searched;
    /**
     * top level of namespace used to canonicalize config key and path 
     * @internal
@@ -113,6 +126,73 @@ class config extends \flat\core {
       self::$value[$key] = $value;
    }
    
+   
+   private static $ref_value;
+   
+   /**
+    * save config ref value to memory
+    *
+    * @static
+    * @access private
+    * @param string $basename ref basename
+    * @param string $ns ref namespace
+    * @param mixed $value value associated with given config ref basename and ns
+    * @return void
+    */
+   private static function _set_ref_value(string $basename, string $ns, $value) : void {
+      if (!isset(self::$ref_value[$basename])) {
+         self::$ref_value[$basename] = [];
+      }
+      self::$ref_value[$basename][$ns] = $value;
+   }
+   
+   /**
+    * retrieve a config reference value
+    * 
+    * @static
+    * @param string $basename refernce basename 
+    * @param string $ns reference 
+    * @return mixed
+    * @throws \flat\core\config\exception\not_ready
+    * @throws \flat\core\config\exception\bad_key
+    * @throws \flat\core\config\exception\bad_config_file
+    */
+   public static function get_ref_value(string $basename, string $ns) {
+      if (empty(self::$base_dir)) {
+         if (isset($options['default'])) return $options['default'];
+         throw new config\exception\not_ready();
+      }
+      
+      if (isset(self::$ref_searched[$basename]) && !empty(self::$ref_searched[$basename][$ns])) {
+         return self::_get_ref_value($basename, $ns);
+      }
+      
+      if (!isset(self::$ref_searched[$basename])) {
+         self::$ref_searched[$basename] = [];
+      }
+      
+      self::$ref_searched[$basename][$ns]=true;
+      
+      self::_load_config_ref($basename);
+      
+      return self::_get_ref_value($basename, $ns);
+   }
+   
+   /**
+    * retrieve a config reference value from memory
+    * 
+    * @static
+    * @internal
+    */
+   private static function _get_ref_value(string $basename, string $ns) {
+      if (isset(self::$ref_value[$basename]) && key_exists($ns,self::$ref_value[$basename])) {
+         return self::$ref_value[$basename][$ns];
+      }
+      throw new config\exception\key_not_found(self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM."$basename.$ns");
+   }
+   
+   const REFERENCE_VALUE_PREFIX = 'CONFIG-REF';
+   const REFERENCE_VALUE_DELIM = '::';
    /**
     * retrieve a config value from memory
     * 
@@ -126,6 +206,7 @@ class config extends \flat\core {
     *    associated with given config key if $options['not_found_exception']
     *    is not false 
     * @return mixed
+    * @internal
     */
    private static function _get_value($key,array $options=NULL) {
       
@@ -134,13 +215,49 @@ class config extends \flat\core {
       
       /**
        * @uses self::$value all loaded config values indexed assoc by config key of 
+       * @internal
        */
-      if (isset(self::$value[$key])) return self::$value[$key];
+      if (isset(self::$value[$key])) {
+         if (is_string(self::$value[$key])) {
+            if (substr(self::$value[$key],0,strlen(self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM)) == self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM) {
+               //CONFIG-REF::localization.tz
+               $refsub = substr(self::$value[$key],strlen(self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM));
+               if (false!==($dotpos = strpos($refsub,"."))) {
+                  $basename = substr($refsub,0,$dotpos);
+                  $ns = substr($refsub,$dotpos+1);
+                  if (!empty($basename) && !empty($ns)) {
+                     try {
+                        return self::get_ref_value($basename, $ns);
+                     } catch (config\exception\key_not_found $e) {
+                        //config value for 'CONFIG-REF::localization.memcached_serverz' not found
+                        throw new config\exception\key_not_found("$key=".self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM."$basename.$ns");
+                        //die(__FILE__);
+                     }
+                  }
+               }
+            }
+         }
+         return self::$value[$key];
+      };
       
       /**
        * @uses $not_found_exception if truthy
        */
       if ($not_found_exception) throw new config\exception\key_not_found($key);
+      
+   }
+   
+   /**
+    * retrieve all config reference values from a given basename
+    * 
+    * @static
+    * @param string $basename reference basename 
+    * @return array
+    */
+   public static function enum_ref_values(string $basename) {
+      $subdir = $basename;
+      $subdir = str_replace("\\","/",$subdir);
+      $subdir = str_replace("/",\DIRECTORY_SEPARATOR, $subdir);
       
    }
    
@@ -151,7 +268,15 @@ class config extends \flat\core {
     * @param string $path config path. note this is NOT a system path.  
     * @return array
     */
-   public static function get_values($path,array $options=NULL) {
+   public static function enum_values($path,array $options=NULL) {
+      /*
+       * @uses config::$base_dir when empty config values are not available
+       *
+       * @internal
+       */
+      if (empty(self::$base_dir)) {
+         throw new config\exception\not_ready();
+      }
       $path = self::_canonicalize_path($path,$options);
       $file = self::$base_dir . "/".$path.".php";
       return self::_get_config_arr($file);
@@ -228,6 +353,9 @@ class config extends \flat\core {
     *    string $options['key_name_base'] value to remove from the beginning of key-name; useful for inherited classes
     *       to get an option from their own namespace.  
     * @return mixed
+    * @throws \flat\core\config\exception\not_ready
+    * @throws \flat\core\config\exception\bad_key
+    * @throws \flat\core\config\exception\bad_config_file
     */
    public static function get($key,array $options=NULL) {
       
@@ -327,13 +455,80 @@ class config extends \flat\core {
       return self::_get_value($key,$options);
       
    }
+   
+   /**
+    * @static
+    * @var string[] $_not_config filenames that previously failed to load
+    * @access private
+    */
+   private static $_not_config_ref=[];
 
+   /**
+    * retrieve assoc array of config reference values from config file
+    *
+    * @static
+    * @access private
+    * @param string $filename filename
+    * @throws config\exception\bad_config_file if config file
+    *    does not contain assoc array
+    *
+    * @return array|null
+    * @internal
+    */
+   private static function _get_config_ref_arr(string $filename) {
+      /*
+       * leave if already determined that given filename cannot be loaded
+       */
+      if (in_array($filename,self::$_not_config_ref)) return;
+      
+      /*
+       * proceed if file can be included
+       */
+      if (is_file($filename) && is_readable($filename) && (pathinfo($filename,\PATHINFO_EXTENSION)=='json')) {
+         
+         $doc = file_get_contents($filename);
+         
+         if (empty($doc)) throw new config\exception\bad_config_file(
+               $filename,
+               "config ref file cannot be empty"
+               );
+         
+         if (null === ($cfg = json_decode($doc))) {
+            throw new config\exception\bad_config_file(
+                  $filename,
+                  "config ref file contains invalid JSON"
+                  );
+         }
+         
+         if (!is_object($cfg)) {
+            throw new config\exception\bad_config_file(
+                  $filename,
+                  "config ref file must contain a JSON object"
+                  );
+         }
+         
+         $cfg = json_decode($doc, true);
+         
+         foreach ($cfg as $key=>$val) {
+            if (!is_string($key))
+            throw new config\exception\bad_key;
+         }
+            
+         return $cfg;
+            
+      } else {
+         
+         self::$_not_config_ref[] = $filename;
+         
+      }
+   }
+   
    /**
     * @static
     * @var string[] $_not_config filenames that previously failed to load 
     * @access private
     */
-   private static $_not_config=array();
+   private static $_not_config=[];
    
    /**
     * retrieve assoc array of config values from config file
@@ -345,6 +540,7 @@ class config extends \flat\core {
     *    does not contain assoc array
     * 
     * @return array|null
+    * @internal
     */
    private static function _get_config_arr($filename) {
       
@@ -356,7 +552,7 @@ class config extends \flat\core {
       /*
        * proceed if file can be included
        */
-      if (is_file($filename) && is_readable($filename)) {
+      if (is_file($filename) && is_readable($filename) && (pathinfo($filename,\PATHINFO_EXTENSION)=='php')) {
          
          $cfg = include($filename);
          
@@ -378,6 +574,31 @@ class config extends \flat\core {
    }
    
    /**
+    * attempt to load a given config ref basename to memory
+    * returns bool true if successful, false otherwise
+    *
+    * @static
+    * @access private
+    * @param string $ns namespace
+    * @return bool
+    */
+   private static function _load_config_ref(string $basename) : bool {
+      $subpath = str_replace("\\","/",$basename);
+      $file = self::$base_dir . "/".$subpath.".json";
+      $file = str_replace("/",\DIRECTORY_SEPARATOR, $file);
+      if (in_array($file,self::$ref_loaded)) return true;
+      
+      if (is_array($cfg = self::_get_config_ref_arr($file))) {
+         foreach ($cfg as $ns=>$val) {
+            self::_set_ref_value($basename,$ns,$val);
+         }
+         self::$ref_loaded []= $file;
+         return true;
+      }
+      return false;
+   }
+   
+   /**
     * attempt to load a given namespace's config to memory
     * returns bool true if successful, false otherwise
     * 
@@ -386,18 +607,16 @@ class config extends \flat\core {
     * @param string $ns namespace
     * @return bool
     */
-   private static function _load_config($ns) {
-      
+   private static function _load_config($ns) : bool {      
       $file = self::$base_dir . "/".$ns.".php";
+      $file = str_replace("/",\DIRECTORY_SEPARATOR, $file);
       if (in_array($file,self::$loaded)) return true;
               
       if (is_array($cfg = self::_get_config_arr($file))) {
          foreach ($cfg as $key=>$val) {
-            //$full_key = "$ns/".$key;
-            //echo "src/config::key: $full_key=$val<br>";
             self::_set_value("$ns/".$key,$val);
          }
-         
+         self::$loaded []= $file;
          return true;
       }
       return false;
