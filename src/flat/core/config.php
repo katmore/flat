@@ -43,6 +43,13 @@ namespace flat\core;
  */
 class config extends \flat\core {
    
+   const NS_TOP_LEVEL = 'flat';
+   const REFERENCE_VALUE_IDENTIFIER_PREFIX = 'CONFIG-REF';
+   const REFERENCE_VALUE_IDENTIFIER_TERMINATOR = '::';
+   const REFERENCE_VALUE_INLINE_STRING_START_TOKEN = '<%'.self::REFERENCE_VALUE_IDENTIFIER_PREFIX.'-STRING'.self::REFERENCE_VALUE_IDENTIFIER_TERMINATOR;
+   const REFERENCE_VALUE_INLINE_STRING_END_TOKEN = '%>';
+   const REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR = '.';
+   
    /**
     * @static
     * @access private
@@ -84,11 +91,10 @@ class config extends \flat\core {
     * @var string[] array of config keys already searched for, successful or not
     */
    private static $ref_searched;
-   /**
-    * top level of namespace used to canonicalize config key and path 
-    * @internal
-    */
-   const ns_top_level = 'flat';
+   
+   private static $ref_value = [];
+   
+   private static $transformed_value = [];
    
    /**
     * tests if given base directory is useable
@@ -125,9 +131,6 @@ class config extends \flat\core {
    private static function _set_value($key,$value) {
       self::$value[$key] = $value;
    }
-   
-   
-   private static $ref_value;
    
    /**
     * save config ref value to memory
@@ -188,11 +191,9 @@ class config extends \flat\core {
       if (isset(self::$ref_value[$basename]) && key_exists($ns,self::$ref_value[$basename])) {
          return self::$ref_value[$basename][$ns];
       }
-      throw new config\exception\key_not_found(self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM."$basename.$ns");
+      throw new config\exception\key_not_found(self::REFERENCE_VALUE_IDENTIFIER_PREFIX.self::REFERENCE_VALUE_IDENTIFIER_TERMINATOR."$basename.$ns");
    }
    
-   const REFERENCE_VALUE_PREFIX = 'CONFIG-REF';
-   const REFERENCE_VALUE_DELIM = '::';
    /**
     * retrieve a config value from memory
     * 
@@ -218,23 +219,76 @@ class config extends \flat\core {
        * @internal
        */
       if (isset(self::$value[$key])) {
+         if (isset(static::$transformed_value[$key])) {
+            return static::$transformed_value[$key];
+         }
          if (is_string(self::$value[$key])) {
-            if (substr(self::$value[$key],0,strlen(self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM)) == self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM) {
-               //CONFIG-REF::localization.tz
-               $refsub = substr(self::$value[$key],strlen(self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM));
-               if (false!==($dotpos = strpos($refsub,"."))) {
+            if (substr(self::$value[$key],0,strlen(static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR)) == static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR) {
+               $refsub = substr(self::$value[$key],strlen(static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR));
+               if (false!==($dotpos = strpos($refsub,static::REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR))) {
                   $basename = substr($refsub,0,$dotpos);
                   $ns = substr($refsub,$dotpos+1);
                   if (!empty($basename) && !empty($ns)) {
                      try {
-                        return self::get_ref_value($basename, $ns);
+                        static::$transformed_value[$key] = self::get_ref_value($basename, $ns);
+                        return static::$transformed_value[$key];
                      } catch (config\exception\key_not_found $e) {
-                        //config value for 'CONFIG-REF::localization.memcached_serverz' not found
-                        throw new config\exception\key_not_found("$key=".self::REFERENCE_VALUE_PREFIX.self::REFERENCE_VALUE_DELIM."$basename.$ns");
-                        //die(__FILE__);
+                        throw new config\exception\key_not_found("$key=".static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR."$basename.$ns");
                      }
                   }
                }
+            } else {
+               $val = self::$value[$key];
+               $offset = 0;
+               $str_replace = [];
+               for(;;) {
+                  if (false!==($pos1 = strpos($val,static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN,$offset))) {
+                     
+                     if (false!==($pos2 = strpos($val,static::REFERENCE_VALUE_INLINE_STRING_END_TOKEN,$offset))) {
+                        $offset = $pos2 + strlen(static::REFERENCE_VALUE_INLINE_STRING_END_TOKEN);
+                        $refsub = substr($val,$pos1+strlen(static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN));
+                        if (false===($dotpos = strpos($refsub,static::REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR))) {
+                           continue;
+                        }
+                        $basename = substr($refsub,0,$dotpos);
+                        $nslen = $pos2 - $pos1 - strlen($basename) - strlen(static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN) - 1;
+                        $ns = substr($refsub,$dotpos+1, $nslen);
+                        $inline_config_ref = static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN.$basename.static::REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR.$ns.static::REFERENCE_VALUE_INLINE_STRING_END_TOKEN;
+                        if (isset($str_replace[$inline_config_ref])) {
+                           continue;
+                        }
+                        $refval = self::get_ref_value($basename, $ns);
+                        if (!is_scalar($refval)) {
+                           throw new config\exception\non_scalar_inline_ref_value($key, $basename, $ns);
+                        } else
+                        if (is_bool($refval)) {
+                           $replace_with_string = $refval?"true":"false";
+                        } else {
+                           $replace_with_string = $refval;
+                        }
+                        $str_replace[$inline_config_ref] = $replace_with_string;
+                     } else {
+                        
+                        break 1;
+                        
+                     }
+                     
+                  } else {
+                  
+                     break 1;
+                  }
+               }
+               unset($inline_config_ref);
+               unset($replace_with_string);
+               
+               foreach($str_replace as $inline_config_ref=>$replace_with_string) {
+                  $val = str_replace($inline_config_ref,$replace_with_string, $val);
+               }
+               unset($inline_config_ref);
+               unset($replace_with_string);
+               static::$transformed_value[$key] = $val;
+               return static::$transformed_value[$key];
+               
             }
          }
          return self::$value[$key];
@@ -329,12 +383,12 @@ class config extends \flat\core {
       $path = trim(trim($path),"/");
 
       /** 
-       * @uses config::ns_top_level top level of namespace 
+       * @uses config::NS_TOP_LEVEL top level of namespace 
        * @uses $path remove top level of namespace from $path (ie: 'flat/')
        * 
        * @internal
        */
-      $topns = self::ns_top_level.'/';
+      $topns = self::NS_TOP_LEVEL.'/';
       if (substr($path,0,strlen($topns))==$topns) {
          $path = substr($path,0,strlen($topns)*-1);
       }
