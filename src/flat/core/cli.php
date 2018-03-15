@@ -2,9 +2,9 @@
 /**
  * class definition
 *
-* PHP version >=7.1
+* PHP version >=7.2
 *
-* Copyright (c) 2012-2015 Doug Bird.
+* Copyright (c) 2012-2018 Doug Bird.
 *    All Rights Reserved.
 *
 * COPYRIGHT NOTICE:
@@ -144,7 +144,7 @@ class cli {
     *
     * @param callable $handler A handler function which is assumed to provide whatever the next "line"
     *    of "cli input" is; it must either return (string) or (null) value.
-    *    This handler is used by cli application functions to determine if any "cli input" remains
+    *    This handler is used by cli Application methods to determine if any "cli input" remains
     *    and to get the value of the next  "line" of "cli input" . It is up to this handler implement buffering of input
     *    and to tracking of current "line" position as approprate for the entry point interface.
     *    A return value of (null) by this handler indicates that no remaining "line(s)" of "cli input"
@@ -244,7 +244,7 @@ class cli {
       return null;
    }
    /**
-    * Application function:
+    * Application method:
     *    Provides the value of a "cli param".
     *
     * @param int $idx specifies the "cli param" index position.
@@ -257,7 +257,7 @@ class cli {
       }
    }
    /**
-    * Application function:
+    * Application method:
     *    Invokes the specified callback function for each item that
     *    exists in the active "cli argument list" as specified by the
     *    cli entry point interface.
@@ -275,8 +275,161 @@ class cli {
          $callback($arg);
       }
    }
+   
    /**
-    * Application function:
+    * Application method:
+    *    Provides an enumeration of every long or short "optval" in the active "cli argument list".
+    *    
+    * @return array contains an element for each "optval" in the order encountered in the "cli argument list";
+    *    each element value is an assoc array with the key equal to the option name corresponding to the option value,
+    *    <b>for example:</b>
+    *    <ul>
+    *       <li> <b>cli command</b>: <code>cli.php some-command some-arg --some-flag --foo bar1 --foo=bar2 -- --another-option anotherValue -f=bar1 -f=bar2 -x -y -z -invalid-flag -invalid-optval=foobar</code></li>
+    *       <li> <b>code</b>: <code>var_dump(\flat\core\cli::enum_optval())</code></li>
+    *       <li> <b>output</b>:
+    *    <code><pre>array(4) {
+  [0]=>
+  array(1) {
+    ["foo"]=>
+    string(4) "bar1"
+  }
+  [1]=>
+  array(1) {
+    ["foo"]=>
+    string(4) "bar2"
+  }
+  [2]=>
+  array(1) {
+    ["-"]=>
+    string(0) ""
+  }
+  [3]=>
+  array(1) {
+    ["another-option"]=>
+    string(12) "anotherValue"
+  }
+}</pre></code>
+    *    </ul>
+    *    
+    */
+   public static function enum_optval() : array {
+      $option = [];
+      $last_option_name = null;
+      foreach(self::$_argv as $arg) {
+         if ($arg==='--') {
+            $last_option_name = '--';
+            continue;
+         } 
+         $argsub = null;
+         $shortopt = false;
+         if ($last_option_name==='--') {
+            $option []= ['-'=>''];
+            $last_option_name=null;
+         } 
+         if (substr($arg,0,2)==='--') {
+            $argsub  = substr($arg,2);
+         } else if (substr($arg,0,1)==='-') {
+            $shortopt = true;
+            $argsub = substr($arg,1);
+         } else if ($last_option_name!==null) {
+            if ($last_option_name!=='') {
+               $option []= [ $last_option_name=>$arg ];
+            }
+            $last_option_name=null;
+         }
+         if ($argsub!==null) {
+            if ($last_option_name!==null) {
+               $last_option_name = null;
+            }
+            if (false!==($tokenpos = strpos($argsub,'='))) {
+               $optname = substr($argsub,0,$tokenpos);
+               if (!$shortopt || (strlen($optname) === 1)) {
+                  $option []= [$optname=>substr($argsub,$tokenpos+1)];
+               }
+            } else {
+               if (!$shortopt || (strlen($argsub) === 1)) {
+                  $last_option_name = $argsub;
+               }
+            }
+         }
+      }
+      unset($arg);
+      
+      return $option;
+   }
+   
+   /**
+    * Application method:
+    *    Provides an enumeration of each "flag" in the active "cli argument list".
+    *    
+    * @return array contains an element for each "flag" in the order encountered in the "cli argument list";
+    *    each element value is a string equal to the flag name, 
+    *    <b>for example:</b>
+    *    <ul>
+    *       <li> <b>cli command</b>: <code>cli.php some-command some-arg --some-flag --foo bar1 --foo=bar2 -- --another-option anotherValue -f=bar1 -f=bar2 -x -y -z -invalid-flag -invalid-optval=foobar</code></li>
+    *       <li> <b>code</b>: <code>var_dump(\flat\core\cli::enum_flag())</code></li>
+    *       <li> <b>output</b>:
+    *    <code><pre>array(5) {
+  [0]=>
+  string(9) "some-flag"
+  [1]=>
+  string(1) "-"
+  [2]=>
+  string(1) "x"
+  [3]=>
+  string(1) "y"
+  [4]=>
+  string(1) "z"
+}</pre></code>
+    *    </ul>
+    */
+   public static function enum_flag() : array {
+      $flag = [];
+      $last_flag = null;
+      foreach(self::$_argv as $arg) {
+         
+         if ($arg==='--') {
+            $flag['-'] = true;
+            continue;
+         } else if ($arg==='-') {
+            $flag[''] = true;
+            continue;
+         }
+         
+         $argsub = null;
+         $shortname = false;
+         if (substr($arg,0,2)==='--') {
+            $argsub  = substr($arg,2);
+         } else if (substr($arg,0,1)==='-') {
+            $argsub  = substr($arg,1);  
+            $shortname = true;
+         } else if ($last_flag!==null) {
+            $last_flag=null;
+         }
+         
+         if ($argsub!==null) {
+            if ($last_flag!==null) {
+               $flag[$last_flag]=true;
+               $last_flag = null;
+            }
+            if (false===($tokenpos = strpos($argsub,'='))) {
+               if (!$shortname || (strlen($argsub)===1)) {
+                  $last_flag = $argsub;
+               }
+            }
+         }
+      }
+      unset($arg);
+      
+      if ($last_flag!==null) {
+         $flag[$last_flag]=true;
+      }
+      
+      return array_keys($flag);
+   }
+   
+   /**
+    * Application method:
     *    Provides reported cli command.
     *
     * @return string
@@ -288,7 +441,7 @@ class cli {
    }
 
    /**
-    * Application function:
+    * Application method:
     *    Provides the resource as indicated by the cli argument list.
     *
     * @return string
@@ -307,7 +460,7 @@ class cli {
    /**
     * Entry point method;
     *    Sets a handler which is invoked when the "cli line width" is needed by an
-    *    an application function; for example, when displaying a line of text.
+    *    an Application method; for example, when displaying a line of text.
     *
     * @param callable $handler Function invoked each time "cli line width" is needed.
     *    Must return (null) or (int) value. (int) return value indicates
@@ -526,7 +679,7 @@ class cli {
    }
 
    /**
-    * Application function;
+    * Application method;
     *    Formats a string as specified by wrapping as appropriate for the
     *    currently active "cli width".
     *
