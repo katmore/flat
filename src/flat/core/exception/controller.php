@@ -27,7 +27,9 @@ trait controller {
       /*
        * use only 0th caller from trace
        */
-      $crc = $crc[0];
+      if (isset($crc[0])) {
+         $crc = $crc[0];
+      }
        
       /*
        * to keep code same in more conditions...
