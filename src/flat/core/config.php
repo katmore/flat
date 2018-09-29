@@ -333,7 +333,13 @@ class config extends \flat\core {
       }
       $path = self::_canonicalize_path($path,$options);
       $file = self::$base_dir . "/".$path.".php";
-      return self::_get_config_arr($file);
+      $cfg = self::_get_config_arr($file);
+      foreach($cfg as $k=>&$v) {
+         $v=static::get("$path/$k",$options);
+      }
+      unset($k);
+      unset($v);
+      return $cfg;
    }
    
    /**
@@ -693,7 +699,6 @@ class config extends \flat\core {
       self::$searched = array();
    }
 }
-
 
 
 
