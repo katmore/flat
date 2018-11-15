@@ -194,6 +194,87 @@ class config extends \flat\core {
       throw new config\exception\key_not_found(self::REFERENCE_VALUE_IDENTIFIER_PREFIX.self::REFERENCE_VALUE_IDENTIFIER_TERMINATOR."$basename.$ns");
    }
    
+   private static function _get_transformed_value($rawval,$key) {
+      if (is_array($rawval)) {
+         foreach($rawval as $k=>$v) {
+            $rawval[$k] = self::_get_transformed_value($v,$key);
+         }
+         unset($v);
+         unset($k);
+         return $rawval;
+      } else
+      if (is_string($rawval)) {
+         if (substr($rawval,0,strlen(static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR)) == static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR) {
+            $refsub = substr($rawval,strlen(static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR));
+            if (false!==($dotpos = strpos($refsub,static::REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR))) {
+               $basename = substr($refsub,0,$dotpos);
+               $ns = substr($refsub,$dotpos+1);
+               if (!empty($basename) && !empty($ns)) {
+                  try {
+                     return self::get_ref_value($basename, $ns);
+                  } catch (config\exception\key_not_found $e) {
+                     throw new config\exception\key_not_found("$key=".static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR."$basename.$ns");
+                  }
+               }
+            }
+         } else {
+            $val = $rawval;
+            $offset = 0;
+            $str_replace = [];
+            for(;;) {
+               if (false!==($pos1 = strpos($val,static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN,$offset))) {
+                  
+                  if (false!==($pos2 = strpos($val,static::REFERENCE_VALUE_INLINE_STRING_END_TOKEN,$offset))) {
+                     $offset = $pos2 + strlen(static::REFERENCE_VALUE_INLINE_STRING_END_TOKEN);
+                     $refsub = substr($val,$pos1+strlen(static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN));
+                     if (false===($dotpos = strpos($refsub,static::REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR))) {
+                        continue;
+                     }
+                     $basename = substr($refsub,0,$dotpos);
+                     $nslen = $pos2 - $pos1 - strlen($basename) - strlen(static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN) - 1;
+                     $ns = substr($refsub,$dotpos+1, $nslen);
+                     $inline_config_ref = static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN.$basename.static::REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR.$ns.static::REFERENCE_VALUE_INLINE_STRING_END_TOKEN;
+                     if (isset($str_replace[$inline_config_ref])) {
+                        continue;
+                     }
+                     $refval = self::get_ref_value($basename, $ns);
+                     if (!is_scalar($refval)) {
+                        throw new config\exception\non_scalar_inline_ref_value($key, $basename, $ns);
+                     } else
+                        if (is_bool($refval)) {
+                           $replace_with_string = $refval?"true":"false";
+                        } else {
+                           $replace_with_string = $refval;
+                        }
+                        $str_replace[$inline_config_ref] = $replace_with_string;
+                  } else {
+                     
+                     break 1;
+                     
+                  }
+                  
+               } else {
+                  
+                  break 1;
+               }
+            }
+            unset($inline_config_ref);
+            unset($replace_with_string);
+            
+            foreach($str_replace as $inline_config_ref=>$replace_with_string) {
+               $val = str_replace($inline_config_ref,$replace_with_string, $val);
+            }
+            unset($inline_config_ref);
+            unset($replace_with_string);
+            return $val;
+            
+         }
+      }
+//       var_dump($rawval);
+//       die(__FILE__);
+      return $rawval;
+   }
+   
    /**
     * retrieve a config value from memory
     * 
@@ -219,80 +300,11 @@ class config extends \flat\core {
        * @internal
        */
       if (isset(self::$value[$key])) {
-         if (isset(static::$transformed_value[$key])) {
-            return static::$transformed_value[$key];
+         if (!isset(static::$transformed_value[$key])) {
+            static::$transformed_value[$key] = static::_get_transformed_value(self::$value[$key], $key);
          }
-         if (is_string(self::$value[$key])) {
-            if (substr(self::$value[$key],0,strlen(static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR)) == static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR) {
-               $refsub = substr(self::$value[$key],strlen(static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR));
-               if (false!==($dotpos = strpos($refsub,static::REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR))) {
-                  $basename = substr($refsub,0,$dotpos);
-                  $ns = substr($refsub,$dotpos+1);
-                  if (!empty($basename) && !empty($ns)) {
-                     try {
-                        static::$transformed_value[$key] = self::get_ref_value($basename, $ns);
-                        return static::$transformed_value[$key];
-                     } catch (config\exception\key_not_found $e) {
-                        throw new config\exception\key_not_found("$key=".static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR."$basename.$ns");
-                     }
-                  }
-               }
-            } else {
-               $val = self::$value[$key];
-               $offset = 0;
-               $str_replace = [];
-               for(;;) {
-                  if (false!==($pos1 = strpos($val,static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN,$offset))) {
-                     
-                     if (false!==($pos2 = strpos($val,static::REFERENCE_VALUE_INLINE_STRING_END_TOKEN,$offset))) {
-                        $offset = $pos2 + strlen(static::REFERENCE_VALUE_INLINE_STRING_END_TOKEN);
-                        $refsub = substr($val,$pos1+strlen(static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN));
-                        if (false===($dotpos = strpos($refsub,static::REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR))) {
-                           continue;
-                        }
-                        $basename = substr($refsub,0,$dotpos);
-                        $nslen = $pos2 - $pos1 - strlen($basename) - strlen(static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN) - 1;
-                        $ns = substr($refsub,$dotpos+1, $nslen);
-                        $inline_config_ref = static::REFERENCE_VALUE_INLINE_STRING_START_TOKEN.$basename.static::REFERENCE_VALUE_BASENAME_TERMINATOR_CHAR.$ns.static::REFERENCE_VALUE_INLINE_STRING_END_TOKEN;
-                        if (isset($str_replace[$inline_config_ref])) {
-                           continue;
-                        }
-                        $refval = self::get_ref_value($basename, $ns);
-                        if (!is_scalar($refval)) {
-                           throw new config\exception\non_scalar_inline_ref_value($key, $basename, $ns);
-                        } else
-                        if (is_bool($refval)) {
-                           $replace_with_string = $refval?"true":"false";
-                        } else {
-                           $replace_with_string = $refval;
-                        }
-                        $str_replace[$inline_config_ref] = $replace_with_string;
-                     } else {
-                        
-                        break 1;
-                        
-                     }
-                     
-                  } else {
-                  
-                     break 1;
-                  }
-               }
-               unset($inline_config_ref);
-               unset($replace_with_string);
-               
-               foreach($str_replace as $inline_config_ref=>$replace_with_string) {
-                  $val = str_replace($inline_config_ref,$replace_with_string, $val);
-               }
-               unset($inline_config_ref);
-               unset($replace_with_string);
-               static::$transformed_value[$key] = $val;
-               return static::$transformed_value[$key];
-               
-            }
-         }
-         return self::$value[$key];
-      };
+         return static::$transformed_value[$key];
+      }
       
       /**
        * @uses $not_found_exception if truthy
