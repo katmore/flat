@@ -12,6 +12,7 @@
  * @license see /flat/LICENSE.txt
  */
 namespace flat\db\driver;
+
 /**
  * operations for mongo client
  * 
@@ -509,7 +510,172 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
       if (empty($client)) $client =$this->get_client();
       return $client->selectDB($name);
    }
+   
+   /**
+    * Provide database name in-use according to current configuration.
+    * 
+    * @return string
+    * @see \flat\db\driver\mongo\db\explicit 
+    */
+   public function get_database_name(string $fallback_name="") : string {
+      if ($this instanceof \flat\db\driver\mongo\db\explicit) {
+         $name = $this->get_client_db();
+         if (empty($name) || (!is_string($name))) {
+            throw new \flat\db\driver\mongo\db\exception\bad_interface(
+               '\flat\db\driver\mongo\db\explicit',
+               get_called_class(),
+               "get_client_db",
+               "must return non empty string"
+               );
+         }
+         return $name;
+      }
+      
+      if (empty($fallback_name)) {
+         throw new \flat\db\driver\mongo\db\exception\bad_param(
+            "fallback_name",
+            "cannot be empty unless child class has ".
+            '\flat\db\driver\mongo\db\explicit interface'
+            );
+      }
+      
+      return $fallback_name;
+   }
 
+   /**
+    * Provides the mongo connection server string uri in-use according to current configuration.
+    * 
+    * @return string mongo connection server string uri
+    * 
+    * @see \flat\db\driver\mongo\client\trivial_connection
+    * @see \flat\db\driver\mongo\client\server_string
+    */
+   public function get_uri() : string {
+      if ($this instanceof \flat\db\driver\mongo\client\trivial_connection) {
+         return "mongodb://".$this->get_client_host() .
+         ":".$this->get_client_port();
+      } else {
+         if ($this instanceof \flat\db\driver\mongo\client\server_string) {
+            return $this->get_client_server_string();
+         }
+      }
+      return "";
+   }
+   
+   /**
+    * Provides any URI options in-use according to current configuration.
+    * 
+    * @return array client options
+    * 
+    * @see \flat\db\driver\mongo\client\options
+    * 
+    */
+   public function get_uri_options(array $options=null,array $default_client_options=['connect'=>TRUE]) : array {
+      if ($options===null) $options=[];
+      $client_options = $default_client_options;
+      
+      if (isset($options['client_options'])) {
+         $client_options = $options['client_options'];
+      } else {
+         if ($this instanceof \flat\db\driver\mongo\client\options) {
+            
+            if (is_array($arr = $this->get_client_options())) {
+               //$client_options = $arr;
+               foreach ($arr as $key=>$val) {
+                  $client_options[$key] = $val;
+               }
+               unset($key);
+               unset($val);
+            }
+         }
+      }
+      
+      return $client_options;
+      
+   }
+   
+   /**
+    * Provides any driver-specific options in-use according to configuration.
+    * 
+    * @return array driver options
+    * @see \flat\db\driver\mongo\client\driver_options
+    */
+   public function get_driver_options(array $options=null) : array {
+      if ($options===null) $options=[];
+      $driver_options = [];
+      
+      if (isset($options['driver_options'])) {
+         $driver_options = $options['driver_options'];
+      } else {
+         if ($this instanceof \flat\db\driver\mongo\client\driver_options) {
+            if (is_array($arr = $this->get_client_driver_options())) $driver_options = $arr;
+         }
+      }
+      
+      return $driver_options;
+   }
+   
+   /**
+    * Provides a MongoDB Collection object.
+    * 
+    * @param string $collection_name collection name
+    * @param array $collection_options identical to <i>$options</i> parameter of <b>MongoDB\Client::selectCollection()</b>
+    * @param array $driver_client_options identical to <i>$options</i> parameter of <b>\flat\db\driver\mongo::getMongoDBClient()</b>
+    * 
+    * @return \MongoDB\Collection
+    */
+   public function getMongoDBCollection(string $collection_name=null,array $collection_options=[],array $driver_client_options=null) : \MongoDB\Collection {
+      if ($collection_name===null) $collection_name = $this->get_collection_name();
+      return $this->getMongoDBClient($options)->selectCollection($this->get_database_name(),$collection_name,$collection_options);
+   }
+   
+   /**
+    * Provides a MongoDB Client object.
+    * 
+    * @param array $options assoc array of options <ul>
+    *    <li><b>array 'uri'</b> identical to <i>$uriOptions</i> paramter of <i>\MongoDB\Client::__construct()</i></li>
+    *    <li><b>array 'uriOptions'</b> identical to <i>$uriOptions</i> paramter of <i>\MongoDB\Client::__construct()</i></li>
+    *    <li><b>array 'driverOptions'</b> identical to <i>$uriOptions</i> paramter of <i>\MongoDB\Client::__construct()</i></li>
+    *    
+    *    <li><b>array 'server_string'</b> alias of <i><b>'uri'</b></i></li>
+    *    <li><b>array 'client_options'</b> alias of <i><b>'uriOptions'</b></i></li>
+    *    <li><b>array 'driver_options'</b> alias of <i><b>'driverOptions'</b></i></li>
+    * </ul>
+    * 
+    * @return \MongoDB\Client
+    * 
+    * @see \MongoDB\Client::__construct()
+    * @link https://docs.mongodb.com/php-library/v1.2/reference/method/MongoDBClient__construct/
+    */
+   public function getMongoDBClient(array $options=null) : \MongoDB\Client {
+      if (!$options===null) $options = [];
+      
+      if (isset($options['uri'])) {
+         $uri = $options['uri'];
+      } else if (isset($options['server_string'])) {
+         $uri = $options['server_string'];
+      } else {
+         $uri = $this->get_uri();
+      }
+      
+      if (isset($options['uriOptions'])) {
+         $uriOptions = $options['uriOptions'];
+      } else if (isset($options['client_options'])) {
+         $uriOptions = $options['client_options'];
+      } else {
+         $uriOptions = $this->get_uri_options();
+      } 
+      
+      if (isset($options['driverOptions'])) {
+         $driverOptions = $options['driverOptions'];
+      } else if (isset($options['driver_options'])) {
+         $driverOptions = $options['driver_options'];
+      } else {
+         $driverOptions = $this->get_driver_options();
+      }
+      
+      return new \MongoDB\Client($uri,$uriOptions,$driverOptions);
+   }
    /**
     * retrieve \MongoClient object
     * 
@@ -521,7 +687,7 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
     * 
     */
    public function get_client($server="",array $options=NULL) {
-      
+      if ($options===null) $options=[];
       /**
        * @var string $server 
        *    sanitize and determine server connection string as appropriate
@@ -531,44 +697,15 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
        */
       if (!is_string($server)) $server = "";
       if (empty($server)) {
-         if ($this instanceof \flat\db\driver\mongo\client\trivial_connection) {
-            $server = "mongodb://".$this->get_client_host() .
-               ":".$this->get_client_port();     
-         } else {
-            if ($this instanceof \flat\db\driver\mongo\client\server_string) {
-               $server = $this->get_client_server_string();
-            }
-         }
+         $server = $this->get_uri();
       }
       
-      $opt['client_options'] = ['connect'=>TRUE];
+      $load_client['client_options'] = $this->get_uri_options($options);
+
       
-      if (isset($options['client_options'])) {
-         $opt['client_options'] = $options['client_options'];
-      } else {
-         if ($this instanceof \flat\db\driver\mongo\client\options) {
-            
-            if (is_array($arr = $this->get_client_options())) {
-               //$opt['client_options'] = $arr;
-               foreach ($arr as $key=>$val) {
-                  $opt['client_options'][$key] = $val;
-               }
-            }
-         }
-      }
-      
-      $opt['driver_options'] = NULL;
-      
-      if (isset($options['driver_options'])) {
-         $opt['driver_options'] = $options['driver_options'];
-      } else {
-         if ($this instanceof \flat\db\driver\mongo\client\driver_options) {
-            if (is_array($arr = $this->get_client_driver_options())) $opt['driver_options'] = $arr;
-         }
-      }
-//       var_dump($opt);
-//       die($server);
-      return self::load_client($server,$opt);
+      $load_client['driver_options'] = $this->get_driver_options($options);
+
+      return self::load_client($server,$load_client);
       
    }
 
