@@ -626,7 +626,7 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
     */
    public function getMongoDBCollection(string $collection_name=null,array $collection_options=[],array $driver_client_options=null) : \MongoDB\Collection {
       if ($collection_name===null) $collection_name = $this->get_collection_name();
-      return $this->getMongoDBClient($options)->selectCollection($this->get_database_name(),$collection_name,$collection_options);
+      return $this->getMongoDBClient($driver_client_options)->selectCollection($this->get_database_name(),$collection_name,$collection_options);
    }
    
    /**
