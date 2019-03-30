@@ -31,6 +31,7 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\core\controller;
+
 /**
  * template controller
  * 
@@ -55,6 +56,60 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
          return false;
       }
    }
+   
+   /**
+    * @var int
+    * @static
+    */
+   protected static $logger_message_type = 0;
+   
+   /**
+    * @var string
+    * @static
+    */
+   protected static $logger_destination;
+   
+   /**
+    * @var string
+    * @static
+    */
+   protected static $logger_extra_headers;
+   
+   /**
+    * @var bool
+    * @static
+    */
+   protected static $logger_enabled = false;
+   
+   /**
+    * Enables logger of template design paths using error_log().
+    * 
+    * @param int $message_type Optional. See: https://www.php.net/manual/en/function.error-log.php
+    * @param string $destination Optional. See: https://www.php.net/manual/en/function.error-log.php
+    * @param string $extra_headers Optional. See: https://www.php.net/manual/en/function.error-log.php
+    * 
+    * @return void
+    * @see error_log()
+    * @static
+    */
+   public static function enable_design_logger(int $message_type=0,string $destination=null,string $extra_headers=null) : void {
+      static::$logger_enabled = true;
+      static::$logger_message_type = $message_type;
+      static::$logger_destination = $destination;
+      static::$logger_extra_headers = $extra_headers;
+   }
+   
+   /**
+    * Disables logger of template design paths.
+    * 
+    * @return void
+    * @see \flat\core\controller\tmpl::enable_design_logger()
+    * @static
+    */
+   public static function disable_design_logger() : void {
+      static::$logger_enabled = false;
+   }
+   
    
    /**
     * displays a design template as formatted by given parameters
@@ -134,6 +189,20 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
    }
    
    /**
+    * Log the design name if design logger is enabled using error_log
+    * 
+    * @param string $type type of design (i.e "path" or "object").
+    * @param string $name name of design (path or name of object). 
+    * 
+    * @static
+    * @return void
+    */
+   protected static function design_log(string $type, string $name) : void {
+      if (!static::$logger_enabled) return;
+      error_log("tmpl design ($type): ".trim(str_replace(['flat\design\\','\\'],["",'/'],$name),'/'),static::$logger_message_type,static::$logger_destination,static::$logger_extra_headers);
+   }
+   
+   /**
     * displays a design template
     *  
     * @return void
@@ -146,7 +215,6 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
     * @todo .md (markdown) templates
     */
    public static function display($design,$data=null,$check_only=false) {
-      
       
       /*
        * skip all resolving if design is a display class
@@ -167,6 +235,9 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
          if (!is_scalar($output) && !is_null($output)) throw new tmpl\exception\bad_design(
             '\flat\tmpl\output::get_output() return value must be scalar type or null'
          );
+         
+         static::design_log('object',get_class($design));
+
          echo $output;
          return;
       }
@@ -186,7 +257,7 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
        * transform all acceptable separators to backslash for consistency
        */
       $design = str_replace("/","\\",$design);
-      
+            
       /*
        * transform relative to absolute design path
        *    as appropriate
@@ -221,19 +292,18 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
        */
       if (empty($file)) {
          $file_base = str_replace("flat\\design","",$design);
-         
          $file_base = \flat\core\config::get("design/basedir")."/".str_replace("\\","/",$file_base);
          $file = $file_base.".php";
+         
       }
       if (is_file($file) && is_readable($file)) {
          if ($check_only) return;
+         
+         static::design_log('path',$design);
+         
          /*
           * load in closure for clean scope
           */
-//          $loader = function($filename,$data) {
-//             require($filename);
-//          };
-         //$loader($file,new \flat\tmpl\data($data));
          $data = new \flat\tmpl\data((array) $data);
          call_user_func(function() use($file,$data) {
             require($file);
@@ -258,6 +328,9 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
                   if (!$h = fopen($file, "r")) throw new tmpl\exception\system_err(
                      "could not open file '$file' for read"
                   );
+                  
+                  static::design_log('path',"$design.$ext");
+                  
                   while (!feof($h)) {
                       if (false === ($chunk = fread($h, self::min_chunking_size))) {
                         throw new tmpl\exception\system_err(
@@ -277,6 +350,9 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
                         "could not read string from file '$file'"
                      );
                   }
+                  
+                  static::design_log('path',"$design.$ext");
+                  
                   echo( $str );
                }
                return;
@@ -296,6 +372,9 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
             try {
                $md= new \flat\core\md\convert\file($file);
                if ($check_only) return;
+               
+               static::design_log('path',"$design.$ext");
+
                echo $md->get_html();
                return;
             } catch (\Exception $e) {
@@ -328,6 +407,9 @@ abstract class tmpl implements \flat\core\controller ,\flat\core\resolver\prepar
                      ob_get_clean();
                      return;
                   }
+                  
+                  static::design_log('path',$design);
+                  
                   $text = ob_get_clean();
                   echo \flat\core\md\convert::string_to_html( $text );
                   return;
