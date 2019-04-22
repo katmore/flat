@@ -34,20 +34,26 @@
 namespace flat\api\response;
 class forbidden extends \flat\api\response {
    
-   public function __construct($message="",$data=NULL,int $trace_offset=0) {
+   public $message;
+   public $data;
+   public function __construct($message="",$data=NULL,$trace_offset=0) {
       if (empty($message)) {
          $trace = debug_backtrace();
-         if (isset($trace[1+$trace_offset]) && !empty($trace[1+$trace_offset]['class'])) {
-            try {
-               $this->message = "Request forbidden by ".(new \ReflectionClass($trace[1+$trace_offset]['class']))->getShortName();
-            } catch (\Exception $e) {
-               $this->message = "Request forbidden";
-            }
+         if (!empty($trace[1+$trace_offset]['class'])) {
+            $r = new \ReflectionClass($trace[1+$trace_offset]['class']);
+            $this->message = "error indicated by ".$trace[1+$trace_offset]['class'];
          }
       } else {
          $this->message = $message;
       }
-      if (!empty($data)) $this->data = $data;
+      if (!empty($data)) {
+         $this->data = json_decode(json_encode($data));
+         if (!isset($this->data->message)) {
+            $this->data->message = $message;
+         } else {
+            $this->data->{'message-'.uniqid()} = $message;
+         }
+      }
       $this->_set_status(new \flat\api\status\forbidden());
    }
 
