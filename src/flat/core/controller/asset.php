@@ -1,415 +1,174 @@
 <?php
-/**
- * \flat\core\controller\asset class 
+/*
+ * \flat\core\controller\asset definition 
  *
- * PHP version >=7.1
+ * PHP version >=7.2
  * 
- * Copyright (c) 2012-2017 Doug Bird. 
- *    All Rights Reserved. 
+ * This file is part of the "The Flat Framework".
+ * 
+ * More information regarding "The Flat Framework" is available by viewing the 
+ * url "https://github.com/katmore/flat" in any web browser.
+ * 
+ * The following copyright notice and license notice shall apply to this file 
+ * and to any other part of The Flat Framework.
  * 
  * COPYRIGHT NOTICE:
- * The flat framework. https://github.com/katmore/flat
- * Copyright (c) 2012-2017  Doug Bird.
- * ALL RIGHTS RESERVED. THIS COPYRIGHT APPLIES TO THE ENTIRE CONTENTS OF THE WORKS HEREIN
- * UNLESS A DIFFERENT COPYRIGHT NOTICE IS EXPLICITLY PROVIDED WITH AN EXPLANATION OF WHERE
- * THAT DIFFERENT COPYRIGHT APPLIES. WHERE SUCH A DIFFERENT COPYRIGHT NOTICE IS PROVIDED
- * IT SHALL APPLY EXCLUSIVELY TO THE MATERIAL AS DETAILED WITHIN THE NOTICE.
+ * Copyright (c) 2012-2019 Doug Bird. All Rights Reserved.
  * 
- * The flat framework is copyrighted free software.
- * You can redistribute it and/or modify it under either the terms and conditions of the
- * "The MIT License (MIT)" (see the file MIT-LICENSE.txt); or the terms and conditions
- * of the "GPL v3 License" (see the file GPL-LICENSE.txt).
+ * LICENSE NOTICE:
+ * The Flat Framework is copyrighted free software.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * You may use, modify, and distribute it under the terms and conditions of any
+ * one of the following licenses: the "MIT License" (MIT); the "GNU General 
+ * Public License v3.0 or later" (GPL-3.0-or-later); or the "GNU Lesser General 
+ * Public License v3.0 or later" (LGPL-3.0-or-later).
  * 
- * @license The MIT License (MIT) http://opensource.org/licenses/MIT
- * @license GNU General Public License, version 3 (GPL-3.0) http://opensource.org/licenses/GPL-3.0
- * @link https://github.com/katmore/flat
- * @author     D. Bird <retran@gmail.com>
- * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
+ * A full copy of the MIT license is available by viewing the url
+ * "https://raw.githubusercontent.com/katmore/flat/master/LICENSE" in any web 
+ * browser.
+ * 
+ * A full copy of the GNU General Public License v3.0 is available by viewing 
+ * the url "https://www.gnu.org/licenses/gpl-3.0-standalone.html" in any web 
+ * browser.
+ * 
+ * A full copy of the GNU Lesser General Public License v3.0 is available by
+ * viewing the url "https://www.gnu.org/licenses/lgpl-3.0-standalone.html" 
+ * in any web browser.
  */
 namespace flat\core\controller;
 
+use ReflectionClass;
+
 /**
  * provides routable and cascading resource locations
- *
- * @package flat\asset
+ * 
+ * @abstract
+ * 
+ * @license MIT
+ * @license GPL-3.0-or-later
+ * @license LGPL-3.0-or-later
  * @author D. Bird <retran@gmail.com>
- * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
- * @version 0.1.0-alpha
+ * @copyright  Copyright (c) 2012-2019 Doug Bird. All Rights Reserved.
  */
-class asset implements 
-   \flat\core\controller {
-
-   protected static $_data_to_refs=false;
-   public static function data_to_refs_on() {
-      self::$_data_to_refs = true;
-   }
-   public static function data_to_refs_off() {
-      self::$_data_to_refs = false;
-   }
+abstract class asset implements \flat\core\controller {
    
-   public function print_data_uri($mtype,$always=false) {
-      if (static::$_data_to_refs && !$always) {
-         echo $this->get_url();
-         return;
-      }
-      echo "data:$mtype;base64,";
-      echo base64_encode(file_get_contents($this->get_system()));
-   }
-   /**
-    * @return bool
-    */
-   public function exists_on_system() {
-      if (file_exists($this->get_system()) && is_file($this->get_system())) {
-         return true;
-      }
-      return false;
-   }
-   /**
-    * prints a style tag with contents of resource's system path (file).
-    * 
-    * @return void
-    * 
-    * @throws \flat\lib\exception\app_error if resource does not resolve on system to a .css file
-    * @uses \flat\asset\system_base
-    */
-   public function print_style($always=false) {
-      if (static::$_data_to_refs && !$always) {
-         $this->style_link();
-         return;
-      }
-      if (substr($this->get_system(),-4)!=".css") {
-         throw new \flat\lib\exception\app_error("resource ".$this->get_system()."is not a css file");
-      }
-      ?>
-      <!--START asset: <?=$this->get_url();?>-->
-      <style>
-      <?=file_get_contents($this->get_system());?>
-      
-      </style>
-      <!--END vendor: <?=$this->get_url();?>-->
-      <?php
-    }
-      /**
-       * prints a script tag with contents of resource's system path (file).
-       *
-       * @return void
-       *
-       * @throws \flat\lib\exception\app_error if resource does not resolve on system to a .js file
-       * @uses \flat\asset\system_base
-       */
-      public function print_script($always=false) {
-         if (static::$_data_to_refs && !$always) {
-            //die(__FILE__);
-            $this->script_tag();
-            return;
-         }
-         if (substr($this->get_system(),-3)!=".js") {
-            throw new \flat\lib\exception\app_error("resource ".$this->get_system()." is not a javascript file");
-         }
-         if (!is_file($this->get_system())) {
-            throw new \flat\lib\exception\app_error("resource ".$this->get_system()." does not exist");
-            ?>
-            <!--NOT-FOUND asset::print_script(<?=$this->get_url();?>)-->            
-            <?php
-            return;
-         }
-   ?>
-   <!--START asset::print_script(<?=$this->get_url();?>)-->
-   <script>
-   <?=file_get_contents($this->get_system());?>
+   use asset\deprecated_methods_trait;
    
-   </script>
-   <!--END asset::print_script(<?=$this->get_url();?>)-->
-   <?php
-      }
-      
-      /**
-       * prints a script tag with src attribute to resource's url.
-       *
-       * @return void
-       *
-       * @throws \flat\lib\exception\app_error if resource does not resolve on system to a .js file
-       * @uses \flat\asset\system_base
-       */      
-      public function script_tag() {
-         if (substr($this->get_url(),-3)!=".js") {
-            throw new \flat\lib\exception\app_error("resource ".$this->get_url()."is not a javascript file");
-         }
-         ?><!--asset::script_tag()--><script src="<?=$this->get_url();?>"></script><?php
-      }   
-      
-      public function style_link() {
-         /*
-          * <link href="<?=lib::asset('styles.css')?>" rel="stylesheet">
-          */
-         if (substr($this->get_url(),-4)!=".css") {
-            throw new \flat\lib\exception\app_error("resource ".$this->get_url()."is not a css file");
-         }
-         ?><!--asset::style_link()--><link href="<?=$this->get_url();?>" rel="stylesheet"><?php
-      }
-   
-   /**
-    * determines if flag exists in given param in the following manner: returns
-    * bool true if $param['flag'] exists and is an array and $flag exists as
-    * value in $param['flag'].
-    * returns bool false if $flag does not exist as element value in
-    * $param['flag'], or $param['flag'] element does not exist or $param['flag']
-    * is not array.
-    * returns NULL if $flag is not scalar value.
-    *
-    * @return bool|NULL
-    *
-    * @param scalar $flag
-    *           value of flag to check. typically a string or integer derived
-    *           from hash table.
-    * @param mixed $param
-    *           parameter as given to self::asset()
-    */
-   protected static function _asset_param_to_flag($flag, $param = NULL) {
-
-      if (! is_scalar($flag))
-         return NULL;
-      if (is_array($param) && ! empty($param['flag']) && is_array(
-         $param['flag'])) {
-         if (in_array($flag, $param['flag']) ||
-             array_key_exists($flag, $param['flag'])) {
-            return true;
-         }
-      }
-      return false;
-   
-   }
-
-   protected static function _asset_param_to_option(
-      $option, $param, $default_val = NULL) {
-
-      if (! is_scalar($option))
-         return $default_val;
-      if (is_array($param) && ! empty($param['option']) &&
-          is_array($param['option'])) {
-         if (isset($param['option'][$option])) {
-            return $param['option'][$option];
-         }
-      }
-      return $default_val;
-   
-   }
-
-   /**
-    * alias of asset::load()
-    *
-    * @uses asset::load()
-    */
-   public static function asset($resource = "", $param = NULL) {
-
-      return self::load($resource, $param);
-   
-   }
-
-   /**
-    * loads asset object.
-    *
-    * @return \flat\core\controller\asset
-    *
-    * @param string $resource
-    *           (optional) specify resource to be resolved into asset
-    * @uses \flat\core\controller\asset::__construct()
-    * @throws \flat\core\controller\asset\exception\bad_resource
-    * @throws \flat\core\controller\asset\exception\not_resolvable
-    */
-   public static function load($resource = "", $param = NULL) {
-
-      /*
-       * concat full asset namespace
-       */
-      $asset = "\\" . get_called_class();
-      
-      /*
-       * sanity enforcement for $resource param
-       *    (must be a string) 
-       */
-      if (! is_string($resource))
-         throw new asset\exception\bad_resource($asset);
-         /*
-       * canonicalize resource string
-       */
-      if (! empty($resource)) {
-         $resource = str_replace("\\", "/", $resource);
-         if (substr($resource, 0, 1) == "/")
-            $resource = substr($resource, 1);
-      }
-      if (static::_asset_param_to_flag('cascade', $param)) {
-         
-         $base = "\\" . get_called_class();
-         // var_dump($param);var_dump($resource);die('asset controller:
-         // '."base=$base");
-         if (static::_asset_param_to_option('cascade', $param)) {
-            $base = str_replace("/", "\\", 
-               static::_asset_param_to_option('cascade', $param));
-         }
-         // var_dump($param);die('asset controller: '."base=$base");
-         if (substr($base, 0, 1) == "\\" && class_exists($base) &&
-             is_a($base, "\\flat\\core\\controller\\asset", true)) {
-            $asset = $base;
-         } else {
-            if (class_exists("$asset\\$base") &&
-                is_a("$asset\\$base", "\\flat\\core\\controller\\asset", true)) {
-               $r = new \ReflectionClass("$asset\\$base");
-               if ($r->isInstantiable())
-                  $asset = "$asset\\$base";
-            }
-         }
-         /*
-          * convert path to namespace to check if it's relative class reference
-          */
-         $ns = str_replace("/", "\\", $resource); // convert slashes
-         $base = pathinfo($resource, PATHINFO_BASENAME);
-         $ns = preg_replace('/^([^\.]*).*$/', '$1', $ns); // remove file
-                                                         // extension if has one
-         $ns = "$asset\\$ns";
-         
-         /*
-          * check relative resource without file extension is an asset
-          */
-         $ns_instance = false;
-         if (class_exists($ns) &&
-             is_a($ns, "\\flat\\core\\controller\\asset", true)) {
-            $r = new \ReflectionClass($ns);
-            if ($r->isInstantiable()) {
-               $ns_instance = true;
-               $asset = $ns;
-               $ns = explode("\\", $ns);
-               $resource = $base;
-            }
-         }
-         /*
-          * if relative resource wasnt asset yet...
-          *    remove one level at a time from resource and check it
-          */
-         if (! $ns_instance) {
-            $reslevel = array(
-               $base
-            );
-            $ns = str_replace("/", "\\", $resource); // convert slashes
-            $base = pathinfo($resource, PATHINFO_BASENAME);
-            $ns = preg_replace('/^([^\.]*).*$/', '$1', $ns); // remove file
-                                                            // extension if has
-                                                            // one
-            $ns = "$asset\\$ns";
-            $nslevel = explode("\\", $ns);
-            if (count($nslevel) > 1) {
-               $level_count = count($nslevel);
-               for($i = 0; $i < $level_count; $i ++) {
-                  $ns_resource = array_pop($nslevel);
-                  if ($i != 0)
-                     $reslevel[] = $ns_resource;
-                  $ns = implode("\\", $nslevel);
-                  if (class_exists($ns) &&
-                      is_a($ns, "\\flat\\core\\controller\\asset", true)) {
-                     $r = new \ReflectionClass($ns);
-                     if ($r->isInstantiable()) {
-                        $ns_instance = true;
-                        $asset = $ns;
-                        
-                        // $resource = $ns_resource;
-                        $resource = implode("\\", array_reverse($reslevel));
-                        // var_dump($asset);echo('asset controller echo'."\n");
-                        break 1;
-                     }
-                  }
-               }
-            }
-         }
-      }
-      
-      $r = new \ReflectionClass($asset);
-      if (! $r->isInstantiable())
-         throw new asset\exception\not_resolvable(get_called_class(), $asset);
-      $asset = new $asset($resource);
-      // return $asset->get_url();
-      return $asset;
-   
-   }
-
-   /**
-    * retrieves asset's URL when object invoked as string
-    *
-    * @uses \flat\core\controller\asset::get_url()
-    * @return string
-    */
-   public function __toString() {
-      try {
-         return $this->get_url();
-      } catch (\Exception $e) {
-         trigger_error("magic method asset::__toString() failed because exception ".get_class($e)." code: ".$e->getCode(). " message: \"".$e->getMessage()."\" thrown by ".get_called_class()."::get_url()",E_USER_ERROR);
-         return "";
-      }
-   }
-
-   /**
-    * provides an asset's system path.
-    * 
-    * @return string
-    */
-   public function get_system() {
-      if (!$this instanceof \flat\asset\system_base) {
-         throw new asset\exception\missing_system_base(get_called_class());
-      }
-      $path = $this->_get_system_base();
-      if (empty($this->resource))
-         return $path;
-      return "$path/" . $this->resource;
-   }
-
-   /**
-    * retrieves asset's URL
-    *
-    * @return string
-    */
-   public function get_url() {
-
-      $url = "";
-      if ($this instanceof \flat\asset\base) {
-         $url .= $this->_get_base();
-      }
-      if (empty($this->resource))
-         return $url;
-      return "$url/" . $this->resource;
-   
-   }
-
    /**
     *
     * @var string $resource resource specified to be resolved into asset
     */
    private $resource;
-
-   /**
-    * re-resolves asset and retrieves URL when invoked as method
-    * 
-    * @see get_url()
-    * @return string
-    */
-   public function __invoke($resource = "") {
-
-      $this->__construct($resource);
-      return $this->get_url();
    
-   }
-
    /**
     * @var callable
     * @see asset::set_resolved_handler()
     */
-   private static $_resolved_handler;
-   /**
-    * 
-    */
+   private static $resolved_handler;
    
+   /**
+    * provides the resource uri path
+    * 
+    * @return string resource uri path
+    */
+   public function get_resource_uri(): string {
+      return (string) $this->resource;
+   }
+   
+   /**
+    * Invoked for each param argument item passed to the "resolve" method.
+    * The return value is used as the class name of a replacement asset to instantiate.
+    * 
+    * @see \flat\core\controller\asset::resolve()
+    * 
+    * @return string 
+    */
+   protected function on_resolve_param(string $asset, string $key, $value): string {
+      return $asset;
+   }
+   
+   /**
+    * Invoked when the "resolve" method has resolved the asset.
+    * The return value will become the asset this is finally returned 
+    * by the "resolve" method.
+    *
+    * @see \flat\core\controller\asset::resolve()
+    *
+    * @return \flat\core\controller\asset
+    */
+   protected function on_resolve_ready(asset $resolved_asset) : asset {
+      return $resolved_asset;
+   }
+   
+   final public function is_equal(asset $asset) : bool {
+      return get_class($asset)===static::class && $asset->get_resource_uri() === $this->get_resource_uri();
+   }
+   
+   /**
+    * Resolves an asset
+    * 
+    * @return \flat\core\controller\asset
+    */
+   final public function resolve(array $param = null): asset {
+      $param === null && $param = [];
+
+      $orig_asset = $asset = "\\" . static::class;
+
+      foreach ( $param as $key => $value ) {
+         if ("" !== ($param_asset = trim($this->on_resolve_param($asset,$key,$value),"\\"))) {
+            $param_asset = "\\$param_asset";
+            if ($param_asset !== $asset) {
+               if ((new ReflectionClass($param_asset))->isInstantiable()) {
+                  $asset = $param_asset;
+               }
+            }
+         }
+      }
+      unset($key);
+      unset($value);
+
+      if ($orig_asset === $asset) {
+         $resolved_asset = $this;
+      } else {
+         $resolved_asset = new $asset($this->resource,$param);
+      }
+      
+      $resolved_asset = $this->on_resolve_ready($resolved_asset);
+
+      return $resolved_asset;
+   }
+
+   /**
+    * Returns information about the resource path.
+    * 
+    * @param int $options [optional]
+    * <br><br>
+    * If present, specifies a specific element to be returned; one of
+    * PATHINFO_DIRNAME, PATHINFO_BASENAME, PATHINFO_EXTENSION or PATHINFO_FILENAME. 
+    * <br><br>
+    * If options is not specified, returns all available elements. 
+    * 
+    * @return string|string[] If the options parameter is not passed, an associative array containing the following elements is returned: 
+    * dirname, basename, extension (if any), and filename. 
+    * <br><br>
+    * If the path has more than one extension, PATHINFO_EXTENSION returns only the last one and PATHINFO_FILENAME only strips the last one. 
+    * (see first example below). 
+    * <br><br>
+    * If the path does not have an extension, no extension element will be returned(see second example below). 
+    * <br><br>
+    * If the basename of the path starts with a dot, the following characters are interpreted asextension, and the filename is empty 
+    * (see third example below). 
+    * <br><br>
+    * If options is present, returns a string containing the requested element. 
+    * 
+    * @see http://www.php.net/manual/en/function.pathinfo.php 
+    */
+   public function get_pathinfo(int $options = null): string {
+      return pathinfo($this->resource,$options);
+   }
+
+   
+
    /**
     * sets a handler invoked for each resolved asset.
     * 
@@ -418,42 +177,57 @@ class asset implements
     *    callback signature: function(\flat\core\controller\asset $asset, $resource)
     * 
     */
-   public static function set_resolved_handler(callable $handler) {
-      
-      self::$_resolved_handler = $handler;
-      
+   public static function set_resolved_handler(callable $handler) : void {
+      self::$resolved_handler = $handler;
    }
-   
    
    /**
-    *
-    * @param string $resource
-    *           (optional) specify resource to be resolved into asset
+    * Canonicalizes and sets a new resource.
+    * 
+    * @return void
     */
-   public function __construct($resource = "") {
-
-      $this->resource = $resource;
-      if ($this instanceof \flat\asset\resource\transform) {
-         $transform = $this->get_resource_transform($resource);
-         // var_dump($resource);
-         if (is_string($transform) && ( $transform !== NULL )) {
-            $this->resource = $transform;
-         }
+   protected function set_resource(string $resource) : void {
+      $resource = str_replace("\\","/",$resource);
+      if (substr($resource,0,1) === "/") {
+         $resource = substr($resource,1);
       }
-      
-      if (self::$_resolved_handler) {
-         //$resolved_hash = get_class($this).":".$this->resource;
-         //if (!in_array($resolved_hash,self::$_resolved_list)) {
-            $handler = self::$_resolved_handler;
-            $asset = $this;
-            $ret = $handler($asset,$this->resource);
-            if (!empty($ret) && is_string($ret)) {
-               $this->resource = $ret;
-            }
-         //}
+      $this->resource = $resource;
+   }
+   
+   /**
+    * Provides the asset "resource".
+    * 
+    * @return string asset resource
+    */
+   protected function get_resource(): string {
+      return $this->resource;
+   }
+   
+   /**
+    * Invoked after the asset "resource" has been canonicalized for the first time.
+    * 
+    * @see \flat\core\controller\asset::__construct()
+    * 
+    * @return void
+    */
+   protected function on_resource_ready(array $param=null) : void {
+      if (self::$resolved_handler) {
+         $handler = self::$resolved_handler;
+         if (is_string($resource = $handler($this,$this->resource))) {
+            $this->set_resource($resource);
+         }
       }
    }
 
+   /**
+    * @param string $resource (optional) the asset "resource" value
+    */
+   public function __construct(string $resource = "",array $param=null) {
+      
+      $this->set_resource($resource);
+      
+      $this->on_resource_ready($param);
+   }
 }
 
 
