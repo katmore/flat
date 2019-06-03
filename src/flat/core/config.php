@@ -160,7 +160,7 @@ class config extends \flat\core {
     * @throws \flat\core\config\exception\bad_key
     * @throws \flat\core\config\exception\bad_config_file
     */
-   public static function get_ref_value(string $basename, string $ns) {
+   public static function get_ref_value(string $basename, string $ns, array $options=null) {
       if (empty(self::$base_dir)) {
          if (isset($options['default'])) return $options['default'];
          throw new config\exception\not_ready();
@@ -290,7 +290,7 @@ class config extends \flat\core {
     * @return mixed
     * @internal
     */
-   private static function _get_value($key,array $options=NULL) {
+   private static function _get_value($key,array $options=null) {
       
       $not_found_exception = true;
       if (isset($options['not_found_exception'])) $not_found_exception =$options['not_found_exception'];
@@ -332,9 +332,9 @@ class config extends \flat\core {
     * 
     * @static
     * @param string $path config path. note this is NOT a system path.  
-    * @return array
+    * @return array|null
     */
-   public static function enum_values($path,array $options=NULL) {
+   public static function enum_values($path,array $options=null) {
       /*
        * @uses config::$base_dir when empty config values are not available
        *
@@ -343,14 +343,26 @@ class config extends \flat\core {
       if (empty(self::$base_dir)) {
          throw new config\exception\not_ready();
       }
+      
       $path = self::_canonicalize_path($path,$options);
-      $file = self::$base_dir . "/".$path.".php";
-      $cfg = self::_get_config_arr($file);
-      foreach($cfg as $k=>&$v) {
-         $v=static::get("$path/$k",$options);
+      
+      $filename = self::$base_dir . "/".$path.".php";
+      
+      if (in_array($filename,self::$_not_config)) return null;
+      
+      $cfg = self::_get_config_arr($filename);
+      
+      if (!is_array($cfg)) {
+         if (isset($options['default']) && is_array($options['default'])) {
+            return $options['default'];
+         }
+         return null;
       }
-      unset($k);
-      unset($v);
+      
+      array_walk($cfg,function(&$v,$k) use($path) {
+         $v = static::get("$path/$k");
+      });
+      
       return $cfg;
    }
    
@@ -366,7 +378,7 @@ class config extends \flat\core {
     * 
     * @return mixed
     */
-   private static function _get_value_or_default($key,$default=NULL,array $options=NULL) {
+   private static function _get_value_or_default($key,$default=NULL,array $options=null) {
       try {
          return self::get($key,$options);
       } catch (config\exception $e) {
@@ -385,7 +397,7 @@ class config extends \flat\core {
     * @param array|NULL $options optional assoc array
     * @return string 
     */
-   private static function _canonicalize_path($path,array $options=NULL) {
+   private static function _canonicalize_path($path,array $options=null) {
       
       /** 
        * @uses $path must be string
@@ -429,7 +441,7 @@ class config extends \flat\core {
     * @throws \flat\core\config\exception\bad_key
     * @throws \flat\core\config\exception\bad_config_file
     */
-   public static function get($key,array $options=NULL) {
+   public static function get($key,array $options=null) {
       
       /*
        * @uses config::$base_dir when empty config values are not available 
@@ -619,7 +631,7 @@ class config extends \flat\core {
       /*
        * leave if already determined that given filename cannot be loaded
        */
-      if (in_array($filename,self::$_not_config)) return;
+      if (in_array($filename,self::$_not_config)) return null;
       
       /*
        * proceed if file can be included
@@ -630,19 +642,16 @@ class config extends \flat\core {
          
          if (!is_array($cfg)) throw new config\exception\bad_config_file(
             $filename,
-            "config file must return assoc array"
+            "config file must return array"
          );
-         
-         foreach ($cfg as $key=>$val) if (!is_string($key)) 
-            throw new config\exception\bad_key();
          
          return $cfg;
          
-      } else {
-         
-         self::$_not_config[] = $filename;
-         
       }
+      
+      self::$_not_config[] = $filename;
+      
+      return null;
    }
    
    /**
