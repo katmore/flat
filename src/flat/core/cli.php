@@ -4,12 +4,12 @@
 *
 * PHP version >=7.2
 *
-* Copyright (c) 2012-2018 Doug Bird.
+* Copyright (c) 2012-2019 Doug Bird.
 *    All Rights Reserved.
 *
 * COPYRIGHT NOTICE:
 * The flat framework. https://github.com/katmore/flat
-* Copyright (c) 2012-2017  Doug Bird.
+* Copyright (c) 2012-2019  Doug Bird.
 * ALL RIGHTS RESERVED. THIS COPYRIGHT APPLIES TO THE ENTIRE CONTENTS OF THE WORKS HEREIN
 * UNLESS A DIFFERENT COPYRIGHT NOTICE IS EXPLICITLY PROVIDED WITH AN EXPLANATION OF WHERE
 * THAT DIFFERENT COPYRIGHT APPLIES. WHERE SUCH A DIFFERENT COPYRIGHT NOTICE IS PROVIDED
@@ -28,7 +28,7 @@
 * @license GNU General Public License, version 3 (GPL-3.0) http://opensource.org/licenses/GPL-3.0
 * @link https://github.com/katmore/flat
 * @author     D. Bird <retran@gmail.com>
-* @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
+* @copyright  Copyright (c) 2012-2019 Doug Bird. All Rights Reserved.
 */
 namespace flat\core;
 
@@ -75,6 +75,47 @@ class cli {
     * @static
     */
    private static $_param;
+   
+   /**
+    * Provides option and operand values using <b>getopt()</b> specifications.
+    * 
+    * @param string $options option specification, same as used by getopt() function
+    * @param array $longopts longoption specification, same as used by getopt() function
+    * 
+    * @see getopt()
+    * 
+    * @return array associative array with <b>'opt'</b> key containing option values and <b>'operand'</b> key containing any arguments after last processed option
+    */
+   public static function getopt_and_operand(string $options = '', array $longopts = []): array {
+      
+      /*
+       * enforce argv global exists
+       */
+      if (!isset($GLOBALS['argv'])) {
+         throw new RuntimeException('cannot get command-line arguments because "argv" global does not exist');
+      }
+      
+      /*
+       * dereference argv global and enforce sanity
+       */
+      $argv = $GLOBALS['argv'];
+      /*
+       * get options and index of last option
+       */
+      $optind = null;
+      $opt = getopt($options,$longopts,$optind);
+      
+      /*
+       * get operands using index of last option
+       */
+      $operand = array_slice($argv,$optind);
+      
+      return [
+         'opt' => $opt,
+         'operand' => $operand
+      ];
+      
+   }
 
    /**
     * provides a reportable 'command' from given argv array.
