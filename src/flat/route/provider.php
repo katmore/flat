@@ -1,4 +1,5 @@
 <?php
+
 /**
  * class definition 
  *
@@ -34,9 +35,11 @@ namespace flat\route;
 
 use flat\core\controller\route;
 
-interface provider {
+interface provider
+{
+
     /**
-     * @return \flat\core\controller\route
+     * @return \flat\core\controller\route|null
      */
-   public function get_route() : route;
+    public function get_route(): ?route;
 }
