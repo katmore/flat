@@ -129,8 +129,6 @@ if (class_exists($check_class)) {
      contain the application logic.
 
 ## Legal
-The Flat Framework is copyrighted free software.
-
-Copyright (c) 2012-2019 Doug Bird <retran@gmail.com>. All Rights Reserved.
+Copyright (c) 2012-2019 Doug Bird - <retran@gmail.com>. All Rights Reserved.
 
 This software is distributed under the terms of the [MIT license](LICENSE) or [The GNU General Public License v3.0](GPLv3).
