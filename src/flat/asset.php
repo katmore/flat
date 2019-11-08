@@ -197,6 +197,7 @@ class asset extends core\controller\asset implements core\app
         self::RESOURCE_CSS => 'RESOURCE_CSS',
     ];
 
+
     /**
      * @var \flat\asset[] assoc array with an element value containing each registered asset or callback object; 
      * the element keys correspond to the unique hash of the asset or callback
@@ -254,15 +255,17 @@ class asset extends core\controller\asset implements core\app
     private static $bundle = [];
 
     /**
-     * @return int asset resource type
+     * @var \flat\asset[]|null "builtin dependencies" that have been registered, element keys the asset hash of the dependencies 
+     * @static
+     * @see \flat\asset::on_resource_ready()
      */
-    public function get_resource_type(): int
-    {
-        if (empty($ext = $this->get_pathinfo(PATHINFO_EXTENSION)) || !isset(self::IMPLICIT_RESOURCE_TYPE[$ext])) {
-            return self::RESOURCE_UNKNOWN;
-        }
-        return self::IMPLICIT_RESOURCE_TYPE[$ext];
-    }
+    private static $builtin_dependencies_registered;
+
+    /**
+     * @var string unique hash for this asset
+     * @see \flat\asset::get_hash()
+     */
+    private $hash;
 
     /**
      * retrieves asset's URL when object invoked as string
@@ -292,6 +295,23 @@ class asset extends core\controller\asset implements core\app
             $this->set_resource($resource);
         }
         return $this->get_url();
+    }
+
+    /**
+     * @return int asset resource type
+     */
+    public function get_resource_type(): int
+    {
+        return static::extension2resource_type($this->get_pathinfo(PATHINFO_EXTENSION));
+    }
+
+    /**
+     * @return string unique hash for this asset
+     */
+    public function get_hash(): string
+    {
+        if ($this->hash !== null) return $this->hash;
+        return self::concat_hash($this->get_resource_type(), static::class, $this->get_resource());
     }
 
     /**
@@ -325,9 +345,12 @@ class asset extends core\controller\asset implements core\app
         if (!$this instanceof asset\system_base) {
             return null;
         }
-        $path = $this->_get_system_base();
-        if (empty($this->get_resource())) return $path;
-        return "$path/" . $this->get_resource();
+
+        if (empty($base = ltrim($this->_get_system_base()))) {
+            return null;
+        }
+
+        return rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . ltrim($resource, DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -337,33 +360,22 @@ class asset extends core\controller\asset implements core\app
      */
     public function get_url()
     {
-        $url = "";
-        if ($this instanceof asset\base) {
-            $url .= $this->_get_base();
+        $base = $this instanceof asset\base ? ltrim($this->_get_base()) : '';
+
+        $resource = $this->get_resource();
+
+        if (empty(trim($resource, '/'))) {
+            return $base . rtrim($resource, '//');
         }
-        if (empty($this->get_resource())) return $url;
-        return "$url/" . $this->get_resource();
+
+        if ($base === '') {
+            return $this->get_resource();
+        }
+
+        return rtrim($base, '/') . '/' . ltrim($resource, '/');
     }
 
-    private function print_system_contents(array $valid_extensions, array $valid_media_types)
-    {
-        if ($this->get_system() === null) {
-            throw new exception\app_error('cannot determine system path for resource: ' . $this->get_resource());
-        }
-        if (!is_file($this->get_system())) {
-            throw new exception\app_error('system resource file not found: ' . $this->get_system());
-        }
-        if (!is_readable($this->get_system())) {
-            throw new exception\app_error('system resource file not readable: ' . $this->get_system());
-        }
-        if (!in_array($ext = strtolower(pathinfo($this->get_system(), PATHINFO_EXTENSION), $valid_extensions)) && !in_array(mime_content_type($this->get_system()), $valid_media_types)) {
-            throw new exception\app_error('system resource file does not have a valid extension or media type: ' . $this->get_system());
-        }
-        if (false === ($content = file_get_contents($this->get_system()))) {
-            throw new exception\app_error('failed to read system resource file');
-        }
-        echo trim($content);
-    }
+
 
     /**
      * prints a style tag with contents of resource's system path (file).
@@ -400,30 +412,6 @@ class asset extends core\controller\asset implements core\app
     }
 
     /**
-     * Prints a &lt;script> element for a javascript resource.
-     * Example: &lt;script src="http://example.com/my-javascript.js">&lt;/script>
-     *
-     * @return void
-     */
-    protected function print_js_script_tag(): void
-    {
-        echo "<!--js script asset tag: " . static::class . "-->";
-        echo '<script src="' . trim(htmlentities($this->get_url())) . '"></script>' . "\n";
-    }
-
-    /**
-     * Prints a &lt;link> element for a stylesheet resource.
-     * Example: &lt;link href="http://example.com/my-stylesheet.css" rel="stylesheet">
-     *
-     * @return void
-     */
-    protected function print_css_link_tag(): void
-    {
-        echo "<!--css link asset tag: " . static::class . "-->";
-        echo '<link href="' . trim(htmlentities($this->get_url())) . '" rel="stylesheet">' . "\n";
-    }
-
-    /**
      * Prints an HTML element using the resource's url.
      *
      * @param int $tag_type
@@ -448,28 +436,6 @@ class asset extends core\controller\asset implements core\app
             case self::TAG_STYLESHEET_LINK:
                 $this->print_css_link_tag();
                 return;
-        }
-    }
-
-    /**
-     * @return void
-     */
-    private static function each_dependency(array &$called, callable $callback, string $asset_hash, int $position, asset $asset = null): void
-    {
-        if (isset(self::$reigster_depends[$asset_hash])) {
-            foreach (self::$reigster_depends[$asset_hash] as $depends_asset_hash => $depends_asset) {
-                if (isset(self::$reigster_depends[$depends_asset_hash])) {
-                    static::each_dependency($called, $callback, $depends_asset_hash, $position, $asset);
-                }
-                if (!in_array($depends_asset_hash, $called)) {
-                    if ($depends_asset instanceof asset || is_callable($depends_asset)) {
-                        $callback($depends_asset, $position, $asset);
-                    }
-                    $called[] = $depends_asset_hash;
-                }
-            }
-            unset($depends_asset_hash);
-            unset($depends_asset);
         }
     }
 
@@ -559,9 +525,9 @@ class asset extends core\controller\asset implements core\app
                 $position = self::CATCHALL_CALLBACK_POSITION;
             }
 
-//             $positionFilterMask = $position & $filter;
-//             $resourceTypeFilterMask = $resource_type & $filter;
-//             echo "resource_type: $resource_type, position: $position, filter: $filter, positionFilterMask: $positionFilterMask, resourceTypeFilterMask: $resourceTypeFilterMask\n";
+            //             $positionFilterMask = $position & $filter;
+            //             $resourceTypeFilterMask = $resource_type & $filter;
+            //             echo "resource_type: $resource_type, position: $position, filter: $filter, positionFilterMask: $positionFilterMask, resourceTypeFilterMask: $resourceTypeFilterMask\n";
 
             $filterByResource = false;
             $filterByPosition = false;
@@ -575,9 +541,6 @@ class asset extends core\controller\asset implements core\app
             }
         }
         unset($asset_hash);
-//         echo "\n\n";
-//         debug_print_backtrace();
-//         die(__FILE__);
     }
 
     /**
@@ -710,16 +673,226 @@ class asset extends core\controller\asset implements core\app
 
         return $this;
     }
-
-    private $hash;
+    
+    /**
+     * @param callable|string $html if callable, it will be executed, when the corresponding registered asset is executed.
+     * @param array $param optional parameters
+     *
+     * @return \flat\asset
+     * @static
+     */
+    final public static function register_html($html, array $param = null): asset
+    {
+        return static::register_output($html, $param);
+    }
+    
+    final public static function register_html_special($html_position_type = null, ...$html): asset
+    {
+        $output_param = [];
+        if (in_array($html_position_type, self::VALID_POSITIONS, true)) {
+            $output_param['position'] = $html_position_type;
+        }
+        if (is_string($html_position_type) || is_callable($html_position_type)) {
+            array_unshift($html, $html_position_type);
+        }
+        count($html) === 1 && $html = [
+            $html[0]
+        ];
+        
+        return static::register_output($html, $output_param);
+    }
+    
+    /**
+     * Registers an asset for future processing.
+     *
+     * @return void
+     * @static
+     */
+    public static function register_asset($asset = "", array $param = null): asset
+    {
+        $depends = [];
+        $resource = null;
+        if (is_array($param)) {
+            $dk = [];
+            foreach ($param as $k => $v) {
+                if ($v instanceof asset) {
+                    $depends[] = $v;
+                    $dk[] = $k;
+                }
+            }
+            unset($k);
+            unset($v);
+            
+            foreach ($dk as $k) {
+                unset($param[$k]);
+            }
+            unset($k);
+            unset($dk);
+            
+            if (isset($param['depends'])) {
+                if (is_array($param['depends'])) {
+                    $depends = array_merge($depends, $param['depends']);
+                }
+                unset($param['depends']);
+            }
+            
+            if (isset($param['resource'])) {
+                is_string($param['resource']) && $resource = $param['resource'];
+                unset($param['resource']);
+            }
+        }
+        
+        if (!$asset instanceof asset) {
+            $resource === null && $resource = $asset;
+            $asset = static::asset($resource, $param);
+        }
+        
+        
+        
+        $asset_hash = $asset->get_hash();
+        
+        if (!isset(self::$register_asset[$asset_hash])) {
+            
+            if (isset($param['position'])) {
+                if (false === ($position = filter_var($param['position'], FILTER_VALIDATE_INT))) {
+                    throw new exception\bad_param("position", 'must be an integer');
+                }
+                if (!in_array($position, self::VALID_POSITIONS, true)) {
+                    throw new exception\bad_param("position", 'unknown position');
+                }
+            } else {
+                
+                $resource_type = $asset->get_resource_type();
+                
+                if (isset(self::IMPLICIT_RESOURCE_POSITION[$resource_type])) {
+                    $position = self::IMPLICIT_RESOURCE_POSITION[$resource_type];
+                } else {
+                    $position = self::CATCHALL_RESOURCE_POSITION;
+                }
+            }
+            
+            self::$register_hash[] = $asset_hash;
+            
+            self::$register_asset[$asset_hash] = $asset;
+            
+            self::$register_position[$asset_hash] = $position;
+            
+            self::$reigster_depends[$asset_hash] = [];
+        }
+        
+        if (count($depends)) {
+            self::register_depends($asset, $depends, is_array($param) ? $param : []);
+        }
+        
+        return $asset;
+    }
+    
+    /**
+     * Creates and resolves an asset object.
+     *
+     * @see \flat\core\controller\asset::__construct()
+     * @see \flat\core\controller\asset::resolve()
+     *
+     * @return \flat\asset
+     */
+    public static function asset($resource = "", $param = null)
+    {
+        !is_array($param) && $param = [];
+        
+        return (new static($resource))->resolve($param);
+    }
+    
+    /**
+     * @return \flat\asset[]
+     */
+    public static function builtin_dependencies(): array
+    {
+        return [];
+    }
+    
+    /**
+     * @return \flat\core\controller\asset
+     */
+    protected function on_resolve_ready(core\controller\asset $resolved_asset): core\controller\asset
+    {
+        return $resolved_asset instanceof asset ? $resolved_asset : $this;
+    }
 
     /**
-     * @return string unique hash for this asset
+     * Prints a &lt;script> element for a javascript resource.
+     * Example: &lt;script src="http://example.com/my-javascript.js">&lt;/script>
+     *
+     * @return void
      */
-    public function get_hash(): string
+    protected function print_js_script_tag(): void
     {
-        if ($this->hash !== null) return $this->hash;
-        return self::concat_hash($this->get_resource_type(), static::class, $this->get_resource());
+        echo "<!--js script asset tag: " . static::class . "-->";
+        echo '<script src="' . trim(htmlentities($this->get_url())) . '"></script>' . "\n";
+    }
+
+    /**
+     * Prints a &lt;link> element for a stylesheet resource.
+     * Example: &lt;link href="http://example.com/my-stylesheet.css" rel="stylesheet">
+     *
+     * @return void
+     */
+    protected function print_css_link_tag(): void
+    {
+        echo "<!--css link asset tag: " . static::class . "-->";
+        echo '<link href="' . trim(htmlentities($this->get_url())) . '" rel="stylesheet">' . "\n";
+    }
+
+    /**
+     * @return void
+     */
+    private static function each_dependency(array &$called, callable $callback, string $asset_hash, int $position, asset $asset = null): void
+    {
+        if (isset(self::$reigster_depends[$asset_hash])) {
+            foreach (self::$reigster_depends[$asset_hash] as $depends_asset_hash => $depends_asset) {
+                if (isset(self::$reigster_depends[$depends_asset_hash])) {
+                    static::each_dependency($called, $callback, $depends_asset_hash, $position, $asset);
+                }
+                if (!in_array($depends_asset_hash, $called)) {
+                    if ($depends_asset instanceof asset || is_callable($depends_asset)) {
+                        $callback($depends_asset, $position, $asset);
+                    }
+                    $called[] = $depends_asset_hash;
+                }
+            }
+            unset($depends_asset_hash);
+            unset($depends_asset);
+        }
+    }
+
+    private function print_system_contents(array $valid_extensions, array $valid_media_types)
+    {
+        if ($this->get_system() === null) {
+            throw new exception\app_error('cannot determine system path for resource: ' . $this->get_resource());
+        }
+        if (!is_file($this->get_system())) {
+            throw new exception\app_error('system resource file not found: ' . $this->get_system());
+        }
+        if (!is_readable($this->get_system())) {
+            throw new exception\app_error('system resource file not readable: ' . $this->get_system());
+        }
+        if (!in_array($ext = strtolower(pathinfo($this->get_system(), PATHINFO_EXTENSION), $valid_extensions)) && !in_array(mime_content_type($this->get_system()), $valid_media_types)) {
+            throw new exception\app_error('system resource file does not have a valid extension or media type: ' . $this->get_system());
+        }
+        if (false === ($content = file_get_contents($this->get_system()))) {
+            throw new exception\app_error('failed to read system resource file');
+        }
+        echo trim($content);
+    }
+
+    /**
+     * @return int determine an extension's resource type
+     */
+    private static function extension2resource_type(?string $extension): int
+    {
+        if (empty($extension) || !isset(self::IMPLICIT_RESOURCE_TYPE[$extension])) {
+            return self::RESOURCE_UNKNOWN;
+        }
+        return self::IMPLICIT_RESOURCE_TYPE[$extension];
     }
 
     /**
@@ -798,34 +971,6 @@ class asset extends core\controller\asset implements core\app
             }
         }
         unset($depends_asset);
-    }
-
-    /**
-     * @param callable|string $html if callable, it will be executed, when the corresponding registered asset is executed.
-     * @param array $param optional parameters
-     * 
-     * @return \flat\asset
-     * @static
-     */
-    final public static function register_html($html, array $param = null): asset
-    {
-        return static::register_output($html, $param);
-    }
-
-    final public static function register_html_special($html_position_type = null, ...$html): asset
-    {
-        $output_param = [];
-        if (in_array($html_position_type, self::VALID_POSITIONS, true)) {
-            $output_param['position'] = $html_position_type;
-        }
-        if (is_string($html_position_type) || is_callable($html_position_type)) {
-            array_unshift($html, $html_position_type);
-        }
-        count($html) === 1 && $html = [
-            $html[0]
-        ];
-
-        return static::register_output($html, $output_param);
     }
 
     /**
@@ -924,107 +1069,6 @@ class asset extends core\controller\asset implements core\app
         if (isset($param['type'])) unset($param['type']);
 
         return $asset->register($param);
-    }
-
-    /**
-     * Registers an asset for future processing.
-     * 
-     * @return void
-     * @static
-     */
-    public static function register_asset($asset = "", array $param = null): asset
-    {
-        $depends = [];
-        if (is_array($param)) {
-            $dk = [];
-            foreach ($param as $k => $v) {
-                if ($v instanceof asset) {
-                    $depends[] = $v;
-                    $dk[] = $k;
-                }
-            }
-            unset($k);
-            unset($v);
-
-            foreach ($dk as $k) {
-                unset($param[$k]);
-            }
-            unset($k);
-            unset($dk);
-
-            if (isset($param['depends'])) {
-                if (is_array($param['depends'])) {
-                    $depends = array_merge($depends, $param['depends']);
-                }
-                unset($param['depends']);
-            }
-        }
-
-        if (!$asset instanceof asset) {
-            $asset = static::asset($asset, $param);
-        }
-
-
-
-        $asset_hash = $asset->get_hash();
-
-        if (!isset(self::$register_asset[$asset_hash])) {
-
-            if (isset($param['position'])) {
-                if (false === ($position = filter_var($param['position'], FILTER_VALIDATE_INT))) {
-                    throw new exception\bad_param("position", 'must be an integer');
-                }
-                if (!in_array($position, self::VALID_POSITIONS, true)) {
-                    throw new exception\bad_param("position", 'unknown position');
-                }
-            } else {
-
-                $resource_type = $asset->get_resource_type();
-
-                if (isset(self::IMPLICIT_RESOURCE_POSITION[$resource_type])) {
-                    $position = self::IMPLICIT_RESOURCE_POSITION[$resource_type];
-                } else {
-                    $position = self::CATCHALL_RESOURCE_POSITION;
-                }
-            }
-
-            self::$register_hash[] = $asset_hash;
-
-            self::$register_asset[$asset_hash] = $asset;
-
-            self::$register_position[$asset_hash] = $position;
-
-            self::$reigster_depends[$asset_hash] = [];
-        }
-
-        if (count($depends)) {
-            self::register_depends($asset, $depends, is_array($param) ? $param : []);
-        }
-
-        return $asset;
-    }
-
-    /**
-     * @return \flat\core\controller\asset
-     */
-    protected function on_resolve_ready(core\controller\asset $resolved_asset): core\controller\asset
-    {
-        return $resolved_asset instanceof asset ? $resolved_asset : $this;
-    }
-
-    /**
-     * Creates and resolves an asset object.
-     *
-     * @see \flat\core\controller\asset::__construct()
-     * @see \flat\core\controller\asset::resolve()
-     * 
-     * @return \flat\asset
-     */
-    public static function asset($resource = "", $param = null)
-    {
-        !is_array($param) && $param = [];
-
-        return (new static($resource))->resolve($param);
     }
 
     /**
@@ -1134,9 +1178,15 @@ class asset extends core\controller\asset implements core\app
         }
 
         if (isset($param['hash'])) {
-            if (is_string($param['hash']) && $this->hash === null) {
+            if ($this->hash === null && is_string($param['hash'])) {
                 $this->hash = $param['hash'];
             }
+        }
+
+        if (!static::$registerd_builtin_dependencies) {
+
+            static::$registerd_builtin_dependencies = true;
+            static::builtin_dependencies();
         }
 
         parent::on_resource_ready($param);
