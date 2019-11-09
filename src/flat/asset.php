@@ -98,6 +98,33 @@ class asset extends core\controller\asset implements core\app
     public const RESOURCE_CSS = 128;
 
     /**
+     * @var int enforce that system path exists
+     */
+    public const SYSTEM_PATH_EXISTS = 256;
+
+    /**
+     * @var int enforce that system path is a file
+     */
+    public const SYSTEM_PATH_FILE = 512 | self::SYSTEM_PATH_EXISTS;
+
+    /**
+     * @var int enforce that system path is a directory
+     */
+    public const SYSTEM_PATH_DIR = 1024 | self::SYSTEM_PATH_EXISTS;
+
+    /**
+     * @var int determine the canonicalized absolute system path if possible
+     */
+    public const SYSTEM_PATH_ABSOLUTE = 2048;
+    
+    /**
+     * @var bool
+     * @static
+     * @see \flat\asset::on_resource_ready()
+     */
+    private static $first_instantiation = [];
+
+    /**
      * @var int[] enumeration of tag types
      */
     private const VALID_TAGS = [
@@ -127,11 +154,11 @@ class asset extends core\controller\asset implements core\app
     private const EXTENSION_CSS = 'css';
 
     private const VALID_CSS_EXTENSIONS = [
-        'js'
+        'css'
     ];
 
     private const VALID_JS_EXTENSIONS = [
-        'css'
+        'js'
     ];
 
     private const VALID_CSS_MEDIA_TYPES = [
@@ -255,20 +282,31 @@ class asset extends core\controller\asset implements core\app
     private static $bundle = [];
 
     /**
-     * @var \flat\asset[]|null "builtin dependencies" that have been registered, element keys the asset hash of the dependencies 
-     * @static
-     * @see \flat\asset::on_resource_ready()
-     */
-    private static $builtin_dependencies_registered;
-
-    /**
-     * @var string unique hash for this asset
+     * @var string cached value of unique hash for this asset
      * @see \flat\asset::get_hash()
      */
     private $hash;
 
     /**
-     * retrieves asset's URL when object invoked as string
+     * @var string cached value of system path for this asset
+     * @see \flat\asset::get_system()
+     */
+    private $system;
+
+    /**
+     * Canonicalizes and sets a new resource.
+     *
+     * @return void
+     */
+    protected function set_resource(string $resource): void
+    {
+        $this->hash = null;
+        $this->system = null;
+        parent::set_resource($resource);
+    }
+
+    /**
+     * retrieves asset's URL when object cast as string
      *
      * @uses \flat\asset::get_url()
      * @return string
@@ -336,21 +374,70 @@ class asset extends core\controller\asset implements core\app
     }
 
     /**
-     * provides an asset's system path.
-     *
+     * Provides an asset's system path
+     * 
+     * @param int $flags optional flags:<ul>
+     *   <li>asset::SYSTEM_PATH_EXISTS - throw exception if system path cannot be determined, does not exist, or read permission is denied</li>
+     *   <li>asset::SYSTEM_PATH_FILE - throw exception if system path is not a readable file</li>
+     *   <li>asset::SYSTEM_PATH_DIR - throw exception if system path is not a readable directory</li>
+     *   <li>asset::SYSTEM_PATH_ABSOLUTE - determine the canonicalized absolute system path if possible</li>
+     * </ul>
+     * 
      * @return string|null
+     * @throws \flat\lib\exception\app_error
+     * 
+     * @see \flat\asset::SYSTEM_PATH_EXISTS
+     * @see \flat\asset::SYSTEM_PATH_FILE
+     * @see \flat\asset::SYSTEM_PATH_DIR
+     * @see \flat\asset::SYSTEM_PATH_ABSOLUTE
      */
-    public function get_system()
+    public function get_system(int $flags = null)
     {
         if (!$this instanceof asset\system_base) {
+            if ($flags & self::SYSTEM_PATH_EXISTS) {
+                throw new exception\app_error('cannot determine system path: asset must be instance of ' . asset\system_base::class);
+            }
             return null;
         }
 
         if (empty($base = ltrim($this->_get_system_base()))) {
+            if (self::SYSTEM_PATH_EXISTS) {
+                throw new exception\app_error('cannot determine system path: asset::_get_system_base() must not return an empty value');
+            }
             return null;
         }
 
-        return rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . ltrim($resource, DIRECTORY_SEPARATOR);
+        $resource = $this->get_resource();
+
+        $system_path = rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . ltrim($resource, DIRECTORY_SEPARATOR);
+
+        if ($flags & self::SYSTEM_PATH_EXISTS) {
+
+            if (!is_readable($system_path)) {
+                if (!file_exists($system_path)) {
+                    throw new exception\app_error("the system path does not exist: $system_path (resource: '$resource')");
+                }
+                throw new exception\app_error("read permission is denied for system path: $system_path (resource: '$resource')");
+            }
+
+            if ($flags & self::SYSTEM_PATH_FILE) {
+                if (!is_file($system_path)) {
+                    throw new exception\app_error("system path is not a file: $system_path (resource: '$resource')");
+                }
+            } else if ($flags & self::SYSTEM_PATH_DIR) {
+                if (!is_dir($system_path)) {
+                    throw new exception\app_error("system path is not a directory: $system_path (resource: '$resource')");
+                }
+            }
+        }
+
+        if ($flags & self::SYSTEM_PATH_ABSOLUTE) {
+            $error_reporting = error_reporting(error_reporting() & ~E_NOTICE & ~E_WARNING);
+            !empty($realpath = realpath($system_path)) && $system_path = $realpath;
+            error_reporting($error_reporting);
+        }
+
+        return $system_path;
     }
 
     /**
@@ -404,11 +491,36 @@ class asset extends core\controller\asset implements core\app
      */
     public function print_contents_script_tag(): void
     {
-        echo "<!--START script asset contents: {$this->get_pathinfo(PATHINFO_BASENAME)} " . static::class . "-->\n";
+        if (null === ($system_path = $this->get_system())) return;
+
+        echo "<!--START script asset contents: pathinfo(PATHINFO_BASENAME)} " . static::class . "-->\n";
         echo "<script>\n";
         $this->print_system_contents(self::VALID_JS_EXTENSIONS, self::VALID_JS_MEDIA_TYPES);
         echo "\n</script>\n";
         echo "<!--END script asset contents: {$this->get_pathinfo(PATHINFO_BASENAME)} " . static::class . "-->\n";
+    }
+
+    public function print_contents(int $resource_type = null): void
+    {
+        if (null === ($system_path = $this->get_system())) return;
+
+        if (!in_array($resource_type, self::VALID_RESOURCES, true)) {
+
+            $ext = pathinfo($system_path, PATHINFO_EXTENSION);
+
+            if (!isset(self::IMPLICIT_RESOURCE_TYPE[$ext])) return;
+
+            $tag_type = self::IMPLICIT_RESOURCE_TYPE[$ext];
+        }
+
+        switch ($tag_type) {
+            case self::TAG_SCRIPT:
+                $this->print_contents_script_tag();
+                return;
+            case self::TAG_STYLESHEET_LINK:
+                $this->print_contents_style_tag();
+                return;
+        }
     }
 
     /**
@@ -673,7 +785,7 @@ class asset extends core\controller\asset implements core\app
 
         return $this;
     }
-    
+
     /**
      * @param callable|string $html if callable, it will be executed, when the corresponding registered asset is executed.
      * @param array $param optional parameters
@@ -685,7 +797,7 @@ class asset extends core\controller\asset implements core\app
     {
         return static::register_output($html, $param);
     }
-    
+
     final public static function register_html_special($html_position_type = null, ...$html): asset
     {
         $output_param = [];
@@ -698,10 +810,10 @@ class asset extends core\controller\asset implements core\app
         count($html) === 1 && $html = [
             $html[0]
         ];
-        
+
         return static::register_output($html, $output_param);
     }
-    
+
     /**
      * Registers an asset for future processing.
      *
@@ -722,37 +834,37 @@ class asset extends core\controller\asset implements core\app
             }
             unset($k);
             unset($v);
-            
+
             foreach ($dk as $k) {
                 unset($param[$k]);
             }
             unset($k);
             unset($dk);
-            
+
             if (isset($param['depends'])) {
                 if (is_array($param['depends'])) {
                     $depends = array_merge($depends, $param['depends']);
                 }
                 unset($param['depends']);
             }
-            
+
             if (isset($param['resource'])) {
                 is_string($param['resource']) && $resource = $param['resource'];
                 unset($param['resource']);
             }
         }
-        
+
         if (!$asset instanceof asset) {
             $resource === null && $resource = $asset;
             $asset = static::asset($resource, $param);
         }
-        
-        
-        
+
+
+
         $asset_hash = $asset->get_hash();
-        
+
         if (!isset(self::$register_asset[$asset_hash])) {
-            
+
             if (isset($param['position'])) {
                 if (false === ($position = filter_var($param['position'], FILTER_VALIDATE_INT))) {
                     throw new exception\bad_param("position", 'must be an integer');
@@ -761,32 +873,32 @@ class asset extends core\controller\asset implements core\app
                     throw new exception\bad_param("position", 'unknown position');
                 }
             } else {
-                
+
                 $resource_type = $asset->get_resource_type();
-                
+
                 if (isset(self::IMPLICIT_RESOURCE_POSITION[$resource_type])) {
                     $position = self::IMPLICIT_RESOURCE_POSITION[$resource_type];
                 } else {
                     $position = self::CATCHALL_RESOURCE_POSITION;
                 }
             }
-            
+
             self::$register_hash[] = $asset_hash;
-            
+
             self::$register_asset[$asset_hash] = $asset;
-            
+
             self::$register_position[$asset_hash] = $position;
-            
+
             self::$reigster_depends[$asset_hash] = [];
         }
-        
+
         if (count($depends)) {
             self::register_depends($asset, $depends, is_array($param) ? $param : []);
         }
-        
+
         return $asset;
     }
-    
+
     /**
      * Creates and resolves an asset object.
      *
@@ -798,18 +910,176 @@ class asset extends core\controller\asset implements core\app
     public static function asset($resource = "", $param = null)
     {
         !is_array($param) && $param = [];
-        
+
         return (new static($resource))->resolve($param);
     }
-    
+
     /**
-     * @return \flat\asset[]
+     * Provide an asset's "built-in" dependencies
+     * 
+     * The first time a particular asset class is instantiated, the <i>register()</i> method is executed for each "built-in" dependency.
+     * 
+     * @return \flat\asset[]|string[]|array 
+     *  Each element may be either an instance of <i>\flat\asset</i>, or a <i>string</i> "resource" to provide to an asset
      */
-    public static function builtin_dependencies(): array
+    public static function get_builtin_dependencies(): array
     {
         return [];
     }
+
+    /**
+     * @return string
+     */
+    protected function on_resolve_param(string $asset, string $key, $value): string
+    {
+        if ($key === 'hash_handle_prefix') {
+            if (is_string($value) && $this->hash === null) {
+                //$this->hash = $value;
+                $this->hash = uniqid("$value." . static::class . '.', true);
+            }
+            return $asset;
+        }
+        if ($key === 'hash') {
+            if (is_string($value) && $this->hash === null) {
+                $this->hash = $value;
+            }
+            return $asset;
+        }
+        if ($key === 'cascade') {
+
+            $base = "\\" . static::class;
+
+            if (is_string($value)) {
+                $base = str_replace("/", "\\", $value);
+            }
+
+            if (substr($base, 0, 1) == "\\" && class_exists($base) && is_a($base, '\flat\asset', true)) {
+                $asset = $base;
+            } else {
+                if (class_exists("$asset\\$base") && is_a("$asset\\$base", '\flat\asset', true)) {
+                    if ((new ReflectionClass("$asset\\$base"))->isInstantiable()) $asset = "$asset\\$base";
+                }
+            }
+
+            /*
+             * convert path to namespace to check if it's relative class reference
+             */
+            $ns = str_replace("/", "\\", $this->get_resource()); // convert slashes
+            $base = $this->get_pathinfo(PATHINFO_BASENAME);
+            $ns = preg_replace('/^([^\.]*).*$/', '$1', $ns); // remove file extension if has one
+            $ns = "$asset\\$ns";
+
+            /*
+             * check relative resource without file extension is an asset
+             */
+            $ns_instance = false;
+            if (class_exists($ns) && is_a($ns, '\flat\asset', true)) {
+                if ((new ReflectionClass($ns))->isInstantiable()) {
+                    $ns_instance = true;
+                    $asset = $ns;
+                    $ns = explode("\\", $ns);
+
+                    $this->set_resource($base);
+                }
+            }
+
+            /*
+             * if relative resource wasnt asset yet...
+             *    remove one level at a time from resource and check it
+             */
+            if (!$ns_instance) {
+                $reslevel = [
+                    $base
+                ];
+                $ns = str_replace("/", "\\", $this->get_resource()); // convert slashes
+                $base = $this->get_pathinfo(PATHINFO_BASENAME);
+                $ns = preg_replace('/^([^\.]*).*$/', '$1', $ns); // remove file extension if has one
+                $ns = "$asset\\$ns";
+                $nslevel = explode("\\", $ns);
+                if (count($nslevel) > 1) {
+                    $level_count = count($nslevel);
+                    for ($i = 0; $i < $level_count; $i++) {
+                        $ns_resource = array_pop($nslevel);
+                        if ($i != 0) $reslevel[] = $ns_resource;
+                        $ns = implode("\\", $nslevel);
+                        if (class_exists($ns) && is_a($ns, '\flat\asset', true)) {
+                            if ((new ReflectionClass($ns))->isInstantiable()) {
+                                $ns_instance = true;
+                                $asset = $ns;
+                                $this->set_resource(implode("\\", array_reverse($reslevel)));
+                                break 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $asset;
+        }
+
+        return parent::on_resolve_param($asset, $key, $value);
+    }
     
+    /**
+     * Invoked when an asset class has been instantiated the first time.
+     *
+     * @see \flat\core\controller\asset::__construct()
+     *
+     * @return void
+     */
+    protected static function on_first_instantiation() : void {
+        
+    }
+
+    /**
+     * @return void
+     */
+    protected function on_resource_ready(array $param = null): void
+    {
+        $param === null && $param = [];
+        
+        $first_instantiation = null;
+        
+        if (!key_exists(static::class,self::$first_instantiation)) {
+            
+            self::$first_instantiation[static::class] = null;
+            
+            $first_instantiation = true;
+            
+            static::on_first_instantiation();
+                
+        }
+
+        if ($this instanceof asset\resource\transform) {
+            if (is_string($resource = $this->get_resource_transform($this->get_resource()))) {
+                $this->set_resource($resource);
+            }
+        }
+
+        if (isset($param['hash'])) {
+            if ($this->hash === null && is_string($param['hash'])) {
+                $this->hash = $param['hash'];
+            }
+        }
+
+        parent::on_resource_ready($param);
+        
+        
+        if ($first_instantiation) {
+            array_map(function ($asset) {
+                if (is_string($asset)) {
+                    $resource = $asset;
+                    $asset = clone $this;
+                    $asset->set_resource($resource);
+                }
+                if (!$asset instanceof asset) return;
+                //die(__FILE__);
+                $asset->register();
+            }, static::get_builtin_dependencies());
+                
+        }
+    }
+
     /**
      * @return \flat\core\controller\asset
      */
@@ -826,7 +1096,7 @@ class asset extends core\controller\asset implements core\app
      */
     protected function print_js_script_tag(): void
     {
-        echo "<!--js script asset tag: " . static::class . "-->";
+        echo "<!--js script asset tag: " . static::class . "-->\n";
         echo '<script src="' . trim(htmlentities($this->get_url())) . '"></script>' . "\n";
     }
 
@@ -838,7 +1108,7 @@ class asset extends core\controller\asset implements core\app
      */
     protected function print_css_link_tag(): void
     {
-        echo "<!--css link asset tag: " . static::class . "-->";
+        echo "<!--css link asset tag: " . static::class . "-->\n";
         echo '<link href="' . trim(htmlentities($this->get_url())) . '" rel="stylesheet">' . "\n";
     }
 
@@ -866,19 +1136,18 @@ class asset extends core\controller\asset implements core\app
 
     private function print_system_contents(array $valid_extensions, array $valid_media_types)
     {
-        if ($this->get_system() === null) {
-            throw new exception\app_error('cannot determine system path for resource: ' . $this->get_resource());
-        }
-        if (!is_file($this->get_system())) {
+        $system_path = $this->get_system(self::SYSTEM_PATH_FILE);
+
+        if (!is_file($system_path)) {
             throw new exception\app_error('system resource file not found: ' . $this->get_system());
         }
-        if (!is_readable($this->get_system())) {
+        if (!is_readable($system_path)) {
             throw new exception\app_error('system resource file not readable: ' . $this->get_system());
         }
-        if (!in_array($ext = strtolower(pathinfo($this->get_system(), PATHINFO_EXTENSION), $valid_extensions)) && !in_array(mime_content_type($this->get_system()), $valid_media_types)) {
+        if (!in_array($ext = strtolower(pathinfo($system_path, PATHINFO_EXTENSION)), $valid_extensions) && !in_array(mime_content_type($this->get_system()), $valid_media_types)) {
             throw new exception\app_error('system resource file does not have a valid extension or media type: ' . $this->get_system());
         }
-        if (false === ($content = file_get_contents($this->get_system()))) {
+        if (false === ($content = file_get_contents($system_path))) {
             throw new exception\app_error('failed to read system resource file');
         }
         echo trim($content);
@@ -1069,126 +1338,5 @@ class asset extends core\controller\asset implements core\app
         if (isset($param['type'])) unset($param['type']);
 
         return $asset->register($param);
-    }
-
-    /**
-     * @return string
-     */
-    protected function on_resolve_param(string $asset, string $key, $value): string
-    {
-        if ($key === 'hash_handle_prefix') {
-            if (is_string($value) && $this->hash === null) {
-                //$this->hash = $value;
-                $this->hash = uniqid("$value." . static::class . '.', true);
-            }
-            return $asset;
-        }
-        if ($key === 'hash') {
-            if (is_string($value) && $this->hash === null) {
-                $this->hash = $value;
-            }
-            return $asset;
-        }
-        if ($key === 'cascade') {
-
-            $base = "\\" . static::class;
-
-            if (is_string($value)) {
-                $base = str_replace("/", "\\", $value);
-            }
-
-            if (substr($base, 0, 1) == "\\" && class_exists($base) && is_a($base, '\flat\asset', true)) {
-                $asset = $base;
-            } else {
-                if (class_exists("$asset\\$base") && is_a("$asset\\$base", '\flat\asset', true)) {
-                    if ((new ReflectionClass("$asset\\$base"))->isInstantiable()) $asset = "$asset\\$base";
-                }
-            }
-
-            /*
-             * convert path to namespace to check if it's relative class reference
-             */
-            $ns = str_replace("/", "\\", $this->get_resource()); // convert slashes
-            $base = $this->get_pathinfo(PATHINFO_BASENAME);
-            $ns = preg_replace('/^([^\.]*).*$/', '$1', $ns); // remove file extension if has one
-            $ns = "$asset\\$ns";
-
-            /*
-             * check relative resource without file extension is an asset
-             */
-            $ns_instance = false;
-            if (class_exists($ns) && is_a($ns, '\flat\asset', true)) {
-                if ((new ReflectionClass($ns))->isInstantiable()) {
-                    $ns_instance = true;
-                    $asset = $ns;
-                    $ns = explode("\\", $ns);
-
-                    $this->set_resource($base);
-                }
-            }
-
-            /*
-             * if relative resource wasnt asset yet...
-             *    remove one level at a time from resource and check it
-             */
-            if (!$ns_instance) {
-                $reslevel = [
-                    $base
-                ];
-                $ns = str_replace("/", "\\", $this->get_resource()); // convert slashes
-                $base = $this->get_pathinfo(PATHINFO_BASENAME);
-                $ns = preg_replace('/^([^\.]*).*$/', '$1', $ns); // remove file extension if has one
-                $ns = "$asset\\$ns";
-                $nslevel = explode("\\", $ns);
-                if (count($nslevel) > 1) {
-                    $level_count = count($nslevel);
-                    for ($i = 0; $i < $level_count; $i++) {
-                        $ns_resource = array_pop($nslevel);
-                        if ($i != 0) $reslevel[] = $ns_resource;
-                        $ns = implode("\\", $nslevel);
-                        if (class_exists($ns) && is_a($ns, '\flat\asset', true)) {
-                            if ((new ReflectionClass($ns))->isInstantiable()) {
-                                $ns_instance = true;
-                                $asset = $ns;
-                                $this->set_resource(implode("\\", array_reverse($reslevel)));
-                                break 1;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return $asset;
-        }
-
-        return parent::on_resolve_param($asset, $key, $value);
-    }
-
-    /**
-     * @return void
-     */
-    protected function on_resource_ready(array $param = null): void
-    {
-        $param === null && $param = [];
-
-        if ($this instanceof asset\resource\transform) {
-            if (is_string($resource = $this->get_resource_transform($this->get_resource()))) {
-                $this->set_resource($resource);
-            }
-        }
-
-        if (isset($param['hash'])) {
-            if ($this->hash === null && is_string($param['hash'])) {
-                $this->hash = $param['hash'];
-            }
-        }
-
-        if (!static::$registerd_builtin_dependencies) {
-
-            static::$registerd_builtin_dependencies = true;
-            static::builtin_dependencies();
-        }
-
-        parent::on_resource_ready($param);
     }
 }
