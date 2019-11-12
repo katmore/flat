@@ -1,8 +1,8 @@
 # The Flat Framework
 
-*Flat* is an experimental framework for php.
+**An experimental framework for php**
 
-The purpose in creating *flat* is to have a framework which conceptualizes the organization of an application project as set of hierarchical resources.
+It was created to allow a project to be organized in a hierarchical manner similar to a REST service.
 
 Architecturally, it facilitates a broad swathe of design patterns using a client-server process flow.
 
@@ -13,10 +13,10 @@ Architecturally, it facilitates a broad swathe of design patterns using a client
  * Command line scripts: convenience classes to faciliate creation of recurring (cron), deamons, and ad-hoc scripts
 
 ## Installation
-*Flat* can be the basis of a **new project** or added to an **existing project**
+**The Flat Framework** can be the basis of a **new project** or added to an **existing project**
 
 ### New Projects
-The easiest way to get going with **flat** is to copy the [*flat boilerplate webapp*](https://github.com/katmore/flat-webapp).
+The easiest way to get going with **The Flat Framework** is to copy the [flat boilerplate webapp](https://github.com/katmore/flat-webapp).
 
 **Step 1. Composer 'create-project'** (*flat boilerplate webapp*)...
 
