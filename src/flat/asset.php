@@ -116,7 +116,32 @@ class asset extends core\controller\asset implements core\app
      * @var int determine the canonicalized absolute system path if possible
      */
     public const SYSTEM_PATH_ABSOLUTE = 2048;
+
+    /**
+     * @var int javascript source asset resource type
+     */
+    public const RESOURCE_JS_SOURCE = 4096;
+
+    /**
+     * @var int "script source" tag type
+     */
+    public const TAG_SCRIPT_SOURCE = 8192;
     
+    /**
+     * @var int stylesheet source asset resource type
+     */
+    public const RESOURCE_STYLE_SOURCE = 16384;
+    
+    /**
+     * @var int "style source" tag type
+     */
+    public const TAG_STYLE_SOURCE = 32768;
+    
+    /**
+     * @var int asset position is right after the opening of the "body" element
+     */
+    public const POSITION_BODY_BEFORE_CONTENT = 65536;
+
     /**
      * @var bool
      * @static
@@ -129,7 +154,9 @@ class asset extends core\controller\asset implements core\app
      */
     private const VALID_TAGS = [
         self::TAG_SCRIPT,
-        self::TAG_STYLESHEET_LINK
+        self::TAG_STYLESHEET_LINK,
+        self::TAG_SCRIPT_SOURCE,
+        self::TAG_STYLE_SOURCE,
     ];
 
     /**
@@ -138,7 +165,8 @@ class asset extends core\controller\asset implements core\app
     private const VALID_POSITIONS = [
         self::POSITION_BODY_AFTER_CONTENT,
         self::POSITION_HEAD,
-        self::POSITION_BODY_BEFORE_END
+        self::POSITION_BODY_BEFORE_END,
+        self::POSITION_BODY_BEFORE_CONTENT,
     ];
 
     /**
@@ -147,6 +175,44 @@ class asset extends core\controller\asset implements core\app
     private const VALID_RESOURCES = [
         self::RESOURCE_JS,
         self::RESOURCE_CSS,
+        self::RESOURCE_JS_SOURCE,
+        self::RESOURCE_STYLE_SOURCE,
+    ];
+    
+    /**
+     * @var int[] map of resource types to tags
+     */
+    private const IMPLICIT_RESOURCE_TAG = [
+        self::RESOURCE_JS => self::TAG_SCRIPT,
+        self::RESOURCE_CSS => self::TAG_STYLESHEET_LINK,
+        self::RESOURCE_JS_SOURCE => self::TAG_SCRIPT_SOURCE,
+        self::RESOURCE_STYLE_SOURCE => self::TAG_STYLE_SOURCE,
+    ];
+    
+    /**
+     * @var int[] map of resource types to positions
+     */
+    private const IMPLICIT_RESOURCE_POSITION = [
+        self::RESOURCE_JS => self::POSITION_BODY_AFTER_CONTENT,
+        self::RESOURCE_CSS => self::POSITION_HEAD,
+        self::RESOURCE_JS_SOURCE => self::POSITION_BODY_AFTER_CONTENT,
+        self::RESOURCE_STYLE_SOURCE => self::POSITION_HEAD,
+    ];
+    
+    /**
+     * @var int[] default tags for valid extensions
+     */
+    private const IMPLICIT_EXTENSION_TAG = [
+        self::EXTENSION_JS => self::TAG_SCRIPT,
+        self::EXTENSION_CSS => self::TAG_STYLESHEET_LINK
+    ];
+    
+    /**
+     * @var int[] map of path extentions to resource types
+     */
+    private const IMPLICIT_EXTENSION_RESOURCE = [
+        self::EXTENSION_JS => self::RESOURCE_JS,
+        self::EXTENSION_CSS => self::RESOURCE_CSS,
     ];
 
     private const EXTENSION_JS = 'js';
@@ -184,46 +250,7 @@ class asset extends core\controller\asset implements core\app
      */
     private const CATCHALL_RESOURCE_POSITION = self::POSITION_HEAD;
 
-    /**
-     * @var int[] default tags for valid extensions
-     */
-    private const IMPLICIT_EXTENSION_TAG = [
-        self::EXTENSION_JS => self::TAG_SCRIPT,
-        self::EXTENSION_CSS => self::TAG_STYLESHEET_LINK
-    ];
-
-    /**
-     * @var int[] map of resource types to positions
-     */
-    private const IMPLICIT_RESOURCE_POSITION = [
-        self::RESOURCE_JS => self::POSITION_BODY_AFTER_CONTENT,
-        self::RESOURCE_CSS => self::POSITION_HEAD,
-    ];
-
-    /**
-     * @var int[] map of path extentions to resource types
-     */
-    private const IMPLICIT_RESOURCE_TYPE = [
-        self::EXTENSION_JS => self::RESOURCE_JS,
-        self::EXTENSION_CSS => self::RESOURCE_CSS,
-    ];
-
-    private const DESC_TAG = [
-        self::TAG_SCRIPT => 'TAG_SCRIPT',
-        self::TAG_STYLESHEET_LINK => 'TAG_STYLESHEET_LINK',
-    ];
-
-    private const DESC_POSITION = [
-        self::POSITION_BODY_AFTER_CONTENT => 'POSITION_BODY_AFTER_CONTENT',
-        self::POSITION_HEAD => 'POSITION_HEAD',
-        self::POSITION_BODY_BEFORE_END => 'POSITION_BODY_BEFORE_END',
-    ];
-
-    private const DESC_RESOURCE = [
-        self::RESOURCE_JS => 'RESOURCE_JS',
-        self::RESOURCE_CSS => 'RESOURCE_CSS',
-    ];
-
+    
 
     /**
      * @var \flat\asset[] assoc array with an element value containing each registered asset or callback object; 
@@ -294,15 +321,35 @@ class asset extends core\controller\asset implements core\app
     private $system;
 
     /**
+     * @var int|null
+     */
+    private $explicit_type;
+
+    /**
+     * @var string|null
+     */
+    private $source;
+
+    /**
      * Canonicalizes and sets a new resource.
      *
      * @return void
      */
-    protected function set_resource(string $resource): void
+    protected function set_resource(string $resource, array $param = null): void
     {
         $this->hash = null;
         $this->system = null;
-        parent::set_resource($resource);
+        $this->explicit_type = null;
+
+        if ($param !== null && isset($param['type']) && in_array($param['type'], self::VALID_RESOURCES)) {
+            $this->explicit_type = $param['type'];
+        }
+        if ($this->explicit_type === self::RESOURCE_JS_SOURCE) {
+            $this->hash = sha1($resource);
+            $this->source = $resource;
+            return;
+        }
+        parent::set_resource($resource, $param);
     }
 
     /**
@@ -313,6 +360,9 @@ class asset extends core\controller\asset implements core\app
      */
     public function __toString()
     {
+        if ($this->explicit_type === self::RESOURCE_JS_SOURCE) {
+            return $this->source;
+        }
         try {
             return $this->get_url();
         } catch (\Exception $e) {
@@ -327,10 +377,13 @@ class asset extends core\controller\asset implements core\app
      * @see get_url()
      * @return string
      */
-    public function __invoke(string $resource = ""): string
+    public function __invoke(string $resource = "", array $param = null): string
     {
-        if ($this->get_resource() !== $resource) {
-            $this->set_resource($resource);
+        if ($this->get_resource() !== $resource || $param !== null) {
+            $this->set_resource($resource, $param);
+        }
+        if ($this->explicit_type === self::RESOURCE_JS_SOURCE) {
+            return $this->source;
         }
         return $this->get_url();
     }
@@ -340,6 +393,7 @@ class asset extends core\controller\asset implements core\app
      */
     public function get_resource_type(): int
     {
+        if ($this->explicit_type !== null) return $this->explicit_type;
         return static::extension2resource_type($this->get_pathinfo(PATHINFO_EXTENSION));
     }
 
@@ -462,6 +516,14 @@ class asset extends core\controller\asset implements core\app
         return rtrim($base, '/') . '/' . ltrim($resource, '/');
     }
 
+    public function print_script_source_tag(): void
+    {
+        echo "<!--START script source {$this->get_hash()}-->\n";
+        echo "<script>";
+        echo $this->source;
+        echo "</script>\n";
+        echo "<!--END script source {$this->get_hash()}-->\n";
+    }
 
 
     /**
@@ -493,11 +555,11 @@ class asset extends core\controller\asset implements core\app
     {
         if (null === ($system_path = $this->get_system())) return;
 
-        echo "<!--START script asset contents: pathinfo(PATHINFO_BASENAME)} " . static::class . "-->\n";
+        echo "<!--START script asset contents: " . pathinfo($system_path, PATHINFO_BASENAME) . " " . static::class . "-->\n";
         echo "<script>\n";
         $this->print_system_contents(self::VALID_JS_EXTENSIONS, self::VALID_JS_MEDIA_TYPES);
         echo "\n</script>\n";
-        echo "<!--END script asset contents: {$this->get_pathinfo(PATHINFO_BASENAME)} " . static::class . "-->\n";
+        echo "<!--END script asset contents: " . pathinfo($system_path, PATHINFO_BASENAME) . " " . static::class . "-->\n";
     }
 
     public function print_contents(int $resource_type = null): void
@@ -505,19 +567,17 @@ class asset extends core\controller\asset implements core\app
         if (null === ($system_path = $this->get_system())) return;
 
         if (!in_array($resource_type, self::VALID_RESOURCES, true)) {
-
-            $ext = pathinfo($system_path, PATHINFO_EXTENSION);
-
-            if (!isset(self::IMPLICIT_RESOURCE_TYPE[$ext])) return;
-
-            $tag_type = self::IMPLICIT_RESOURCE_TYPE[$ext];
+            $resource_type = $this->get_resource_type();
         }
 
-        switch ($tag_type) {
-            case self::TAG_SCRIPT:
+        switch ($resource_type) {
+            case self::RESOURCE_JS_SOURCE:
+                $this->print_script_source_tag();
+                return;
+            case self::RESOURCE_JS:
                 $this->print_contents_script_tag();
                 return;
-            case self::TAG_STYLESHEET_LINK:
+            case self::RESOURCE_CSS:
                 $this->print_contents_style_tag();
                 return;
         }
@@ -534,14 +594,25 @@ class asset extends core\controller\asset implements core\app
     {
         if (!in_array($tag_type, self::VALID_TAGS, true)) {
 
-            $ext = pathinfo($this->get_url(), PATHINFO_EXTENSION);
-
-            if (!isset(self::IMPLICIT_EXTENSION_TAG[$ext])) return;
-
-            $tag_type = self::IMPLICIT_EXTENSION_TAG[$ext];
+            $resource_type = $this->get_resource_type();
+            
+            if (isset(self::IMPLICIT_RESOURCE_TAG[$resource_type])) {
+                
+                $tag_type = self::IMPLICIT_RESOURCE_TAG[$resource_type];
+                
+            } else {
+                
+                $ext = $this->get_pathinfo(PATHINFO_EXTENSION);
+                if (!isset(self::IMPLICIT_EXTENSION_TAG[$ext])) return;
+                $tag_type = self::IMPLICIT_EXTENSION_TAG[$ext];
+                
+            }
         }
 
         switch ($tag_type) {
+            case self::TAG_SCRIPT_SOURCE:
+                $this->print_script_source_tag();
+                return;
             case self::TAG_SCRIPT:
                 $this->print_js_script_tag();
                 return;
@@ -1019,7 +1090,7 @@ class asset extends core\controller\asset implements core\app
 
         return parent::on_resolve_param($asset, $key, $value);
     }
-    
+
     /**
      * Invoked when an asset class has been instantiated the first time.
      *
@@ -1027,8 +1098,8 @@ class asset extends core\controller\asset implements core\app
      *
      * @return void
      */
-    protected static function on_first_instantiation() : void {
-        
+    protected static function on_first_instantiation(): void
+    {
     }
 
     /**
@@ -1037,17 +1108,16 @@ class asset extends core\controller\asset implements core\app
     protected function on_resource_ready(array $param = null): void
     {
         $param === null && $param = [];
-        
+
         $first_instantiation = null;
-        
-        if (!key_exists(static::class,self::$first_instantiation)) {
-            
+
+        if (!key_exists(static::class, self::$first_instantiation)) {
+
             self::$first_instantiation[static::class] = null;
-            
+
             $first_instantiation = true;
-            
+
             static::on_first_instantiation();
-                
         }
 
         if ($this instanceof asset\resource\transform) {
@@ -1063,8 +1133,8 @@ class asset extends core\controller\asset implements core\app
         }
 
         parent::on_resource_ready($param);
-        
-        
+
+
         if ($first_instantiation) {
             array_map(function ($asset) {
                 if (is_string($asset)) {
@@ -1073,10 +1143,8 @@ class asset extends core\controller\asset implements core\app
                     $asset->set_resource($resource);
                 }
                 if (!$asset instanceof asset) return;
-                //die(__FILE__);
                 $asset->register();
             }, static::get_builtin_dependencies());
-                
         }
     }
 
@@ -1158,10 +1226,10 @@ class asset extends core\controller\asset implements core\app
      */
     private static function extension2resource_type(?string $extension): int
     {
-        if (empty($extension) || !isset(self::IMPLICIT_RESOURCE_TYPE[$extension])) {
+        if (empty($extension) || !isset(self::IMPLICIT_EXTENSION_RESOURCE[$extension])) {
             return self::RESOURCE_UNKNOWN;
         }
-        return self::IMPLICIT_RESOURCE_TYPE[$extension];
+        return self::IMPLICIT_EXTENSION_RESOURCE[$extension];
     }
 
     /**

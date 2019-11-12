@@ -186,7 +186,7 @@ abstract class asset implements \flat\core\controller {
     * 
     * @return void
     */
-   protected function set_resource(string $resource) : void {
+   protected function set_resource(string $resource,array $param=null) : void {
       $resource = str_replace("\\","/",$resource);
       if (substr($resource,0,1) === "/") {
          $resource = substr($resource,1);
@@ -224,7 +224,7 @@ abstract class asset implements \flat\core\controller {
     */
    public function __construct(string $resource = "",array $param=null) {
       
-      $this->set_resource($resource);
+       $this->set_resource($resource, $param);
       
       $this->on_resource_ready($param);
    }
