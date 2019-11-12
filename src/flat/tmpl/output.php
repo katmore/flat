@@ -32,5 +32,5 @@
  */
 namespace flat\tmpl;
 interface output {
-   public function get_output($data);
+   public function get_output($data) : ?string;
 }
