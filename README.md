@@ -1,5 +1,4 @@
-# Flat
-**The Flat Framework**
+# The Flat Framework
 
 *Flat* is an experimental framework for php.
 
