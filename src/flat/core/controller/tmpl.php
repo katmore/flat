@@ -5,7 +5,7 @@
  *
  * PHP version >=7.2
  * 
- * Copyright (c) 2012-2019 Doug Bird - <retran@gmail.com>. All Rights Reserved.
+ * Copyright (c) 2012-2020 Doug Bird - <retran@gmail.com>. All Rights Reserved.
  * This software is distributed under the terms of the MIT license or the GNU General Public License v3.0.
  */
 namespace flat\core\controller;
@@ -321,14 +321,12 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
          */
         if (substr($design, 0, 1) !== '\\') {
 
-            //             $r = new \ReflectionClass(get_called_class());
-            //             if ($r->isSubclassOf(design_base::class)) {
             if (is_a(get_called_class(), design_base::class, true)) {
+                
                 $design_base = trim(static::get_design_base(), '\\');
                 if (substr($design, 0, strlen($design_base)) !== $design_base) {
                     $design = $design_base . '\\' . $design;
                 }
-                //$design = static::get_design_base() . '\\' . $design;
             }
         }
 
@@ -342,18 +340,10 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
             }
         }
 
-
-        $design_class = "$design_class_prefix\\$design_class_suffix";
-
-        //         if (!$check_only) {
-        //             var_dump($design);
-        //             var_dump($orig_design);
-        //             var_dump($design_class);
-        //             echo \flat\core\encode\text::serialize(debug_backtrace());
-        //             die(__LINE__.':'.__FILE__);
-        //         }
+        $design_class = str_replace('-','_',"$design_class_prefix\\$design_class_suffix");
 
         if (class_exists($design_class) && is_a($design_class, resolvable_design::class, true)) {
+            
             if ($check_only) return;
             static::design_log('resolvable_design class', $design_class);
 
@@ -394,16 +384,6 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
             $file_base .= str_replace('\\', DIRECTORY_SEPARATOR, $design);
 
             $file_base = rtrim($file_base, DIRECTORY_SEPARATOR);
-
-            //             if (!$check_only) {
-            //                 echo "orig:";
-            //                 var_dump($orig_design);
-            //                 var_dump($design);
-            //                 var_dump($file_base);
-
-            //                 die(__LINE__.':'.__FILE__);
-            //             }
-
             $file = $file_base . '.php';
         }
 
@@ -430,7 +410,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
         $tried = array(
             $file
         );
-        //$display = self::get_display_handler();
+        
         foreach (array(
             'html',
             'htm'
