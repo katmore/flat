@@ -152,6 +152,11 @@ implements \flat\data\ready
       } else {
          return;
       }
+       
+      /*
+       * https://stackoverflow.com/questions/18234545/replace-all-kind-of-dashes
+       */
+      $phoneNumber = preg_replace('#\p{Pd}#u', '-', $phoneNumber);
 
       $ext=null;
       if (false !==($extp = strpos(strtolower($phoneNumber),'ext'))) {
