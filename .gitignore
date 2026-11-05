@@ -1,4 +1,5 @@
 .*
 !/.gitignore
+!/.dockerignore
 /vendor/
 composer.lock

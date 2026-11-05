@@ -1,0 +1,25 @@
+# flat framework - Phase 1 test stack
+#
+# Only the PHP test runner lives here for now. Service containers
+# (MongoDB, MySQL, S3 emulation, RabbitMQ) arrive with the Phase 2
+# integration suite, after the unit baseline is approved.
+#
+# Usage:
+#   docker compose -f docker/docker-compose.yml build
+#   docker compose -f docker/docker-compose.yml run --rm test
+#   docker compose -f docker/docker-compose.yml run --rm test php -v
+services:
+  test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    working_dir: /app
+    volumes:
+      - ..:/app
+      - vendor:/app/vendor
+      - composer_cache:/tmp/composer
+    command: ["vendor/bin/phpunit", "--testsuite", "unit"]
+
+volumes:
+  vendor:
+  composer_cache:

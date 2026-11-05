@@ -203,9 +203,17 @@ class uuid implements \flat\core\generator {
       } else {
          if (empty($p['version']) || $p['version']==4 || empty($p['namespace'])) {
             $uuid = uuid::get_v4();
-         } else {
-            throw new uuid\exception\invalid_version();
          }
+         /*
+          * CONSERVATIVELY DISABLED (unreachable code, kept visible in place):
+          * this branch can never be entered. It requires a non-empty
+          * namespace, but a non-empty namespace is the condition that
+          * selects the other branch above.
+          *
+          * else {
+          *    throw new uuid\exception\invalid_version();
+          * }
+          */
       }
       return $uuid;
   }

@@ -43,21 +43,30 @@ class rand implements \flat\core\generator {
     * @return int
     */   
    protected static function _get($min,$max) {
-      if (\PHP_VERSION>=7) {
-         return random_int($min,$max);
-      }
-      extract(unpack('Nrandom', openssl_random_pseudo_bytes(4,$strong)));
-      if (!$strong) throw new rand\exception\failed();
-      return abs($random) % (($max-$min)+1) + $min;
+      return random_int($min,$max);
+      /*
+       * CONSERVATIVELY DISABLED (modernization baseline, PHP >= 7.2 only):
+       * the pre-PHP-7 fallback below is commented out, not deleted, so the
+       * original code remains visible in place. It was unreachable on
+       * PHP >= 7, where random_int() above was always used.
+       *
+       * extract(unpack('Nrandom', openssl_random_pseudo_bytes(4,$strong)));
+       * if (!$strong) throw new rand\exception\failed();
+       * return abs($random) % (($max-$min)+1) + $min;
+       */
    }
-   
+
    public static function bytes($len) {
-      if (\PHP_VERSION>=7) {
-         $bytes = random_bytes($len);
-      } else {
-         $bytes = openssl_random_pseudo_bytes($len,$strong);
-         if (!$strong) throw new rand\exception\failed();
-      }
+      $bytes = random_bytes($len);
+      /*
+       * CONSERVATIVELY DISABLED (modernization baseline, PHP >= 7.2 only):
+       * the pre-PHP-7 fallback below is commented out, not deleted, so the
+       * original code remains visible in place. It was unreachable on
+       * PHP >= 7, where random_bytes() above was always used.
+       *
+       * $bytes = openssl_random_pseudo_bytes($len,$strong);
+       * if (!$strong) throw new rand\exception\failed();
+       */
       return $bytes;
    }
    
