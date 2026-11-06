@@ -11,11 +11,6 @@ services:
     environment:
       FLAT_TEST_MONGODB_URI: mongodb://mongo:27017
       FLAT_TEST_RABBITMQ_HOST: rabbitmq
-    depends_on:
-      mongo:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
   mongo:
     image: mongo:4.0@sha256:4ca81c89ad08f4cfa9906005126112bffe8fb363800466ef5e50f6238f6f6af1
     healthcheck:
@@ -34,3 +29,8 @@ services:
       interval: 2s
       timeout: 10s
       retries: 30
+
+# Test services can reach one another; runtime containers have no Internet route.
+networks:
+  default:
+    internal: true

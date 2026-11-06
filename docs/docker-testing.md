@@ -28,6 +28,28 @@ Subscription guard tests use an owner-approved subclass limit of 2 while
 asserting that the production default remains 100,000. They exercise the real
 guard without the former brute-force 100-million-detail scan.
 
+## Offline operation
+
+Prepare the images online once with `./tests.sh all` (or build the PHP image and
+pull the selected service images separately). Then, with those images cached:
+
+```sh
+./tests.sh unit --offline
+./tests.sh all --offline --coverage
+```
+
+Offline mode checks that the selected local image refs exist, skips builds,
+and passes explicit no-pull flags. A missing image produces a clear error; it is not downloaded automatically. Cached base images or Composer
+archives alone are not sufficient: the built flat-tests-php72 image must exist.
+Rebuild that image online after changing Dockerfile/test dependency inputs.
+The optional build CA input is not used by offline execution.
+
+The test network is internal-only for normal and offline runs. Runtime containers
+can reach the local services but have no Internet route. Docker health checks,
+loopback fixtures and the Mongo transport-failure proxy stay local. The wrapper
+owns startup/readiness by selected test type; PHP does not unconditionally depend
+on services in Compose, so unit mode needs only the PHP image.
+
 ## What runs where
 
 | Component | Runtime |

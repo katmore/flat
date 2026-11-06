@@ -24,9 +24,12 @@ containers and their test data. Only Docker Engine and Docker Compose are needed
 ./tests.sh mongo                 # start only MongoDB
 ./tests.sh rabbitmq              # start only RabbitMQ
 ./tests.sh all --coverage        # full suite and coverage reports
+./tests.sh all --offline         # cached images only; no build or pull
 ```
 
-The default is `all`. Reports are written under `build/tests/<mode>/`.
+The default is `all`. Initial image preparation requires network access. Once
+the built PHP test image and selected service images are cached, `--offline` runs
+without builds or pulls. Reports are written under `build/tests/<mode>/`.
 See [Docker test instructions](docs/docker-testing.md) for details.
 
 ## Installation
