@@ -281,7 +281,7 @@ implements
       
       $payment_profile = self::_params_to_payment_profile($params);
       
-      $response = $this->_get_CIM()->createCustomerPaymentProfile($customerProfileId, $payment_profile);
+      $response = $this->_get_CIM()->createCustomerPaymentProfile($params['customerProfileId'], $payment_profile);
       
       if ($response->isError()) {
          throw new response_error($response->getMessageCode(), $response->getMessageText());
@@ -311,7 +311,7 @@ implements
       }
       $payment_profile = self::_params_to_payment_profile($params);
       
-      $response = $this->_get_CIM()->updateCustomerPaymentProfile($customerProfileId, $customerPaymentProfileId, $payment_profile);
+      $response = $this->_get_CIM()->updateCustomerPaymentProfile($params['customerProfileId'], $params['customerPaymentProfileId'], $payment_profile);
       if ($response->isError()) {
          throw new response_error($response->getMessageCode(), $response->getMessageText());
       }
@@ -428,7 +428,8 @@ implements
                   $params['transaction']['transactionType'] = $key;
                }
             }
-            if (empty($customer_transaction_type)) {
+            $customer_transaction_type = $params['transaction']['transactionType'];
+            if (!isset($transtypes[$customer_transaction_type])) {
                throw new bad_param(
                   "transaction.transactionType",
                   "unknown transactionType specified"

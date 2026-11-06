@@ -44,17 +44,18 @@
 namespace flat\core\util\validate\match\filtervar;
 class valid_filter_check extends \flat\core\util\listcheck\factory {
    public function __construct($filter_name) {
-      $this->set_list(
-         array(
+      // The factory's last supplied member defines the membership list.
+      $this->set_list([
+         [
             FILTER_VALIDATE_EMAIL,
             FILTER_VALIDATE_IP,
             FILTER_VALIDATE_REGEXP,
             FILTER_VALIDATE_URL
-         )
-      );
+         ]
+      ]);
       $this->set_fail_handler(
          function ($factory,$filter_name) {
-            throw new \flat\core\util\validate\match\filtervar\exception(
+            throw new \flat\core\util\validate\match\filtervar\exception\invalid_filter(
                $filter_name,
                $factory->get_list()
             );

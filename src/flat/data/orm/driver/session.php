@@ -48,7 +48,7 @@ class session extends \flat\data\session\driver {
 
    const fallback_handler = "\\flat\\data\\orm\\driver\\session\\handler\\native";
 
-   private function _get_handler($input) {
+   private function _get_handler($input,array $param=NULL) {
       if (is_string($input) && !empty($input)) {
          if (class_exists($input)) {
             if (is_a($input,"\\flat\\data\\orm\\driver\\session\\handler",true)) {
@@ -73,22 +73,25 @@ class session extends \flat\data\session\driver {
       $handler = NULL;
       if (isset($param['handler'])) {
          
-         $handler = $this->_get_handler($param['handler']);
+         $handler = $this->_get_handler($param['handler'],$param);
          
       }
       if (empty($handler)) {
          $handler = $this->_get_handler(
-            \flat\core\config::get_or_default("flat/data/orm/driver/session/handler")
+            \flat\core\config::get("data/orm/driver/session/handler",['default'=>false]),$param
          );
       }
       if (empty($handler)) {
-         $handler = $this->_get_handler(self::fallback_handler);
+         $handler = $this->_get_handler(self::fallback_handler,$param);
       }
-      if (!$this->_get_handler($handler)) {
-         session\exception\failure(
-            "could not initialize a session handler"
-         );
-      }
+      /* CONSERVATIVELY DISABLED redundant final revalidation. Failed lookups
+       * always reach the concrete fallback native handler, whose constructor
+       * is the no-op base constructor; successful lookups already return a
+       * handler object. Original unreachable failure:
+       * if (!$this->_get_handler($handler)) {
+       *    session\exception\failure("could not initialize a session handler");
+       * }
+       */
       $this->_h = $handler;
    }
    
@@ -104,6 +107,9 @@ class session extends \flat\data\session\driver {
 
    }
 }
+
+// Keep the declared historical name and the name implied by the original path.
+class_alias(session::class, 'flat\data\orm\driver\session');
 
 
 

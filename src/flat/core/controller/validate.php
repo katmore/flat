@@ -35,7 +35,8 @@ class validate extends \flat\core\collection implements \flat\core\input\consume
    public function set_input(\flat\input $input) {
       //$col = $this->__col;
       $mbr = array();
-      foreach ( $this->_col->range() as $validate ) {
+      foreach ( $this->_col->range() as $member ) {
+         $validate = $member->get_data();
          if (isset($input->{$validate->data})) {
             
          }

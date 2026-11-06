@@ -3,3 +3,7 @@
 !/.dockerignore
 /vendor/
 composer.lock
+# Repository-owned test locks are reproducibility inputs.
+!/tests/docker/tools/composer.lock
+!/tests/docker/runtime/composer.lock
+/build/tests/

@@ -48,13 +48,16 @@ class value {
          'invalid_return'=>NULL,
          'exception'=>false
       );
-      if (!empty($value)) {
-         if (is_scalar($arr[$key])) {
-            if ($param['return_valid_value']) return $value;
-            return true;
+      if (is_array($options)) {
+         foreach ($options as $key=>$option) {
+            if (array_key_exists($key,$param)) $param[$key] = $option;
          }
       }
-      if ($param['invalid_return']) return $param['invalid_return'];
+      if (is_scalar($value)) {
+         if ($param['return_valid_value']) return $value;
+         return true;
+      }
+      if ($param['invalid_return']!==NULL) return $param['invalid_return'];
       if ($param['return_valid_value']) return NULL;
       return false;
    }

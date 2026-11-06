@@ -50,8 +50,7 @@ abstract class alert
          $crud = static::get_alert_mongo_crud();
       }
       if (empty($crud)) {
-         $param = crud::params_from_config_ns(get_called_class()."/alert");
-         $crud = new crud($param);
+         throw new \LogicException('Alert subscriptions and synchronous listeners require a mongo_crud_provider');
           
       }
       return $crud;
@@ -99,9 +98,8 @@ abstract class alert
    }
    
    /**
-    * triggers alert event
-    *    sends message on {queuename}
-    *    sends message on {queuename}.listener
+    * Retired unfinished publisher; retained only as a compatibility entry point.
+    * @throws \BadMethodCallException always
     *    
     * @param mixed $trigger_data (optional) data passed to handler and listeners
     * @param array $callback (optional) assoc array of event callbacks:
@@ -111,41 +109,53 @@ abstract class alert
     * @return event uuid
     */
    public static function trigger($alert_data=NULL,array $callback=NULL) {
-      if (!empty($callback['listener']) && is_callable($callback['listener'])) {
-         self::add_listener($callback['listener']);
-      }
-      $success = null;
-      if (!empty($callback['success']) && is_callable($callback['success'])) {
-         $success = $callback['success'];
-      }
-      
-      $uuid = \flat\core\uuid::get_v4();
-      $data = [
-         'alert'=>$alert_data,
-         'uuid'=>$uuid,
-         'meta'=>$meta,
-         'iso_timestamp'=>date("c"),
-         'unix_timestamp'=>microtime(true)
-      ];
-      $payload = json_encode($data);
-      
-      /*
-       * find alert subscriptions
-       *    determine queue's necessary to publish to
-       */
-      $driver->publish(self::_get_queue("subscription:$uuid"),$payload);
-      
-      /*
-       * find alert listeners
-       *    determine queue's necessary to publish to
-       */
-      $driver->publish(self::_get_queue("listener:$uuid"),$payload);
-      
-      /*
-       * 
-       */
+      throw new \BadMethodCallException('The unfinished alert publisher is retired');
    }
-   
+
+   // RETIRED by owner decision. Preserve the incomplete publisher as a record;
+   // it must not run listeners or pretend to publish messages.
+   //    public static function trigger($alert_data=NULL,array $callback=NULL) {
+   //       if (!empty($callback['listener']) && is_callable($callback['listener'])) {
+   //          self::add_listener($callback['listener']);
+   //       }
+   //       $success = null;
+   //       if (!empty($callback['success']) && is_callable($callback['success'])) {
+   //          $success = $callback['success'];
+   //       }
+   //
+   //       $uuid = \flat\core\uuid::get_v4();
+   //       $data = [
+   //          'alert'=>$alert_data,
+   //          'uuid'=>$uuid,
+   //          'meta'=>$meta,
+   //          'iso_timestamp'=>date("c"),
+   //          'unix_timestamp'=>microtime(true)
+   //       ];
+   //       $payload = json_encode($data);
+   //
+   //       /*
+   //        * find alert subscriptions
+   //        *    determine queue's necessary to publish to
+   //        */
+   //       $driver->publish(self::_get_queue("subscription:$uuid"),$payload);
+   //
+   //       /*
+   //        * find alert listeners
+   //        *    determine queue's necessary to publish to
+   //        */
+   //       /* CONSERVATIVELY DISABLED unreachable second publish. The local
+   //        * $driver is never assigned; the first publish above always raises
+   //        * Error before execution can reach this point. Publisher semantics
+   //        * remain pending; do not invent subscription/listener routing.
+   //        * $driver->publish(self::_get_queue("listener:$uuid"),$payload);
+   //        */
+   //
+   //       /*
+   //        *
+   //        */
+   //    }
+   //
+
    /**
     * creates an alert subscription
     * 

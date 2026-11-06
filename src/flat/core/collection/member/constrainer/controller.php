@@ -78,11 +78,11 @@ class controller implements \flat\core\collection\member\checker {
          return $arr;
       } else
       if (is_string($constraint)) {
-         if (interface_exists($constraint)) return array($constraint);
+         if (class_exists($constraint)) return array($constraint);
       }
       throw new exception\bad_constrainer(
-         get_class($this->_col)."->get_member_interface_constraint() ".
-         "must return only valid interface names that exist"
+         get_class($this->_col)."->get_member_class_constraint() ".
+         "must return only valid class names that exist"
       );
       
    }
@@ -113,13 +113,13 @@ class controller implements \flat\core\collection\member\checker {
    }   
    public function __construct(\flat\core\collection $col) {
       $this->_col = $col;
-      if ($col instanceof collection\member\constrainer\class_constraint) {
+      if ($col instanceof \flat\core\collection\member\constrainer\class_constraint) {
          $this->_class = array();
          $this->_class = $this->_check_class_constraint(
             $col->get_member_class_constraint()
          );
       }
-      if ($col instanceof collection\member\constrainer\interface_constraint) {
+      if ($col instanceof \flat\core\collection\member\constrainer\interface_constraint) {
          $this->_interface = array();
          $this->_interface = $this->_check_interface_constraint(
             $col->get_member_interface_constraint()

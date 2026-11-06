@@ -177,11 +177,15 @@ abstract class orm {
       }
       if (count($data)) {
          $mapArg=null;
-         if ((count($data)==1) && (is_array(current($data) || is_object(current($data))))) {
-            $mapArg = json_decode(json_encode(current($data)));
-         } else {
-            $mapArg = json_decode(json_encode($data));
-         }
+         /* CONSERVATIVELY DISABLED: is_array receives the boolean result
+          * of ||, so this guard is always false. Preserve the original nested
+          * argument attempt pending a separately defined mapping contract.
+          * if ((count($data)==1) && (is_array(current($data) || is_object(current($data))))) {
+          *    $mapArg = json_decode(json_encode(current($data)));
+          * } else {
+          */
+         $mapArg = json_decode(json_encode($data));
+         // } // original always-taken else branch
          if (is_array($mapArg)) {
             foreach(
                   $fieldlist as $field

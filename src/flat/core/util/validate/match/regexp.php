@@ -91,7 +91,13 @@ class regexp extends  \flat\core\util\validate {
          
          if ($result==0) return false;
          
-         throw new regexp\exception\preg_error(preg_last_error(),$regexp);
+         /* CONSERVATIVELY DISABLED unreachable throw:
+          * preg_match returns 1, 0 or false. The first case continues;
+          * both remaining values satisfy the existing loose == 0 above.
+          * Preserve current false-on-engine-error behavior until its policy
+          * is explicitly changed; do not fake a fourth native return value.
+          * throw new regexp\exception\preg_error(preg_last_error(),$regexp);
+          */
       }
       return true;
    }

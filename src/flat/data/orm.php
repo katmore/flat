@@ -40,19 +40,19 @@ namespace flat\data;
 class orm implements \flat\core\controller {
    private $_driver;
    const fallback_driver = "\\flat\\data\\orm\\driver\\session";
-   private function _get_default_driver() {
-      
-   }
+   /* CONSERVATIVELY DISABLED unused private placeholder: no callers exist.
+    * private function _get_default_driver() {}
+    */
    public function __construct(array $driver=NULL) {
       //\flat\data\orm\driver
       if (!$driver) {
-         $driver = self::default_handler;
-         $driver = new $driver();
+         $driver = self::fallback_driver;
+         $this->_driver = new $driver();
          return;
       }
-      if (isset($param['driver'])) {
-         
-      }
+      /* CONSERVATIVELY DISABLED empty placeholder referencing an undefined
+       * local: if (isset($param['driver'])) {}. Constructor input is $driver.
+       */
       $this->_driver = $driver; 
       
    }
@@ -66,18 +66,24 @@ class orm implements \flat\core\controller {
    
    private static $_s=NULL;
    private static function _get_orm(array $options=NULL) {
-      if (isset($param['driver'])) {
-         if (
-            (assoc::non_empty_scalar($param,"driver")) ||
-            (is_a($param['driver'],"\\flat\\data\\orm\\driver"))
-         ) {
-            $driver = $param['driver'];
-            return new static($param['driver']);
-         }
-         throw new orm\exception\bad_param(
-            "'driver' option must be either: a class name string, or orm driver object"
-         );
-      }
+      /* CONSERVATIVELY DISABLED unreachable driver-option branch. This
+       * method accepts $options, but the branch only reads undefined $param;
+       * its isset guard always fails. Public static callers also do not pass
+       * options into this method. Preserve current selection until its input
+       * contract is settled; original code follows:
+       *       if (isset($param['driver'])) {
+       *          if (
+       *             (assoc::non_empty_scalar($param,"driver")) ||
+       *             (is_a($param['driver'],"\\flat\\data\\orm\\driver"))
+       *          ) {
+       *             $driver = $param['driver'];
+       *             return new static($param['driver']);
+       *          }
+       *          throw new orm\exception\bad_param(
+       *             "'driver' option must be either: a class name string, or orm driver object"
+       *          );
+       *       }
+       */
       if (empty(self::$_s)) self::$_s = new static();
       return self::$_s;
    }

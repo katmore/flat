@@ -104,7 +104,7 @@ class schedule extends \flat\data
       if (!empty($this->startDate_timeZone) && ($this->startDate_timeZone!='America/Denver')) {
           try {
               $dateTime = new \DateTime ($this->startDate, new \DateTimeZone($this->startDate_timeZone));
-              $dateTime->setTimezone(new DateTimeZone('America/Denver'));
+              $dateTime->setTimezone(new \DateTimeZone('America/Denver'));
               $this->startDate = $dateTime->format("Y-m-d");
           } catch (\Exception $e) {
               $this->startDate = null;

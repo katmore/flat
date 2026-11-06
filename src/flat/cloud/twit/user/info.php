@@ -54,14 +54,14 @@ class info extends \flat\core\data {
       parent::__construct($param);
       $this->_starting_prop = array();
       foreach ($this as $prop=>$val) {
-         $p = \ReflectionProperty($this,$prop);
+         $p = new \ReflectionProperty($this,$prop);
          if (!$p->isPrivate()) $this->_starting_prop[] = $prop;
       }
    }
    public function get_extra_fields($get_assoc=false) {
       $extra = array();
       foreach ($this as $prop=>$val) {
-         $p = \ReflectionProperty($this,$prop);
+         $p = new \ReflectionProperty($this,$prop);
          if (!$p->isPrivate()) {
             if (!in_array($prop,$this->_starting_prop)) {
                if ($get_assoc)

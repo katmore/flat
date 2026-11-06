@@ -274,9 +274,12 @@ implements
     * 
     */
    public static function load_html($html) {
-      if ($node = self::_html_to_DOMNode($html)) {
-         return new static($node);
-      } 
+      /* CONSERVATIVELY DISABLED: the private loader returns DOMDocument or
+       * throws; it never returns a falsy value. Original guard retained:
+       * if ($node = self::_html_to_DOMNode($html)) { return new static($node); }
+       */
+      $node = self::_html_to_DOMNode($html);
+      return new static($node);
    }
    
    /**
@@ -289,9 +292,12 @@ implements
     * @throws \flat\core\dom\exception\invalid_input
     */
    public static function load_xml($xml,array $option=NULL) {
-      if ($node = self::_xml_to_DOMNode($xml,$option)) {
-         return new static($node);
-      }
+      /* CONSERVATIVELY DISABLED: the private loader returns DOMDocument or
+       * throws; it never returns a falsy value. Original guard retained:
+       * if ($node = self::_xml_to_DOMNode($xml,$option)) { return new static($node); }
+       */
+      $node = self::_xml_to_DOMNode($xml,$option);
+      return new static($node);
     }
    
    /**
@@ -383,7 +389,12 @@ implements
       /*
        * create DOMDocument from DOMNode
        */
-      if (is_a($this->_DOMNode,"\\DOMNode")) {
+      /* CONSERVATIVELY DISABLED: successful construction always assigns a
+       * DOMNode from the private input loader. A subclass skipping the native
+       * iterator initialization cannot call these methods (PHP raises a fatal
+       * initialization error). The DOMDocument case returned above.
+       * if (is_a($this->_DOMNode,"\\DOMNode")) {
+       */
         $doc = new \DOMDocument;
         $doc->preserveWhiteSpace = false;
         $doc->appendChild(
@@ -391,7 +402,7 @@ implements
         );
         $this->_DOMDocument = $doc;
         return $this->_DOMDocument;
-      }
+      // } // original redundant DOMNode guard
    }
    
    /**

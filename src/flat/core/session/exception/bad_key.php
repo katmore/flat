@@ -37,6 +37,7 @@ class bad_key extends \flat\core\session\exception {
       return $this->_reason;
    }
    public function __construct($reason="") {
+      $this->_reason = $reason;
       if (!empty($reason)) $reason = ": $reason";
       parent::__construct("bad key given".$reason);
    }

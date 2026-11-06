@@ -132,7 +132,7 @@ class image {
       /*
        * leave if we aren't needed
        */
-      if (($dim->h==$height) && ($dim->w=$width)) return;
+      if (($dim->h==$height) && ($dim->w==$width)) return;
       
       $dim->scale(
          new image\dim(array(
@@ -172,17 +172,10 @@ class image {
        */
       if ($dim->h==$height) return;
       
-      $dim->scale(
-         new image\dim(array(
-            'h'=>$height
-         )),
-         new image\dim(array(
-            'h'=>$height
-         ))
-      );
+      $width = (int) round($height * $dim->ratio());
       $image->resizeImage(
-         $dim->width,
-         $dim->height,
+         $width,
+         $height,
          \Imagick::FILTER_LANCZOS,
          0.7,
          false
@@ -212,17 +205,10 @@ class image {
        */
       if ($dim->w==$width) return;
       
-      $dim->scale(
-         new image\dim(array(
-            'w'=>$width
-         )),
-         new image\dim(array(
-            'w'=>$width
-         ))
-      );
+      $height = (int) round($width / $dim->ratio());
       $image->resizeImage(
-         $dim->width,
-         $dim->height,
+         $width,
+         $height,
          \Imagick::FILTER_LANCZOS,
          0.7,
          false

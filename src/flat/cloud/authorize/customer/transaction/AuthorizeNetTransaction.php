@@ -50,7 +50,7 @@ abstract class AuthorizeNetTransaction extends \AuthorizeNetTransaction {
             throw new \flat\cloud\authorize\bad_param("transaction","invalid transaction type");
          }
          if (is_string($validate)) {
-            throw new \flat\cloud\authorize\bad_param("transaction",$validate_msg);
+            throw new \flat\cloud\authorize\bad_param("transaction",$validate);
          }
       }
       parent::__construct();

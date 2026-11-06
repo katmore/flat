@@ -103,7 +103,7 @@ namespace flat\core\xml;
 use flat\input;
 
 class encode implements \flat\core\serializer,\flat\core\status\beta {
-   const flat_xml_ver="0.2";
+   const flat_xml_ver="0.3";
    const xmlns = 'https://github.com/katmore/flat/wiki/xmlns';
    private $xml;
    public function __toString() {
@@ -118,20 +118,55 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
    public static function unserialize($xml, array $options=NULL) {      
       $dom = dom::load_xml($xml);
       if (!is_a($dom,"\\flat\\core\\xml\\dom")) return;
-      if ($dom->getAttr('xmlns')!=self::xmlns."/obj") return;
-      return dom::dom_to_object(
-          $dom,
-          array(
-            'assoc'=>validate\assoc::only_bool_true($options,'assoc'),
-            'node_name_attr'=>'key',
-            'index_name_attr'=>'index',
-            'preserve_parent_value'=>false
-          )
-      );
+      $root = $dom->get_DOMDocument()->documentElement;
+      if (!$root || !in_array($root->getAttribute('xmlns'), [self::xmlns.'-object', self::xmlns.'/obj'], true)) return;
+      return self::_decode_element($root, isset($options['assoc']) && $options['assoc'] === true);
       
    }
    public static function serialize($input, array $options=NULL) {
       return self::_xml_encode($input, $options);
+   }
+   /** Decode Flat XML values without instantiating class names from the document. */
+   private static function _decode_element(\DOMElement $element, bool $assoc) {
+      $type = $element->getAttributeNS(self::xmlns, 'php-type');
+      if ($type === '') {
+         $xsi = $element->getAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'type');
+         $types = ['xs:integer'=>'integer', 'xs:decimal'=>'double', 'xs:boolean'=>'boolean',
+            'extxs:Array'=>'array', 'extxs:Hashmap'=>'array', 'extxs:Object'=>'object'];
+         $type = isset($types[$xsi]) ? $types[$xsi] : $element->getAttributeNS(self::xmlns, 'meta');
+         if ($element->getAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'nil') === 'true') return null;
+      }
+      $children = [];
+      foreach ($element->childNodes as $child) {
+         if ($child instanceof \DOMElement && $child->namespaceURI !== self::xmlns.'-structure') $children[] = $child;
+      }
+      if ($type === 'array' || $type === 'object' || count($children)) {
+         $result = $type === 'array' || $assoc ? [] : new \stdClass;
+         foreach ($children as $child) {
+            if ($child->hasAttributeNS(self::xmlns, 'php-key')) {
+               $key = $child->getAttributeNS(self::xmlns, 'php-key');
+               if ($child->getAttributeNS(self::xmlns, 'php-key-type') === 'integer') $key = (int) $key;
+            } elseif ($child->hasAttributeNS(self::xmlns.'-extxs', 'key')) {
+               $key = $child->getAttributeNS(self::xmlns.'-extxs', 'key');
+            } elseif ($child->hasAttributeNS(self::xmlns.'-extxs', 'index')) {
+               $key = (int) $child->getAttributeNS(self::xmlns.'-extxs', 'index');
+            } else {
+               $key = $child->localName;
+            }
+            $value = self::_decode_element($child, $assoc);
+            if (is_array($result)) $result[$key] = $value;
+            else $result->{(string) $key} = $value;
+         }
+         return $result;
+      }
+      $text = $element->textContent;
+      // The writer inserts one formatting newline after its root opening tag.
+      if ($element->parentNode instanceof \DOMDocument && substr($text, 0, 1) === "\n") $text = substr($text, 1);
+      if ($type === 'NULL') return null;
+      if ($type === 'integer') return (int) $text;
+      if ($type === 'double') return (float) $text;
+      if ($type === 'boolean') return in_array(trim($text), ['true', '1'], true);
+      return $text;
    }
    private static function _ident($level=1,$size=3) {
       $ident="";
@@ -243,7 +278,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
             if ($meta = self::_get_meta_value($input)) {
                $meta = ' fx:meta="'.$meta.'"';
             } else {
-               $meta = " fx:meta=\"extxs:structure";
+               $meta = " fx:meta=\"extxs:structure\"";
                $structure = new \stdClass();
                $structure->structure = self::_get_structure($input);               
                $metatag = self::_data_to_xml(
@@ -298,6 +333,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
       $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
       $xml .= '<' . $options['top_node'] . ' fx:created="'.date("c").'"'.$checksum_attr."$meta$xsins";
+      $xml .= ' fx:php-type="'.gettype($input).'"';
       $ftypeattr = " ";
       if (is_null($input)) {
          $ftypeattr .= 'xsi:nil="true"';
@@ -369,8 +405,8 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
           if (is_bool($data)) {
              return "xs:boolean";
           } else
-          if (is_string($data)) {
-             
+          { // Scalar int/float/bool cases returned above; the remainder is string.
+             // CONSERVATIVELY DISABLED original guard: if (is_string($data))
              if (is_numeric($data)) {
                 
                 if (intval($data)==$data) {
@@ -379,7 +415,11 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                    return "extxs:NumericStringFloat";
                 }
                 
-                return "extxs:NumericString";
+                /* CONSERVATIVELY DISABLED: for an is_numeric string, PHP 7.2
+                 * numeric comparison matches its int conversion or its float
+                 * conversion. NaN/INF spellings are not numeric strings.
+                 * return "extxs:NumericString";
+                 */
              }
              
              if ($param['DateTime'] ) {
@@ -405,13 +445,17 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                    return "xs:anyURI";
                 }
              }             
-             if ($param['string']) return "xs:string";
+             // CONSERVATIVELY DISABLED: all private callsites enable string.
+             // if ($param['string']) return "xs:string";
+             return "xs:string";
              
              //$xsi=" ".self::_get_xsi_attr("string");
           }
        } else {
           if (is_array($data)) {
-             if ($param['Array']) {
+             // CONSERVATIVELY DISABLED: all private callsites keep Array enabled.
+             // if ($param['Array']) {
+             {
                 $i=0;
                 foreach($data as $k=>$v) {
                    if ($i>9) break 1;
@@ -422,9 +466,13 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
              }
           } else
           if (is_object($data)) {
-             if ($param['Object']) return "extxs:Object";
+             // CONSERVATIVELY DISABLED: no private caller disables Object.
+             // if ($param['Object']) return "extxs:Object";
+             return "extxs:Object";
           } else {
-             if ($param['other']) return "extxs:".str_replace(" ","",ucwords(gettype($data)));
+             // CONSERVATIVELY DISABLED: no private caller disables other.
+             // if ($param['other']) return "extxs:".str_replace(" ","",ucwords(gettype($data)));
+             return "extxs:".str_replace(" ","",ucwords(gettype($data)));
           }
        }
    }
@@ -477,11 +525,14 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                  $ns = $options['namespace'].":";
 
                  if (empty($options['namespace_child'])) {
-                    if (empty($options['namespace_identifyer'])) {
-                       $nsid = self::xmlns."-".$options['namespace'];
-                    } else {
-                       $nsid = htmlspecialchars($options['namespace_identifyer'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8');
-                    }
+                    /* CONSERVATIVELY DISABLED: both private namespace-bearing
+                     * callsites supply namespace_identifyer explicitly.
+                     * if (empty($options['namespace_identifyer'])) {
+                     *    $nsid = self::xmlns."-".$options['namespace'];
+                     * } else {
+                     */
+                    $nsid = htmlspecialchars($options['namespace_identifyer'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8');
+                    // } // original always-taken else
                     $nsidattr= " xmlns:".$options['namespace']."=\"$nsid\"";
                     $options['namespace_child']=true;
                  }
@@ -509,6 +560,9 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                 if (empty($node)) $node = $default_node;
                 $node = strtolower($node);
                 $xml .= self::_ident($indent_level,$indent_size)."<$ns$node$nsidattr";
+                $xml .= ' fx:php-type="'.gettype($value).'"';
+                $xml .= ' fx:php-key="'.htmlspecialchars((string) $key, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED, 'UTF-8').'"';
+                $xml .= ' fx:php-key-type="'.gettype($key).'"';
                 if ($is_arr){
                     if (is_int($key)) {
                        $index = $key;
@@ -564,7 +618,7 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                       }
                       $xml .= "/>\n";
                    } else {
-                      if (empty($value)) {
+                      if (empty($value) && $value !== '0') {
                          if (is_string($value)) {
                             $xml .= ' xsi:nil="true"';
                          }
@@ -590,8 +644,9 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
             return $xml;
             
         } else {
-           if (empty($data)) return "<!--empty-->";
-           if ($xml = htmlspecialchars($data, ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8')) return trim($xml);
+           if (empty($data) && $data !== '0') return "<!--empty-->";
+           $xml = htmlspecialchars($data, ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8');
+           if ($xml !== null && $xml !== false) return $xml;
             $checksum_attr = "";
             foreach ($checksum as $algo) {
                if ($hash = hash($algo,$input)) {
@@ -610,6 +665,10 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
             var_dump($data);
             $dump = ob_get_clean();
             $encoding = "";
+            /* CONSERVATIVELY DISABLED: native var_dump yields a nonempty
+             * string (including its ASCII resource descriptor). With fixed UTF-8
+             * and ENT_SUBSTITUTE, escaping it remains nonempty. Original
+             * impossible alternate encodings retained:
             if ($data = htmlspecialchars($dump, ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8')) {
                $encoding = " extxs:encoding=\"none\"";
                $dump = $data;
@@ -623,6 +682,9 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                   $encoding = " extxs:encoding=\"unserializable\" /";
                }
             }
+             */
+            $dump = htmlspecialchars($dump, ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8');
+            $encoding = " extxs:encoding=\"none\"";
             $indent_level++;
             $xml = "\n".self::_ident($indent_level,$indent_size);
             $xml .= "<extxs:dump extxs:DumpObject=\"$type\"$checksum_attr$encoding>$dump";

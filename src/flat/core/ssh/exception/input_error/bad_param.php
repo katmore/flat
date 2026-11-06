@@ -39,3 +39,5 @@ class badParam extends \flat\core\ssh\exception\input_error {
    }
 
 }
+// Retain the historical name and support the name used by SSH callers.
+class_alias(badParam::class, __NAMESPACE__.'\\bad_param');

@@ -123,9 +123,12 @@ class cli {
     * @return string | null
     * @static
     */
+   /* CONSERVATIVELY DISABLED: this private helper has no callers.
    private static function _argv_to_command(array $argv) {
       if (isset($argv[0])) return $argv[0];
    }
+   */
+
    /**
     * Entry point method;
     * Sets the cli argument list which maps to the cli command, params, switches,
@@ -652,9 +655,12 @@ class cli {
     */
    public static function printf($format,...$args) {
       $param_arr = func_get_args();
+      /* CONSERVATIVELY DISABLED: $format is required, so entry with zero
+       * arguments raises ArgumentCountError before this method can execute.
       if (!count($param_arr)) {
          $param_arr = [""];
       }
+       */
       if (count($param_arr)==1) {
          $param_arr[0] = str_replace("%","%%",$param_arr[0]);
       }

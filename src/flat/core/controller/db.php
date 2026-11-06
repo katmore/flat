@@ -34,13 +34,19 @@ namespace flat\core\controller;
 abstract class db {
    final public static function load_read(array $param=NULL) {
       if (self instanceof \flat\db\op\read) {
-         $q = array();
-         if (!empty($param['key'])) {
-            $q['key'] = $param['key'];
-         }
-         $read = new static($q);
-         $data = $read->op_read();
-         return $data;
+         /* CONSERVATIVELY DISABLED unreachable read body on PHP 7.2.
+          * The guard tests the literal constant self, not an object or the
+          * called class. PHP 7.2 constants cannot hold objects. Preserve the
+          * guard's existing undefined-constant warning and NULL result until
+          * the read-versus-op_read contract is settled. Original body:
+          *          $q = array();
+          *          if (!empty($param['key'])) {
+          *             $q['key'] = $param['key'];
+          *          }
+          *          $read = new static($q);
+          *          $data = $read->op_read();
+          *          return $data;
+          */
       }
       return NULL;
    }

@@ -59,28 +59,33 @@ class shutdown extends \flat\core {
       
       //self::_clear();
    }
-   private static function _clear() {
-      
-      $_default =  NULL;
-      $_default_h =  NULL;
-      $_default_c =  NULL;
-   
-      $_first =  NULL;
-      $_first_h =  NULL;
-      $_first_c =  NULL;
-   
-      $_last =  NULL;
-      $_last_h =  NULL;
-      $_last_c =  NULL;
-   
-      $_weight =  NULL;
-      $_weight_h =  NULL;
-      $_weight_c =  NULL;
-   
-      $_weight_max=0;
-      
-      self::$_init = false;
-   }
+   /*
+    * CONSERVATIVELY DISABLED unused private helper: its only call is commented
+    * out in invoke_shutdown_callbacks(). Keep explicit invocation repetition
+    * unchanged; do not activate clearing without a lifecycle decision. Original:
+    * private static function _clear() {
+    *
+    * $_default =  NULL;
+    * $_default_h =  NULL;
+    * $_default_c =  NULL;
+    *
+    * $_first =  NULL;
+    * $_first_h =  NULL;
+    * $_first_c =  NULL;
+    *
+    * $_last =  NULL;
+    * $_last_h =  NULL;
+    * $_last_c =  NULL;
+    *
+    * $_weight =  NULL;
+    * $_weight_h =  NULL;
+    * $_weight_c =  NULL;
+    *
+    * $_weight_max=0;
+    *
+    * self::$_init = false;
+    * }
+    */
    private static function _init() {
       
       if (self::$_init===true) return;
@@ -165,70 +170,23 @@ class shutdown extends \flat\core {
          } else
          if (is_int($priority) && $priority>=(self::weight_offset*-1) && $priority<=self::weight_offset) {
             $priority = $priority + self::weight_offset;
-            if (isset(self::$_weight[$priority])) {
-               $start = $priority+1;
-               $last = NULL;
-               $last_h = NULL;
-               $last_c = NULL;
-               
-               $last_TMP = NULL;
-               $last_TMP_h = NULL;
-               $last_TMP_c = NULL;
-               
-               for($i=$start;;$i++) {
-                  if ($i>self::weight_ceiling) {
-                     throw new shutdown\exception\weight_ceiling(
-                        self::weight_ceiling
-                     );
-                  }
-                  if ($i>self::$_weight_max) self::$_weight_max=$i;
-                  if (isset(self::$_weight[$i])) {
-                     if ($last) {
-                        $last_TMP = self::$_weight[$i];
-                        $last_TMP_h = self::$_weight_h[$i];
-                        $last_TMP_c = self::$_weight_c[$i];
-                        
-                        self::$_weight[$i] = $last;
-                        self::$_weight_h[$i] = $last_h;
-                        self::$_weight_c[$i] = $last_c;
-                        
-                        $last = $last_TMP;
-                        $last_h = $last_TMP_h;
-                        $last_c = $last_TMP_c;
-                        
-                        $last_TMP = NULL;
-                        $last_TMP_h = NULL;
-                        $last_TMP_c = NULL;
-                     } else {
-                        $last = self::$_weight[$i];
-                        $last_h = self::$_weight_h[$i];
-                        $last_c = self::$_weight_c[$i];
-                        
-                        self::$_weight[$i]=$callback;
-                        self::$_weight_h[$i]=$handle;
-                        self::$_weight_c[$i]=$context;
-                     }
-                  } else {
-                     if ($last) {
-                        self::$_weight[$i] = $last;
-                        self::$_weight_h[$i] = $last_h;
-                        self::$_weight_c[$i] = $last_c;
-                     } else {
-                        self::$_weight[$i]=$callback;
-                        self::$_weight_h[$i]=$handle;
-                        self::$_weight_c[$i]=$context;
-                     }
-                     break 1;
-                  }
+            $free = $priority;
+            while (isset(self::$_weight[$free])) {
+               $free++;
+               if ($free>self::weight_ceiling) {
+                  throw new shutdown\exception\weight_ceiling(self::weight_ceiling);
                }
-               return $handle;
-            } else {
-               if ($priority>self::$_weight_max) self::$_weight_max=$priority+1;
-               self::$_weight[$priority] = $callback;
-               self::$_weight_h[$priority] = $handle;
-               self::$_weight_c[$priority]=$context;
-               return $handle;
             }
+            for ($i=$free;$i>$priority;$i--) {
+               self::$_weight[$i] = self::$_weight[$i-1];
+               self::$_weight_h[$i] = self::$_weight_h[$i-1];
+               self::$_weight_c[$i] = self::$_weight_c[$i-1];
+            }
+            self::$_weight[$priority] = $callback;
+            self::$_weight_h[$priority] = $handle;
+            self::$_weight_c[$priority] = $context;
+            self::$_weight_max = max(self::$_weight_max,$free+1);
+            return $handle;
          } else {
             self::$_default[] = $callback;
             self::$_default_h[count(self::$_default)]=$handle;

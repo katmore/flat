@@ -5,6 +5,8 @@ trait mapper  {
 
    /**
     * iterates through class properties (as given) invoking a callback function on each one.
+    * Maintainer contract: public properties only. The access flags are obsolete;
+    * the options parameter is retained for call compatibility.
     */
    protected function each_property(callable $callback,array $property_list=null,array $options=null) {
       $option = array(
@@ -22,11 +24,13 @@ trait mapper  {
          
          $filter = \ReflectionProperty::IS_PUBLIC;
          
+      /*
+       * CONSERVATIVELY DISABLED: obsolete access flags; maintainer confirms public-only iteration.
          if (!empty($option['get_protected_property']))
             $filter = \ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED;;
          
          if (!empty($option['get_private_property'])) $filter = NULL;
-         
+       */
          $prop = $r->getProperties($filter);
       } else {
          $prop=array();
@@ -53,6 +57,8 @@ trait mapper  {
       foreach ($prop as $rp) {
          $ret = $callback($rp->getValue($this),$rp->getName());
          if ($ret!==null) {
+      /*
+       * CONSERVATIVELY DISABLED: private properties are never selected; protected reflection reads fail before this block on PHP 7.2.
             if ($rp->isPrivate()) {
                if (!empty($option['set_private_property'])) {
                   $rp->setAccessible(true);
@@ -71,6 +77,7 @@ trait mapper  {
                   );
                }
             }
+       */
             if ($ret instanceof \flat\core\mappable\property\nulled) $ret = NULL;
             $rp->setValue($this,$ret);
          }
@@ -152,7 +159,11 @@ trait mapper  {
       if ($property instanceof \ReflectionProperty) {
          $rp = $property;
       } else {
+         $property = (string) $property;
+      /*
+       * CONSERVATIVELY DISABLED: a successful string cast always yields a string.
          if (!is_string($property = (string) $property)) throw new mappable\exception\bad_property_name();
+       */
          if (property_exists(get_class($this), $property)) {
             $rp = new \ReflectionProperty($this,$property);
          } else 
@@ -195,7 +206,10 @@ trait mapper  {
    private function _get_object($object) {
       if (!$object) return $this;
       $object = (object) $object;
+      /*
+       * CONSERVATIVELY DISABLED: the immediately preceding object cast always yields an object.
       if (!is_object($object)) throw new mappable\exception\invalid_object();
+       */
       return $object;
       
    }

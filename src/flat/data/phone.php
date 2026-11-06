@@ -274,11 +274,16 @@ implements \flat\data\ready
                            if (substr($phoneNumber,0,5)==99534) {
                               //south ossetia
                               $this->country_code == substr($phoneNumber,0,5);
-                           } else
-                              if (substr($phoneNumber,0,5)==99534) {
-                                 //abkhazia
-                                 $this->country_code == substr($phoneNumber,0,5);
-                              } else {
+                           }
+                           /* CONSERVATIVELY DISABLED: the identical 99534 test
+                            * immediately above already handles this prefix.
+                            * Original unreachable alternative retained:
+                            * else if (substr($phoneNumber,0,5)==99534) {
+                            *    //abkhazia
+                            *    $this->country_code == substr($phoneNumber,0,5);
+                            * }
+                            */
+                              else {
                                  //georgia
                                  $this->country_code == substr($phoneNumber,0,3);
                               }

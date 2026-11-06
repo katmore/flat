@@ -185,9 +185,12 @@ class debug extends \flat\core {
       if (!is_string($label)) {
          if (is_string($default_label)) {
             $label = $default_label;
-         } else {
-            $label = "debug";
-         }  
+         }
+         /* CONSERVATIVELY DISABLED: every public caller either supplies a
+          * string label (kill/msg) or a string default label (dump/display).
+          * Original fallback retained:
+          * else { $label = "debug"; }
+          */
       }
       $param = [
          'trigger_error'=>false,
@@ -247,9 +250,11 @@ class debug extends \flat\core {
             $ohash = spl_object_hash($caller->object);
             $oid = ltrim(substr($ohash,0,16),"0").ltrim(substr($ohash,16),"0");
             $caller->object = "object(".get_class($caller->object).")#spl-$oid";
-         } else {
-            $caller->object = gettype($caller->object);
          }
+         /* CONSERVATIVELY DISABLED: debug_backtrace supplies an object for
+          * its object entry; absent entries are null and fail the outer guard.
+          * else { $caller->object = gettype($caller->object); }
+          */
       }
       
       if (!$param['show_args'] && isset($caller->args)) unset($caller->args);
@@ -455,7 +460,12 @@ class debug extends \flat\core {
       } else 
       if (empty($data)) {
          if ($data===null) return self::data2str_null;
-         return self::data2str_empty;
+         /* CONSERVATIVELY DISABLED: scalar, array and object inputs already
+          * returned above; NULL is the only remaining empty PHP 7.2 value and
+          * returned immediately above. Live resources (including closed ones)
+          * are nonempty. The original undefined-constant path is retained:
+          * return self::data2str_empty;
+          */
       }
       return str_replace('%typename%',gettype($data),self::data2str_other_format);
    }

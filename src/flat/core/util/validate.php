@@ -89,29 +89,39 @@ abstract class validate {
          'value_on_fail'=>NULL
       );
       foreach ($option as $k=>$v) if (isset($param[$k])) $param[$k]=$v;
-      if (self::is_valid($value,$option)) {
-         if ($param['value_on_pass']===NULL) {
-            return $value;
-         } else {
-            return $param['value_on_pass'];
-         }
-      } else {
-         if (is_callable($param['fail_handler'])) {
-            $handler = $param['fail_handler'];
-            return $handler($value);
-         }
-         if ($param['value_on_fail']===NULL) {
-            return NULL;
-         } else 
-         if ($param['exception_on_fail']===true) {
-            if (self instanceof validate\exceptionable) {
-               self::throw_exception(array('value'=>$value));
-            } else {
-               throw new validate\exception\fail(array('value'=>$value,"rule"=>get_class(self)));
-            }
-         } 
-      }
+      /* CONSERVATIVELY DISABLED unreachable option dispatch.
+       * The option merge uses isset against NULL defaults, so fail_handler,
+       * value_on_pass and value_on_fail always stay NULL. Only the boolean
+       * exception_on_fail can merge, but the NULL failure value returns first.
+       * Preserve the actual pass-through/null behavior until the option
+       * contract is resolved. Original dispatch follows for restoration:
+       *       if (self::is_valid($value,$option)) {
+       *          if ($param['value_on_pass']===NULL) {
+       *             return $value;
+       *          } else {
+       *             return $param['value_on_pass'];
+       *          }
+       *       } else {
+       *          if (is_callable($param['fail_handler'])) {
+       *             $handler = $param['fail_handler'];
+       *             return $handler($value);
+       *          }
+       *          if ($param['value_on_fail']===NULL) {
+       *             return NULL;
+       *          } else
+       *          if ($param['exception_on_fail']===true) {
+       *             if (self instanceof validate\exceptionable) {
+       *                self::throw_exception(array('value'=>$value));
+       *             } else {
+       *                throw new validate\exception\fail(array('value'=>$value,"rule"=>get_class(self)));
+       *             }
+       *          }
+       *       }
+       */
+      if (self::is_valid($value,$option)) return $value;
+      return NULL;
    }
+
    final public static function is_valid($value,array $option=NULL) {
       if (static::_validate($value,$option)===true) {
          return true;

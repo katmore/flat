@@ -23,6 +23,6 @@ namespace flat\report;
  * @version    0.1.0-alpha
  * 
  */
-interface meta extends \flat\core\data {
+interface meta {
    public function get_meta();
 }

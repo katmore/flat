@@ -12,6 +12,23 @@ Architecturally, it facilitates a broad swathe of design patterns using a client
  * Back-End Webservice: convienence classes to faciliate actual RESTful APIs
  * Command line scripts: convenience classes to faciliate creation of recurring (cron), deamons, and ad-hoc scripts
 
+## Tests (Docker only)
+
+From the repository root, run `./tests.sh`. It builds the pinned PHP 7.2.34 image,
+starts the required MongoDB/RabbitMQ containers, runs the tests, then removes the
+containers and their test data. Only Docker Engine and Docker Compose are needed.
+
+```sh
+./tests.sh unit                  # no external service containers
+./tests.sh services              # service-dependent tests
+./tests.sh mongo                 # start only MongoDB
+./tests.sh rabbitmq              # start only RabbitMQ
+./tests.sh all --coverage        # full suite and coverage reports
+```
+
+The default is `all`. Reports are written under `build/tests/<mode>/`.
+See [Docker test instructions](docs/docker-testing.md) for details.
+
 ## Installation
 **The Flat Framework** can be the basis of a **new project** or added to an **existing project**
 

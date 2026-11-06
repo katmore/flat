@@ -31,7 +31,7 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\core\exception\bad_interface;
-class message extends \flat\core\controller implements \flat\core\bad_interface {
+class message implements \flat\core\controller, \flat\core\bad_interface {
    public function __toString() {
       return $this->_msg;
    }

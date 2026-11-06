@@ -458,7 +458,10 @@ class asset extends core\controller\asset implements core\app
             if (self::SYSTEM_PATH_EXISTS) {
                 throw new exception\app_error('cannot determine system path: asset::_get_system_base() must not return an empty value');
             }
-            return null;
+            /* CONSERVATIVELY DISABLED: SYSTEM_PATH_EXISTS is the nonzero
+             * constant 256, so the condition above always throws.
+             * Original unreachable statement: return null;
+             */
         }
 
         $resource = $this->get_resource();
@@ -474,11 +477,11 @@ class asset extends core\controller\asset implements core\app
                 throw new exception\app_error("read permission is denied for system path: $system_path (resource: '$resource')");
             }
 
-            if ($flags & self::SYSTEM_PATH_FILE) {
+            if (($flags & self::SYSTEM_PATH_FILE) === self::SYSTEM_PATH_FILE) {
                 if (!is_file($system_path)) {
                     throw new exception\app_error("system path is not a file: $system_path (resource: '$resource')");
                 }
-            } else if ($flags & self::SYSTEM_PATH_DIR) {
+            } else if (($flags & self::SYSTEM_PATH_DIR) === self::SYSTEM_PATH_DIR) {
                 if (!is_dir($system_path)) {
                     throw new exception\app_error("system path is not a directory: $system_path (resource: '$resource')");
                 }
@@ -696,13 +699,15 @@ class asset extends core\controller\asset implements core\app
 
             if ($asset instanceof asset) {
                 $resource_type = $asset->get_resource_type();
-                if (isset(self::$register_position[$asset_hash])) {
-                    $position = self::$register_position[$asset_hash];
-                } else if (isset(self::IMPLICIT_RESOURCE_POSITION[$resource_type])) {
-                    $position = self::IMPLICIT_RESOURCE_POSITION[$resource_type];
-                } else {
-                    $position = self::CATCHALL_RESOURCE_POSITION;
-                }
+                $position = self::$register_position[$asset_hash];
+                /* CONSERVATIVELY DISABLED missing-position fallback. Both
+                 * private registration writers store a validated integer
+                 * position together with each asset; no public path unsets it.
+                 * Original unreachable alternatives:
+                 * else if (isset(self::IMPLICIT_RESOURCE_POSITION[$resource_type])) {
+                 *     $position = self::IMPLICIT_RESOURCE_POSITION[$resource_type];
+                 * } else { $position = self::CATCHALL_RESOURCE_POSITION; }
+                 */
             } elseif (is_callable($asset)) {
                 $resource_type = self::$register_callback_resource[$asset_hash];
                 $position = self::CATCHALL_CALLBACK_POSITION;

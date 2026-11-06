@@ -147,13 +147,13 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
    public function set_collection_name($name) {
 
       if ($this instanceof mongo\collection\shortname ) {
-         return mongo\collection\illegal(
+         throw new mongo\collection\illegal(
             "cannot set collection name while having interface ".
             "\\flat\\db\\driver\\mongo\\collection\\shortname"
          );
       } else
       if ($this instanceof mongo\collection\explicit ) {
-         return mongo\collection\illegal(
+         throw new mongo\collection\illegal(
             "cannot set collection name while having interface ".
             "\\flat\\db\\driver\\mongo\\collection\\explicit"
          );
@@ -267,22 +267,19 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
    private static $_client_ping;
    
    /**
-    * retrieve new or existing cached \MongoClient object. cache expires when a
-    *    connection does not exist or last ping is greater than 
-    *    self::client_expire seconds.
-    * 
-    * @param string $connect_string mongo connection string. client is 
-    *    cached by this value.  
-    *    
-    * @param int $ping_offset (optional) default 0. timezone offset in seconds 
-    *    to assume between system and mongo server.
-    *    
+    * Retrieve a cached client, verifying new/stale eager connections by ping.
+    * A successful ping remains fresh for client_ping_expire seconds; missing
+    * timestamps also trigger verification. Failed verification evicts the
+    * cached client before reconnection attempts.
+    *
+    * @param string $server MongoDB connection URI
+    * @param array $options optional client_options and driver_options arrays;
+    *    client_options['connect'] defaults to true (actively verify); false
+    *    keeps construction lazy and does not record a verified timestamp.
+    *    connect_attempts is a positive numeric retry count (default 5).
+    *    ping_offset adjusts the clock used for cached verification timestamps.
     * @return \MongoClient
-    * 
-    * @link http://php.net/manual/en/mongoclient.construct.php 
-    *    connection string format definition
-    * 
-    * @throws \MongoConnectionException
+    * @throws mongo\db\exception\connect_failure after retry exhaustion
     * @static
     * @final
     */
@@ -339,133 +336,188 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
 //       var_dump($param);
 //       die('mongo driver die');
       ////\flat\core\debug::dump($hash,"client hash");
-      /**
-       * @var bool $new determine if need to create a new \MongoClient
-       *    (establish new connection(s))
-       */
-      $new = false;
+      // connect=false is explicitly lazy; otherwise verify actual server I/O.
+      $verify = !isset($param['client_options']['connect']) || (bool) $param['client_options']['connect'];
       if (isset(self::$_client[$hash])) {
-         ////\flat\core\debug::msg("client exists... checking if need reconnect");
-         $client = self::$_client[$hash];
-         
-         $ping = null;
-         if (!empty(self::$_client_ping[$hash])) {
-            $ping = self::$_client_ping[$hash];
-         } else {
-            $conn = self::$_client[$hash]->getConnections();
-            if (empty($conn)) {
-               //\flat\core\debug::msg("no array returned from \\MongoClient->getConnections()");
-               $new = true;
-            } else {
-               $most_recent_ping = 0;
-               foreach ($conn as $c) {
-                  if (isset($conn['connection'])) {
-                     if (isset($conn['last_ping'])) {
-                        if (
-                           empty($most_recent_ping) ||
-                           ($conn['last_ping']>$most_recent_ping)
-                        ) {
-                           $most_recent_ping = $conn['last_ping'];
-                        }
-                     } else {
-                        //\flat\core\debug::dump($c,"no mongo last_ping");
-                        
-                     }
-                  } else {
-                     //\flat\core\debug::dump($c,"no 'connection' assoc key array returned from \\MongoClient->getConnections()");
-                  }
-               }
-               if (!empty($most_recent_ping)) $ping = $most_recent_ping;
-            }
+         if (!$verify) return self::$_client[$hash];
+         $ping = self::$_client_ping[$hash] ?? null;
+         if ($ping !== null && time() + $ping_offset - $ping <= self::client_ping_expire) {
+            return self::$_client[$hash];
          }
-         $new_ping = false;
-         if (empty($ping)) {
-            $new_ping = true;
-            //\flat\core\debug::msg("no last ping determined, must try ping command");
-         } else
-         if (((time()+$ping_offset) - ($ping)) > self::client_ping_expire) {
-            $new_ping = true;
-            ////\flat\core\debug::msg("ping expired, must try ping command");
+         try {
+            self::_verify_client(self::$_client[$hash]);
+            self::$_client_ping[$hash] = time() + $ping_offset;
+            return self::$_client[$hash];
+         } catch (\MongoConnectionException $e) {
+            // A failed cached verification must not leave a usable cache entry.
+            unset(self::$_client[$hash], self::$_client_ping[$hash]);
          }
-         if ($new_ping) {
-            ////\flat\core\debug::msg("doing ping command...");
-            try {
-               $doc = $client->selectDB(self::test_collection)->command(array("ping"=>1));
-               if (empty($doc)) {
-                  ////\flat\core\debug::msg("empty response for mongo ping command");
-                  $new = true;
-               } else {
-                  ////\flat\core\debug::dump($doc,"mongo ping response");
-                  if (isset($doc['ok'])) {
-                     if ($doc['ok']!=1) {
-                        //\flat\core\debug::dump($doc['ok'],"'ok' field not '1' in response");
-                        $new = true;
-                     }
-                  } else {
-                     ////\flat\core\debug::msg("missing 'ok' field in response");
-                     $new = true;
-                  }
-               }
-            } catch (\Exception $e) {
-               ////\flat\core\debug::dump($e,"ping failed");
-               $new = true;
-            }
-         }         
-      } else {
-         $new = true;
       }
+      $attempts = self::connect_attempts;
+      if (isset($options['connect_attempts']) && is_numeric($options['connect_attempts']) && (int) $options['connect_attempts'] > 0) {
+         $attempts = (int) $options['connect_attempts'];
+      }
+      $first_ex = null;
+      for ($i = 0; $i < $attempts; $i++) {
+         try {
+            $client = new \MongoClient($server, $param['client_options'], $param['driver_options']);
+            if ($verify) {
+               self::_verify_client($client);
+               self::$_client_ping[$hash] = time() + $ping_offset;
+            }
+            return self::$_client[$hash] = $client;
+         } catch (\MongoConnectionException $e) {
+            if ($first_ex === null) $first_ex = $e;
+         }
+      }
+      // A positive attempt count either returns a client or records a failure.
+      throw new mongo\db\exception\connect_failure(
+         "failed after $attempts attempts (msg='".$first_ex->getMessage()."'), opt=".json_encode($param['client_options'])
+      );
+   }
 
-      /**
-       * @var \MongoClient[] \flat\db\driver\mongo::$_client
-       *    establish new connection(s) as determined above
-       */
-      if ($new) {
-         /**
-          * @uses int $param['connect_attempts'] (optional) number of reconnection attempts.
-          * @uses \flat\db\driver\mongo::connect_attempts default
-          */
-         ////\flat\core\debug::msg("reconnecting");
-         $attempts=self::connect_attempts;
-         if (!empty($param['connect_attempts'])) {
-            if (is_numeric($param['connect_attempts'])) {
-               $attempts = (int) $param['connect_attempts'];
-            }
-         }         
-         $success = false;
-         $last_ex = null;
-         $first_ex = null;
-         for ($i=0;$i<$attempts;$i++) {
-            try {
-               self::$_client[$hash] = new \MongoClient(
-                  $server,
-                  $param['client_options'],
-                  $param['driver_options']
-               );
-               $success = true;
-               break 1;
-            } catch (\MongoConnectionException $e) {
-               ////\flat\core\debug::dump($e,"connection error: $i");
-               //throw $e;
-               if (!$first_ex) $first_ex = $e;
-               $last_ex = $e;
-            }
-         }
-         if (!$success) {
-            $msg = "failed after $attempts attempts";
-            if ($first_ex!==null) {
-               $msg .= " (msg='".$first_ex->getMessage()."'), opt=".json_encode($param['client_options']);
-            }
-            throw new mongo\db\exception\connect_failure($msg);
-         }
-      } else {
-         ////\flat\core\debug::dump($ping,"existing connection ok");
+   private static function _verify_client(\MongoClient $client) {
+      $reply = $client->selectDB(self::test_collection)->command(['ping' => 1]);
+      if (empty($reply['ok'])) {
+         throw new \MongoConnectionException(json_encode($reply));
       }
-      
-      self::$_client_ping[$hash] = time()+$ping_offset;
-      return self::$_client[$hash];
-      
-   } /*end function mongo::load_client()*/
-   
+   }
+
+   // RETIRED by owner decision: legacy getConnections inspection and lazy
+   // constructor-only retries. Active ping verification above replaces them.
+   //       /**
+   //        * @var bool $new determine if need to create a new \MongoClient
+   //        *    (establish new connection(s))
+   //        */
+   //       $new = false;
+   //       if (isset(self::$_client[$hash])) {
+   //          ////\flat\core\debug::msg("client exists... checking if need reconnect");
+   //          $client = self::$_client[$hash];
+   //
+   //          $ping = null;
+   //          if (!empty(self::$_client_ping[$hash])) {
+   //             $ping = self::$_client_ping[$hash];
+   //          } else {
+   //             $conn = self::$_client[$hash]->getConnections();
+   //             if (empty($conn)) {
+   //                //\flat\core\debug::msg("no array returned from \\MongoClient->getConnections()");
+   //                $new = true;
+   //             } else {
+   //                $most_recent_ping = 0;
+   //                foreach ($conn as $c) {
+   //                   if (isset($conn['connection'])) {
+   //                      if (isset($conn['last_ping'])) {
+   //                         if (
+   //                            empty($most_recent_ping) ||
+   //                            ($conn['last_ping']>$most_recent_ping)
+   //                         ) {
+   //                            $most_recent_ping = $conn['last_ping'];
+   //                         }
+   //                      } else {
+   //                         //\flat\core\debug::dump($c,"no mongo last_ping");
+   //
+   //                      }
+   //                   } else {
+   //                      //\flat\core\debug::dump($c,"no 'connection' assoc key array returned from \\MongoClient->getConnections()");
+   //                   }
+   //                }
+   //                if (!empty($most_recent_ping)) $ping = $most_recent_ping;
+   //             }
+   //          }
+   //          $new_ping = false;
+   //          if (empty($ping)) {
+   //             $new_ping = true;
+   //             //\flat\core\debug::msg("no last ping determined, must try ping command");
+   //          } else
+   //          if (((time()+$ping_offset) - ($ping)) > self::client_ping_expire) {
+   //             $new_ping = true;
+   //             ////\flat\core\debug::msg("ping expired, must try ping command");
+   //          }
+   //          if ($new_ping) {
+   //             ////\flat\core\debug::msg("doing ping command...");
+   //             try {
+   //                $doc = $client->selectDB(self::test_collection)->command(array("ping"=>1));
+   //                if (empty($doc)) {
+   //                   ////\flat\core\debug::msg("empty response for mongo ping command");
+   //                   $new = true;
+   //                } else {
+   //                   ////\flat\core\debug::dump($doc,"mongo ping response");
+   //                   if (isset($doc['ok'])) {
+   //                      if ($doc['ok']!=1) {
+   //                         //\flat\core\debug::dump($doc['ok'],"'ok' field not '1' in response");
+   //                         $new = true;
+   //                      }
+   //                   } else {
+   //                      ////\flat\core\debug::msg("missing 'ok' field in response");
+   //                      $new = true;
+   //                   }
+   //                }
+   //             } catch (\Exception $e) {
+   //                ////\flat\core\debug::dump($e,"ping failed");
+   //                $new = true;
+   //             }
+   //          }
+   //       } else {
+   //          $new = true;
+   //       }
+   //
+   //       /**
+   //        * @var \MongoClient[] \flat\db\driver\mongo::$_client
+   //        *    establish new connection(s) as determined above
+   //        */
+   //       if ($new) {
+   //          /**
+   //           * @uses int $param['connect_attempts'] (optional) number of reconnection attempts.
+   //           * @uses \flat\db\driver\mongo::connect_attempts default
+   //           */
+   //          ////\flat\core\debug::msg("reconnecting");
+   //          $attempts=self::connect_attempts;
+   //          /* CONSERVATIVELY DISABLED unreachable override. The local param
+   //           * whitelist above only populates ping_offset, client_options and
+   //           * driver_options, so connect_attempts cannot be present here.
+   //           * Original code:
+   //           * if (!empty($param['connect_attempts'])) {
+   //           *    if (is_numeric($param['connect_attempts'])) {
+   //           *       $attempts = (int) $param['connect_attempts'];
+   //           *    }
+   //           * }
+   //           */
+   //          $success = false;
+   //          $last_ex = null;
+   //          $first_ex = null;
+   //          for ($i=0;$i<$attempts;$i++) {
+   //             try {
+   //                self::$_client[$hash] = new \MongoClient(
+   //                   $server,
+   //                   $param['client_options'],
+   //                   $param['driver_options']
+   //                );
+   //                $success = true;
+   //                break 1;
+   //             } catch (\MongoConnectionException $e) {
+   //                ////\flat\core\debug::dump($e,"connection error: $i");
+   //                //throw $e;
+   //                if (!$first_ex) $first_ex = $e;
+   //                $last_ex = $e;
+   //             }
+   //          }
+   //          if (!$success) {
+   //             $msg = "failed after $attempts attempts";
+   //             if ($first_ex!==null) {
+   //                $msg .= " (msg='".$first_ex->getMessage()."'), opt=".json_encode($param['client_options']);
+   //             }
+   //             throw new mongo\db\exception\connect_failure($msg);
+   //          }
+   //       } else {
+   //          ////\flat\core\debug::dump($ping,"existing connection ok");
+   //       }
+   //
+   //       self::$_client_ping[$hash] = time()+$ping_offset;
+   //       return self::$_client[$hash];
+   //
+   //    } /*end function mongo::load_client()*/
+   //
+
    const connect_attempts = 5;
    /**
     * @return \MongoDB

@@ -95,7 +95,7 @@ class collection extends \flat\core implements \Iterator {
    final public static function load_copy(\flat\core\collection $source,$dest=null) {
       $className = "";
       if (((is_string($dest) && class_exists($dest) && is_a($dest,'\flat\core\collection',true)) || (is_object($dest) && ($dest instanceof \flat\core\collection))) && (new \ReflectionClass($dest))->isInstantiable()) {
-         $className = $dest;
+         $className = is_object($dest) ? get_class($dest) : $dest;
       }
        
       if (empty($className)) {
@@ -103,7 +103,7 @@ class collection extends \flat\core implements \Iterator {
       }
    
       $colCopy = new $className();
-      $colCopy->set_member($this->member,$this->index);
+      $colCopy->set_member($source->member,$source->index);
       return $colCopy;
    }   
 }

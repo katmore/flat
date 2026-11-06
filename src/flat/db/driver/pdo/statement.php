@@ -139,12 +139,18 @@ class statement extends \flat\core\collection
             if (is_bool($options['fetch'])) {
                 if ($options['fetch'] === true) {
                     $fetch_class = self::default_fetch_class;
-                    $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
-                        $statement->add(new $fetch_class($data));
-                    };
+                    /* CONSERVATIVELY DISABLED local callback: it cannot escape or run
+                     * because every specified fetch option throws below. Original:
+                     * $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
+                     * $statement->add(new $fetch_class($data));
+                     * };
+                     */
                 } else {
-                    $fetch_callback = function () {
-                    };
+                    /* CONSERVATIVELY DISABLED local callback: it cannot escape or run
+                     * because every specified fetch option throws below. Original:
+                     * $fetch_callback = function () {
+                     * };
+                     */
                 }
             } else if (is_string($options['fetch'])) {
                 if (class_exists($options['fetch'])) {
@@ -159,17 +165,23 @@ class statement extends \flat\core\collection
                      *    iterate visible properties to set their values
                      */
                     if (is_a($fetch_class, "\\flat\\data", true)) {
-                        $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
-                            $statement->add(new $fetch_class($data));
-                        };
+                        /* CONSERVATIVELY DISABLED local callback: it cannot escape or run
+                         * because every specified fetch option throws below. Original:
+                         * $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
+                         * $statement->add(new $fetch_class($data));
+                         * };
+                         */
                     } else {
-                        $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
-                            $fetch_object = new $fetch_class();
-                            foreach ($fetch_object as $prop => &$val) {
-                                if (isset($data[$prop])) $val = $data[$prop];
-                            }
-                            $statement->add($fetch_object);
-                        };
+                        /* CONSERVATIVELY DISABLED local callback: it cannot escape or run
+                         * because every specified fetch option throws below. Original:
+                         * $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
+                         * $fetch_object = new $fetch_class();
+                         * foreach ($fetch_object as $prop => &$val) {
+                         * if (isset($data[$prop])) $val = $data[$prop];
+                         * }
+                         * $statement->add($fetch_object);
+                         * };
+                         */
                     }
                 } else {
                     throw new exception\bad_option('fetch', "if string value, must be instantiable class name");

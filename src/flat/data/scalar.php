@@ -62,7 +62,7 @@ class scalar extends \flat\data implements \flat\core\serializer {
        * attempt to make it compatible with \flat\data::__construct()
        */
       if (empty($value)) {
-         $value = $value_on_empty;
+         parent::__construct(array('value'=>$value_on_empty));
       } else if (
          is_scalar($value) || 
          ( is_object($value) && is_a($value,'\flat\data\scalar') )

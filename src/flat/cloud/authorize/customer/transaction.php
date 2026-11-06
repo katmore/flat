@@ -31,20 +31,19 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\cloud\authorize\customer;
-abstract class transaction extends \flat\data 
+abstract class transaction extends \flat\data\typed\loader
    implements 
-      \flat\data\typed\explicit,
-      \flat\data\typed\loader
+      \flat\data\typed\explicit
 {
    protected static function _typed_classname($type) {
       return '\flat\cloud\authorize\customer'."\\$type";
    }
    
    public static function typed_name($param) {
-      return self::get_data_type();
+      return static::get_data_type();
    }
    public function get_customer_transaction_type() {
-      return self::get_data_type();
+      return static::get_data_type();
    }
 
 }

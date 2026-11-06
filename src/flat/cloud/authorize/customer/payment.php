@@ -32,5 +32,5 @@
  */
 namespace flat\cloud\authorize\customer;
 abstract class payment extends \flat\data implements \flat\data\typed\explicit {
-   abstract public function get_data_type();
+   abstract public static function get_data_type();
 }

@@ -1,7 +1,7 @@
 <?php
 namespace flat\core\collection;
 trait controller {
-   private $member;
+   private $member = [];
    private $index; //assoc array of 'key's with integer value of array $member[$index[$key]]
    private $count=0;
 
@@ -37,12 +37,14 @@ trait controller {
     */
    final public function key()
    {
-      // $var = key($this->member);
-      // return $var;
-      if (!is_array($this->index)) return;
-      if ($this->member) {
-         return array_search(current($this->member),$this->index,true);
-      }
+      return $this->_key_for_position(key($this->member));
+   }
+
+   /** Resolve the same key for iteration and range callbacks. */
+   private function _key_for_position($position) {
+      if ($position === NULL) return NULL;
+      $registered = is_array($this->index) ? array_search($position,$this->index,true) : false;
+      return $registered !== false ? $registered : $position;
    }
    
    /**
@@ -83,7 +85,7 @@ trait controller {
     *    returns array containing range of collection members.
     *    void if callback is given.
     *
-    * @param int $limit (optional) default 0. amount of members for range. less than
+    * @param int $limit (optional) number of members; values below 1 select all remaining members.
     * @param int $start (optional) default 0. position starting at 0 within collection to begin range
     * @param callable $callback (optional) callback invoked for each member
     *    within range. callback function pattern:
@@ -104,13 +106,14 @@ trait controller {
       if ($limit<1) $limit = $this->count();
       if ($limit>$this->count) $limit = $this->count;
       $start = (int) sprintf("%d",$start);
+      if ($start < 0) $start = 0;
       if ($start > ($this->count-1)) {
-         throw new collection\exception\out_of_range(
+         throw new \flat\core\collection\exception\out_of_range(
                "start",
                "position:$start is out of range"
                );
       }
-      if ($start < 0) $start = 0;
+      $end = min($this->count,$start+$limit);
    
       /**
        * as appropriate...
@@ -122,20 +125,20 @@ trait controller {
        */
       if (!$callback) {
          $arr = array();
-         for($i=$start;$i<$limit;$i++) {
+         for($i=$start;$i<$end;$i++) {
             $arr[] = $this->member[$i];
          }
          return $arr;
           
       } else {
-         for($i=$start;$i<$limit;$i++) {
+         for($i=$start;$i<$end;$i++) {
             $member = $this->member[$i];
             call_user_func_array(
                   $callback,
                   array(
                      $member,
                      $i,
-                     array_search($i,$this->index,true)
+                     $this->_key_for_position($i)
                   )
                   );
    
