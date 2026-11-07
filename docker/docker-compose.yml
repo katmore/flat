@@ -25,7 +25,9 @@ services:
       RABBITMQ_DEFAULT_PASS: flatunit-local-tests
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "+S 2:2"
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      # `ping` succeeds once the Erlang node is up, seconds before the AMQP
+      # listener accepts connections; require the listener ports instead.
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
       interval: 2s
       timeout: 10s
       retries: 30

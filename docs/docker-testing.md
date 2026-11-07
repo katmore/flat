@@ -22,6 +22,13 @@ containers, network and anonymous test-data volumes. Failure and interrupt paths
 also clean up. PHPUnit failures propagate as a nonzero wrapper exit status.
 Docker image/build cache remains available for subsequent runs.
 
+PHP runs as the host user's UID/GID, except when the host user is root (common
+in CI): root ignores file permissions, so the unreadable-path tests could not
+fail. A root host therefore runs PHP as 1000:1000 and the report directory is
+made writable for it. RabbitMQ counts as healthy only once its listener ports
+accept connections (`check_port_connectivity`); its node `ping` succeeds a few
+seconds earlier, which previously made `./tests.sh rabbitmq` fail every time.
+
 Reports go to `build/tests/<mode>/`, which Git ignores. Only the `all` coverage
 report represents whole-suite coverage; filtered runs cover their selected cases.
 Subscription guard tests use an owner-approved subclass limit of 2 while
@@ -95,7 +102,10 @@ codeload URLs with the same locked source commits. Application composer.json and
 its dependency policy are unchanged by this isolated test setup.
 
 For a corporate/cloud proxy CA, set FLAT_TEST_CA_FILE to a readable CA bundle.
-The CA is a BuildKit secret mount, never copied into an image. Ordinary local builds
+The CA is a BuildKit secret mount, never copied into an image. Newer Compose
+builds through Bake, which refuses a secret read from outside the build context;
+tests.sh sets BUILDX_BAKE_ENTITLEMENTS_FS=0 for CA builds only (an explicit value
+in the environment wins). Ordinary local builds
 need no CA override; Docker's standard proxy configuration is respected.
 
 ## Maintainer expectation

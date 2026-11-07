@@ -3,10 +3,16 @@ set -eu
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 cd "$repo_dir"
 export FLAT_TEST_UID="$(id -u)" FLAT_TEST_GID="$(id -g)"
+# Root ignores file permissions, so tests of unreadable/unwritable paths cannot
+# fail as root (common in CI). Run PHP unprivileged; reports stay writable below.
+if [ "$FLAT_TEST_UID" = 0 ]; then export FLAT_TEST_UID=1000 FLAT_TEST_GID=1000; fi
 export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-flat-tests}"
 compose() {
     if [ "${offline:-false}" != true ] && [ -n "${FLAT_TEST_CA_FILE:-}" ]; then
-        docker compose -f docker/docker-compose.yml -f tests/docker/compose.ca.yaml "$@"
+        # Newer Compose builds through Bake, which refuses a secret read from a
+        # path outside the build context unless file-read entitlements are relaxed.
+        BUILDX_BAKE_ENTITLEMENTS_FS="${BUILDX_BAKE_ENTITLEMENTS_FS:-0}" \
+            docker compose -f docker/docker-compose.yml -f tests/docker/compose.ca.yaml "$@"
     else
         docker compose -f docker/docker-compose.yml "$@"
     fi
@@ -68,6 +74,8 @@ fi
 if [ "$action" = build ]; then exit; fi
 report_dir="build/tests/$test_mode"
 mkdir -p "$report_dir"
+# The container user may differ from the host user (see the root case above).
+[ "$(id -u)" = "$FLAT_TEST_UID" ] || chmod -R a+rwX "$report_dir"
 cleanup() {
     test_status=$?
     trap - EXIT INT TERM
