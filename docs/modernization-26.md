@@ -1825,3 +1825,33 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - `./tests.sh unit --offline`: 1,243 tests / 5,055 assertions pass in 5.5 seconds with no service containers, even with an unavailable build-only CA input.
 - Missing PHP image is rejected with exit 1 before startup; the local image tag was restored after this check. --offline with --build is rejected with exit 2. Both help aliases and shell/Compose validation pass. No test-stack containers remain.
 - Full change-log restoration is verified by its correct heading, 1,819-plus lines, MOD-108/109/110 entries, and a uniqueness check across all docs/ Markdown files.
+
+
+## MOD-111 — Make the harness portable to root hosts and close two test gaps
+
+- Independent review: the suite was rerun from a fresh container and probed with
+  14 deliberate source mutations (one at a time, restored after each). 12 were
+  detected. Two survived and are closed here; no source behavior changes.
+- Harness: on a root host, `./tests.sh` failed 4 unreadable-path cases (AssetTest
+  x2, AwsTest, PdoTest) because root bypasses permissions. A root host now runs
+  PHP as 1000:1000 and makes the report directory writable for it.
+- Harness: RabbitMQ `ping` reported healthy ~4 s before port 5672 accepted
+  connections, so `./tests.sh rabbitmq` failed all 7 cases (3 of 3 runs) and full
+  runs could fail one. The healthcheck now uses `check_port_connectivity`.
+- Harness: with a CA file, newer Compose/Bake refused the out-of-context secret
+  path. tests.sh sets BUILDX_BAKE_ENTITLEMENTS_FS=0 only on that CA path.
+- Test gap: nonce expiry at exactly its TTL was untested (`>` to `>=` survived).
+  SessionTest now pins the documented boundary: accepted at age == ttl, expired at
+  ttl+1. The clock is not faked (SshBoundary already shadows flat\core\time);
+  the acceptance case retries only if the second ticks mid-check.
+- Test gap: routing never received request-path shapes; removing the empty
+  segment filter survived. Route ControllerTest now checks leading, trailing and
+  doubled slashes and a leading backslash resolve exactly like `ParentApp/Leaf`.
+- Undo: revert the healthcheck, the tests.sh root/CA lines and the 7 new cases.
+
+### MOD-111 verification
+
+- As root with a CA file, `./tests.sh all --coverage`: 1,296 tests / 5,212
+  assertions pass, 100% classes (330/330), methods (1,059/1,059), lines
+  (7,988/7,988). `./tests.sh rabbitmq` passes 7/7 on repeated runs.
+- Both formerly surviving mutations now fail the suite.

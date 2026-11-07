@@ -84,6 +84,38 @@ namespace flat\test\Unit\Core\Session {
             $this->expectException(\flat\core\session\exception\nonce_expired::class);
             session::consume_nonce('expired', $nonce);
         }
+        /**
+         * The TTL is "number of seconds from creation time": a nonce whose age
+         * equals its TTL is still accepted; one second older is expired.
+         */
+        public function testNonceIsAcceptedAtExactlyItsTtl()
+        {
+            $ttl = 30;
+            // Age is measured in whole seconds. Retry only if the clock ticks
+            // between backdating and consuming, which would make the age ttl+1.
+            for ($attempt = 0; $attempt < 5; $attempt++) {
+                $nonce = session::generate_nonce('boundary', $ttl, 'accepted');
+                $now = time();
+                $_SESSION[session::root_ns.'/nonce']['boundary'][$nonce]->created = date('c', $now - $ttl);
+                try {
+                    $data = session::consume_nonce('boundary', $nonce);
+                } catch (\flat\core\session\exception\nonce_expired $e) {
+                    if (time() !== $now) continue;
+                    throw $e;
+                }
+                $this->assertSame('accepted', $data);
+                return;
+            }
+            $this->fail('clock advanced during every attempt');
+        }
+        public function testNonceIsExpiredOneSecondAfterItsTtl()
+        {
+            $ttl = 30;
+            $nonce = session::generate_nonce('boundary', $ttl);
+            $_SESSION[session::root_ns.'/nonce']['boundary'][$nonce]->created = date('c', time() - $ttl - 1);
+            $this->expectException(\flat\core\session\exception\nonce_expired::class);
+            session::consume_nonce('boundary', $nonce);
+        }
         public function testCorruptNonceTtlIsRejected()
         {
             $nonce = session::generate_nonce('corrupt', 60);

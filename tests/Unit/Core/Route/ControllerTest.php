@@ -87,6 +87,31 @@ namespace flat\test\Unit\Core\Route {
             $single = $this->controller('ParentApp/Leaf', [['ns' => 'flat\\test\\Unit\\RouteApps', 'iterate' => false, 'weight' => 0]]);
             $this->assertSame(1, $single->get_resolve_count());
         }
+        /**
+         * Resources usually come from request paths, so empty segments from
+         * leading, trailing or repeated separators must not change resolution.
+         * @dataProvider separatorVariants
+         */
+        public function testEmptyPathSegmentsResolveLikeTheCleanResource($resource)
+        {
+            $controller = $this->controller($resource, [['ns' => 'flat\\test\\Unit\\RouteApps', 'iterate' => true, 'weight' => 0]]);
+            $this->assertSame(2, $controller->get_resolve_count());
+            $this->assertSame(
+                [\flat\test\Unit\RouteApps\ParentApp\Leaf::class, \flat\test\Unit\RouteApps\ParentApp::class],
+                array_map('get_class', App::$created)
+            );
+            $this->assertSame('ParentApp\\Leaf', App::$created[0]->resource);
+        }
+        public function separatorVariants()
+        {
+            return [
+                'clean' => ['ParentApp/Leaf'],
+                'leading slash' => ['/ParentApp/Leaf'],
+                'trailing slash' => ['ParentApp/Leaf/'],
+                'doubled slash' => ['ParentApp//Leaf'],
+                'leading backslash' => ['\\ParentApp\\Leaf'],
+            ];
+        }
         public function testResolverCanConsumeUnmatchedSuffix()
         {
             $controller = $this->controller('ParentApp/Missing', [['ns' => 'flat\\test\\Unit\\RouteApps', 'iterate' => false, 'traverse' => false, 'weight' => 0]]);
