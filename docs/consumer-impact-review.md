@@ -1,0 +1,65 @@
+# Consumer impact review of approved behavior changes
+
+Re-examination of the behavior changes made on the PHP 7.2 baseline (MOD-014
+through MOD-107), sorted by what they mean for applications that already depend
+on flat. The main consumer is closed source and not currently available, so
+this is a checklist to run against it later, not a sign-off.
+
+## How changes are classified
+
+- **Silent change**: code that previously ran without error now returns a
+  different result or has a different side effect. A consumer may have relied
+  on, or compensated for, the old result. These need checking in consumer code.
+- **Crash to working**: the old path always raised a fatal `Error`, `TypeError`
+  or missing-class failure, so no running consumer could have depended on its
+  result. Low risk, unless a consumer caught the failure and carried on.
+
+"Verified" means the before/after was confirmed in the `master` diff during this
+review; otherwise the summary comes from the change log entry.
+
+## Silent changes: check consumer code for these
+
+| Entry | Area | Before | After | Search consumer code for | Verified |
+| --- | --- | --- | --- | --- | --- |
+| MOD-026 | Collection iteration keys | `key()` searched the index for the member object, so keys were always `false` during `foreach`; `$out[$k] = $v` collapsed to one entry | Named members yield their key, unkeyed members their position | `foreach` over `flat\core\collection` objects using `$k =>`; `->key()` | yes |
+| MOD-026 | Collection `range($limit, $start)` | `$limit` acted as an exclusive end position, so `range(2, 1)` returned 1 member | `$limit` is a member count, so `range(2, 1)` returns 2; negative start is clamped before the range check | `->range(` with a nonzero start, i.e. pagination | yes |
+| MOD-022 | Collection copies | Falsy copied data became `null` | Falsy values (`0`, `''`, `false`) are preserved; index zero survives | `load_copy(`, `set_member(` | changelog |
+| MOD-023 | Collection constraints/validators | Declared class/interface constraints and validator hooks were not enforced; invalid members were accepted | Invalid members now fail; validation/filter/ignore/success hooks run | Collection subclasses declaring constraints or validator interfaces | changelog |
+| MOD-019 | XML encoding format | Flat XML without type/key metadata; decoder errored | Version 0.3 adds type/key attributes and a working decoder. **Wire format change** | `flat\core\xml\encode`; stored XML documents; any other system that parses flat XML output | changelog |
+| MOD-016 | Data mapper `strings_to_scalar(true)` | Partially numeric text (e.g. `"12abc"`) was converted as a number | Only `is_numeric` strings convert | Mapping of request/form input through `flat\data\mapper` | changelog |
+| MOD-017 | Mapping defaults, scalar fallbacks | `defaults`/`default_on_empty` were ignored; empty scalar wrappers exposed `null` | Defaults apply; empty wrappers expose `value_on_empty` | `default_on_empty`, `value_on_empty`, mapper `defaults` | changelog |
+| MOD-014 | `require_scalar` validation | Returned `null` for every input | Returns scalar inputs and honors fallback options | `require_scalar(` | changelog |
+| MOD-030 | HTTP JSON requests | Sent `Content-Type: application\json` (backslash); falsy JSON data (`[]`, `0`, `false`) sent no body | Sends `application/json`; falsy JSON data is encoded and sent | `new \flat\core\curl\request(` with `"json"`; remote APIs that received these requests | yes |
+| MOD-088 | Shutdown callbacks | Callbacks registered at an already-used integer priority could be overwritten and never run | Every callback runs, newest first among equal priorities | `shutdown::register(` with integer priorities | changelog |
+| MOD-045 | Image minimum-size resize | Guard assigned width instead of comparing; resize math differed | Proper comparison and proportional sizing; output dimensions can differ | `resize_min_proportional`, `flat\core\util\image` with width/height bounds | yes |
+| MOD-106 | Mongo eager connections | `connect=true` clients were not actively checked | New and stale eager clients are pinged and retried (default 5 attempts, honors `connect_attempts`); failures surface at connect time | Mongo configs with `connect` true; startup latency/timeouts | changelog |
+| MOD-033 | PDO `prepare_map` | Depended on SELECT `rowCount`, so drivers reporting 0 (e.g. SQLite) returned `[]` | Rows are fetched directly | PDO use on drivers other than MySQL | changelog |
+| MOD-094 | Asset directory paths | A directory request could enter the file-only branch because both flags share a bit | Full flag mask required | Asset system-path lookups for directories | changelog |
+
+## Changed failure types (still failures)
+
+| Entry | Area | Before | After |
+| --- | --- | --- | --- |
+| MOD-107 | `alert::trigger()` | Registered the `listener` callback, then always raised `Error` (publish on an unassigned driver) | Throws `BadMethodCallException` immediately; no listener is registered. Code catching `\Error` no longer catches it (verified) |
+| MOD-067 | Mongo collection-name setters | Called a nonexistent method (fatal) | Throw the documented `illegal` exception |
+
+## Crash to working (low risk)
+
+These paths previously failed on every call, so no consumer could rely on
+their results: SSH password/pubkey authentication (branches were inverted and
+threw nonexistent `\sf\...` classes; verified), SFTP download (`safe_feof` did
+not exist, MOD-105), S3 multipart upload (removed AWS SDK v2 classes, MOD-085),
+subscription timezone conversion (unqualified `DateTimeZone`, MOD-093), XPath
+node lists (MOD-018), routing-controller subclass caches (MOD-024), API header
+getters (MOD-036), template paths and Markdown execution (MOD-032/040), RabbitMQ
+first connection and queue parameters (MOD-056), payment transaction/CIM/
+subscription loading and identifiers (MOD-089/090/096), validation helpers and
+exception declarations (MOD-047/051/071/072/083/087/097), and the legacy ORM
+session fallback (MOD-100). A consumer that wrapped any of these in a broad
+`catch` and continued would now see them succeed.
+
+## Suggested consumer check
+
+When the consumer source is available, search it for the terms in the silent
+change table. For each hit, decide whether the consumer used the old result as
+is, compensated for it, or never reached it. Record the outcome here, per entry.
