@@ -27,12 +27,14 @@ class YasumiDateQueryTest extends TestCase
         $this->assertInstanceOf(\Yasumi\Provider\USA::class,$query->getProvider());
     }
     public function fallbackDates() { return [[null],[42],['unparseable date'],['1970-01-01 00:00:00 UTC']]; }
+    /** @group known-defect */
     public function testValidDateAndExplicitYearCurrentlyLeaveTheirBackingFieldsUnset()
     {
         $query=new dateQuery('2020-07-04','USA','2020','ignored locale');
         $this->assertNull($query->get_date()); $this->assertNull($query->get_year());
         $this->assertInstanceOf(\Yasumi\Provider\USA::class,$query->getProvider());
     }
+    /** @group known-defect */
     public function testProviderCacheCurrentlyDoesNotAttachItsHitToTheNextInstance()
     {
         $first=new dateQuery(null); $second=new dateQuery(null);
@@ -43,7 +45,10 @@ class YasumiDateQueryTest extends TestCase
         // The valid-date branch does not update the prior timestamp.
         $this->assertNotSame(strtotime('2020-07-04'),$first->get_date());
     }
-    /** @dataProvider providerMethods */
+    /**
+     * @dataProvider providerMethods
+     * @group known-defect
+     */
     public function testRealProviderRejectsTheWrappersRawTimestamp($method)
     {
         $query=new dateQuery(null);

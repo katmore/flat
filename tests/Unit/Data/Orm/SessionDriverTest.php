@@ -100,6 +100,7 @@ class SessionDriverTest extends TestCase
         list($status,$out,$err) = $this->subprocess($body);
         $this->assertSame(0,$status,$out.$err); $this->assertSame('',$err); $this->assertSame(['persisted',null],json_decode($out,true));
     }
+    /** @group known-defect */
     public function testDestroyCurrentlyAttemptsRegenerationAfterEndingTheSession()
     {
         $body = $this->sessionPrefix().'$h=new \\flat\\data\\orm\\driver\\session\\handler\\native; $h->set("key",new \\flat\\data\\generic(["value"=>"local"])); $warnings=[]; set_error_handler(function($n,$m)use(&$warnings){$warnings[]=$m;return true;}); try { $h::destroy(); } finally { restore_error_handler(); } echo json_encode([session_status(),$warnings]);';

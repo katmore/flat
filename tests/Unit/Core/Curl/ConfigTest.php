@@ -19,6 +19,7 @@ class ConfigTest extends TestCase
         // Legacy constructor overwrites the declared text defaults with null.
         $this->assertNull($default->request_method); $this->assertNull($default->user_agent);
     }
+    /** @group known-defect */
     public function testCurrentChromeSelectionIsOverwrittenByRawSelector()
     {
         $config = new config($this->request(), null, config::user_agent_chrome);

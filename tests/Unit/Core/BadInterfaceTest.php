@@ -12,6 +12,7 @@ class BadInterfaceTest extends TestCase
         $this->assertInstanceOf(\flat\core\exception\bad_interface::class,$exception);
         $this->assertStringContainsString('interface example is bad in class',$exception->getMessage());
     }
+    /** @group known-defect */
     public function testMessageFormattingRetainsCurrentMethodAndReasonBehavior()
     {
         $plain = new \flat\core\exception\bad_interface\message('interface','class');

@@ -10,7 +10,10 @@ class UnlabeledDuplicateError extends \flat\db\op\exception\duplicate_key
 }
 class LegacyErrorMessagesTest extends TestCase
 {
-    /** @dataProvider messages */
+    /**
+     * @dataProvider messages
+     * @group known-defect
+     */
     public function testErrorsRetainOperationContext($class, $arguments, $expected)
     {
         $error = new $class(...$arguments);
@@ -143,6 +146,7 @@ class LegacyErrorMessagesTest extends TestCase
         $this->assertSame(42,$error->get_value());
         $this->assertSame('duplicate key in: records, index: id (value: 42)',$error->getMessage());
     }
+    /** @group known-defect */
     public function testEmptyNonScalarDuplicateIndexUsesItsEmptyDescription()
     {
         $warnings=[]; set_error_handler(function ($level,$message) use (&$warnings) { $warnings[]=$message; return true; });
@@ -170,6 +174,7 @@ class LegacyErrorMessagesTest extends TestCase
         $this->assertSame('local error',$error->get_details());
         $this->assertSame(['path'=>'fixture'],$error->get_data());
     }
+    /** @group known-defect */
     public function testLegacyNotFoundStatusCurrentlyReportsServerErrorCode()
     {
         $status = new \flat\core\controller\api\not_found;

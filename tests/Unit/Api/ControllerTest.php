@@ -122,6 +122,7 @@ class ControllerTest extends TestCase
         $this->expectException(\flat\core\controller\api\exception\bad_response::class);
         (new GetApi)->set_input(new \flat\input\map,'GET');
     }
+    /** @group known-defect */
     public function testUnassignedRequestMethodGetterCurrentlyThrows()
     {
         $api = new GetApi; $api->set_input(new \flat\input\map,'GET');
@@ -131,6 +132,7 @@ class ControllerTest extends TestCase
     {
         $this->expectException(\flat\core\controller\api\exception\unknown_method::class); api::set_method('PATCH');
     }
+    /** @group known-defect */
     public function testMissingMethodCurrentlyRaisesUnknownMethod()
     {
         $this->expectException(\flat\core\controller\api\exception\unknown_method::class);

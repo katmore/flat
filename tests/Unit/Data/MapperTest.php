@@ -39,6 +39,7 @@ class MapperTest extends TestCase
         $p->setAccessible(true); $p->setValue(null, null);
     }
     protected function tearDown(): void { $this->setUp(); }
+    /** @group known-defect */
     public function testWebviewCurrentlyDiscardsTheHtmlEncodedClone()
     {
         $data = new WebFixture(['first' => '<tag>&']);
@@ -53,6 +54,7 @@ class MapperTest extends TestCase
         $data->map($rules);
         $this->assertSame($rules, $data->rules);
     }
+    /** @group known-defect */
     public function testFieldListWithInstanceCurrentlyFailsBeforeCreatingReflection()
     {
         $this->expectException(\Error::class);

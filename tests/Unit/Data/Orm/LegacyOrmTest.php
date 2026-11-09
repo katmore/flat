@@ -30,7 +30,10 @@ class LegacyOrmTest extends TestCase
         $this->assertSame($data,DispatchOrmFixture::get_data('key'));
         $this->assertNull(DispatchOrmFixture::get_data('missing')); $this->assertSame(1,DispatchOrmFixture::$constructed);
     }
-    /** @dataProvider directMethods */
+    /**
+     * @dataProvider directMethods
+     * @group known-defect
+     */
     public function testNonemptyConstructorArrayStillCannotActAsADriver($method)
     {
         $orm=new \flat\data\orm(['driver'=>'unresolved configuration']);
@@ -38,6 +41,7 @@ class LegacyOrmTest extends TestCase
         if ($method==='get') $orm->get('key'); else $orm->set('key',new \flat\data\generic);
     }
     public function directMethods() { return [['get'],['set']]; }
+    /** @group known-defect */
     public function testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult()
     {
         $directory=sys_get_temp_dir().'/flat-legacy-orm-'.bin2hex(random_bytes(6)); mkdir($directory,0700);

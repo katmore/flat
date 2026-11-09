@@ -68,6 +68,7 @@ class ImageTest extends TestCase
             } finally { $native->clear(); }
         }
     }
+    /** @group known-defect */
     public function testBothConstructorBoundsCurrentlyLeaveTheImageUnchanged()
     {
         $native = $this->picture();

@@ -170,6 +170,7 @@ class AuthorizeCustomerTest extends TestCase
             ['create',['email'=>'a']], ['delete_paymethod',['customerProfileId'=>'42','customerPaymentProfileId'=>'7']]];
     }
 
+    /** @group known-defect */
     public function testUnimplementedConvenienceOperationsCurrentlyReturnNull()
     {
         $customer = new CustomerFixture;

@@ -27,6 +27,7 @@ class PhoneTest extends TestCase
         $this->assertSame('1234 ext. 42',(string)$short);
         $this->assertSame('',(string)new phone(['original'=>'letters']));
     }
+    /** @group known-defect */
     public function testCurrentCountryOneAndTextExtensionExtractionFailures()
     {
         $country = new phone(['original'=>'+1 800 555 1234']);
@@ -37,7 +38,10 @@ class PhoneTest extends TestCase
         $x = new phone(['original'=>'5551234 x89']);
         $this->assertSame('5551234',$x->extension);
     }
-    /** @dataProvider internationalPrefixes */
+    /**
+     * @dataProvider internationalPrefixes
+     * @group known-defect
+     */
     public function testCurrentInternationalClassificationLeavesComparisonAssignmentsUnset($prefix,$country)
     {
         $number = $prefix.str_repeat('1',12-strlen($prefix));

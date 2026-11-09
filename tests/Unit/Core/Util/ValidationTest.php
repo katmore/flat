@@ -31,6 +31,7 @@ class ValidationTest extends TestCase
         $this->assertSame('',(string)new AlwaysPass(['value'=>['array'],'validate'=>'ignored']));
         $this->assertNull(EchoValidation::validate(false,[]));
     }
+    /** @group known-defect */
     public function testNullDefaultOptionsCurrentlyCannotBeOverridden()
     {
         $called = false;
@@ -89,6 +90,7 @@ class ValidationTest extends TestCase
             $this->fail('Invalid regex syntax must fail');
         } finally { restore_error_handler(); }
     }
+    /** @group known-defect */
     public function testPcreExecutionErrorCurrentlyReturnsFalse()
     {
         $this->assertFalse(regexp::is_valid("\xB1",['regexp'=>'/./u']));

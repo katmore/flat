@@ -197,6 +197,7 @@ class AssetTest extends TestCase
     {
         $p = new \ReflectionProperty(asset::class,'register_hash'); $p->setAccessible(true); return $p->getValue();
     }
+    /** @group known-defect */
     public function testUnimplementedResourceAndTagCasesCurrentlyProduceNoOutput()
     {
         $this->assertSame('',$this->output(function () { (new LocalAsset('unknown.bin'))->print_contents(); }));
@@ -258,6 +259,7 @@ class AssetTest extends TestCase
         $this->assertStringContainsString('special', $output);
 
     }
+    /** @group known-defect */
     public function testMultipleHtmlItemsCurrentlyCreateAnAccidentalSelfDependency()
     {
         $asset = asset::register_html_special(asset::POSITION_HEAD, 'first', 'second');
@@ -266,6 +268,7 @@ class AssetTest extends TestCase
         $this->assertSame($asset, $dependencies[$asset->get_hash()][$asset->get_hash()]);
         // Do not execute this cyclic queue: behavior repair is awaiting owner input.
     }
+    /** @group known-defect */
     public function testNewInlineSourceCurrentlyCannotResolveAFilePath()
     {
         $this->expectException(\TypeError::class);

@@ -12,6 +12,7 @@ class PairConstraintFactory extends ValidationFactoryFixture
 }
 class ValidationFactoryTest extends TestCase
 {
+    /** @group known-defect */
     public function testDefaultConstraintCurrentlyRejectsThePairBuiltByItsHelper()
     {
         $factory = new ValidationFactoryFixture;

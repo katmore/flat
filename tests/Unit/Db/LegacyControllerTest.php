@@ -16,6 +16,7 @@ class LegacyControllerTest extends TestCase
         $this->assertSame(['local'=>'configuration'],$driver->received);
         $this->assertInstanceOf(LegacyPlainController::class,new LegacyPlainController);
     }
+    /** @group known-defect */
     public function testStaticReadCurrentlyWarnsAboutItsLiteralSelfAndReturnsNull()
     {
         $warnings=[]; set_error_handler(function ($level,$message) use (&$warnings) { $warnings[]=$message; return true; });

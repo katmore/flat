@@ -140,6 +140,7 @@ CHILD;
         $this->assertStringContainsString('default output', $output);
         $this->assertStringContainsString('caller', $output);
     }
+    /** @group known-defect */
     public function testDataDescriptionsCharacterizeCurrentFormatting()
     {
         $this->assertSame('{empty string}', debug::data2str(''));

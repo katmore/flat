@@ -172,6 +172,7 @@ namespace flat\test\Unit\Core\Curl {
             $this->assertInstanceOf(\DOMDocument::class, $response->get_dom());
             $this->assertStringContainsString('0', $response->get_dom()->textContent);
         }
+        /** @group known-defect */
         public function testCurrentMissingInfoExceptionClassFailure()
         {
             CurlDouble::$responses['https://example.com/page'] = ['body'=>'text','missing_info'=>true];

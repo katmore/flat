@@ -63,6 +63,7 @@ class CollectionTest extends TestCase
         $this->expectExceptionMessage('position:0 is out of range');
         (new collection)->range();
     }
+    /** @group known-defect */
     public function testCurrentCallbacksRunTwicePerAddedMember()
     {
         $col = new collection; $validated = [];

@@ -31,6 +31,7 @@ class ShutdownTest extends TestCase
         $this->assertSame(['first','first2','normal','normal2','fallback','last'], $seen);
         $this->assertCount(6, array_unique($handles));
     }
+    /** @group known-defect */
     public function testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue()
     {
         $seen = [];
@@ -47,6 +48,7 @@ class ShutdownTest extends TestCase
         shutdown::invoke_shutdown_callbacks();
         $this->assertSame(['first','low','high','default','last'], $seen);
     }
+    /** @group known-defect */
     public function testRepeatedInvocationCurrentlyRepeatsCallbacks()
     {
         $calls = 0; shutdown::register(function () use (&$calls) { $calls++; });

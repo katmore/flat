@@ -53,6 +53,7 @@ class CaFileTest extends TestCase
         $this->assertStringContainsString('cafile',$out);
         $this->assertFileNotExists($out);
     }
+    /** @group known-defect */
     public function testFailedFileWriteCurrentlyReturnsNull()
     {
         $certificate = new CaLiteralFixture; $warnings = [];

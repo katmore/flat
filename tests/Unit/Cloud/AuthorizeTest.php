@@ -91,6 +91,7 @@ class AuthorizeTest extends TestCase
         (new AuthorizeFixture)->execute($controller);
     }
 
+    /** @group known-defect */
     public function testResponseWithoutMessagesAndLegacyScalarErrors()
     {
         $empty = new authorize\response_error(new Api\ANetApiResponseType);

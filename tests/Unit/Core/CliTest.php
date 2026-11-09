@@ -120,6 +120,7 @@ class CliTest extends TestCase
         cli::set_argv(['tool']); cli::line('normal');
         cli::set_argv(['tool','--quiet']); cli::line('hidden'); cli::line('failure', ['error'=>true]);
     }
+    /** @group known-defect */
     public function testMissingArgvPreservesCurrentExceptionNamespaceFailure()
     {
         $old = $GLOBALS['argv']; unset($GLOBALS['argv']);

@@ -138,6 +138,7 @@ class AuthorizeSubscriptionTest extends TestCase
             [['payment'=>['creditCard'=>42]],authorize\bad_param::class],
             [['payment'=>[]],authorize\bad_param::class]];
     }
+    /** @group known-defect */
     public function testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn()
     {
         $service = new SubscriptionFixture; $params=$this->createParams();

@@ -24,6 +24,7 @@ class FormTest extends TestCase
         $this->assertSame(3,substr_count($html,'<!--START flat/core/html/encode/form::data_to_form-->'));
         $this->assertStringNotContainsString('<input',form::data_to_form(42,[]));
     }
+    /** @group known-defect */
     public function testSerializeCurrentlyDiscardsItsConstructedForm()
     {
         $this->assertNull(form::serialize(['value'=>'text'], ['type_map'=>['value'=>'textarea'],'ignored'=>'option']));

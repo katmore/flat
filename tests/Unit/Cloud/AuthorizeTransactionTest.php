@@ -42,6 +42,7 @@ class AuthorizeTransactionTest extends TestCase
         }
         $this->fail('Expected mismatched transaction rejection');
     }
+    /** @group known-defect */
     public function testAdapterRetainsMappedInitializedFieldsAndCurrentNullFieldLimitation()
     {
         $tax = (object)['amount'=>'1.00','name'=>'tax','description'=>'local'];
@@ -51,6 +52,7 @@ class AuthorizeTransactionTest extends TestCase
         // Current isset guard drops SDK fields initialized to null.
         $this->assertNull($adapter->amount);
     }
+    /** @group known-defect */
     public function testExplicitFalseValidationIsRejectedAndOtherReturnTypesCurrentlyPass()
     {
         try {

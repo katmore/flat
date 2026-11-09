@@ -165,7 +165,10 @@ class MapperTest extends TestCase
         $this->assertNull($m->first);
     }
 
-    /** @dataProvider privateAccessFailures */
+    /**
+     * @dataProvider privateAccessFailures
+     * @group known-defect
+     */
     public function testKnownPrivateAccessReflectionTypo($operation)
     {
         $m = new MapperFixture;

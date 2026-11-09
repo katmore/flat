@@ -27,10 +27,12 @@ class LegacyMappingTest extends TestCase
         $this->assertSame('value',$mapped->name);
         $this->assertSame('default',$mapped->zero);
     }
+    /** @group known-defect */
     public function testNonObjectInputCurrentlyProducesAnEmptyMap()
     {
         $this->assertSame([],get_object_vars(new \flat\core\util\map\from_object(42)));
     }
+    /** @group known-defect */
     public function testObjectMappingCurrentlyOmitsRequiredValueArgument()
     {
         $this->expectException(\ArgumentCountError::class);

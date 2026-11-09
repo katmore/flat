@@ -95,6 +95,7 @@ class IpInfoDbTest extends TestCase
         }
         $this->fail('Expected transport failure');
     }
+    /** @group known-defect */
     public function testStaticLoadCurrentlyDoesNothing()
     {
         $this->assertNull(IpLookupFixture::load('192.0.2.1'));

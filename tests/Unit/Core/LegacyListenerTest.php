@@ -28,6 +28,7 @@ class LegacyListenerTest extends TestCase
         $factory->trigger_event('factory-event','payload');
         $this->assertSame(['payload'],$seen);
     }
+    /** @group known-defect */
     public function testHookableCurrentlyDropsEventDataAndReportsItsUndefinedLocal()
     {
         $notices = []; $previous = null;
@@ -50,6 +51,7 @@ class LegacyListenerTest extends TestCase
         $data = new \stdClass;
         $this->assertSame([$data,'event'],(new ConstructorListenerFixture($data,'event'))->seen);
     }
+    /** @group known-defect */
     public function testStubCurrentlyReadsASeparateUndeclaredListenerProperty()
     {
         $stub = new \flat\core\event\stub('local-stub'); $callback = function () {};

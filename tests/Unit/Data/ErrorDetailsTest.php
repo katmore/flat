@@ -3,6 +3,7 @@ namespace flat\test\Unit\Data;
 use PHPUnit\Framework\TestCase;
 class ErrorDetailsTest extends TestCase
 {
+    /** @group known-defect */
     public function testValidationFailureCollectsOnlyStringFieldsAndCurrentlyIgnoresMessage()
     {
         foreach ([null, '', 42] as $field) {

@@ -88,7 +88,10 @@ class StatementTest extends TestCase
             [['column_hash'=>['bad-prefix'=>['id']]],$bad], [['column_hash'=>['i'=>['bad-column']]],$bad],
             [['column_hash'=>['i'=>['bad-alias'=>'id']]],$bad]];
     }
-    /** @dataProvider currentlyRejectedFetchOptions */
+    /**
+     * @dataProvider currentlyRejectedFetchOptions
+     * @group known-defect
+     */
     public function testEveryExplicitFetchOptionCurrentlyThrows($fetch)
     {
         $this->expectException(\flat\db\driver\pdo\exception\bad_option::class);
@@ -104,6 +107,7 @@ class StatementTest extends TestCase
         $result=new statement($this->pdo,$this->rules(['options'=>['fetch_callback'=>function ($row) use (&$seen) { $seen[]=$row; }]]));
         $this->assertEquals([['i_id'=>1,'i_name'=>'one']],$seen); $this->assertSame(0,$result->count());
     }
+    /** @group known-defect */
     public function testExecutedRowsWithoutACallbackStillReferenceUndefinedDataClass()
     {
         $this->pdo->setAttribute(\PDO::ATTR_STATEMENT_CLASS,[BufferedSqliteStatement::class]);
@@ -116,6 +120,7 @@ class StatementTest extends TestCase
         $this->expectException(\flat\db\driver\pdo\exception\bad_rule::class); $this->expectExceptionMessage('invalid char ;');
         new statement($this->pdo,$rules);
     }
+    /** @group known-defect */
     public function testExecuteCurrentlyReportsNotFoundForSqliteSelectRowCount()
     {
         try { new statement($this->pdo, $this->rules(['options'=>['execute'=>true]])); }

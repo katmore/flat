@@ -43,6 +43,7 @@ class StatusTest extends TestCase
         $this->assertSame('', (new FlexibleStatus('invalid', []))->format_code('%code%'));
         $this->assertSame('', status::status_code_class_format('invalid', '%class%'));
     }
+    /** @group known-defect */
     public function testCurrentFormattingUsesStringOffsetsInsteadOfClassMetadata()
     {
         $warnings = [];
