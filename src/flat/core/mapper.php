@@ -119,7 +119,12 @@ trait mapper  {
       }
       if ($rp->isPrivate()) {
          if ($option['get_private_property']===true) {
-            $rp->setAcessible(true);
+            // Retired option: reading private properties never worked (it
+            // called the misspelled setAcessible); the mapper is public-only.
+            throw new mappable\exception\cannot_get_property(
+               $rp->getName(),
+               "private property access is not supported"
+            );
          } else {
             if ($option['ignore_cannot_get']===true) return $this->_get_ignored_value($option['value_if_ignored']);
             throw new mappable\exception\cannot_get_property(
@@ -223,8 +228,11 @@ trait mapper  {
          if (!empty($rp->getName())) {
             if ($rp->isPrivate() || $rp->isProtected()) {
                if ($get_private_properties===true) {
-                  $rp->setAcessible(true);
-                  $array[$rp->getName()]=$rp->getValue($object);
+                  // Retired option; see get_property_value().
+                  throw new mappable\exception\cannot_get_property(
+                     $rp->getName(),
+                     "private/protected property access is not supported"
+                  );
                }
             } else {
                $array[$rp->getName()]=$rp->getValue($object);
@@ -247,8 +255,11 @@ trait mapper  {
 		 if (!isset($object->$name)) continue;
          if ($rp->isPrivate() || $rp->isProtected()) {
             if ($get_private_properties===true) {
-               $rp->setAcessible(true);
-               $stdClass->$name=$rp->getValue($object);
+               // Retired option; see get_property_value().
+               throw new mappable\exception\cannot_get_property(
+                  $name,
+                  "private/protected property access is not supported"
+               );
             }
          } else {
             $stdClass->$name=$rp->getValue($object);

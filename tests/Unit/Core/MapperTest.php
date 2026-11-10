@@ -5,6 +5,7 @@ use flat\core\mappable\exception\cannot_get_property;
 use flat\core\mappable\exception\cannot_set_property;
 use PHPUnit\Framework\TestCase;
 
+class PublicOnlyFixture { public $visible = 'value'; }
 class MapperFixture
 {
     use \flat\core\mapper;
@@ -166,20 +167,29 @@ class MapperTest extends TestCase
     }
 
     /**
+     * Reading non-public properties was never supported (it crashed on a
+     * misspelled reflection call); the retired options now say so clearly.
      * @dataProvider privateAccessFailures
-     * @group known-defect
      */
-    public function testKnownPrivateAccessReflectionTypo($operation)
+    public function testRetiredPrivateReadOptionsRaiseAClearMappingError($operation, $property)
     {
         $m = new MapperFixture;
-        $this->expectException(\Error::class);
-        $this->expectExceptionMessage('setAcessible');
+        $this->expectException(\flat\core\mappable\exception\cannot_get_property::class);
+        $this->expectExceptionMessage("mapper cannot get property: $property reason:");
         if ($operation === 'read') $m->read('secret', ['get_private_property' => true]);
         elseif ($operation === 'assoc') $m->get_as_assoc(null, true);
         else $m->get_as_stdClass(null, true);
     }
 
-    public function privateAccessFailures() { return [['read'], ['assoc'], ['stdClass']]; }
+    public function testPrivateReadFlagIsHarmlessForPublicOnlyObjects()
+    {
+        $source = new PublicOnlyFixture;
+        $m = new MapperFixture;
+        $this->assertSame(['visible' => 'value'], $m->get_as_assoc($source, true));
+        $this->assertEquals((object) ['visible' => 'value'], $m->get_as_stdClass($source, true));
+    }
+
+    public function privateAccessFailures() { return [['read', 'secret'], ['assoc', 'guarded'], ['stdClass', 'guarded']]; }
 
     public function testProtectedVisitPreservesReflectionFailure()
     {
