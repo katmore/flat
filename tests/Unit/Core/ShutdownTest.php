@@ -48,12 +48,38 @@ class ShutdownTest extends TestCase
         shutdown::invoke_shutdown_callbacks();
         $this->assertSame(['first','low','high','default','last'], $seen);
     }
-    /** @group known-defect */
-    public function testRepeatedInvocationCurrentlyRepeatsCallbacks()
+    public function testEachCallbackRunsOnlyOnceAcrossRepeatedInvocation()
     {
-        $calls = 0; shutdown::register(function () use (&$calls) { $calls++; });
-        shutdown::invoke_shutdown_callbacks(); shutdown::invoke_shutdown_callbacks();
-        $this->assertSame(2, $calls);
+        $seen = [];
+        foreach ([['first','first'], ['weighted',5], ['default',null], ['last','last']] as $entry) {
+            list($name,$priority) = $entry;
+            shutdown::register(function () use (&$seen,$name) { $seen[] = $name; }, $priority);
+        }
+        shutdown::invoke_shutdown_callbacks();
+        shutdown::invoke_shutdown_callbacks();
+        $this->assertSame(['first','weighted','default','last'], $seen);
+        shutdown::register(function () use (&$seen) { $seen[] = 'later'; });
+        shutdown::invoke_shutdown_callbacks();
+        $this->assertSame(['first','weighted','default','last','later'], $seen);
+    }
+    public function testExplicitInvocationIsNotRepeatedAtPhpShutdown()
+    {
+        list($status,$out,$err) = $this->subprocess(
+            '\flat\core\shutdown::register(function () { echo "once;"; });'
+            .' \flat\core\shutdown::invoke_shutdown_callbacks(); echo "end;";'
+        );
+        $this->assertSame(0,$status,$err); $this->assertSame('',$err);
+        $this->assertSame('once;end;',$out);
+    }
+    public function testCallbackRegisteredDuringInvocationRunsAtPhpShutdown()
+    {
+        list($status,$out,$err) = $this->subprocess(
+            '\flat\core\shutdown::register(function () { echo "explicit;";'
+            .' \flat\core\shutdown::register(function () { echo "deferred;"; }); });'
+            .' \flat\core\shutdown::invoke_shutdown_callbacks(); echo "end;";'
+        );
+        $this->assertSame(0,$status,$err); $this->assertSame('',$err);
+        $this->assertSame('explicit;end;deferred;',$out);
     }
     public function testEqualWeightsRunNewestFirstWithoutLosingCallbacks()
     {

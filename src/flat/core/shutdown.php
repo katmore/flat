@@ -34,14 +34,24 @@ namespace flat\core;
 class shutdown extends \flat\core {
    private static $_init=false;
    
+   /**
+    * Invokes every queued callback once, in priority order, and empties the
+    * queues first. Explicit invocation followed by PHP's own shutdown therefore
+    * runs nothing twice. A callback registered while the queue runs is kept for
+    * the next invocation (PHP shutdown at the latest).
+    */
    public static function invoke_shutdown_callbacks() {
       
       $first = self::$_first;
+      $weight = self::$_weight;
+      $weight_max = self::$_weight_max;
+      $default = self::$_default;
+      $last = self::$_last;
+      self::_clear();
+
       if ($first)
       foreach ($first as $callback) $callback();
       
-      $weight = self::$_weight;
-      $weight_max = self::$_weight_max;
       for($i=0;$i<$weight_max;$i++) {
          if (isset($weight[$i])) {
             $callback = $weight[$i];
@@ -49,43 +59,24 @@ class shutdown extends \flat\core {
          }
       }
       
-      $default = self::$_default;
       if ($default)
       foreach ($default as $callback) $callback();
       
-      $last = self::$_last;
       if ($last)
       foreach ($last as $callback) $callback();
-      
-      //self::_clear();
    }
-   /*
-    * CONSERVATIVELY DISABLED unused private helper: its only call is commented
-    * out in invoke_shutdown_callbacks(). Keep explicit invocation repetition
-    * unchanged; do not activate clearing without a lifecycle decision. Original:
-    * private static function _clear() {
-    *
-    * $_default =  NULL;
-    * $_default_h =  NULL;
-    * $_default_c =  NULL;
-    *
-    * $_first =  NULL;
-    * $_first_h =  NULL;
-    * $_first_c =  NULL;
-    *
-    * $_last =  NULL;
-    * $_last_h =  NULL;
-    * $_last_c =  NULL;
-    *
-    * $_weight =  NULL;
-    * $_weight_h =  NULL;
-    * $_weight_c =  NULL;
-    *
-    * $_weight_max=0;
-    *
-    * self::$_init = false;
-    * }
+   /**
+    * Empties every queue. The PHP shutdown hook stays registered (_init), so
+    * callbacks registered later still run when the script ends. (The original
+    * helper assigned local variables and cleared nothing; it was never called.)
     */
+   private static function _clear() {
+      self::$_default = self::$_default_h = self::$_default_c = NULL;
+      self::$_first = self::$_first_h = self::$_first_c = NULL;
+      self::$_last = self::$_last_h = self::$_last_c = NULL;
+      self::$_weight = self::$_weight_h = self::$_weight_c = NULL;
+      self::$_weight_max = 0;
+   }
    private static function _init() {
       
       if (self::$_init===true) return;
