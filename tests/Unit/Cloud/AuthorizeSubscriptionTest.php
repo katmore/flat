@@ -80,7 +80,14 @@ class AuthorizeSubscriptionTest extends TestCase
         $this->assertSame(12,$service->client->calls[0][1][1]->amount);
         $this->assertNull($service->cancel(['subscriptionId'=>'sub']));
         $this->assertSame(['cancelSubscription',['sub']],$service->client->calls[1]);
-        $this->assertNull($service->get_transaction([]));
+    }
+    public function testRetiredGetTransactionFailsClearlyWithoutCallingTheGateway()
+    {
+        $service = new SubscriptionFixture;
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('authorize subscription get_transaction() is not implemented');
+        try { $service->get_transaction([]); }
+        finally { $this->assertSame([], $service->client->calls); }
     }
     /** @dataProvider invalidAmounts */
     public function testUpdateAmountRetainsItsExistingIntegerRestriction($params,$kind)

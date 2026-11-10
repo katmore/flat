@@ -1,12 +1,12 @@
 # Test inventory
 
 Every PHPUnit test method in `tests/Unit`, grouped by file, for review.
-Generated from the test sources. It is refreshed whenever tests change during
-the known-defect fixes; the test files remain the source of truth.
+Generated from the test sources; regenerate it after tests change rather than
+editing it by hand.
 
-- 700 test methods in 92 files. 117 use a data provider, so the
+- 704 test methods in 92 files. 118 use a data provider, so the
   suite runs more cases than methods.
-- 50 methods currently assert defective behavior (`@group known-defect`);
+- 46 methods currently assert defective behavior (`@group known-defect`);
   their IDs refer to `docs/known-defects.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 
@@ -110,12 +110,12 @@ the known-defect fixes; the test files remain the source of truth.
 | 119 | `testInvalidRequestsStopBeforeClientCalls` | Invalid Requests Stop Before Client Calls | data provider |
 | 148 | `testUpdateAndDeleteForwardIds` | Update And Delete Forward Ids | data provider |
 | 160 | `testClientRejectionBecomesResponseError` | Client Rejection Becomes Response Error | data provider |
-| 174 | `testUnimplementedConvenienceOperationsCurrentlyReturnNull` | Unimplemented Convenience Operations Currently Return Null | **known defect KD-45** |
-| 186 | `testPaymentMethodCreationAndUpdateForwardValidatedIds` | Payment Method Creation And Update Forward Validated Ids |  |
-| 196 | `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` | Missing Payment Id Does Not Raise An Index Zero Notice |  |
-| 206 | `testPaymentMethodRejectionUsesExistingResponseError` | Payment Method Rejection Uses Existing Response Error | data provider |
-| 217 | `testTransactionSpecificationsNormalizeAndReachTheClient` | Transaction Specifications Normalize And Reach The Client | data provider |
-| 243 | `testTransactionClientRejectionIsPropagatedBeforeDecoding` | Transaction Client Rejection Is Propagated Before Decoding |  |
+| 174 | `testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway` | Retired Convenience Operations Fail Clearly Without Calling The Gateway | data provider |
+| 197 | `testPaymentMethodCreationAndUpdateForwardValidatedIds` | Payment Method Creation And Update Forward Validated Ids |  |
+| 207 | `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` | Missing Payment Id Does Not Raise An Index Zero Notice |  |
+| 217 | `testPaymentMethodRejectionUsesExistingResponseError` | Payment Method Rejection Uses Existing Response Error | data provider |
+| 228 | `testTransactionSpecificationsNormalizeAndReachTheClient` | Transaction Specifications Normalize And Reach The Client | data provider |
+| 254 | `testTransactionClientRejectionIsPropagatedBeforeDecoding` | Transaction Client Rejection Is Propagated Before Decoding |  |
 
 ### `tests/Unit/Cloud/AuthorizeDataTest.php` (12)
 
@@ -134,27 +134,28 @@ the known-defect fixes; the test files remain the source of truth.
 | 117 | `testFactoryMapsActualSdkCodesToResponseKindsAndStatus` | Factory Maps Actual Sdk Codes To Response Kinds And Status | data provider |
 | 129 | `testUnknownSdkResponseCodeStillReturnsNull` | Unknown Sdk Response Code Still Returns Null |  |
 
-### `tests/Unit/Cloud/AuthorizeSubscriptionTest.php` (17)
+### `tests/Unit/Cloud/AuthorizeSubscriptionTest.php` (18)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 61 | `testNativeArbConstructionUsesTheApplicationPreparationHookAndCachesItsClient` | Native Arb Construction Uses The Application Preparation Hook And Caches Its Client |  |
 | 69 | `testExistingSubscriptionOperationsRequireTheirIdentifier` | Existing Subscription Operations Require Their Identifier | data provider |
 | 75 | `testUpdateAmountAndCancelPassValidatedIdentifiersToTheirClient` | Update Amount And Cancel Pass Validated Identifiers To Their Client |  |
-| 86 | `testUpdateAmountRetainsItsExistingIntegerRestriction` | Update Amount Retains Its Existing Integer Restriction | data provider |
-| 92 | `testStatusAndUpdatabilityUseTheExistingStatusMethod` | Status And Updatability Use The Existing Status Method | data provider |
-| 100 | `testGatewayRejectionsUseTheDeclaredResponseError` | Gateway Rejections Use The Declared Response Error | data provider |
-| 111 | `testPaymentFormsProduceRealSdkSubscriptionObjects` | Payment Forms Produce Real Sdk Subscription Objects | data provider |
-| 128 | `testInvalidPaymentShapesFailBeforeClientTransmission` | Invalid Payment Shapes Fail Before Client Transmission | data provider |
-| 142 | `testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn` | Create Maps Its Amount And Optional Order Without Guessing An Identifier Return | **known defect KD-40** |
-| 154 | `testCreateRejectsMissingOrMalformedDocumentedFields` | Create Rejects Missing Or Malformed Documented Fields | data provider |
-| 165 | `testCreateAcceptsAnExistingScheduleObject` | Create Accepts An Existing Schedule Object |  |
-| 171 | `testInfoSurfacesAListRejectionAfterSuccessfulStatusLookup` | Info Surfaces A List Rejection After Successful Status Lookup |  |
-| 177 | `testInfoStopsAfterFullPageExceedsDeclaredTotal` | Info Stops After Full Page Exceeds Declared Total |  |
-| 183 | `testInfoCircuitBreakerBoundsRepeatedFullPages` | Info Circuit Breaker Bounds Repeated Full Pages |  |
-| 193 | `testInfoFindsASubscriptionInActualXmlDetails` | Info Finds A Subscription In Actual Xml Details |  |
-| 200 | `testInfoMissingTotalUsesUnexpectedResponseWithoutAnIndexZeroWarning` | Info Missing Total Uses Unexpected Response Without An Index Zero Warning |  |
-| 205 | `testInactiveInfoWithoutAMatchUsesNotFound` | Inactive Info Without A Match Uses Not Found |  |
+| 84 | `testRetiredGetTransactionFailsClearlyWithoutCallingTheGateway` | Retired Get Transaction Fails Clearly Without Calling The Gateway |  |
+| 93 | `testUpdateAmountRetainsItsExistingIntegerRestriction` | Update Amount Retains Its Existing Integer Restriction | data provider |
+| 99 | `testStatusAndUpdatabilityUseTheExistingStatusMethod` | Status And Updatability Use The Existing Status Method | data provider |
+| 107 | `testGatewayRejectionsUseTheDeclaredResponseError` | Gateway Rejections Use The Declared Response Error | data provider |
+| 118 | `testPaymentFormsProduceRealSdkSubscriptionObjects` | Payment Forms Produce Real Sdk Subscription Objects | data provider |
+| 135 | `testInvalidPaymentShapesFailBeforeClientTransmission` | Invalid Payment Shapes Fail Before Client Transmission | data provider |
+| 149 | `testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn` | Create Maps Its Amount And Optional Order Without Guessing An Identifier Return | **known defect KD-40** |
+| 161 | `testCreateRejectsMissingOrMalformedDocumentedFields` | Create Rejects Missing Or Malformed Documented Fields | data provider |
+| 172 | `testCreateAcceptsAnExistingScheduleObject` | Create Accepts An Existing Schedule Object |  |
+| 178 | `testInfoSurfacesAListRejectionAfterSuccessfulStatusLookup` | Info Surfaces A List Rejection After Successful Status Lookup |  |
+| 184 | `testInfoStopsAfterFullPageExceedsDeclaredTotal` | Info Stops After Full Page Exceeds Declared Total |  |
+| 190 | `testInfoCircuitBreakerBoundsRepeatedFullPages` | Info Circuit Breaker Bounds Repeated Full Pages |  |
+| 200 | `testInfoFindsASubscriptionInActualXmlDetails` | Info Finds A Subscription In Actual Xml Details |  |
+| 207 | `testInfoMissingTotalUsesUnexpectedResponseWithoutAnIndexZeroWarning` | Info Missing Total Uses Unexpected Response Without An Index Zero Warning |  |
+| 212 | `testInactiveInfoWithoutAMatchUsesNotFound` | Inactive Info Without A Match Uses Not Found |  |
 
 ### `tests/Unit/Cloud/AuthorizeTest.php` (7)
 
@@ -206,7 +207,7 @@ the known-defect fixes; the test files remain the source of truth.
 | 53 | `testMissingOrExpiredCacheFetchesMapsAndStoresResponse` | Missing Or Expired Cache Fetches Maps And Stores Response | data provider |
 | 73 | `testHttpFailureCarriesStatusContext` | Http Failure Carries Status Context |  |
 | 85 | `testTransportFailureCarriesCurlContext` | Transport Failure Carries Curl Context |  |
-| 99 | `testStaticLoadCurrentlyDoesNothing` | Static Load Currently Does Nothing | **known defect KD-46** |
+| 98 | `testRetiredStaticLoadFailsClearlyWithoutTouchingTheCache` | Retired Static Load Fails Clearly Without Touching The Cache |  |
 
 ### `tests/Unit/Cloud/S3MultipartTest.php` (3)
 
@@ -503,25 +504,26 @@ the known-defect fixes; the test files remain the source of truth.
 | 36 | `testObjectMappingCurrentlyOmitsRequiredValueArgument` | Object Mapping Currently Omits Required Value Argument | **known defect KD-26** |
 | 41 | `testControllerExportsAreLimitedToFlatDataObjects` | Controller Exports Are Limited To Flat Data Objects |  |
 
-### `tests/Unit/Core/MapperTest.php` (15)
+### `tests/Unit/Core/MapperTest.php` (16)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 27 | `testReadsPropertiesByNameAndReflection` | Reads Properties By Name And Reflection |  |
-| 36 | `testReadErrors` | Read Errors | data provider |
-| 51 | `testIgnoredReadsReturnConfiguredSentinel` | Ignored Reads Return Configured Sentinel |  |
-| 61 | `testWritesDeclaredProtectedAndReflectionProperties` | Writes Declared Protected And Reflection Properties |  |
-| 76 | `testWriteErrors` | Write Errors | data provider |
-| 84 | `testIgnoredWritesAndDynamicProperties` | Ignored Writes And Dynamic Properties |  |
-| 100 | `testExportsPublicPropertiesAndOmitsNullFromStdClass` | Exports Public Properties And Omits Null From Std Class |  |
-| 112 | `testListsAndObjectsPopulateProperties` | Lists And Objects Populate Properties |  |
-| 124 | `testArgumentMapping` | Argument Mapping | data provider |
-| 143 | `testParamsSupportNamedPositionalAndEmptyLists` | Params Support Named Positional And Empty Lists |  |
-| 155 | `testVisitReadsAndUpdatesSelectedPublicProperties` | Visit Reads And Updates Selected Public Properties |  |
-| 172 | `testKnownPrivateAccessReflectionTypo` | Known Private Access Reflection Typo | data provider; **known defect KD-28** |
-| 184 | `testProtectedVisitPreservesReflectionFailure` | Protected Visit Preserves Reflection Failure |  |
-| 190 | `testPrivateVisitIsIgnoredEvenWithObsoleteFlags` | Private Visit Is Ignored Even With Obsolete Flags |  |
-| 197 | `testMissingVisitThrowsCannotGetProperty` | Missing Visit Throws Cannot Get Property |  |
+| 28 | `testReadsPropertiesByNameAndReflection` | Reads Properties By Name And Reflection |  |
+| 37 | `testReadErrors` | Read Errors | data provider |
+| 52 | `testIgnoredReadsReturnConfiguredSentinel` | Ignored Reads Return Configured Sentinel |  |
+| 62 | `testWritesDeclaredProtectedAndReflectionProperties` | Writes Declared Protected And Reflection Properties |  |
+| 77 | `testWriteErrors` | Write Errors | data provider |
+| 85 | `testIgnoredWritesAndDynamicProperties` | Ignored Writes And Dynamic Properties |  |
+| 101 | `testExportsPublicPropertiesAndOmitsNullFromStdClass` | Exports Public Properties And Omits Null From Std Class |  |
+| 113 | `testListsAndObjectsPopulateProperties` | Lists And Objects Populate Properties |  |
+| 125 | `testArgumentMapping` | Argument Mapping | data provider |
+| 144 | `testParamsSupportNamedPositionalAndEmptyLists` | Params Support Named Positional And Empty Lists |  |
+| 156 | `testVisitReadsAndUpdatesSelectedPublicProperties` | Visit Reads And Updates Selected Public Properties |  |
+| 174 | `testRetiredPrivateReadOptionsRaiseAClearMappingError` | Retired Private Read Options Raise A Clear Mapping Error | data provider |
+| 184 | `testPrivateReadFlagIsHarmlessForPublicOnlyObjects` | Private Read Flag Is Harmless For Public Only Objects |  |
+| 194 | `testProtectedVisitPreservesReflectionFailure` | Protected Visit Preserves Reflection Failure |  |
+| 200 | `testPrivateVisitIsIgnoredEvenWithObsoleteFlags` | Private Visit Is Ignored Even With Obsolete Flags |  |
+| 207 | `testMissingVisitThrowsCannotGetProperty` | Missing Visit Throws Cannot Get Property |  |
 
 ### `tests/Unit/Core/Md/ConvertTest.php` (4)
 
@@ -599,17 +601,19 @@ the known-defect fixes; the test files remain the source of truth.
 | 179 | `testMissingSessionGlobalIsRejectedEvenWhenActive` | Missing Session Global Is Rejected Even When Active |  |
 | 187 | `testFailedStorageRetriesAndReturnsNoId` | Failed Storage Retries And Returns No Id |  |
 
-### `tests/Unit/Core/ShutdownTest.php` (7)
+### `tests/Unit/Core/ShutdownTest.php` (9)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 23 | `testNamedPrioritiesRunInDocumentedOrderAndHandlesAreUnique` | Named Priorities Run In Documented Order And Handles Are Unique |  |
 | 35 | `testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue` | Zero And Out Of Range Weights Currently Join The Default Queue | **known defect KD-15** |
 | 42 | `testDistinctWeightsRunBeforeDefaultAndAfterFirst` | Distinct Weights Run Before Default And After First |  |
-| 52 | `testRepeatedInvocationCurrentlyRepeatsCallbacks` | Repeated Invocation Currently Repeats Callbacks | **known defect KD-16** |
-| 58 | `testEqualWeightsRunNewestFirstWithoutLosingCallbacks` | Equal Weights Run Newest First Without Losing Callbacks |  |
-| 65 | `testRegisteredCallbackRunsAtActualPhpShutdown` | Registered Callback Runs At Actual Php Shutdown |  |
-| 70 | `testWeightCeilingStopsUnboundedInsertion` | Weight Ceiling Stops Unbounded Insertion |  |
+| 51 | `testEachCallbackRunsOnlyOnceAcrossRepeatedInvocation` | Each Callback Runs Only Once Across Repeated Invocation |  |
+| 65 | `testExplicitInvocationIsNotRepeatedAtPhpShutdown` | Explicit Invocation Is Not Repeated At Php Shutdown |  |
+| 74 | `testCallbackRegisteredDuringInvocationRunsAtPhpShutdown` | Callback Registered During Invocation Runs At Php Shutdown |  |
+| 84 | `testEqualWeightsRunNewestFirstWithoutLosingCallbacks` | Equal Weights Run Newest First Without Losing Callbacks |  |
+| 91 | `testRegisteredCallbackRunsAtActualPhpShutdown` | Registered Callback Runs At Actual Php Shutdown |  |
+| 96 | `testWeightCeilingStopsUnboundedInsertion` | Weight Ceiling Stops Unbounded Insertion |  |
 
 ### `tests/Unit/Core/SshTest.php` (32)
 

@@ -46,7 +46,7 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-13 | Asset | Multiple HTML items create a self-dependency (cyclic queue) | `AssetTest::testMultipleHtmlItemsCurrentlyCreateAnAccidentalSelfDependency` | B | Q4 | open |
 | KD-14 | Asset | Unknown resource types and the style-source tag produce no output | `AssetTest::testUnimplementedResourceAndTagCasesCurrentlyProduceNoOutput` | C | Q5 | open |
 | KD-15 | Shutdown | Integer weight `0` joins the default queue; out-of-range weights (±51) are silently accepted | `Core/ShutdownTest::testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue` | A | `0` is a weight (docs: -50 to 50); out of range throws `bad_priority` | open |
-| KD-16 | Shutdown | Explicit invocation followed by PHP shutdown runs callbacks twice (`_clear()` was commented out by the original author) | `ShutdownTest::testRepeatedInvocationCurrentlyRepeatsCallbacks` | B | Q6 | open |
+| KD-16 | Shutdown | Explicit invocation followed by PHP shutdown runs callbacks twice (`_clear()` was commented out by the original author) | `ShutdownTest::testRepeatedInvocationCurrentlyRepeatsCallbacks` | B | Q6 | fixed (MOD-112) |
 | KD-17 | Events | `hookable` drops event data and reads an undefined local | `Core/LegacyListenerTest::testHookableCurrentlyDropsEventDataAndReportsItsUndefinedLocal` | A | Pass the supplied event data to the handler | open |
 | KD-18 | Events | `stub::get_listeners` reads an undeclared property | `LegacyListenerTest::testStubCurrentlyReadsASeparateUndeclaredListenerProperty` | A | Return the listeners `add_listener` stored | open |
 | KD-19 | Yasumi wrapper | Valid date/year fields stay unset; the provider cache is not attached; providers reject the wrapper's raw timestamp | `Vendor/YasumiDateQueryTest::testValidDateAndExplicitYearCurrentlyLeaveTheirBackingFieldsUnset`, `::testProviderCacheCurrentlyDoesNotAttachItsHitToTheNextInstance`, `::testRealProviderRejectsTheWrappersRawTimestamp` | B | Q7 | open |
@@ -58,7 +58,7 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-25 | Collection | Data validator and filter run twice per added member | `Core/CollectionTest::testCurrentCallbacksRunTwicePerAddedMember` | A | Run each once | open |
 | KD-26 | Map from object | Non-objects give an empty map; objects fail with `ArgumentCountError` | `Core/LegacyMappingTest::testNonObjectInputCurrentlyProducesAnEmptyMap`, `::testObjectMappingCurrentlyOmitsRequiredValueArgument` | A | Pass the missing value argument | open |
 | KD-27 | CLI | Missing `$argv` throws an unqualified `flat\core\RuntimeException` (`Error`) | `Core/CliTest::testMissingArgvPreservesCurrentExceptionNamespaceFailure` | A | Throw `\RuntimeException` | open |
-| KD-28 | Core mapper | Private-access options fail on the `setAcessible` typo | `Core/MapperTest::testKnownPrivateAccessReflectionTypo` | B | Q12 | open |
+| KD-28 | Core mapper | Private-access options fail on the `setAcessible` typo | `Core/MapperTest::testKnownPrivateAccessReflectionTypo` | B | Q12 | fixed (MOD-113) |
 | KD-29 | Debug | `data2str` uses the object template for arrays and leaves placeholders for small scalars | `Core/DebugTest::testDataDescriptionsCharacterizeCurrentFormatting` | A | Use the matching template and fill it | open |
 | KD-30 | Debug | `kill` options overwrite the options array and read an undefined `fh_options` | (testing-follow-ups.md; not yet asserted) | A | Keep the options array; define the handle options | open |
 | KD-31 | cURL response | Missing curl info throws a nonexistent exception class (`Error`) | `Core/Curl/ResponseTest::testCurrentMissingInfoExceptionClassFailure` | A | Declare/use the exception | open |
@@ -75,8 +75,8 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-42 | Payments | Subscription search pagination offset never advances | (pending-behavior-questions.md row 8) | A | Advance the offset per page | open |
 | KD-43 | Payments | Scalar `response_error` ignores its second argument | `Cloud/AuthorizeTest::testResponseWithoutMessagesAndLegacyScalarErrors` | B | Q15 | open |
 | KD-44 | Payments | Transaction validation accepts any return except explicit `false` | `AuthorizeTransactionTest::testExplicitFalseValidationIsRejectedAndOtherReturnTypesCurrentlyPass` | A | Accept only `true` | open |
-| KD-45 | Payments | Customer convenience operations (void, refund, authonly, authcapture, captureonly, get_transaction) return `null` | `Cloud/AuthorizeCustomerTest::testUnimplementedConvenienceOperationsCurrentlyReturnNull` | C | Q16 | open |
-| KD-46 | IP lookup | Static `load` does nothing | `Cloud/IpInfoDbTest::testStaticLoadCurrentlyDoesNothing` | C | Q16 | open |
+| KD-45 | Payments | Customer convenience operations (void, refund, authonly, authcapture, captureonly, get_transaction) return `null` | `Cloud/AuthorizeCustomerTest::testUnimplementedConvenienceOperationsCurrentlyReturnNull` | C | Q16 | fixed (MOD-114) |
+| KD-46 | IP lookup | Static `load` does nothing | `Cloud/IpInfoDbTest::testStaticLoadCurrentlyDoesNothing` | C | Q16 | fixed (MOD-114) |
 | KD-47 | Exceptions | `bad_interface` message drops the class when a method is given and ignores the reason | `Core/BadInterfaceTest::testMessageFormattingRetainsCurrentMethodAndReasonBehavior` | A | Include class, method and reason | open |
 | KD-48 | Exceptions | SSH `auth\not_ready` and `auth\failure\pubkey` replace their prefix with the detail (`": detail"`) | `LegacyErrorMessagesTest::testErrorsRetainOperationContext` (2 rows) | A | Keep the prefix like the sibling classes | open |
 | KD-49 | Exceptions | `duplicate_key` with an array index raises "Array to string conversion" | `LegacyErrorMessagesTest::testEmptyNonScalarDuplicateIndexUsesItsEmptyDescription` | A | Describe non-scalar indexes like non-scalar values | open |
@@ -111,6 +111,7 @@ Each has a recommendation; "agree" is enough.
    `bad_resource`/invalid-type error instead of printing nothing.
 6. **KD-16 repeated shutdown invocation.** Recommend: each callback runs at
    most once (restore `_clear()` after invocation).
+   **Answered: agreed.** Fixed in MOD-112.
 7. **KD-19 Yasumi `get_date`.** Recommend: Unix timestamp, set for valid
    dates, and convert to `DateTime` when calling providers.
 8. **KD-20 validation factory.** Recommend: the default collects
@@ -124,6 +125,8 @@ Each has a recommendation; "agree" is enough.
 12. **KD-28 core mapper private access.** Recommend: remove the obsolete
     private-access options and throw a clear error, since you confirmed
     iteration is public-only (MOD-011).
+    **Answered: agreed.** Fixed in MOD-113 for the three read paths, which always
+    crashed. `set_private_property` already worked and is kept unchanged.
 13. **KD-34 legacy ORM constructor array.** Recommend: treat the array as
     driver configuration (resolve the driver from it).
 14. **KD-41 subscription `create` return.** Recommend: return the gateway's
@@ -133,6 +136,8 @@ Each has a recommendation; "agree" is enough.
 16. **KD-45/46 unfinished payment conveniences and IP `load`.** Recommend:
     retire them (throw `BadMethodCallException`, as MOD-107 did for alerts)
     unless the consumer uses them.
+    **Answered: agreed.** Fixed in MOD-114; the identical empty subscription
+    `get_transaction` was retired with them.
 17. **KD-55 random string invoke.** Recommend: an instance reuses its own
     configured pool and length.
 18. **KD-56 `rand::get` zero maximum.** Recommend: keep `0` meaning "default

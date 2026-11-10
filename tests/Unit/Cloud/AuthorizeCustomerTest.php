@@ -170,18 +170,29 @@ class AuthorizeCustomerTest extends TestCase
             ['create',['email'=>'a']], ['delete_paymethod',['customerProfileId'=>'42','customerPaymentProfileId'=>'7']]];
     }
 
-    /** @group known-defect */
-    public function testUnimplementedConvenienceOperationsCurrentlyReturnNull()
+    /** @dataProvider retiredOperations */
+    public function testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway($method,array $arguments,$hint)
     {
         $customer = new CustomerFixture;
-        $this->assertNull($customer->void_transaction([]));
-        $this->assertNull($customer->refund_transaction([]));
-        $this->assertNull($customer->authonly('42','7','1.00'));
-        $this->assertNull($customer->authcapture('42','7','1.00'));
-        $this->assertNull($customer->captureonly('42','7'));
-        $this->assertNull($customer->captureonly('42','7',['memo'=>'local',0=>'ignored']));
-        $this->assertNull($customer->get_transaction([]));
+        try {
+            $customer->$method(...$arguments);
+            $this->fail("$method() should be retired");
+        } catch (\BadMethodCallException $e) {
+            $this->assertStringContainsString("$method() is not implemented".$hint, $e->getMessage());
+        }
         $this->assertSame([], $customer->client->calls);
+    }
+    public function retiredOperations()
+    {
+        $useCreate = function ($type) { return "; use create_transaction() with transactionType '$type'"; };
+        return [
+            'void' => ['void_transaction', [[]], ''],
+            'refund' => ['refund_transaction', [[]], ''],
+            'get' => ['get_transaction', [[]], ''],
+            'authonly' => ['authonly', ['42','7','1.00'], $useCreate('authonly')],
+            'authcapture' => ['authcapture', ['42','7','1.00'], $useCreate('authcapture')],
+            'captureonly' => ['captureonly', ['42','7',['memo'=>'local']], $useCreate('captureonly')],
+        ];
     }
     public function testPaymentMethodCreationAndUpdateForwardValidatedIds()
     {

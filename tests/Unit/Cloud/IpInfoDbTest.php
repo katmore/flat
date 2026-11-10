@@ -95,10 +95,14 @@ class IpInfoDbTest extends TestCase
         }
         $this->fail('Expected transport failure');
     }
-    /** @group known-defect */
-    public function testStaticLoadCurrentlyDoesNothing()
+    public function testRetiredStaticLoadFailsClearlyWithoutTouchingTheCache()
     {
-        $this->assertNull(IpLookupFixture::load('192.0.2.1'));
+        try {
+            IpLookupFixture::load('192.0.2.1');
+            $this->fail('load() should be retired');
+        } catch (\BadMethodCallException $e) {
+            $this->assertStringContainsString('construct the lookup class and call result()', $e->getMessage());
+        }
         $this->assertSame([], IpLookupFixture::$cache->calls);
     }
 }

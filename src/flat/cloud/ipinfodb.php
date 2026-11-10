@@ -171,7 +171,8 @@ abstract class ipinfodb {
    }
    
    public static function load($ip_addr) {
-      
+      // RETIRED by owner decision: never implemented (empty body returned null).
+      throw new \BadMethodCallException('ipinfodb::load() is not implemented; construct the lookup class and call result()');
    }
 }
 

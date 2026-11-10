@@ -58,6 +58,16 @@ exception declarations (MOD-047/051/071/072/083/087/097), and the legacy ORM
 session fallback (MOD-100). A consumer that wrapped any of these in a broad
 `catch` and continued would now see them succeed.
 
+## Known-defect fixes (from `known-defects.md`)
+
+Every known-defect fix changes behavior a consumer might have relied on.
+
+| Entry | Area | Before | After | Search consumer code for |
+| --- | --- | --- | --- | --- |
+| MOD-112 (KD-16) | Shutdown callbacks | Calling `shutdown::invoke_shutdown_callbacks()` explicitly ran every callback, and PHP shutdown then ran them all again | Each callback runs at most once; the queues empty on invocation, and callbacks registered later still run at PHP shutdown | `invoke_shutdown_callbacks(` |
+| MOD-113 (KD-28) | Core mapper | Reading a non-public property with `get_private_property` or `get_as_assoc`/`get_as_stdClass(..., true)` raised a PHP `Error` (misspelled reflection call) | Raises `flat\core\mappable\exception\cannot_get_property` ("... access is not supported"). The flag on public-only objects, and `set_private_property`, are unchanged | `get_private_property`, `get_as_assoc(` / `get_as_stdClass(` with a second argument `true` |
+| MOD-114 (KD-45/46) | Payment conveniences, IP lookup | `void_transaction`, `refund_transaction`, `authonly`, `authcapture`, `captureonly`, `get_transaction` (customer and subscription) and `ipinfodb::load` did nothing and returned `null` | Throw `BadMethodCallException`; the message names `create_transaction()` or the constructor where one exists | Those method names; code checking their result for `null` |
+
 ## Suggested consumer check
 
 When the consumer source is available, search it for the terms in the silent

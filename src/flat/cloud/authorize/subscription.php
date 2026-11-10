@@ -110,7 +110,8 @@ abstract class subscription extends \flat\cloud\authorize
      * @return \flat\cloud\authorize\subscription\transaction | \flat\cloud\authorize\subscription\transaction[] 
      */
     public function get_transaction(array $params) {
-       
+       // RETIRED by owner decision: never implemented (empty body returned null).
+       throw new \BadMethodCallException('authorize subscription get_transaction() is not implemented');
     }
     
     /**

@@ -1855,3 +1855,49 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   assertions pass, 100% classes (330/330), methods (1,059/1,059), lines
   (7,988/7,988). `./tests.sh rabbitmq` passes 7/7 on repeated runs.
 - Both formerly surviving mutations now fail the suite.
+
+## MOD-112 — Run each shutdown callback at most once (KD-16)
+
+- Owner decision (known-defects Q6): explicit invocation followed by PHP
+  shutdown must not run callbacks twice.
+- `invoke_shutdown_callbacks()` snapshots the queues, empties them, then runs
+  the snapshot. A working `_clear()` replaces the never-called original, which
+  assigned local variables and cleared nothing. The PHP hook stays registered,
+  so callbacks registered during or after invocation run at PHP shutdown.
+- Tests: repeated invocation runs each callback once across all queues; real
+  child PHP processes show no repeat at shutdown after explicit invocation and
+  that a callback registered mid-run still runs at shutdown.
+- Undo: restore the snapshot-free loop and the commented helper.
+
+## MOD-113 — Retire the core mapper's private-read options (KD-28)
+
+- Owner decision (known-defects Q12): reading private/protected properties is
+  not supported; the mapper is public-only (MOD-011).
+- `get_property_value` with `get_private_property`, and `get_as_assoc` /
+  `get_as_stdClass` with `$get_private_properties = true`, raised `Error` on the
+  misspelled `setAcessible` whenever a non-public property was reached. They now
+  throw `cannot_get_property` at that same point, naming the property. Objects
+  with only public properties behave as before; `set_private_property` already
+  worked and is unchanged.
+- Tests assert the clear error for all three paths and that the flag is
+  harmless for public-only objects.
+
+## MOD-114 — Retire unfinished payment conveniences and IP lookup load (KD-45/46)
+
+- Owner decision (known-defects Q16): retire never-implemented methods, as
+  MOD-107 did for the alert publisher.
+- Customer `void_transaction`, `refund_transaction`, `authonly`, `authcapture`,
+  `captureonly`, `get_transaction`, subscription `get_transaction` and
+  `ipinfodb::load` had empty bodies returning `null`. They keep their
+  declarations (the ccgateway interface requires them) and throw
+  `BadMethodCallException`; messages point to `create_transaction()` or to
+  constructing the lookup class where those work.
+- Tests assert each failure and that no gateway call or cache access occurs.
+  The subscription `get_transaction` assertion moved out of the unrelated
+  update/cancel test into its own test.
+
+### MOD-112 to MOD-114 verification
+
+- `./tests.sh all --coverage`: 1,305 tests / 5,231 assertions pass; 100%
+  classes (330/330), methods (1,060/1,060), lines (7,994/7,994).
+- `--group known-defect` drops from 130 to 124 cases.
