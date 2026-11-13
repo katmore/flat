@@ -27,33 +27,39 @@ class PhoneTest extends TestCase
         $this->assertSame('1234 ext. 42',(string)$short);
         $this->assertSame('',(string)new phone(['original'=>'letters']));
     }
-    /** @group known-defect */
-    public function testCurrentCountryOneAndTextExtensionExtractionFailures()
+    public function testCountryOneAndTextExtensions()
     {
         $country = new phone(['original'=>'+1 800 555 1234']);
-        $this->assertSame('8005551234',$country->extension);
-        $this->assertSame('(800) 555-1234 x8005551234',(string)$country);
+        $this->assertNull($country->extension);
+        $this->assertSame('(800) 555-1234',(string)$country);
+        $long = new phone(['original'=>'1800555123499']);
+        $this->assertSame('99',$long->extension);
+        $this->assertSame('(800) 555-1234 x99',(string)$long);
         $ext = new phone(['original'=>'8005551234 ext 42']);
-        $this->assertSame('8005551234',$ext->extension);
+        $this->assertSame('42',$ext->extension);
+        $this->assertSame('(800) 555-1234 x42',(string)$ext);
         $x = new phone(['original'=>'5551234 x89']);
-        $this->assertSame('5551234',$x->extension);
+        $this->assertSame('89',$x->extension);
+        $this->assertSame('555-1234 x89',(string)$x);
+        $this->assertNull((new phone(['original'=>'5551234 ext']))->extension);
     }
-    /**
-     * @dataProvider internationalPrefixes
-     * @group known-defect
-     */
-    public function testCurrentInternationalClassificationLeavesComparisonAssignmentsUnset($prefix,$country)
+    /** @dataProvider internationalPrefixes */
+    public function testInternationalNumbersGetTheirCountryCode($prefix,$country)
     {
         $number = $prefix.str_repeat('1',12-strlen($prefix));
         $phone = new phone(['original'=>$number]);
         $this->assertSame($number,$phone->numeric);
         $this->assertSame(substr($number,0,1),$phone->zone);
         $this->assertSame($country,$phone->country_code);
+        $this->assertSame('+'.$number,$phone->e164);
         $this->assertSame($number,(string)$phone);
     }
     public function internationalPrefixes()
     {
-        $rows=[]; foreach (['20','21','30','35','40','42','51','50','60','67','81','85','90','91','99534','99512','999','93'] as $prefix) $rows[]=[$prefix,null];
+        // Expected codes follow the country-code table written in data/phone.php.
+        $rows=[]; foreach (['20'=>'20','21'=>'211','30'=>'30','35'=>'351','40'=>'40','42'=>'421','45'=>'45','51'=>'51',
+            '50'=>'501','60'=>'60','67'=>'671','81'=>'81','85'=>'851','90'=>'90','91'=>'91','93'=>'93','96'=>'961',
+            '99534'=>'99534','99512'=>'995','999'=>'999'] as $prefix=>$country) $rows[]=[(string)$prefix,$country];
         foreach (['7365'=>'7365','7426'=>7426,'76'=>'7611','7840'=>'7840','7869'=>'7869','75'=>7,'77'=>7,'73'=>7] as $prefix=>$country) $rows[]=[(string)$prefix,$country];
         return $rows;
     }

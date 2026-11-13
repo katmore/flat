@@ -91,6 +91,8 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-130 (KD-13) | Asset HTML output | Several items in one `register_html_special()`/`register_html([...])` call kept only the first and made the asset depend on itself | All items print, in the order given; no self-dependency (also when `register_html()` gets `resolved`) | `register_html_special(` with several items, `register_html(` with arrays |
 | MOD-130 (KD-12) | Inline asset source | `print_contents()` on an inline JavaScript source raised `TypeError` | Prints the `<script>` with the source | `RESOURCE_JS_SOURCE` assets |
 | MOD-130 (KD-14) | Asset printing | `print_contents()` of an unprintable type and `print_tag(TAG_STYLE_SOURCE)` printed nothing; inline-source printing of a file asset printed an empty `<script></script>` | These explicit requests throw `app_error`; `print_tag()` without a tag type still prints nothing for assets with no tag form | `print_contents(`, `print_tag(` with explicit types |
+| MOD-131 (KD-50) | Phone extensions | `+1 800 555 1234` stored the whole number as its extension (`x8005551234`); `ext 42` and `x89` extracted digits of the main number | `+1` numbers have no extension unless digits follow the 10-digit number; text extensions are read from after the marker | `flat\data\phone` `extension` and string output; stored phone strings |
+| MOD-131 (KD-51) | Phone country codes | Most international numbers had no `country_code`; `e164` read `+` plus the whole number | Country code set from the table in `data/phone.php`; `e164`/`e164_ndc`/`e164_intl` split accordingly | `country_code`, `e164*` of non-NANP numbers |
 
 ## Suggested consumer check
 

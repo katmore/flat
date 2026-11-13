@@ -2220,3 +2220,19 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   there would break a page that registers, for example, an image.
 - Verified: `docker/bin/test all --coverage` passes 1,314 tests; 100% classes
   (331/331), methods (1,061/1,061), lines (8,005/8,005).
+
+## MOD-131 — Fix phone extensions and international country codes (KD-50, 51)
+
+- KD-50: text extensions (`ext`, `x`) are read from after the marker before the
+  number is cut there; they used to be read from the already-cut number, giving
+  digits of the main number. For country code 1, only digits beyond the 10-digit
+  national number become an extension (`substr($n, -0)` returned the whole
+  number). An empty marker leaves no extension; a supplied `extension` is kept
+  when the text has no marker.
+- KD-51: the 18 country-code lines compared (`==`) instead of assigning (`=`).
+  Where conditions contradicted the file's own country-code comments, the code
+  now follows the comments (no new table): 45 is two-digit; 90 (Turkey) is set;
+  zone 9 two-digit codes are 91, 92, 93, 94, 95 and 98; the remaining 99x codes
+  are three digits.
+- Verified: `docker/bin/test all --coverage` passes 1,316 tests; 100% classes
+  (331/331), methods (1,061/1,061), lines (8,007/8,007).

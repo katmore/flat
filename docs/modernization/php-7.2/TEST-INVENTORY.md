@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 711 test methods in 92 files, running 1314 test cases.
+- 711 test methods in 92 files, running 1316 test cases.
 - 119 methods use a data provider (one case per data set).
-- 23 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 21 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -923,9 +923,9 @@ PHPUnit's `--list-tests-xml` and converts it with
 | --- | --- | --- | --- |
 | 8 | `testNationalAndLocalNanpFormatting` | National And Local Nanp Formatting |  |
 | 21 | `testEmptyInputAndProtectedValueExtensionPoint` | Empty Input And Protected Value Extension Point |  |
-| 31 | `testCurrentCountryOneAndTextExtensionExtractionFailures` | Current Country One And Text Extension Extraction Failures | **known defect KD-50** |
-| 45 | `testCurrentInternationalClassificationLeavesComparisonAssignmentsUnset` | Current International Classification Leaves Comparison Assignments Unset | 26 data-provider cases; **known defect KD-51** |
-| 60 | `testInternationalDialingPrefixAndExistingFormattedMetadata` | International Dialing Prefix And Existing Formatted Metadata |  |
+| 30 | `testCountryOneAndTextExtensions` | Country One And Text Extensions |  |
+| 47 | `testInternationalNumbersGetTheirCountryCode` | International Numbers Get Their Country Code | 28 data-provider cases |
+| 66 | `testInternationalDialingPrefixAndExistingFormattedMetadata` | International Dialing Prefix And Existing Formatted Metadata |  |
 
 ### `tests/Unit/Data/ScalarTest.php` (6)
 
