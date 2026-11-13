@@ -85,6 +85,9 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-127 (KD-59) | API `TRACE` | Echoed an empty object (input fields were lost) | Echoes the input's fields | `TRACE` requests |
 | MOD-127 (KD-09) | API status formatting | `%class-type%`/`%class-description%` produced warnings and wrong text; `get_code_class_type()`/`_description()` returned literal placeholders | Filled from the RFC 7231 class table | `status_code_class_format(`, `format_code(`, `get_code_class_type(` |
 | MOD-127 (KD-57) | View resolution | The `view_resolved` event's `resolved` was always `\flat\design` (with notices) | The matched design class path, e.g. `\flat\design\sample\page` | `view_resolved` listeners |
+| MOD-129 (KD-15) | Shutdown weights | Weight `0` joined the default queue; weights outside -50 to 50 were silently queued as default | `0` is ordered among the weights; out-of-range integers throw `bad_priority` | `shutdown::register(` with integer priorities |
+| MOD-129 (KD-52) | UUID versions | `uuid::get()` with an invalid version and no namespace returned a v4 UUID | Throws `invalid_version` (versions 3, 4 and 5 still fall back to v4 without a namespace) | `uuid::get(` with a computed version |
+| MOD-129 (KD-55) | Random strings | Invoking a `rand\str` instance (`$generator()`) ignored its configured pool and length | Uses the instance's pool and length; `$generator(5)` changes only the length; options still build a new pool | `rand\str` objects called as functions |
 
 ## Suggested consumer check
 

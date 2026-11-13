@@ -109,6 +109,10 @@ class rand implements \flat\core\generator {
     * @see http://php.net/manual/en/function.getrandmax.php
     * @see http://php.net/openssl_random_pseudo_bytes
     */
+   /*
+    * A $max of 0 (or NULL) means the default maximum, getrandmax(); $min must
+    * not exceed the resolved maximum. Owner-confirmed contract (KD-56).
+    */
    public static function get( $min=0, $max=NULL) {
       if (!$max) $max = getrandmax();
       self::_check_params($min,$max);

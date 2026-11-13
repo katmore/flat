@@ -141,19 +141,23 @@ class shutdown extends \flat\core {
       $handle = \flat\core\uuid::get();
       
       self::_init();
-      if (!$priority || $priority=='default') {
+      // Integer weights run from -weight_offset to weight_offset (0 included).
+      if (is_int($priority) && ($priority < self::weight_offset*-1 || $priority > self::weight_offset)) {
+         throw new shutdown\exception\bad_priority();
+      }
+      if ((!$priority && !is_int($priority)) || $priority==='default') {
          self::$_default[] = $callback;
          self::$_default_h[count(self::$_default)]=$handle;
          self::$_default_c[count(self::$_default)]=$context;
          return $handle;
       } else {
-         if ($priority=='first') {
+         if ($priority==='first') {
             self::$_first[] = $callback;
             self::$_first_h[count(self::$_first)]=$handle;
             self::$_first_c[count(self::$_first)]=$context;
             return $handle;
          } else
-         if ($priority=='last') {
+         if ($priority==='last') {
             self::$_last[] = $callback;
             self::$_last_h[count(self::$_last)]=$handle;
             self::$_last_c[count(self::$_last)]=$context;

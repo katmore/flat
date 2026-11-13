@@ -2181,3 +2181,22 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   container (PHP 7.2.34) and natively (PHP 8.3); a probe document with a missing
   file, a missing anchor and a missing backticked path produced exactly those 3
   problems and exit status 1, while its valid references and code examples passed.
+
+## MOD-129 — Fix shutdown weights, UUID versions and random-string invocation (KD-15, 52, 55; KD-56 confirmed)
+
+- KD-15: integer weight `0` is a weight (the `!$priority` check treated it as
+  empty) and integers outside -50 to 50 throw `bad_priority`, whose message now
+  states that range instead of "(int) 0 or greater". The `'first'`/`'last'`
+  comparisons are strict: in PHP 7 `0 == 'first'` is true, so 0 would otherwise
+  have jumped the queue.
+- KD-52: `uuid::get()` without a namespace throws `invalid_version` for anything
+  but versions 3, 4 and 5 (the documented versions); the original throw had been
+  commented out as unreachable. Versions 3 and 5 without a namespace still fall
+  back to v4, because `get([])` defaults to version 5 and relies on that.
+- KD-55 (owner answer Q17): invoking a `rand\str` instance uses its own pool and
+  length; `$len` overrides only the length, and `$options` still build a new pool.
+- KD-56 (owner answer Q18): the agreed contract is already the behavior. A `$max`
+  of 0 means `getrandmax()`, and `$min` above the resolved maximum is rejected.
+  Documented in `rand::get()` and pinned by a new test; no code change.
+- Verified: `docker/bin/test all --coverage` passes 1,312 tests; 100% classes
+  (331/331), methods (1,061/1,061), lines (7,999/7,999).

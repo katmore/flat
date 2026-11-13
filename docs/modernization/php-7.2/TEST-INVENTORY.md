@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 705 test methods in 92 files, running 1306 test cases.
-- 118 methods use a data provider (one case per data set).
-- 27 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 709 test methods in 92 files, running 1312 test cases.
+- 119 methods use a data provider (one case per data set).
+- 26 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -537,31 +537,33 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 29 | `testNonStringSourceIsRejected` | Non String Source Is Rejected |  |
 | 34 | `testMissingFileRaisesInvalidSource` | Missing File Raises Invalid Source |  |
 
-### `tests/Unit/Core/RandStrTest.php` (8)
+### `tests/Unit/Core/RandStrTest.php` (9)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 9 | `testStrDefaultLengthAndCharset` | Str Default Length And Charset |  |
 | 16 | `testStrCustomCharpoolAndLength` | Str Custom Charpool And Length |  |
 | 30 | `testStrGenerateAndInvoke` | Str Generate And Invoke |  |
-| 41 | `testStrGetStringWithExplicitLength` | Str Get String With Explicit Length |  |
-| 49 | `testStrOptionsAsList` | Str Options As List |  |
-| 56 | `testStrWithoutLowerAlpha` | Str Without Lower Alpha |  |
-| 62 | `testStrNonStringCharpoolThrowsBadConfig` | Str Non String Charpool Throws Bad Config |  |
-| 68 | `testStrTooSmallCharpoolThrows` | Str Too Small Charpool Throws |  |
+| 41 | `testInvokingAnInstanceReusesItsPoolAndLength` | Invoking An Instance Reuses Its Pool And Length |  |
+| 50 | `testStrGetStringWithExplicitLength` | Str Get String With Explicit Length |  |
+| 58 | `testStrOptionsAsList` | Str Options As List |  |
+| 65 | `testStrWithoutLowerAlpha` | Str Without Lower Alpha |  |
+| 71 | `testStrNonStringCharpoolThrowsBadConfig` | Str Non String Charpool Throws Bad Config |  |
+| 77 | `testStrTooSmallCharpoolThrows` | Str Too Small Charpool Throws |  |
 
-### `tests/Unit/Core/RandTest.php` (8)
+### `tests/Unit/Core/RandTest.php` (9)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 9 | `testGetWithinBounds` | Get Within Bounds |  |
 | 22 | `testGetMinEqualsMax` | Get Min Equals Max |  |
-| 29 | `testGetRejectsMaxLessThanMin` | Get Rejects Max Less Than Min |  |
-| 35 | `testGetRejectsNegativeMin` | Get Rejects Negative Min |  |
-| 41 | `testGetRejectsNonIntParams` | Get Rejects Non Int Params |  |
-| 53 | `testGetRejectsBadMaxParameters` | Get Rejects Bad Max Parameters |  |
-| 65 | `testBytesLength` | Bytes Length |  |
-| 74 | `testInvokeAndGenerateMatchBounds` | Invoke And Generate Match Bounds |  |
+| 29 | `testZeroMaximumMeansTheDefaultMaximum` | Zero Maximum Means The Default Maximum |  |
+| 38 | `testGetRejectsMaxLessThanMin` | Get Rejects Max Less Than Min |  |
+| 44 | `testGetRejectsNegativeMin` | Get Rejects Negative Min |  |
+| 50 | `testGetRejectsNonIntParams` | Get Rejects Non Int Params |  |
+| 62 | `testGetRejectsBadMaxParameters` | Get Rejects Bad Max Parameters |  |
+| 74 | `testBytesLength` | Bytes Length |  |
+| 83 | `testInvokeAndGenerateMatchBounds` | Invoke And Generate Match Bounds |  |
 
 ### `tests/Unit/Core/Route/ControllerTest.php` (13)
 
@@ -604,19 +606,20 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 179 | `testMissingSessionGlobalIsRejectedEvenWhenActive` | Missing Session Global Is Rejected Even When Active |  |
 | 187 | `testFailedStorageRetriesAndReturnsNoId` | Failed Storage Retries And Returns No Id |  |
 
-### `tests/Unit/Core/ShutdownTest.php` (9)
+### `tests/Unit/Core/ShutdownTest.php` (10)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 23 | `testNamedPrioritiesRunInDocumentedOrderAndHandlesAreUnique` | Named Priorities Run In Documented Order And Handles Are Unique |  |
-| 35 | `testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue` | Zero And Out Of Range Weights Currently Join The Default Queue | **known defect KD-15** |
-| 42 | `testDistinctWeightsRunBeforeDefaultAndAfterFirst` | Distinct Weights Run Before Default And After First |  |
-| 51 | `testEachCallbackRunsOnlyOnceAcrossRepeatedInvocation` | Each Callback Runs Only Once Across Repeated Invocation |  |
-| 65 | `testExplicitInvocationIsNotRepeatedAtPhpShutdown` | Explicit Invocation Is Not Repeated At Php Shutdown |  |
-| 74 | `testCallbackRegisteredDuringInvocationRunsAtPhpShutdown` | Callback Registered During Invocation Runs At Php Shutdown |  |
-| 84 | `testEqualWeightsRunNewestFirstWithoutLosingCallbacks` | Equal Weights Run Newest First Without Losing Callbacks |  |
-| 91 | `testRegisteredCallbackRunsAtActualPhpShutdown` | Registered Callback Runs At Actual Php Shutdown |  |
-| 96 | `testWeightCeilingStopsUnboundedInsertion` | Weight Ceiling Stops Unbounded Insertion |  |
+| 34 | `testZeroIsAWeightAndEmptyValuesJoinTheDefaultQueue` | Zero Is A Weight And Empty Values Join The Default Queue |  |
+| 45 | `testOutOfRangeWeightsAreRejected` | Out Of Range Weights Are Rejected | 3 data-provider cases |
+| 52 | `testDistinctWeightsRunBeforeDefaultAndAfterFirst` | Distinct Weights Run Before Default And After First |  |
+| 61 | `testEachCallbackRunsOnlyOnceAcrossRepeatedInvocation` | Each Callback Runs Only Once Across Repeated Invocation |  |
+| 75 | `testExplicitInvocationIsNotRepeatedAtPhpShutdown` | Explicit Invocation Is Not Repeated At Php Shutdown |  |
+| 84 | `testCallbackRegisteredDuringInvocationRunsAtPhpShutdown` | Callback Registered During Invocation Runs At Php Shutdown |  |
+| 94 | `testEqualWeightsRunNewestFirstWithoutLosingCallbacks` | Equal Weights Run Newest First Without Losing Callbacks |  |
+| 101 | `testRegisteredCallbackRunsAtActualPhpShutdown` | Registered Callback Runs At Actual Php Shutdown |  |
+| 106 | `testWeightCeilingStopsUnboundedInsertion` | Weight Ceiling Stops Unbounded Insertion |  |
 
 ### `tests/Unit/Core/SshTest.php` (32)
 
@@ -786,7 +789,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 24 | `testScalarRequirementReturnsTheUnchangedScalar` | Scalar Requirement Returns The Unchanged Scalar | 8 data-provider cases |
 | 30 | `testInvalidScalarRequirementsAndFallbacks` | Invalid Scalar Requirements And Fallbacks |  |
 
-### `tests/Unit/Core/UuidTest.php` (12)
+### `tests/Unit/Core/UuidTest.php` (13)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -798,10 +801,11 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 56 | `testGetArrayFormV3AndV5` | Get Array Form V3 And V5 |  |
 | 68 | `testGetWithNamespaceAndVersion4Throws` | Get With Namespace And Version4 Throws |  |
 | 74 | `testGetWithNamespaceAndBadVersionThrows` | Get With Namespace And Bad Version Throws |  |
-| 80 | `testInvalidNamespaceThrows` | Invalid Namespace Throws |  |
-| 99 | `testInvokeAlwaysReturnsV4` | Invoke Always Returns V4 |  |
-| 107 | `testToStringReturnsUuidForConstructorState` | To String Returns Uuid For Constructor State |  |
-| 113 | `testGenerateUsesConstructorState` | Generate Uses Constructor State |  |
+| 80 | `testGetWithoutNamespaceRejectsVersionsOtherThanThreeFourOrFive` | Get Without Namespace Rejects Versions Other Than Three Four Or Five |  |
+| 87 | `testInvalidNamespaceThrows` | Invalid Namespace Throws |  |
+| 106 | `testInvokeAlwaysReturnsV4` | Invoke Always Returns V4 |  |
+| 114 | `testToStringReturnsUuidForConstructorState` | To String Returns Uuid For Constructor State |  |
+| 120 | `testGenerateUsesConstructorState` | Generate Uses Constructor State |  |
 
 ### `tests/Unit/Core/Xml/DomTest.php` (15)
 

@@ -31,14 +31,24 @@ class ShutdownTest extends TestCase
         $this->assertSame(['first','first2','normal','normal2','fallback','last'], $seen);
         $this->assertCount(6, array_unique($handles));
     }
-    /** @group known-defect */
-    public function testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue()
+    public function testZeroIsAWeightAndEmptyValuesJoinTheDefaultQueue()
     {
         $seen = [];
-        foreach ([0,51,-51,false] as $weight) shutdown::register(function () use (&$seen,$weight) { $seen[] = $weight; },$weight);
+        foreach ([['default',null],['false',false],['zero',0],['minus',-1],['plus',1],['first','first'],['last','last']] as $entry) {
+            list($name,$priority) = $entry;
+            shutdown::register(function () use (&$seen,$name) { $seen[] = $name; },$priority);
+        }
         shutdown::invoke_shutdown_callbacks();
-        $this->assertSame([0,51,-51,false], $seen);
+        $this->assertSame(['first','minus','zero','plus','default','false','last'], $seen);
     }
+    /** @dataProvider outOfRangeWeights */
+    public function testOutOfRangeWeightsAreRejected($weight)
+    {
+        $this->expectException(shutdown\exception\bad_priority::class);
+        $this->expectExceptionMessage('(int) -50 to 50');
+        shutdown::register(function () {},$weight);
+    }
+    public function outOfRangeWeights() { return [[51],[-51],[1000]]; }
     public function testDistinctWeightsRunBeforeDefaultAndAfterFirst()
     {
         $seen = [];

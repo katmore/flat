@@ -163,7 +163,9 @@ class str implements \flat\core\generator {
    }
    /**
     * magic method __invoke
-    *    alias of str::load()
+    *    generates a string from this instance's character pool, with its
+    *    configured length unless $len is given. Passing $options builds a new
+    *    pool instead, like str::load().
     * @return string
     * @param int $len (optional) random string length
     * @param array $options (optional) options regarding generated output,
@@ -172,7 +174,8 @@ class str implements \flat\core\generator {
     * @see \flat\core\rand\str::load()
     */
    public function __invoke($len=NULL,array $options=NULL) {
-      return self::load($len,$options);
+      if ($options !== NULL) return self::load($len,$options);
+      return $this->get_string($len);
    }
 
    const min_valid_chars = 2;

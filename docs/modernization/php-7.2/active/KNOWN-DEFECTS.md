@@ -47,7 +47,7 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-12 | Asset | New inline JS source raises `TypeError` looking for a file path | `Asset/AssetTest::testNewInlineSourceCurrentlyCannotResolveAFilePath` | A | Print the inline source | open |
 | KD-13 | Asset | Multiple HTML items create a self-dependency (cyclic queue) | `AssetTest::testMultipleHtmlItemsCurrentlyCreateAnAccidentalSelfDependency` | B | Q4 | open |
 | KD-14 | Asset | Unknown resource types and the style-source tag produce no output | `AssetTest::testUnimplementedResourceAndTagCasesCurrentlyProduceNoOutput` | C | Q5 | open |
-| KD-15 | Shutdown | Integer weight `0` joins the default queue; out-of-range weights (±51) are silently accepted | `Core/ShutdownTest::testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue` | A | `0` is a weight (docs: -50 to 50); out of range throws `bad_priority` | open |
+| KD-15 | Shutdown | Integer weight `0` joins the default queue; out-of-range weights (±51) are silently accepted | `Core/ShutdownTest::testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue` | A | `0` is a weight (docs: -50 to 50); out of range throws `bad_priority` | fixed (MOD-129) |
 | KD-16 | Shutdown | Explicit invocation followed by PHP shutdown runs callbacks twice (`_clear()` was commented out by the original author) | `ShutdownTest::testRepeatedInvocationCurrentlyRepeatsCallbacks` | B | Q6 | fixed (MOD-112) |
 | KD-17 | Events | `hookable` drops event data and reads an undefined local | `Core/LegacyListenerTest::testHookableCurrentlyDropsEventDataAndReportsItsUndefinedLocal` | A | Pass the supplied event data to the handler | fixed (MOD-126) |
 | KD-18 | Events | `stub::get_listeners` reads an undeclared property | `LegacyListenerTest::testStubCurrentlyReadsASeparateUndeclaredListenerProperty` | A | Return the listeners `add_listener` stored | fixed (MOD-126) |
@@ -84,11 +84,11 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-49 | Exceptions | `duplicate_key` with an array index raises "Array to string conversion" | `LegacyErrorMessagesTest::testEmptyNonScalarDuplicateIndexUsesItsEmptyDescription` | A | Describe non-scalar indexes like non-scalar values | fixed (MOD-124) |
 | KD-50 | Phone | `+1 800 555 1234` stores the whole number as its extension; `ext 42`/`x89` extraction fails | `Data/PhoneTest::testCurrentCountryOneAndTextExtensionExtractionFailures` | A | Strip country code 1; extract extensions | open |
 | KD-51 | Phone | International numbers get no country code for most prefixes (comparisons are assignments) | `PhoneTest::testCurrentInternationalClassificationLeavesComparisonAssignmentsUnset` | A | Fix the comparisons (no new country table) | open |
-| KD-52 | UUID | `uuid::get(2)` without a namespace returns a v4 UUID | (`../history/TESTING-FOLLOWUPS.md`) | A | Throw `invalid_version` | open |
+| KD-52 | UUID | `uuid::get(2)` without a namespace returns a v4 UUID | (`../history/TESTING-FOLLOWUPS.md`) | A | Throw `invalid_version` | fixed (MOD-129) |
 | KD-53 | Templates | Absolute file resolution converts a null `$file`; failure paths leave output buffers open | (`../history/TESTING-FOLLOWUPS.md`) | A | Resolve the design path; close buffers on failure | open |
 | KD-54 | Templates | `tmpl/display` declares a class extending an interface; loading it aborts PHP | (`../history/TESTING-FOLLOWUPS.md`) | A | Implement the interface | open |
-| KD-55 | Random strings | Invoking an instance ignores its configured character pool | (`../history/TESTING-FOLLOWUPS.md`) | B | Q17 | open |
-| KD-56 | Random numbers | `rand::get(1, 0)`: a zero maximum means "default", so inverted bounds pass | (`../history/TESTING-FOLLOWUPS.md`) | B | Q18 | open |
+| KD-55 | Random strings | Invoking an instance ignores its configured character pool | (`../history/TESTING-FOLLOWUPS.md`) | B | Q17 | fixed (MOD-129) |
+| KD-56 | Random numbers | `rand::get(1, 0)`: a zero maximum means "default", so inverted bounds pass | (`../history/TESTING-FOLLOWUPS.md`) | B | Q18 | confirmed, no change (MOD-129) |
 
 | KD-57 | Views | The `view_resolved` event payload uses an undefined `$resolved` | (follow-ups; source checked 2026-11) | A | Use the matched route | fixed (MOD-127) |
 | KD-58 | API controller | A `HEAD` request sets a flag that is never cleared, so a reused controller keeps treating later requests as `HEAD` | (follow-ups; source checked 2026-11) | A | Reset the flag per request | fixed (MOD-127) |

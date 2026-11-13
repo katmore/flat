@@ -77,6 +77,13 @@ class UuidTest extends TestCase
         uuid::get(2, self::DNS, 'x');
     }
 
+    public function testGetWithoutNamespaceRejectsVersionsOtherThanThreeFourOrFive()
+    {
+        foreach ([3,4,5] as $version) $this->assertSame('4', uuid::get($version)[14]);
+        $this->expectException(\flat\core\uuid\exception\invalid_version::class);
+        uuid::get(2);
+    }
+
     public function testInvalidNamespaceThrows()
     {
         foreach ([[''], ['nope']] as $args) {

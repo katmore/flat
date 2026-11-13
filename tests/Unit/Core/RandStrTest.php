@@ -38,6 +38,15 @@ class RandStrTest extends TestCase
         $this->assertSame(5, strlen($invoked));
     }
 
+    public function testInvokingAnInstanceReusesItsPoolAndLength()
+    {
+        $object = str::load(12, ['charpool' => 'xy', 'load_object' => true]);
+        $this->assertSame(1, preg_match('/^[xy]{12}$/', $object()));
+        $this->assertSame(1, preg_match('/^[xy]{5}$/', $object(5)));
+        // Explicit options build a new pool, as str::load() does.
+        $this->assertSame(1, preg_match('/^[01]{6}$/', $object(6, ['charpool' => '01'])));
+    }
+
     public function testStrGetStringWithExplicitLength()
     {
         $object = str::load(8, ['load_object' => true]);

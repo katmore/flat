@@ -33,7 +33,7 @@ class LegacyErrorMessagesTest extends TestCase
             ['flat\\core\\mappable\\exception\\invalid_object',[], 'object argument must be valid object'],
             ['flat\\core\\resolver\\exception\\not_ready',[], 'class resolution not ready'],
             ['flat\\core\\shutdown\\exception\\not_callable',[], 'callback arg must be callable'],
-            ['flat\\core\\shutdown\\exception\\bad_priority',[], "priority must be NULL, (string) 'first', (string) 'last', or (int) 0 or greater."],
+            ['flat\\core\\shutdown\\exception\\bad_priority',[], "priority must be NULL, (string) 'first', (string) 'last', or (int) -50 to 50."],
             ['flat\\core\\controller\\asset\\exception\\bad_resource',['LocalAsset'], "asset 'LocalAsset' must be given (string) for resource"],
             ['flat\\core\\controller\\asset\\exception\\missing_system_base',['LocalAsset'], "to get system path, 'LocalAsset' must have \\flat\\asset\\system_base interface"],
             ['flat\\core\\controller\\asset\\exception\\not_resolvable',['LocalAsset','path.png'], "asset 'LocalAsset' could not resolve 'path.png'"],

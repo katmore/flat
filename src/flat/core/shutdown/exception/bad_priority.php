@@ -33,6 +33,6 @@
 namespace flat\core\shutdown\exception;
 class bad_priority extends \flat\core\shutdown\exception {
    public function __construct() {
-      parent::__construct("priority must be NULL, (string) 'first', (string) 'last', or (int) 0 or greater.");
+      parent::__construct("priority must be NULL, (string) 'first', (string) 'last', or (int) -50 to 50.");
    }
 }

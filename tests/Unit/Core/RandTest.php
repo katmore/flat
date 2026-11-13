@@ -26,6 +26,15 @@ class RandTest extends TestCase
         }
     }
 
+    public function testZeroMaximumMeansTheDefaultMaximum()
+    {
+        for ($i = 0; $i < 20; $i++) {
+            $value = rand::get(1, 0);
+            $this->assertGreaterThanOrEqual(1, $value);
+            $this->assertLessThanOrEqual(getrandmax(), $value);
+        }
+    }
+
     public function testGetRejectsMaxLessThanMin()
     {
         $this->expectException(\flat\core\rand\exception\bad_param::class);
