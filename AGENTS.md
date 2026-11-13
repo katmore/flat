@@ -7,11 +7,12 @@ The framework is being modernized one PHP version at a time. Read
 `README.md` (currently `docs/modernization/php-7.2/README.md`) for status and
 how to resume work.
 
-## Maintainer feedback
+## Reproducibility
 
-my human was disappointed and irritated with me because I put the Docker test
-harness outside this repository. That made the setup dependent on the agent's
-workspace instead of reproducible from the repository. Do not repeat this.
+The test harness lives entirely in this repository. Nothing may depend on an
+agent's own workspace, private paths or prebuilt images: a fresh checkout plus
+Docker must be enough to run every test. (An earlier harness kept outside the
+repository broke this, and had to be replaced.)
 
 ## Required test workflow
 
@@ -76,10 +77,11 @@ workspace instead of reproducible from the repository. Do not repeat this.
 - Ask before guessing: when a fix needs a decision, add it to the open
   questions with a recommendation rather than choosing silently.
 
-## Commit cadence
+## Commits and branches
 
-My human requested more frequent commits for logical groups of related changes.
-After the appropriate checks, commit each coherent group with its related docs
-updates instead of accumulating a large undocumented working tree. Follow the
-maintainer's explicit branch and push instructions; commit/push current work to
-php-7.2 only and leave modernize-26/master housekeeping to the maintainer.
+- Commit often, in coherent logical groups, each with its related
+  documentation updates, after running the relevant checks. Do not let a large
+  undocumented working tree build up.
+- Commit and push to the current phase branch (now `php-7.2`). Leave
+  `modernize-26` and `master` to the maintainer, and follow the maintainer's
+  explicit branch and push instructions.

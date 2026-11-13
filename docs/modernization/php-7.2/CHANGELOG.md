@@ -2069,3 +2069,12 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   known-defect process, and communicating with the maintainer (summaries in
   chat, long listings in files, questions instead of guesses).
 - Documentation only; no code or test change.
+
+## MOD-122 — Plain-language AGENTS.md sections and a CLAUDE.md pointer
+
+- Owner direction: rewrite the first-person sections written by an earlier
+  agent as plain rules. "Maintainer feedback" becomes "Reproducibility" and
+  "Commit cadence" becomes "Commits and branches"; their requirements are
+  unchanged.
+- New root `CLAUDE.md` contains only `@AGENTS.md`, which imports it, so Claude
+  Code reads the same rules as other agents; `AGENTS.md` stays the single source.
