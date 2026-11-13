@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 711 test methods in 92 files, running 1316 test cases.
+- 713 test methods in 92 files, running 1318 test cases.
 - 119 methods use a data provider (one case per data set).
-- 21 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 20 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -330,11 +330,11 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 9 | `testExplicitConfigurationAndNumericDefaults` | Explicit Configuration And Numeric Defaults |  |
-| 23 | `testCurrentChromeSelectionIsOverwrittenByRawSelector` | Current Chrome Selection Is Overwritten By Raw Selector | **known defect KD-32** |
-| 29 | `testInvalidSettingsAreRejected` | Invalid Settings Are Rejected | 7 data-provider cases |
-| 39 | `testCachingUsesWritableTemporaryDirectoryByDefault` | Caching Uses Writable Temporary Directory By Default |  |
-| 45 | `testUnwritableCacheDirectoryIsRejected` | Unwritable Cache Directory Is Rejected |  |
+| 10 | `testExplicitConfigurationAndNumericDefaults` | Explicit Configuration And Numeric Defaults | **known defect KD-70** |
+| 23 | `testChromeSelectionProvidesTheChromeUserAgent` | Chrome Selection Provides The Chrome User Agent |  |
+| 30 | `testInvalidSettingsAreRejected` | Invalid Settings Are Rejected | 7 data-provider cases |
+| 40 | `testCachingUsesWritableTemporaryDirectoryByDefault` | Caching Uses Writable Temporary Directory By Default |  |
+| 46 | `testUnwritableCacheDirectoryIsRejected` | Unwritable Cache Directory Is Rejected |  |
 
 ### `tests/Unit/Core/Curl/RequestTest.php` (11)
 
@@ -374,21 +374,22 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 175 | `testMissingTransferInfoRaisesItsDeclaredException` | Missing Transfer Info Raises Its Declared Exception |  |
 | 182 | `testUnavailableSavePathRaisesSystemErrorAfterWarning` | Unavailable Save Path Raises System Error After Warning |  |
 
-### `tests/Unit/Core/DebugTest.php` (11)
+### `tests/Unit/Core/DebugTest.php` (12)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 17 | `testDisplayCollectionHelperAcceptsOnlyDisplayData` | Display Collection Helper Accepts Only Display Data |  |
 | 54 | `testDefaultKillHandlerExitsWithConfiguredStatus` | Default Kill Handler Exits With Configured Status |  |
-| 62 | `testKillSanitizesInvalidNestedExitStatusAndEmptyMessage` | Kill Sanitizes Invalid Nested Exit Status And Empty Message |  |
-| 68 | `testReturningCustomKillHandlerReachesTheFinalExit` | Returning Custom Kill Handler Reaches The Final Exit |  |
-| 75 | `testWebDisplayFormattingInAnIsolatedPlatformBranch` | Web Display Formatting In An Isolated Platform Branch |  |
-| 87 | `testSuppressionAndInactiveConfigurationPreventDisplay` | Suppression And Inactive Configuration Prevent Display |  |
-| 101 | `testDisplayDumpAndMessageEventsCarryCallerAndCreationTime` | Display Dump And Message Events Carry Caller And Creation Time |  |
-| 119 | `testDisplayAndDumpTriggerOnlySupportedUserErrors` | Display And Dump Trigger Only Supported User Errors |  |
-| 135 | `testDefaultCliHandlerDisplaysStructuredData` | Default Cli Handler Displays Structured Data |  |
-| 144 | `testDataDescriptionsCharacterizeCurrentFormatting` | Data Descriptions Characterize Current Formatting | **known defect KD-29** |
-| 159 | `testCustomKillHandlerReceivesCallerAndConvertedMessage` | Custom Kill Handler Receives Caller And Converted Message |  |
+| 62 | `testKillHonorsAPlainExitStatus` | Kill Honors A Plain Exit Status |  |
+| 70 | `testKillSanitizesInvalidNestedExitStatusAndEmptyMessage` | Kill Sanitizes Invalid Nested Exit Status And Empty Message |  |
+| 76 | `testReturningCustomKillHandlerReachesTheFinalExit` | Returning Custom Kill Handler Reaches The Final Exit |  |
+| 83 | `testWebDisplayFormattingInAnIsolatedPlatformBranch` | Web Display Formatting In An Isolated Platform Branch |  |
+| 95 | `testSuppressionAndInactiveConfigurationPreventDisplay` | Suppression And Inactive Configuration Prevent Display |  |
+| 109 | `testDisplayDumpAndMessageEventsCarryCallerAndCreationTime` | Display Dump And Message Events Carry Caller And Creation Time |  |
+| 127 | `testDisplayAndDumpTriggerOnlySupportedUserErrors` | Display And Dump Trigger Only Supported User Errors |  |
+| 143 | `testDefaultCliHandlerDisplaysStructuredData` | Default Cli Handler Displays Structured Data |  |
+| 151 | `testDataDescriptionsUseTheMatchingFormat` | Data Descriptions Use The Matching Format |  |
+| 166 | `testCustomKillHandlerReceivesCallerAndConvertedMessage` | Custom Kill Handler Receives Caller And Converted Message |  |
 
 ### `tests/Unit/Core/Encode/CsvTest.php` (5)
 
@@ -660,23 +661,24 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 224 | `testNativeReadsHandleShortEmptyAndZeroBodies` | Native Reads Handle Short Empty And Zero Bodies | 5 data-provider cases |
 | 238 | `testCallbackFailureStillClosesTheLocalAndRemoteStreams` | Callback Failure Still Closes The Local And Remote Streams |  |
 
-### `tests/Unit/Core/Template/ControllerTest.php` (13)
+### `tests/Unit/Core/Template/ControllerTest.php` (14)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 90 | `testDesignRootUsesConfigurationOrItsDocumentedFallback` | Design Root Uses Configuration Or Its Documented Fallback |  |
-| 107 | `testMarkdownReadFailureIsCaughtByTemplateResolver` | Markdown Read Failure Is Caught By Template Resolver |  |
-| 112 | `testAbsolutePhpFileAndDisplayClass` | Absolute Php File And Display Class |  |
-| 120 | `testFileReadFailuresReportLibraryExceptions` | File Read Failures Report Library Exceptions | 4 data-provider cases |
-| 134 | `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` | Php And Plain Html Files Render And Check Without Output |  |
-| 150 | `testMarkdownAndGeneratedMarkdownFiles` | Markdown And Generated Markdown Files |  |
-| 166 | `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` | Object And Class Designs Receive Data And Check Only Flag |  |
-| 180 | `testInvalidDesignsAreRejected` | Invalid Designs Are Rejected | 4 data-provider cases |
-| 186 | `testDesignBasesPrefixesAndSeparators` | Design Bases Prefixes And Separators |  |
-| 194 | `testFormattingFlagsReplacementsAndOutput` | Formatting Flags Replacements And Output |  |
-| 203 | `testLoggerWritesDesignKindAndNormalizedName` | Logger Writes Design Kind And Normalized Name |  |
-| 214 | `testConstructorAndPreparedInterfacesControlDisplayTiming` | Constructor And Prepared Interfaces Control Display Timing |  |
-| 233 | `testDefaultDisplayCallbackDelegatesToTemplateRendering` | Default Display Callback Delegates To Template Rendering |  |
+| 90 | `testFailingTemplatesCloseTheirOutputBuffers` | Failing Templates Close Their Output Buffers |  |
+| 102 | `testDesignRootUsesConfigurationOrItsDocumentedFallback` | Design Root Uses Configuration Or Its Documented Fallback |  |
+| 119 | `testMarkdownReadFailureIsCaughtByTemplateResolver` | Markdown Read Failure Is Caught By Template Resolver |  |
+| 124 | `testAbsolutePhpFileAndDisplayClass` | Absolute Php File And Display Class |  |
+| 132 | `testFileReadFailuresReportLibraryExceptions` | File Read Failures Report Library Exceptions | 4 data-provider cases |
+| 146 | `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` | Php And Plain Html Files Render And Check Without Output |  |
+| 162 | `testMarkdownAndGeneratedMarkdownFiles` | Markdown And Generated Markdown Files |  |
+| 178 | `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` | Object And Class Designs Receive Data And Check Only Flag |  |
+| 192 | `testInvalidDesignsAreRejected` | Invalid Designs Are Rejected | 4 data-provider cases |
+| 198 | `testDesignBasesPrefixesAndSeparators` | Design Bases Prefixes And Separators |  |
+| 206 | `testFormattingFlagsReplacementsAndOutput` | Formatting Flags Replacements And Output |  |
+| 215 | `testLoggerWritesDesignKindAndNormalizedName` | Logger Writes Design Kind And Normalized Name |  |
+| 226 | `testConstructorAndPreparedInterfacesControlDisplayTiming` | Constructor And Prepared Interfaces Control Display Timing |  |
+| 245 | `testDefaultDisplayCallbackDelegatesToTemplateRendering` | Default Display Callback Delegates To Template Rendering |  |
 
 ### `tests/Unit/Core/Template/ValidateControllerTest.php` (2)
 

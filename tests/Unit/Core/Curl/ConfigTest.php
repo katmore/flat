@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 class ConfigTest extends TestCase
 {
     private function request() { return new request('https://example.com/path'); }
+    /** @group known-defect */
     public function testExplicitConfigurationAndNumericDefaults()
     {
         $request = $this->request();
@@ -19,11 +20,11 @@ class ConfigTest extends TestCase
         // Legacy constructor overwrites the declared text defaults with null.
         $this->assertNull($default->request_method); $this->assertNull($default->user_agent);
     }
-    /** @group known-defect */
-    public function testCurrentChromeSelectionIsOverwrittenByRawSelector()
+    public function testChromeSelectionProvidesTheChromeUserAgent()
     {
         $config = new config($this->request(), null, config::user_agent_chrome);
-        $this->assertSame(0, $config->user_agent);
+        $this->assertSame(str_replace('%chrome_version%', config::chrome_latest_version_str, config::chrome_user_agent_str), $config->user_agent);
+        $this->assertStringContainsString('Chrome/', $config->user_agent);
     }
     /** @dataProvider invalidSettings */
     public function testInvalidSettingsAreRejected(array $args)

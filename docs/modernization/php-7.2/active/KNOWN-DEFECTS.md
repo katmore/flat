@@ -61,10 +61,10 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-26 | Map from object | Non-objects give an empty map; objects fail with `ArgumentCountError` | `Core/LegacyMappingTest::testNonObjectInputCurrentlyProducesAnEmptyMap`, `::testObjectMappingCurrentlyOmitsRequiredValueArgument` | A | Pass the missing value argument | fixed (MOD-126) |
 | KD-27 | CLI | Missing `$argv` throws an unqualified `flat\core\RuntimeException` (`Error`) | `Core/CliTest::testMissingArgvPreservesCurrentExceptionNamespaceFailure` | A | Throw `\RuntimeException` | fixed (MOD-124) |
 | KD-28 | Core mapper | Private-access options fail on the `setAcessible` typo | `Core/MapperTest::testKnownPrivateAccessReflectionTypo` | B | Q12 | fixed (MOD-113) |
-| KD-29 | Debug | `data2str` uses the object template for arrays and leaves placeholders for small scalars | `Core/DebugTest::testDataDescriptionsCharacterizeCurrentFormatting` | A | Use the matching template and fill it | open |
-| KD-30 | Debug | `kill` options overwrite the options array and read an undefined `fh_options` | (`../history/TESTING-FOLLOWUPS.md`; not yet asserted) | A | Keep the options array; define the handle options | open |
+| KD-29 | Debug | `data2str` uses the object template for arrays and leaves placeholders for small scalars | `Core/DebugTest::testDataDescriptionsCharacterizeCurrentFormatting` | A | Use the matching template and fill it | fixed (MOD-132) |
+| KD-30 | Debug | `kill` options overwrite the options array and read an undefined `fh_options` | (`../history/TESTING-FOLLOWUPS.md`; not yet asserted) | A | Keep the options array; define the handle options | fixed (MOD-132) |
 | KD-31 | cURL response | Missing curl info throws a nonexistent exception class (`Error`) | `Core/Curl/ResponseTest::testCurrentMissingInfoExceptionClassFailure` | A | Declare/use the exception | fixed (MOD-124) |
-| KD-32 | cURL config | Selecting the Chrome user agent is overwritten by the raw selector (`0`) | `Core/Curl/ConfigTest::testCurrentChromeSelectionIsOverwrittenByRawSelector` | A | Keep the selected user-agent string | open |
+| KD-32 | cURL config | Selecting the Chrome user agent is overwritten by the raw selector (`0`) | `Core/Curl/ConfigTest::testCurrentChromeSelectionIsOverwrittenByRawSelector` | A | Keep the selected user-agent string | fixed (MOD-132) |
 | KD-33 | Legacy ORM | The static `get_data` facade discards its result | `Data/Orm/LegacyOrmTest::testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult` | A | Return the stored data | open |
 | KD-34 | Legacy ORM | A nonempty constructor array cannot act as a driver | `LegacyOrmTest::testNonemptyConstructorArrayStillCannotActAsADriver` | B | Q13 | open |
 | KD-35 | ORM session driver | `destroy` regenerates the id after ending the session (warning) | `Data/Orm/SessionDriverTest::testDestroyCurrentlyAttemptsRegenerationAfterEndingTheSession` | A | Regenerate before destroying, or not at all | open |
@@ -85,8 +85,8 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-50 | Phone | `+1 800 555 1234` stores the whole number as its extension; `ext 42`/`x89` extraction fails | `Data/PhoneTest::testCurrentCountryOneAndTextExtensionExtractionFailures` | A | Strip country code 1; extract extensions | fixed (MOD-131) |
 | KD-51 | Phone | International numbers get no country code for most prefixes (comparisons are assignments) | `PhoneTest::testCurrentInternationalClassificationLeavesComparisonAssignmentsUnset` | A | Fix the comparisons (no new country table) | fixed (MOD-131) |
 | KD-52 | UUID | `uuid::get(2)` without a namespace returns a v4 UUID | (`../history/TESTING-FOLLOWUPS.md`) | A | Throw `invalid_version` | fixed (MOD-129) |
-| KD-53 | Templates | Absolute file resolution converts a null `$file`; failure paths leave output buffers open | (`../history/TESTING-FOLLOWUPS.md`) | A | Resolve the design path; close buffers on failure | open |
-| KD-54 | Templates | `tmpl/display` declares a class extending an interface; loading it aborts PHP | (`../history/TESTING-FOLLOWUPS.md`) | A | Implement the interface | open |
+| KD-53 | Templates | Absolute file resolution converts a null `$file`; failure paths leave output buffers open | (`../history/TESTING-FOLLOWUPS.md`) | A | Resolve the design path; close buffers on failure | fixed (MOD-132) |
+| KD-54 | Templates | `tmpl/display` declares a class extending an interface; loading it aborts PHP | (`../history/TESTING-FOLLOWUPS.md`) | A | Implement the interface | already fixed (MOD-040; verified in MOD-132) |
 | KD-55 | Random strings | Invoking an instance ignores its configured character pool | (`../history/TESTING-FOLLOWUPS.md`) | B | Q17 | fixed (MOD-129) |
 | KD-56 | Random numbers | `rand::get(1, 0)`: a zero maximum means "default", so inverted bounds pass | (`../history/TESTING-FOLLOWUPS.md`) | B | Q18 | confirmed, no change (MOD-129) |
 
@@ -103,6 +103,7 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-67 | SSH | Temporary key files are not cleaned up when connection setup fails part-way; key encryption uses no explicit cipher | (follow-ups; not yet verified) | B | Q22 | open |
 | KD-68 | Validation controller | The validation body is unfinished; it inspects fields and then does nothing | (follow-ups; not yet verified) | C | Q23 | open |
 | KD-69 | Data mapper | `field_list()` caches one list for every `flat\data` subclass, so later classes get the first class's fields (and `is_field()` answers wrongly) | `Data/MapperTest::testFieldListUsesTheInstanceAndCachesPerClass` | A | Cache per class | fixed (MOD-126) |
+| KD-70 | cURL config | The constructor's second loop re-assigns every text argument, so unset `request_method`, `user_agent`, `referrer` and `cache_dir` become `null` instead of their declared defaults (`GET`, `flat/curl`) | `Core/Curl/ConfigTest::testExplicitConfigurationAndNumericDefaults` | B | Q24 | open |
 
 ## Test-strength tasks
 
@@ -125,8 +126,8 @@ treating `0`/`false`/`"0"` as empty (TS-03), `csv::fields2csv([])` returning a n
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. All 23 are answered: the owner
-agreed with every recommendation.
+Each has a recommendation; "agree" is enough. Questions 1-23 are answered (the
+owner agreed with every recommendation); question 24 is open.
 
 1. **KD-03 PDO fetch options.** Recommend: implement the documented meanings
    (true = generic data rows, class = rows as that class, callback = per row,
@@ -222,3 +223,9 @@ agreed with every recommendation.
 23. **KD-68 validation controller.** Recommend: retire it (clear exception)
     unless the consumer uses it; nothing in flat calls its unfinished body.
     **Answered: agreed** (owner, 2026-11-13).
+24. **KD-70 cURL config defaults.** Restoring every declared default changes
+    outgoing requests: requests would send `User-Agent: flat/curl` (today none),
+    and requests with a body would get an explicit `GET` method (today `null`, so
+    curl sends them as POST). Recommend: restore the `flat/curl` user agent and
+    the other text defaults, but leave `request_method` unset unless given, so
+    requests with a body keep being sent as POST.

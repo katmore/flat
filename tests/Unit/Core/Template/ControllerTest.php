@@ -87,6 +87,18 @@ class ControllerTest extends TestCase
     {
         ob_start(); $class::display($design, $values); return ob_get_clean();
     }
+    public function testFailingTemplatesCloseTheirOutputBuffers()
+    {
+        $this->file('tmpl/throws.md.php', '<?php throw new \\RuntimeException("template failure");');
+        $level = ob_get_level();
+        ob_start(); TemplateController::display('throws'); $output = ob_get_clean();
+        $this->assertSame('', $output);
+        $this->assertSame($level, ob_get_level());
+        $this->file('tmpl/failure.html', 'small');
+        TemplateIo::$mode = 'contents';
+        try { TemplateController::format('failure'); $this->fail('expected a read failure'); }
+        catch (\flat\core\controller\tmpl\exception\system_err $e) { $this->assertSame($level, ob_get_level()); }
+    }
     public function testDesignRootUsesConfigurationOrItsDocumentedFallback()
     {
         $saved = [];

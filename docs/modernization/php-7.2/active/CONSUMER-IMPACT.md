@@ -93,6 +93,10 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-130 (KD-14) | Asset printing | `print_contents()` of an unprintable type and `print_tag(TAG_STYLE_SOURCE)` printed nothing; inline-source printing of a file asset printed an empty `<script></script>` | These explicit requests throw `app_error`; `print_tag()` without a tag type still prints nothing for assets with no tag form | `print_contents(`, `print_tag(` with explicit types |
 | MOD-131 (KD-50) | Phone extensions | `+1 800 555 1234` stored the whole number as its extension (`x8005551234`); `ext 42` and `x89` extracted digits of the main number | `+1` numbers have no extension unless digits follow the 10-digit number; text extensions are read from after the marker | `flat\data\phone` `extension` and string output; stored phone strings |
 | MOD-131 (KD-51) | Phone country codes | Most international numbers had no `country_code`; `e164` read `+` plus the whole number | Country code set from the table in `data/phone.php`; `e164`/`e164_ndc`/`e164_intl` split accordingly | `country_code`, `e164*` of non-NANP numbers |
+| MOD-132 (KD-32) | cURL Chrome user agent | Selecting `config::user_agent_chrome` sent the user agent `0` | Sends the Chrome user-agent string | `user_agent_chrome` |
+| MOD-132 (KD-30) | Debug kill exit status | `debug::kill($msg, ['exit_status'=>N])` ignored N (only a nested form worked) and the fallback exit read undefined variables | The plain form sets the exit status; the nested form still works | `debug::kill(` |
+| MOD-132 (KD-29) | Debug value descriptions | Arrays read `{object class: %class%}`; numbers and booleans kept raw placeholders; `"0"` read as `{empty string}` | `{array count: N elements}`, `{integer} 42`, `{boolean} false`, `0` | Logs or tests matching `debug::data2str(` output |
+| MOD-132 (KD-53) | Template output buffers | A failing generated template, or a failure inside `tmpl::format()`, left an output buffer open, swallowing later output | Buffers are closed on failure | Code relying on output after a template failure |
 
 ## Suggested consumer check
 

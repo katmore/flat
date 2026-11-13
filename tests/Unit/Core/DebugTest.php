@@ -59,6 +59,14 @@ class DebugTest extends TestCase
         $this->assertStringContainsString('exit status:</strong> 7',$out);
         $this->assertSame('',$err);
     }
+    public function testKillHonorsAPlainExitStatus()
+    {
+        list($status,$out,$err) = $this->subprocess('\\flat\\core\\debug::kill("plain", ["exit_status"=>9]);');
+        $this->assertSame(9,$status);
+        $this->assertStringContainsString('exit status:</strong> 9',$out);
+        $this->assertSame('',$err);
+    }
+
     public function testKillSanitizesInvalidNestedExitStatusAndEmptyMessage()
     {
         list($status,$out,$err) = $this->subprocess('\\flat\\core\\debug::kill(null, ["exit_status"=>["exit_status"=>true]]);');
@@ -140,18 +148,17 @@ CHILD;
         $this->assertStringContainsString('default output', $output);
         $this->assertStringContainsString('caller', $output);
     }
-    /** @group known-defect */
-    public function testDataDescriptionsCharacterizeCurrentFormatting()
+    public function testDataDescriptionsUseTheMatchingFormat()
     {
         $this->assertSame('{empty string}', debug::data2str(''));
-        $this->assertSame('{empty string}', debug::data2str('0'));
+        $this->assertSame('0', debug::data2str('0'));
         $this->assertSame('{null}', debug::data2str(null));
         $this->assertSame('text', debug::data2str('text'));
         $this->assertSame('{object class: stdClass}', debug::data2str(new \stdClass));
-        // Formatting-template bugs are deferred; these expectations identify current behavior.
-        $this->assertSame('{object class: %class%}', debug::data2str([1, 2]));
-        $this->assertSame('{orig length: %len% truncated integer} %truncated%', debug::data2str(42));
-        $this->assertSame('{orig length: 41 truncated 41} '.str_repeat('x', 40), debug::data2str(str_repeat('x', 41)));
+        $this->assertSame('{array count: 2 elements}', debug::data2str([1, 2]));
+        $this->assertSame('{integer} 42', debug::data2str(42));
+        $this->assertSame('{boolean} false', debug::data2str(false));
+        $this->assertSame('{orig length: 41 truncated string} '.str_repeat('x', 40), debug::data2str(str_repeat('x', 41)));
         $handle = fopen('php://memory', 'r+');
         try { $this->assertSame('{non-scalar resource}', debug::data2str($handle)); }
         finally { fclose($handle); }

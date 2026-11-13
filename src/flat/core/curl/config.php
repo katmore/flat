@@ -110,13 +110,15 @@ class config {
             $this->$param = $$param;
          }
       }
-      if (is_int($this->user_agent) && $this->user_agent == self::user_agent_chrome) {
-         $this->user_agent = self::chrome_user_agent_str;
-         $this->user_agent = str_replace("%chrome_version%",self::chrome_latest_version_str,$this->user_agent);
-      }
       foreach(array("request_method","referrer","user_agent","cache_dir") as $param) {
          if (!empty($$param) && !is_string($this->$param)) throw new exception\bad_param($param,"must be string");
          $this->$param = $$param;
+      }
+      // Resolve the Chrome selector after the loop above, which re-assigns the
+      // raw arguments (and still replaces unset text defaults with null; KD-70).
+      if (is_int($this->user_agent) && $this->user_agent == self::user_agent_chrome) {
+         $this->user_agent = self::chrome_user_agent_str;
+         $this->user_agent = str_replace("%chrome_version%",self::chrome_latest_version_str,$this->user_agent);
       }
       
       if (!is_int($this->timeout)) {

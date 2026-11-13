@@ -6,11 +6,10 @@ model and the rules every phase follows are in [../README.md](../README.md).
 
 ## Status (2026-11-13)
 
-- **Tests:** 1,316 tests pass on PHP 7.2.34 with 100% class, method and line
+- **Tests:** 1,318 tests pass on PHP 7.2.34 with 100% class, method and line
   coverage. How to run them: [../TESTING.md](../TESTING.md).
-- **Known defects (in progress):** 69 tracked, 37 resolved, 32 open, all
-  actionable: the owner answered every question (agreeing with each
-  recommendation), so no input is pending. Work list:
+- **Known defects (in progress):** 70 tracked, 42 resolved, 28 open. One owner
+  question is open (Q24, KD-70); everything else is actionable. Work list:
   [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
   - 5 test-strength tasks (TS-01 to TS-05).
 - **Not started:** functional tests against `flat-webapp`.

@@ -2236,3 +2236,26 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   are three digits.
 - Verified: `docker/bin/test all --coverage` passes 1,316 tests; 100% classes
   (331/331), methods (1,061/1,061), lines (8,007/8,007).
+
+## MOD-132 — Fix debug, cURL user-agent and template buffer defects (KD-29, 30, 32, 53); KD-54 verified; KD-70 found
+
+- KD-29: `debug::data2str()` uses the array format for arrays, the scalar format
+  for numbers and booleans (booleans as `true`/`false`), and the type name (not
+  the length) in the truncate format; the string `"0"` is no longer "empty".
+- KD-30: `debug::kill()` stores the `exit_status` option instead of replacing the
+  whole options array with it, so `['exit_status'=>N]` works; the nested form
+  earlier releases needed is still accepted. The fallback exit no longer reads
+  the undefined `$fh_options`/`$exit_status`.
+- KD-32: the Chrome user-agent selector is resolved after the loop that
+  re-assigned the raw argument (`0`).
+- KD-70 (new, found while fixing KD-32): that same loop replaces the declared
+  text defaults with `null`. Restoring them would make requests with a body go
+  out as `GET` instead of curl's default POST, so this is an owner question (Q24)
+  and its test stays tagged `known-defect`.
+- KD-53: `tmpl::format()` closes its output buffer when `display()` throws, and
+  a failing generated (`.md.php`/`.txt.php`) template closes its buffer. The
+  other half of KD-53 (absolute path resolution) was already repaired by MOD-040.
+- KD-54: already repaired by MOD-040 (`tmpl\display` implements the output
+  interface); verified to load and implement it on PHP 7.2.34.
+- Verified: `docker/bin/test all --coverage` passes 1,318 tests; 100% classes
+  (331/331), methods (1,061/1,061), lines (8,015/8,015).
