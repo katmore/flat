@@ -2162,3 +2162,22 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   (331/331), methods (1,061/1,061), lines (7,995/7,995). One earlier attempt
   stopped before testing because the RabbitMQ container exited during startup;
   the rerun was clean.
+
+## MOD-128 — Add bin/check-docs, a repository-owned documentation checker
+
+- Owner direction: the link audit required by `AGENTS.md` should be repository
+  tooling, written in PHP rather than a script kept outside the repository, and
+  as a PHP shebang script (`#!/usr/bin/env php`) for simplicity.
+- `bin/check-docs` scans every Markdown file (skipping `.git`, `vendor`, `build`
+  and third-party `src/flat/vendor`) and reports broken relative links, missing
+  `#anchors` (GitHub heading rules, including -1/-2 for duplicate headings) and
+  missing repository-root paths in backticks. Change logs and `history/` keep old
+  paths on purpose, so only their links are checked. Code blocks and inline code
+  are ignored. Exit status 1 on any problem.
+- `docker/bin/check-docs` runs it in the PHP 7.2 container under its own Compose
+  project, so it never touches a running test stack.
+- `AGENTS.md` now names the command in its post-move rule.
+- Verified: 0 problems on the repository (24 files, 63 links, 136 paths), in the
+  container (PHP 7.2.34) and natively (PHP 8.3); a probe document with a missing
+  file, a missing anchor and a missing backticked path produced exactly those 3
+  problems and exit status 1, while its valid references and code examples passed.

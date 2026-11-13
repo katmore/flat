@@ -55,8 +55,10 @@ repository broke this, and had to be replaced.)
 - Change-log entries are never rewritten. A correction, rename or move gets a
   new entry; when files move, the entry includes an old-to-new path map. Old
   paths in past entries and in `history/` stay as written.
-- After moving or renaming anything, check that every relative Markdown link
-  and anchor still resolves and that no live document uses the old name.
+- After moving or renaming anything, run `bin/check-docs` (or
+  `docker/bin/check-docs`): it checks every Markdown link, `#anchor` and
+  repository-root path in backticks, and exits nonzero on any problem. Also make
+  sure no live document still uses the old name.
 
 ## Known-defect process
 
