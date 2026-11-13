@@ -1,5 +1,7 @@
 # Branch investigation
 
+> **Historical, kept for the record:** the branch situation before work moved to `php-7.2`. The current branch model is in [../../README.md](../../README.md).
+
 Read-only comparison of GitHub refs found:
 
 - master: 65fdc241fb7777dbd699b34897ca11eae5f69bd7

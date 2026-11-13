@@ -1,5 +1,7 @@
 # Handoff: `modernize-26` — flat framework test baseline
 
+> **Historical, kept for the record:** a handoff between earlier agents working on `modernize-26`. To resume work, start at [../README.md](../README.md).
+
 Audience: a new agent/harness continuing this work with no prior context.
 Read this file first, then `docs/modernization-26.md`.
 

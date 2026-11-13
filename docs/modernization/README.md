@@ -11,7 +11,7 @@ The phases are going to correspond with the major versions of PHP starting at PH
 Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP version flat was using when development stalled in 2020). Once the phases are caught up to the latest stable release of PHP, **modernize-26** branch will be merged with the **master** branch and the modernization project will be considered complete.
 
 ### Progress
- * php-7.2: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
+ * php-7.2: in progress. Status and how to resume: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
 
 ### Rules for every phase
  * Advance one PHP minor version at a time and skip none: 7.2, 7.3, 7.4, 8.0, 8.1, and onward.
@@ -19,5 +19,5 @@ Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP
  * Run PHP, Composer, the tests and their services in Docker configured in this repository, and record the exact PHP patch and tool versions used.
  * Rerun the whole test suite (and the flat-webapp functional tests) for every phase; record failures, skips and coverage gaps.
  * Never weaken an assertion or drop a check to make an upgrade pass. Changing tested behavior is a deliberate maintainer decision.
- * Keep runtime-compatibility fixes separate from behavior changes in each phase's CHANGELOG.md and in the commits, and list consumer-visible changes in the phase's consumer-impact-review.md.
+ * Keep runtime-compatibility fixes separate from behavior changes in each phase's CHANGELOG.md and in the commits, and list consumer-visible changes in the phase's `active/consumer-impact.md`.
  * The maintainer decides when a phase is complete. Creating or merging release branches and moving to the next PHP version need the maintainer's explicit go-ahead.

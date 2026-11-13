@@ -1,5 +1,7 @@
 # PHP 7.2 unit coverage baseline
 
+> **Historical, kept for the record:** coverage checkpoints recorded while the 7.2 tests were written. Current results are in [../CHANGELOG.md](../CHANGELOG.md).
+
 ## Latest verified checkpoint — MOD-109
 
 Repository-owned command: `./tests.sh all --coverage`.
@@ -44,7 +46,7 @@ No excluded files, skipped tests or invented coverage hits were added.
 Full run: 9.59 minutes / 56 MB. The real 100,000-tick subscription guard test
 accounts for most of the runtime under Xdebug. All 631 PHP source files also pass
 PHP-7.2 syntax checks. Changes and test findings are recorded through MOD-104 in
-[CHANGELOG.md](CHANGELOG.md). Earlier checkpoints follow.
+[CHANGELOG.md](../CHANGELOG.md). Earlier checkpoints follow.
 
 
 Verified against `modernize-26` commit `ba9f93d` using PHP 7.2.34,
@@ -129,7 +131,7 @@ repository-owned command is now:
 ./tests.sh all --coverage
 ```
 
-See [docker-testing.md](docker-testing.md) for pinned sources, dependency locks, service types,
+See [testing.md](../../testing.md) for pinned sources, dependency locks, service types,
 proxy CA input and automatic teardown. Earlier counts below remain historical.
 
 ## Coverage progress: configuration unit tests (MOD-009)
@@ -178,7 +180,7 @@ single PHPUnit process; it does not require applications to reinitialize config.
 
 ## Coverage progress: mapper unit tests (MOD-011 / MOD-012)
 
-See `mapper-unit-testing.md` for the confirmed contract, per-edit rationale,
+See [notes/mapper.md](../notes/mapper.md) for the confirmed contract, per-edit rationale,
 findings, and before/after compatibility check. Mapper reaches **100% lines
 (165/165) and methods (12/12)**. Configuration and the original six targets remain
 at 100%. Full suite: **95 passing tests, 1,722 assertions**. Overall coverage:
@@ -189,8 +191,8 @@ in comments; private-access failures remain as explicitly requested.
 ## Continuing progress through MOD-021
 
 Approved fixes and further unit tests are documented in
-`utility-and-event-testing.md`, `data-and-xml-testing.md`, and
-`collections-routing-cli-testing.md`. The latest complete run executes **310
+[utility-and-event.md](../notes/utility-and-event.md), [data-and-xml.md](../notes/data-and-xml.md), and
+[collections-routing-cli.md](../notes/collections-routing-cli.md). The latest complete run executes **310
 tests / 2,366 assertions with 2 errors** exposing collection index copying and
 routing subclass cache access. Those behavior decisions are pending; this is not
 reported as a passing run. Coverage from the run is **20.07% lines**, **24.67%
@@ -206,7 +208,7 @@ assertions**, no errors/failures/skips. Framework coverage is **20.89% lines
 Collection class, its constraint and validator controllers, routing controller,
 and CLI helper now reach 100% measured lines/methods. Detailed behavior changes,
 regressions, and remaining key/range decisions are recorded in
-`collections-routing-cli-testing.md` and MOD-022–MOD-025.
+[collections-routing-cli.md](../notes/collections-routing-cli.md) and MOD-022–MOD-025.
 
 ## Continuing progress through MOD-029
 
@@ -215,7 +217,7 @@ controller trait is 100% lines/methods. Sessions/nonces and the HTTP request,
 configuration, and response classes also reach 100% measured lines/methods.
 Latest complete run: **404 tests / 2,609 assertions, all passing** on PHP 7.2.34.
 Framework: **25.25% lines**, **30.70% methods**, **24.17% classes**. See
-`session-and-http-testing.md` for coverage evidence, runner inheritance details,
+[session-and-http.md](../notes/session-and-http.md) for coverage evidence, runner inheritance details,
 mock boundaries, and the pending request-format behavior question.
 
 ### MOD-030 — Approved JSON/raw request fixes

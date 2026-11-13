@@ -1,7 +1,9 @@
 # Docker test environment
 
+> **Historical, kept for the record:** the earlier test setup that lived outside the repository. It was replaced by the repository-owned harness in [../../testing.md](../../testing.md).
+
 The supported entry point is now `./tests.sh`, with all setup files inside this
-repository. See [docker-testing.md](docker-testing.md) for reproducible commands,
+repository. See [testing.md](../../testing.md) for reproducible commands,
 test types, services, cleanup and optional CA configuration. No path outside this
 checkout is required. The older notes below are historical diagnostic records,
 not current operational instructions.

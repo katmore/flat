@@ -75,7 +75,7 @@ behavior decision and a running change-log entry.
 
 ## Verification and metrics
 
-Same Docker harness as `unit-coverage-baseline.md`: PHP 7.2.34, PHPUnit 8.5.56,
+Same Docker harness as [coverage-baseline.md](../history/coverage-baseline.md): PHP 7.2.34, PHPUnit 8.5.56,
 Xdebug 2.9.8. No host PHP tooling was installed.
 
 | Metric | Before mapper batch | After mapper batch |
@@ -105,4 +105,4 @@ Run through the repository-owned Docker wrapper:
 
 Current reports are under `build/tests/all/`. The earlier mapper differential
 check is historical evidence; its private diagnostic helper is no longer a
-supported test entry point. See [docker-testing.md](docker-testing.md) for portable setup.
+supported test entry point. See [testing.md](../../testing.md) for portable setup.

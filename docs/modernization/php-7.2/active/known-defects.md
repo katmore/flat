@@ -23,7 +23,7 @@ Its test carries `@group known-defect` until the fix lands, so
 1. Change the source.
 2. Rewrite the test to assert the correct behavior, drop "Currently"/"Still"
    from its name and remove `@group known-defect`.
-3. Add a row to `consumer-impact-review.md`: every fix is a silent change for
+3. Add a row to [consumer-impact.md](consumer-impact.md): every fix is a silent change for
    consumers that might have depended on, or worked around, the old behavior.
 4. Mark the entry here as fixed, with its change-log ID.
 
@@ -60,7 +60,7 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-27 | CLI | Missing `$argv` throws an unqualified `flat\core\RuntimeException` (`Error`) | `Core/CliTest::testMissingArgvPreservesCurrentExceptionNamespaceFailure` | A | Throw `\RuntimeException` | open |
 | KD-28 | Core mapper | Private-access options fail on the `setAcessible` typo | `Core/MapperTest::testKnownPrivateAccessReflectionTypo` | B | Q12 | fixed (MOD-113) |
 | KD-29 | Debug | `data2str` uses the object template for arrays and leaves placeholders for small scalars | `Core/DebugTest::testDataDescriptionsCharacterizeCurrentFormatting` | A | Use the matching template and fill it | open |
-| KD-30 | Debug | `kill` options overwrite the options array and read an undefined `fh_options` | (testing-follow-ups.md; not yet asserted) | A | Keep the options array; define the handle options | open |
+| KD-30 | Debug | `kill` options overwrite the options array and read an undefined `fh_options` | (`../history/testing-follow-ups.md`; not yet asserted) | A | Keep the options array; define the handle options | open |
 | KD-31 | cURL response | Missing curl info throws a nonexistent exception class (`Error`) | `Core/Curl/ResponseTest::testCurrentMissingInfoExceptionClassFailure` | A | Declare/use the exception | open |
 | KD-32 | cURL config | Selecting the Chrome user agent is overwritten by the raw selector (`0`) | `Core/Curl/ConfigTest::testCurrentChromeSelectionIsOverwrittenByRawSelector` | A | Keep the selected user-agent string | open |
 | KD-33 | Legacy ORM | The static `get_data` facade discards its result | `Data/Orm/LegacyOrmTest::testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult` | A | Return the stored data | open |
@@ -72,7 +72,7 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-39 | Payments | Transaction adapter's `isset` guard drops SDK fields initialized to `null`, including `amount` | `Cloud/AuthorizeTransactionTest::testAdapterRetainsMappedInitializedFieldsAndCurrentNullFieldLimitation` | A | Map every declared SDK field | open |
 | KD-40 | Payments | Subscription `create` drops `billTo` (same `isset` rule) | `Cloud/AuthorizeSubscriptionTest::testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn` | A | Map declared SDK fields | open |
 | KD-41 | Payments | Subscription `create` returns `null`; its docblock promises the subscription id | same test | B | Q14 | open |
-| KD-42 | Payments | Subscription search pagination offset never advances | (pending-behavior-questions.md row 8) | A | Advance the offset per page | open |
+| KD-42 | Payments | Subscription search pagination offset never advances | (`../history/pending-behavior-questions.md` row 8) | A | Advance the offset per page | open |
 | KD-43 | Payments | Scalar `response_error` ignores its second argument | `Cloud/AuthorizeTest::testResponseWithoutMessagesAndLegacyScalarErrors` | B | Q15 | open |
 | KD-44 | Payments | Transaction validation accepts any return except explicit `false` | `AuthorizeTransactionTest::testExplicitFalseValidationIsRejectedAndOtherReturnTypesCurrentlyPass` | A | Accept only `true` | open |
 | KD-45 | Payments | Customer convenience operations (void, refund, authonly, authcapture, captureonly, get_transaction) return `null` | `Cloud/AuthorizeCustomerTest::testUnimplementedConvenienceOperationsCurrentlyReturnNull` | C | Q16 | fixed (MOD-114) |
@@ -82,16 +82,42 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-49 | Exceptions | `duplicate_key` with an array index raises "Array to string conversion" | `LegacyErrorMessagesTest::testEmptyNonScalarDuplicateIndexUsesItsEmptyDescription` | A | Describe non-scalar indexes like non-scalar values | open |
 | KD-50 | Phone | `+1 800 555 1234` stores the whole number as its extension; `ext 42`/`x89` extraction fails | `Data/PhoneTest::testCurrentCountryOneAndTextExtensionExtractionFailures` | A | Strip country code 1; extract extensions | open |
 | KD-51 | Phone | International numbers get no country code for most prefixes (comparisons are assignments) | `PhoneTest::testCurrentInternationalClassificationLeavesComparisonAssignmentsUnset` | A | Fix the comparisons (no new country table) | open |
-| KD-52 | UUID | `uuid::get(2)` without a namespace returns a v4 UUID | (testing-follow-ups.md) | A | Throw `invalid_version` | open |
-| KD-53 | Templates | Absolute file resolution converts a null `$file`; failure paths leave output buffers open | (testing-follow-ups.md) | A | Resolve the design path; close buffers on failure | open |
-| KD-54 | Templates | `tmpl/display` declares a class extending an interface; loading it aborts PHP | (testing-follow-ups.md) | A | Implement the interface | open |
-| KD-55 | Random strings | Invoking an instance ignores its configured character pool | (testing-follow-ups.md) | B | Q17 | open |
-| KD-56 | Random numbers | `rand::get(1, 0)`: a zero maximum means "default", so inverted bounds pass | (testing-follow-ups.md) | B | Q18 | open |
+| KD-52 | UUID | `uuid::get(2)` without a namespace returns a v4 UUID | (`../history/testing-follow-ups.md`) | A | Throw `invalid_version` | open |
+| KD-53 | Templates | Absolute file resolution converts a null `$file`; failure paths leave output buffers open | (`../history/testing-follow-ups.md`) | A | Resolve the design path; close buffers on failure | open |
+| KD-54 | Templates | `tmpl/display` declares a class extending an interface; loading it aborts PHP | (`../history/testing-follow-ups.md`) | A | Implement the interface | open |
+| KD-55 | Random strings | Invoking an instance ignores its configured character pool | (`../history/testing-follow-ups.md`) | B | Q17 | open |
+| KD-56 | Random numbers | `rand::get(1, 0)`: a zero maximum means "default", so inverted bounds pass | (`../history/testing-follow-ups.md`) | B | Q18 | open |
+
+| KD-57 | Views | The `view_resolved` event payload uses an undefined `$resolved` | (follow-ups; source checked 2026-11) | A | Use the matched route | open |
+| KD-58 | API controller | A `HEAD` request sets a flag that is never cleared, so a reused controller keeps treating later requests as `HEAD` | (follow-ups; source checked 2026-11) | A | Reset the flag per request | open |
+| KD-59 | API controller | `TRACE` echoes input via `get_as_assoc()`, which cannot see the input map's dynamic properties | (follow-ups; source checked 2026-11) | A | Echo the actual input fields | open |
+| KD-60 | ORM | `delete()` silently does nothing if the object was read first (`_read_done` guard) | `Orm/LifecycleTest::testDeleteAndTheCurrentReadDoneGuard` | B | Q19 | open |
+| KD-61 | ORM | `crud_error` stores its details in the operation field | (follow-ups; not yet verified) | A | Store operation and details separately | open |
+| KD-62 | Mongo | `load_client()` without options loops over `null` (warning) | (follow-ups; source checked 2026-11) | A | Treat missing options as `[]` | open |
+| KD-63 | S3 | Multipart threshold is 10 GiB though the comment says 10 MB; a single S3 upload cannot exceed 5 GB, so 5 GB to 10 GiB files would fail | (follow-ups; source checked 2026-11) | B | Q20 | open |
+| KD-64 | S3 | Large (multipart) uploads do not pass on the file's MIME type | (follow-ups; not yet verified) | A | Pass the content type to the multipart upload | open |
+| KD-65 | Data mapper | `dump` HTML-encoding ignores its encoded clone (same pattern as KD-36) | (follow-ups; not yet verified) | A | Use the encoded clone | open |
+| KD-66 | Exceptions | Exception wrapping `print_r`s traces including arguments and can exhaust memory on large objects | (follow-ups; not yet verified) | B | Q21 | open |
+| KD-67 | SSH | Temporary key files are not cleaned up when connection setup fails part-way; key encryption uses no explicit cipher | (follow-ups; not yet verified) | B | Q22 | open |
+| KD-68 | Validation controller | The validation body is unfinished; it inspects fields and then does nothing | (follow-ups; not yet verified) | C | Q23 | open |
+
+## Test-strength tasks
+
+Gaps in what existing tests prove, carried over from
+`../history/testing-follow-ups.md`. No behavior change; each adds or
+strengthens assertions.
+
+| ID | Area | Gap | Status |
+| --- | --- | --- | --- |
+| TS-01 | UUID | `testGenerateUsesConstructorState` only checks a default v4; add configured v3/v5 state | open |
+| TS-02 | Random numbers | No test of invocation without arguments after constructing with custom bounds | open |
+| TS-03 | Input map | No test that `0`, `false` and `"0"` count as empty input | open |
+| TS-04 | CSV | No test that `fields2csv([])` returns a newline | open |
+| TS-05 | Whole suite | Run a broader mutation probe; the 14-mutation sample in MOD-111 found two gaps | open |
 
 Reviewed and **not** treated as defects: `scalar` empty-input fallback (owner
 contract), Mongo affected-record policy, `app_error` summaries, `input\map`
-treating `0`/`false`/`"0"` as empty (needs a test, not a fix, unless the owner
-says otherwise), `csv::fields2csv([])` returning a newline, Markdown/HTML/CSV
+treating `0`/`false`/`"0"` as empty (TS-03), `csv::fields2csv([])` returning a newline (TS-04), Markdown/HTML/CSV
 "not ready" unserializers (explicitly declared unavailable).
 
 ## Owner questions
@@ -142,3 +168,15 @@ Each has a recommendation; "agree" is enough.
     configured pool and length.
 18. **KD-56 `rand::get` zero maximum.** Recommend: keep `0` meaning "default
     maximum", but reject a minimum above the resolved maximum.
+
+19. **KD-60 ORM delete after read.** Recommend: deleting a record that was read
+    first must work; the guard looks meant to stop a repeated delete, not a
+    delete after a read.
+20. **KD-63 S3 multipart threshold.** Recommend: 100 MB (Amazon's suggested
+    multipart size); anything above 5 GB must use multipart regardless.
+21. **KD-66 exception trace formatting.** Recommend: summarize traces without
+    argument values, like `app_error` summaries already do.
+22. **KD-67 SSH temporary keys.** Recommend: always remove temporary key files
+    on failure, and encrypt them with an explicit cipher (AES-256).
+23. **KD-68 validation controller.** Recommend: retire it (clear exception)
+    unless the consumer uses it; nothing in flat calls its unfinished body.

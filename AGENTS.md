@@ -1,5 +1,12 @@
 # Repository working requirements
 
+## Start here
+
+The framework is being modernized one PHP version at a time. Read
+`docs/modernization/README.md` (plan and phase rules), then the current phase's
+`README.md` (currently `docs/modernization/php-7.2/README.md`) for status and
+how to resume work.
+
 ## Maintainer feedback
 
 my human was disappointed and irritated with me because I put the Docker test
@@ -22,7 +29,7 @@ workspace instead of reproducible from the repository. Do not repeat this.
 - Preserve PHP 7.2.34 until the maintainer explicitly approves a version step.
   Do not merge, publish, or change release branches on your own.
 - Keep code changes, test findings, compatibility decisions, and deferred work
-  documented in `docs/`. Ask the maintainer about unknown method/class purposes;
+  documented in the current phase folder under `docs/modernization/`. Ask the maintainer about unknown method/class purposes;
   do not guess behavior to obtain coverage.
 
 ## Commit cadence

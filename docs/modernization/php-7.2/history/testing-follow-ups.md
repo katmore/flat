@@ -1,5 +1,7 @@
 # Deferred testing findings
 
+> **Historical, kept for the record:** its open items were carried into [../active/known-defects.md](../active/known-defects.md) (KD-57 to KD-68, TS-01 to TS-05); the rest were fixed in later CHANGELOG entries.
+
 These findings are recorded for later review. They do not take priority over
 running the PHP 7.2 unit suite and increasing coverage of uncovered framework code.
 No behavior changes are authorized by this list.

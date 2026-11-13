@@ -1901,3 +1901,47 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - `./tests.sh all --coverage`: 1,305 tests / 5,231 assertions pass; 100%
   classes (330/330), methods (1,060/1,060), lines (7,994/7,994).
 - `--group known-defect` drops from 130 to 124 cases.
+
+## MOD-115 — Reorganize the phase documents (no code change)
+
+- Owner direction: keep every document, but make it clear what is current,
+  what is lasting reference and what is finished. The owner moved the docs
+  under `docs/modernization/php-7.2/` (renaming `modernization-26.md` to this
+  `CHANGELOG.md`) and added `docs/modernization/README.md`. The folder name
+  typo (`moderization`) was then fixed, and the release plan's still-valid
+  rules were folded into that README (`php-version-release-plan.md` removed).
+- New layout: `README.md` (status, how to resume, contents), `CHANGELOG.md`,
+  `active/` (current work), `notes/` (per-area testing reference) and
+  `history/` (finished or replaced; each file now starts with a banner).
+  `docker-testing.md` moved up to `docs/modernization/testing.md` because it
+  applies to every phase. Root `AGENTS.md` now points to the phase README.
+- Open items from `testing-follow-ups.md` were carried into
+  `active/known-defects.md` as KD-57 to KD-68 and TS-01 to TS-05, with owner
+  questions 19 to 23. Items marked "source checked" were confirmed in the
+  current code; the others are marked "not yet verified".
+- Earlier entries keep their original paths. Old to new:
+
+| Old path (under `docs/`) | New path (under `docs/modernization/`) |
+| --- | --- |
+| `docker-testing.md` | `testing.md` |
+| `modernization-26.md` | `php-7.2/CHANGELOG.md` |
+| `known-defects.md` | `php-7.2/active/known-defects.md` |
+| `consumer-impact-review.md` | `php-7.2/active/consumer-impact.md` |
+| `test-inventory.md` | `php-7.2/active/test-inventory.md` |
+| `collections-routing-cli-testing.md` | `php-7.2/notes/collections-routing-cli.md` |
+| `data-and-xml-testing.md` | `php-7.2/notes/data-and-xml.md` |
+| `database-assets-and-minifier-testing.md` | `php-7.2/notes/database-assets-minifier.md` |
+| `debug-templates-and-text-testing.md` | `php-7.2/notes/debug-templates-text.md` |
+| `mapper-unit-testing.md` | `php-7.2/notes/mapper.md` |
+| `payment-and-alert-testing.md` | `php-7.2/notes/payment-and-alert.md` |
+| `session-and-http-testing.md` | `php-7.2/notes/session-and-http.md` |
+| `utility-and-event-testing.md` | `php-7.2/notes/utility-and-event.md` |
+| `unit-coverage-baseline.md` | `php-7.2/history/coverage-baseline.md` |
+| `pending-behavior-questions.md` | `php-7.2/history/pending-behavior-questions.md` |
+| `testing-follow-ups.md` | `php-7.2/history/testing-follow-ups.md` |
+| `branch-investigation.md` | `php-7.2/history/branch-investigation.md` |
+| `handoff-modernize-26.md` | `php-7.2/history/handoff-modernize-26.md` |
+| `legacy-test-environment.md` | `php-7.2/history/legacy-test-environment.md` |
+| `php-version-release-plan.md` | folded into `README.md` ("Rules for every phase") |
+
+- Verified: every relative Markdown link in the repository resolves.
