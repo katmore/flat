@@ -24,10 +24,11 @@ class FormTest extends TestCase
         $this->assertSame(3,substr_count($html,'<!--START flat/core/html/encode/form::data_to_form-->'));
         $this->assertStringNotContainsString('<input',form::data_to_form(42,[]));
     }
-    /** @group known-defect */
-    public function testSerializeCurrentlyDiscardsItsConstructedForm()
+    public function testSerializeReturnsTheConstructedForm()
     {
-        $this->assertNull(form::serialize(['value'=>'text'], ['type_map'=>['value'=>'textarea'],'ignored'=>'option']));
+        $form = form::serialize(['value'=>'text'], ['type_map'=>['value'=>'textarea'],'ignored'=>'option']);
+        $this->assertSame(form::data_to_form(['value'=>'text'], ['value'=>'textarea']), $form);
+        $this->assertStringContainsString('<textarea name="value">text</textarea>', $form);
     }
     public function testDecodeExplicitlyReportsFeatureNotReady()
     {

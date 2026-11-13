@@ -329,18 +329,7 @@ trait controller {
    
       $data = $this->_validate_data($data);
    
-      if (is_a($data,"\\flat\\core\\collection\\member\\ignore")) return null;
-   
-      if (is_callable($this->_validator_call)) {
-         $validator = $this->_validator_call;
-         $validator($data);
-      }
-   
-      if (is_callable($this->_filter_call)) {
-         $validator = $this->_filter_call;
-         $data = $validator($data);
-      }
-   
+      // _validate_data() already invoked the validator and filter callbacks.
       if (is_a($data,"\\flat\\core\\collection\\member\\ignore")) return null;
    
       /*

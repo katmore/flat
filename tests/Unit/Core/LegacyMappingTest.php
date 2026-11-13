@@ -3,6 +3,7 @@ namespace flat\test\Unit\Core;
 use PHPUnit\Framework\TestCase;
 class LegacyDataFixture extends \flat\core\data { public $name; }
 class LegacyListFixture extends \flat\core\util\map\from_list { public $name; public $zero; }
+class LegacyObjectFixture extends \flat\core\util\map\from_object { public $name; }
 class PlainDataControllerFixture extends \flat\core\controller\data { public $name; }
 class DynamicCoreDataFixture extends \flat\core\data implements \flat\core\data\create_properties {}
 class LegacyMappingTest extends TestCase
@@ -27,16 +28,16 @@ class LegacyMappingTest extends TestCase
         $this->assertSame('value',$mapped->name);
         $this->assertSame('default',$mapped->zero);
     }
-    /** @group known-defect */
-    public function testNonObjectInputCurrentlyProducesAnEmptyMap()
+    public function testNonObjectInputHasNothingToMap()
     {
         $this->assertSame([],get_object_vars(new \flat\core\util\map\from_object(42)));
     }
-    /** @group known-defect */
-    public function testObjectMappingCurrentlyOmitsRequiredValueArgument()
+    public function testObjectFieldsMapOntoDeclaredProperties()
     {
-        $this->expectException(\ArgumentCountError::class);
-        new \flat\core\util\map\from_object((object)['name'=>'value']);
+        $this->assertSame('value',(new LegacyObjectFixture((object)['name'=>'value']))->name);
+        $this->assertSame('array value',(new LegacyObjectFixture(['name'=>'array value']))->name);
+        $this->expectException(\flat\core\mappable\exception\cannot_set_property::class);
+        new LegacyObjectFixture((object)['undeclared'=>'value']);
     }
     public function testControllerExportsAreLimitedToFlatDataObjects()
     {

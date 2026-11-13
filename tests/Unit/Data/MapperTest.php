@@ -20,6 +20,7 @@ class UnknownStringFixture extends DataFixture implements \flat\data\stringify {
 class UnstringableFixture extends DataFixture implements \flat\data\not_stringable {}
 class EmptyStringFixture extends DataFixture implements \flat\data\stringify, \flat\data\stringify\empty_string {}
 class WebFixture extends DataFixture implements \flat\data\webview {}
+class OtherFieldsFixture extends \flat\data { public $alpha; }
 class RulesFixture extends DataFixture implements \flat\data\rules\consumer
 {
     public $rules;
@@ -39,12 +40,14 @@ class MapperTest extends TestCase
         $p->setAccessible(true); $p->setValue(null, null);
     }
     protected function tearDown(): void { $this->setUp(); }
-    /** @group known-defect */
-    public function testWebviewCurrentlyDiscardsTheHtmlEncodedClone()
+    public function testWebviewDataIsHtmlEncodedOnConstruction()
     {
         $data = new WebFixture(['first' => '<tag>&']);
-        $this->assertSame('<tag>&', $data->first);
-        $this->assertSame('&lt;tag&gt;&amp;', $data->htmlentities()->first);
+        $this->assertSame('&lt;tag&gt;&amp;', $data->first);
+        $plain = new DataFixture(['first' => '<tag>&']);
+        $this->assertSame('<tag>&', $plain->first);
+        $this->assertStringContainsString('&lt;tag&gt;', $plain->dump('human', ['htmlencode'])->value);
+        $this->assertStringContainsString('<tag>', $plain->dump('human')->value);
     }
     public function testRuleConsumerReceivesConstructedAndExplicitRules()
     {
@@ -54,12 +57,13 @@ class MapperTest extends TestCase
         $data->map($rules);
         $this->assertSame($rules, $data->rules);
     }
-    /** @group known-defect */
-    public function testFieldListWithInstanceCurrentlyFailsBeforeCreatingReflection()
+    public function testFieldListUsesTheInstanceAndCachesPerClass()
     {
-        $this->expectException(\Error::class);
-        $this->expectExceptionMessage('getProperties() on null');
-        DataFixture::field_list(new DataFixture);
+        $this->assertSame(['first','second','nil'], DataFixture::field_list(new DataFixture));
+        $this->assertSame(['first','second','nil'], DataFixture::field_list());
+        // Each class keeps its own list; the shared cache used to leak the first one.
+        $this->assertSame(['alpha'], OtherFieldsFixture::field_list());
+        $this->assertSame(['alpha'], DataFixture::field_list(new OtherFieldsFixture));
     }
     public function testConstructorsMapNamedAndPositionalDataAndIgnoreUnknownFields()
     {

@@ -40,7 +40,7 @@ class form implements \flat\core\serializer {
       if ($options) foreach($options as $k=>$v) {
          if (isset($params[$k])) $params[$k] = $v;
       }
-      self::data_to_form($input, $params['type_map']);
+      return self::data_to_form($input, $params['type_map']);
    }
    
    public static function keyval_to_input($key,$val,$type=NULL) {

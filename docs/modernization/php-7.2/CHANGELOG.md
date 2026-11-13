@@ -2118,3 +2118,27 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   (`src/flat/cloud/disqus.php` and five under `src/flat/cloud/pci/`).
 - Verified: `docker/bin/test all` passes 1,305 tests after the removal.
 - Undo: restore both files from the previous commit.
+
+## MOD-126 — Fix data, collection and event defects (KD-17, 18, 24, 25, 26, 36, 37, 38, 65, 69)
+
+- KD-25: `collection::add()` invoked the validator and filter callbacks a second
+  time after `_validate_data()` had already run them; the duplicate is removed
+  (`_validate_data()` documents them as its steps 3 and 4).
+- KD-36/65: `htmlentities()` returns an encoded clone; `webview` construction and
+  `dump(..., ['htmlencode'])` now use it instead of discarding it.
+- KD-37: `field_list($instance)` builds its reflection from the instance.
+- KD-69 (new, found while fixing KD-37): `field_list()` kept one static cache for
+  every `flat\data` subclass, so the first class's fields were returned for all
+  later classes (confirmed with two real subclasses). The cache is keyed by class.
+- KD-24: `form::serialize()` returns the form it builds.
+- KD-26: `map\from_object` passes each value, mapping onto declared properties
+  like `map\from_list`; non-object input has nothing to map and stays empty.
+- KD-38: `validate_failure` keeps its message (`get_message()`, `getMessage()`).
+- KD-17: `event\hookable` passes its data to the handler (it used an undefined
+  `$event_data`). KD-18: `event\stub::get_listeners()` reads the base class's
+  `$listener` property instead of an undeclared `$listeners`.
+- `src/flat/core/collection/controller.php` uses CRLF line endings; the edit
+  preserves them (an audit of every file changed since `5025a18` found no other
+  line-ending change).
+- Verified: `docker/bin/test all --coverage` passes 1,305 tests; 100% classes
+  (331/331), methods (1,061/1,061), lines (7,993/7,993).

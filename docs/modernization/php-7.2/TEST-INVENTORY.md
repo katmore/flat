@@ -8,7 +8,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - 704 test methods in 92 files, running 1305 test cases.
 - 118 methods use a data provider (one case per data set).
-- 39 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 30 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -291,16 +291,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 34 | `testReplacingMembersCopiesWrappersAndHonorsMatchingIndexLength` | Replacing Members Copies Wrappers And Honors Matching Index Length |  |
 | 47 | `testRangeLimitNormalizationAndCallbacks` | Range Limit Normalization And Callbacks |  |
 | 60 | `testEmptyRangeRaisesOutOfRange` | Empty Range Raises Out Of Range |  |
-| 67 | `testCurrentCallbacksRunTwicePerAddedMember` | Current Callbacks Run Twice Per Added Member | **known defect KD-25** |
-| 76 | `testFilterCanIgnoreOnEitherInvocation` | Filter Can Ignore On Either Invocation |  |
-| 84 | `testValidatorExceptionsPropagate` | Validator Exceptions Propagate |  |
-| 91 | `testCopiesAreIndependentAndPreserveIndexZero` | Copies Are Independent And Preserve Index Zero |  |
-| 103 | `testCopyDestinationFormsAndFallbacks` | Copy Destination Forms And Fallbacks |  |
-| 117 | `testFreshCollectionAcceptsMemberReplacement` | Fresh Collection Accepts Member Replacement |  |
-| 126 | `testIterationKeysMixRegisteredNamesAndNumericPositions` | Iteration Keys Mix Registered Names And Numeric Positions |  |
-| 135 | `testRegisteredNumericZeroDoesNotBecomeTheCurrentPosition` | Registered Numeric Zero Does Not Become The Current Position |  |
-| 142 | `testRangeLimitIsACountAndClipsAtTheEnd` | Range Limit Is A Count And Clips At The End |  |
-| 157 | `testRangeRejectsStartAtTheMemberCount` | Range Rejects Start At The Member Count |  |
+| 66 | `testCallbacksRunOncePerAddedMember` | Callbacks Run Once Per Added Member |  |
+| 75 | `testFilterCanIgnoreAMemberAndRunsOnce` | Filter Can Ignore A Member And Runs Once |  |
+| 82 | `testValidatorExceptionsPropagate` | Validator Exceptions Propagate |  |
+| 89 | `testCopiesAreIndependentAndPreserveIndexZero` | Copies Are Independent And Preserve Index Zero |  |
+| 101 | `testCopyDestinationFormsAndFallbacks` | Copy Destination Forms And Fallbacks |  |
+| 115 | `testFreshCollectionAcceptsMemberReplacement` | Fresh Collection Accepts Member Replacement |  |
+| 124 | `testIterationKeysMixRegisteredNamesAndNumericPositions` | Iteration Keys Mix Registered Names And Numeric Positions |  |
+| 133 | `testRegisteredNumericZeroDoesNotBecomeTheCurrentPosition` | Registered Numeric Zero Does Not Become The Current Position |  |
+| 140 | `testRangeLimitIsACountAndClipsAtTheEnd` | Range Limit Is A Count And Clips At The End |  |
+| 155 | `testRangeRejectsStartAtTheMemberCount` | Range Rejects Start At The Member Count |  |
 
 ### `tests/Unit/Core/ConfigTest.php` (16)
 
@@ -458,8 +458,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 | --- | --- | --- | --- |
 | 7 | `testTextAndTextareaInputsEscapeNamesAndValues` | Text And Textarea Inputs Escape Names And Values |  |
 | 18 | `testNestedFormsApplyNestedTypeMaps` | Nested Forms Apply Nested Type Maps |  |
-| 28 | `testSerializeCurrentlyDiscardsItsConstructedForm` | Serialize Currently Discards Its Constructed Form | **known defect KD-24** |
-| 32 | `testDecodeExplicitlyReportsFeatureNotReady` | Decode Explicitly Reports Feature Not Ready |  |
+| 27 | `testSerializeReturnsTheConstructedForm` | Serialize Returns The Constructed Form |  |
+| 33 | `testDecodeExplicitlyReportsFeatureNotReady` | Decode Explicitly Reports Feature Not Ready |  |
 
 ### `tests/Unit/Core/LegacyErrorMessagesTest.php` (19)
 
@@ -490,21 +490,21 @@ PHPUnit's `--list-tests-xml` and converts it with
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 21 | `testListenerFactoryUsesTheExistingLoaderContractAndSharedFactory` | Listener Factory Uses The Existing Loader Contract And Shared Factory |  |
-| 32 | `testHookableCurrentlyDropsEventDataAndReportsItsUndefinedLocal` | Hookable Currently Drops Event Data And Reports Its Undefined Local | **known defect KD-17** |
-| 49 | `testListenerConstructorImmediatelyInvokesItsCallback` | Listener Constructor Immediately Invokes Its Callback |  |
-| 55 | `testStubCurrentlyReadsASeparateUndeclaredListenerProperty` | Stub Currently Reads A Separate Undeclared Listener Property | **known defect KD-18** |
+| 31 | `testHookablePassesItsEventDataToTheHandler` | Hookable Passes Its Event Data To The Handler |  |
+| 40 | `testListenerConstructorImmediatelyInvokesItsCallback` | Listener Constructor Immediately Invokes Its Callback |  |
+| 45 | `testStubReturnsTheListenersItWasGiven` | Stub Returns The Listeners It Was Given |  |
 
 ### `tests/Unit/Core/LegacyMappingTest.php` (7)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 10 | `testDeclaredCoreDataFieldsAreMapped` | Declared Core Data Fields Are Mapped |  |
-| 14 | `testCoreDataMarkerOptsIntoCreatingProperties` | Core Data Marker Opts Into Creating Properties |  |
-| 19 | `testCoreDataDoesNotCreateUndeclaredPropertiesByDefault` | Core Data Does Not Create Undeclared Properties By Default |  |
-| 24 | `testListKeysAndIndexZeroDefaultFollowCurrentMappingRules` | List Keys And Index Zero Default Follow Current Mapping Rules |  |
-| 31 | `testNonObjectInputCurrentlyProducesAnEmptyMap` | Non Object Input Currently Produces An Empty Map | **known defect KD-26** |
-| 36 | `testObjectMappingCurrentlyOmitsRequiredValueArgument` | Object Mapping Currently Omits Required Value Argument | **known defect KD-26** |
-| 41 | `testControllerExportsAreLimitedToFlatDataObjects` | Controller Exports Are Limited To Flat Data Objects |  |
+| 11 | `testDeclaredCoreDataFieldsAreMapped` | Declared Core Data Fields Are Mapped |  |
+| 15 | `testCoreDataMarkerOptsIntoCreatingProperties` | Core Data Marker Opts Into Creating Properties |  |
+| 20 | `testCoreDataDoesNotCreateUndeclaredPropertiesByDefault` | Core Data Does Not Create Undeclared Properties By Default |  |
+| 25 | `testListKeysAndIndexZeroDefaultFollowCurrentMappingRules` | List Keys And Index Zero Default Follow Current Mapping Rules |  |
+| 31 | `testNonObjectInputHasNothingToMap` | Non Object Input Has Nothing To Map |  |
+| 35 | `testObjectFieldsMapOntoDeclaredProperties` | Object Fields Map Onto Declared Properties |  |
+| 42 | `testControllerExportsAreLimitedToFlatDataObjects` | Controller Exports Are Limited To Flat Data Objects |  |
 
 ### `tests/Unit/Core/MapperTest.php` (16)
 
@@ -846,40 +846,40 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 7 | `testValidationFailureCollectsOnlyStringFieldsAndCurrentlyIgnoresMessage` | Validation Failure Collects Only String Fields And Currently Ignores Message | **known defect KD-38** |
-| 20 | `testDataNotFoundRetainsLookupContext` | Data Not Found Retains Lookup Context |  |
-| 28 | `testRandomFailurePreservesRequestedLength` | Random Failure Preserves Requested Length |  |
-| 36 | `testCliErrorExposesStatusUsageFlagAndData` | Cli Error Exposes Status Usage Flag And Data |  |
-| 47 | `testCloudErrorsExposeParameterAndChildClass` | Cloud Errors Expose Parameter And Child Class |  |
+| 6 | `testValidationFailureCollectsStringFieldsAndKeepsItsMessage` | Validation Failure Collects String Fields And Keeps Its Message |  |
+| 21 | `testDataNotFoundRetainsLookupContext` | Data Not Found Retains Lookup Context |  |
+| 29 | `testRandomFailurePreservesRequestedLength` | Random Failure Preserves Requested Length |  |
+| 37 | `testCliErrorExposesStatusUsageFlagAndData` | Cli Error Exposes Status Usage Flag And Data |  |
+| 48 | `testCloudErrorsExposeParameterAndChildClass` | Cloud Errors Expose Parameter And Child Class |  |
 
 ### `tests/Unit/Data/MapperTest.php` (24)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 30 | `testBaseFieldListIsAbsentAndUnknownDumpTypesUseHumanFallback` | Base Field List Is Absent And Unknown Dump Types Use Human Fallback |  |
-| 43 | `testWebviewCurrentlyDiscardsTheHtmlEncodedClone` | Webview Currently Discards The Html Encoded Clone | **known defect KD-36** |
-| 49 | `testRuleConsumerReceivesConstructedAndExplicitRules` | Rule Consumer Receives Constructed And Explicit Rules |  |
-| 58 | `testFieldListWithInstanceCurrentlyFailsBeforeCreatingReflection` | Field List With Instance Currently Fails Before Creating Reflection | **known defect KD-37** |
-| 64 | `testConstructorsMapNamedAndPositionalDataAndIgnoreUnknownFields` | Constructors Map Named And Positional Data And Ignore Unknown Fields |  |
-| 74 | `testFieldInspectionAndCallbacks` | Field Inspection And Callbacks |  |
-| 94 | `testInvalidFieldName` | Invalid Field Name |  |
-| 99 | `testMissingField` | Missing Field |  |
-| 104 | `testMagicFieldAccessStrippingAndFallbacks` | Magic Field Access Stripping And Fallbacks |  |
-| 120 | `testEachFieldAndScalarConversions` | Each Field And Scalar Conversions |  |
-| 137 | `testRecursiveHtmlEncodingClonesTheData` | Recursive Html Encoding Clones The Data |  |
-| 148 | `testTypeAndLifecycleInterfaces` | Type And Lifecycle Interfaces |  |
-| 157 | `testStringRepresentations` | String Representations |  |
-| 174 | `testInvalidStringifierThrows` | Invalid Stringifier Throws | 3 data-provider cases |
-| 180 | `testKeyPrefixMappingPreservesUnmatchedKeysAndExistingMap` | Key Prefix Mapping Preserves Unmatched Keys And Existing Map |  |
-| 188 | `testInvalidPrefixThrows` | Invalid Prefix Throws |  |
-| 194 | `testEmptyMappingKeyThrows` | Empty Mapping Key Throws |  |
-| 201 | `testNumericConversionPreservesNonNumericStrings` | Numeric Conversion Preserves Non Numeric Strings | 4 data-provider cases |
-| 209 | `testDumpFormatsAndStringFailureRecovery` | Dump Formats And String Failure Recovery |  |
-| 227 | `testHtmlEncodingPlainObjectsAndUnsupportedResources` | Html Encoding Plain Objects And Unsupported Resources |  |
-| 239 | `testUtf8FixOnlyTouchesSelectedStringFields` | Utf8 Fix Only Touches Selected String Fields |  |
-| 247 | `testMapAppliesMissingDefaultsAndOptionalEmptyDefaults` | Map Applies Missing Defaults And Optional Empty Defaults |  |
-| 260 | `testRuleObjectConstructorAndRemapping` | Rule Object Constructor And Remapping |  |
-| 269 | `testInvalidMappingRules` | Invalid Mapping Rules | 3 data-provider cases |
+| 31 | `testBaseFieldListIsAbsentAndUnknownDumpTypesUseHumanFallback` | Base Field List Is Absent And Unknown Dump Types Use Human Fallback |  |
+| 43 | `testWebviewDataIsHtmlEncodedOnConstruction` | Webview Data Is Html Encoded On Construction |  |
+| 52 | `testRuleConsumerReceivesConstructedAndExplicitRules` | Rule Consumer Receives Constructed And Explicit Rules |  |
+| 60 | `testFieldListUsesTheInstanceAndCachesPerClass` | Field List Uses The Instance And Caches Per Class |  |
+| 68 | `testConstructorsMapNamedAndPositionalDataAndIgnoreUnknownFields` | Constructors Map Named And Positional Data And Ignore Unknown Fields |  |
+| 78 | `testFieldInspectionAndCallbacks` | Field Inspection And Callbacks |  |
+| 98 | `testInvalidFieldName` | Invalid Field Name |  |
+| 103 | `testMissingField` | Missing Field |  |
+| 108 | `testMagicFieldAccessStrippingAndFallbacks` | Magic Field Access Stripping And Fallbacks |  |
+| 124 | `testEachFieldAndScalarConversions` | Each Field And Scalar Conversions |  |
+| 141 | `testRecursiveHtmlEncodingClonesTheData` | Recursive Html Encoding Clones The Data |  |
+| 152 | `testTypeAndLifecycleInterfaces` | Type And Lifecycle Interfaces |  |
+| 161 | `testStringRepresentations` | String Representations |  |
+| 178 | `testInvalidStringifierThrows` | Invalid Stringifier Throws | 3 data-provider cases |
+| 184 | `testKeyPrefixMappingPreservesUnmatchedKeysAndExistingMap` | Key Prefix Mapping Preserves Unmatched Keys And Existing Map |  |
+| 192 | `testInvalidPrefixThrows` | Invalid Prefix Throws |  |
+| 198 | `testEmptyMappingKeyThrows` | Empty Mapping Key Throws |  |
+| 205 | `testNumericConversionPreservesNonNumericStrings` | Numeric Conversion Preserves Non Numeric Strings | 4 data-provider cases |
+| 213 | `testDumpFormatsAndStringFailureRecovery` | Dump Formats And String Failure Recovery |  |
+| 231 | `testHtmlEncodingPlainObjectsAndUnsupportedResources` | Html Encoding Plain Objects And Unsupported Resources |  |
+| 243 | `testUtf8FixOnlyTouchesSelectedStringFields` | Utf8 Fix Only Touches Selected String Fields |  |
+| 251 | `testMapAppliesMissingDefaultsAndOptionalEmptyDefaults` | Map Applies Missing Defaults And Optional Empty Defaults |  |
+| 264 | `testRuleObjectConstructorAndRemapping` | Rule Object Constructor And Remapping |  |
+| 273 | `testInvalidMappingRules` | Invalid Mapping Rules | 3 data-provider cases |
 
 ### `tests/Unit/Data/Orm/LegacyOrmTest.php` (3)
 

@@ -72,6 +72,13 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-124 (KD-27) | CLI arguments | Missing `$argv` raised a PHP `Error` (class `flat\core\RuntimeException` not found) | Raises `\RuntimeException` | `catch (\Error` around `cli::` calls |
 | MOD-124 (KD-31) | cURL response | Missing transfer info raised a PHP `Error` (empty exception file) | Raises `flat\core\curl\exception\missing_curlinfo` | Catches around `curl\response` |
 | MOD-124 (KD-11, 47, 48, 49) | Exception messages | Asset "could resolve"; `bad_interface` dropped the class and reason when a method was given; SSH `not_ready`/`pubkey` replaced their text with ": detail"; `duplicate_key` warned on array indexes and ended default messages with ", " | "could not resolve"; full class, method and reason; prefix kept; no warning, "(non-scalar index)", no trailing ", " | Code or log parsing that matches these exact messages |
+| MOD-126 (KD-25) | Collection callbacks | The data validator and filter ran twice per `add()`: a filter adding 1 added 2 | Each runs once | `set_data_validator(`, `set_data_filter(` |
+| MOD-126 (KD-36, 65) | Data HTML encoding | `webview` data and `dump(..., ['htmlencode'])` were not actually encoded | Fields are HTML-encoded on construction for `webview` data; the dump is encoded | `implements \flat\data\webview`; `dump(` with `htmlencode`; code that encoded these values again |
+| MOD-126 (KD-37, 69) | Data field lists | `field_list($instance)` raised a PHP `Error`; without an instance, every class after the first got the first class's fields, so `is_field()` could be wrong | Each class gets its own fields | `field_list(`, `is_field(` |
+| MOD-126 (KD-24) | HTML form encoding | `form::serialize()` returned `null` | Returns the form HTML | `html\encode\form::serialize(` |
+| MOD-126 (KD-26) | Map from object | Mapping an object or array raised `ArgumentCountError` | Maps onto the subclass's declared properties; undeclared names raise `cannot_set_property` | `util\map\from_object` |
+| MOD-126 (KD-38) | Validation failure | The message argument was discarded | `get_message()` and `getMessage()` return it | `validate_failure(` with a message |
+| MOD-126 (KD-17, 18) | Legacy events | `hookable` passed no data to its handler (with notices); `stub::get_listeners()` returned nothing | The handler receives the event data; the added listeners are returned | `event\hookable`, `event\stub` |
 
 ## Suggested consumer check
 

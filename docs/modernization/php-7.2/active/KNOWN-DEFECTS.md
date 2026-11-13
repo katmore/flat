@@ -49,16 +49,16 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-14 | Asset | Unknown resource types and the style-source tag produce no output | `AssetTest::testUnimplementedResourceAndTagCasesCurrentlyProduceNoOutput` | C | Q5 | open |
 | KD-15 | Shutdown | Integer weight `0` joins the default queue; out-of-range weights (±51) are silently accepted | `Core/ShutdownTest::testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue` | A | `0` is a weight (docs: -50 to 50); out of range throws `bad_priority` | open |
 | KD-16 | Shutdown | Explicit invocation followed by PHP shutdown runs callbacks twice (`_clear()` was commented out by the original author) | `ShutdownTest::testRepeatedInvocationCurrentlyRepeatsCallbacks` | B | Q6 | fixed (MOD-112) |
-| KD-17 | Events | `hookable` drops event data and reads an undefined local | `Core/LegacyListenerTest::testHookableCurrentlyDropsEventDataAndReportsItsUndefinedLocal` | A | Pass the supplied event data to the handler | open |
-| KD-18 | Events | `stub::get_listeners` reads an undeclared property | `LegacyListenerTest::testStubCurrentlyReadsASeparateUndeclaredListenerProperty` | A | Return the listeners `add_listener` stored | open |
+| KD-17 | Events | `hookable` drops event data and reads an undefined local | `Core/LegacyListenerTest::testHookableCurrentlyDropsEventDataAndReportsItsUndefinedLocal` | A | Pass the supplied event data to the handler | fixed (MOD-126) |
+| KD-18 | Events | `stub::get_listeners` reads an undeclared property | `LegacyListenerTest::testStubCurrentlyReadsASeparateUndeclaredListenerProperty` | A | Return the listeners `add_listener` stored | fixed (MOD-126) |
 | KD-19 | Yasumi wrapper | Valid date/year fields stay unset; the provider cache is not attached; providers reject the wrapper's raw timestamp | `Vendor/YasumiDateQueryTest::testValidDateAndExplicitYearCurrentlyLeaveTheirBackingFieldsUnset`, `::testProviderCacheCurrentlyDoesNotAttachItsHitToTheNextInstance`, `::testRealProviderRejectsTheWrappersRawTimestamp` | B | Q7 | open |
 | KD-20 | Validation factory | The default constraint rejects the pair its own helper builds | `Core/Util/ValidationFactoryTest::testDefaultConstraintCurrentlyRejectsThePairBuiltByItsHelper` | B | Q8 | open |
 | KD-21 | Validation | `value_on_pass`, `value_on_fail`, `exception_on_fail` and `fail_handler` are documented but ignored | `Core/Util/ValidationTest::testNullDefaultOptionsCurrentlyCannotBeOverridden` | B | Q9 | open |
 | KD-22 | Validation | A PCRE engine error returns `false` instead of the existing `preg_error` | `ValidationTest::testPcreExecutionErrorCurrentlyReturnsFalse` | B | Q10 | open |
 | KD-23 | Image | Constructor with both bounds leaves the image unchanged | `Core/Util/Image/ImageTest::testBothConstructorBoundsCurrentlyLeaveTheImageUnchanged` | B | Q11 | open |
-| KD-24 | HTML form | `serialize` builds the form and returns `null` | `Core/Html/FormTest::testSerializeCurrentlyDiscardsItsConstructedForm` | A | Return the built form | open |
-| KD-25 | Collection | Data validator and filter run twice per added member | `Core/CollectionTest::testCurrentCallbacksRunTwicePerAddedMember` | A | Run each once | open |
-| KD-26 | Map from object | Non-objects give an empty map; objects fail with `ArgumentCountError` | `Core/LegacyMappingTest::testNonObjectInputCurrentlyProducesAnEmptyMap`, `::testObjectMappingCurrentlyOmitsRequiredValueArgument` | A | Pass the missing value argument | open |
+| KD-24 | HTML form | `serialize` builds the form and returns `null` | `Core/Html/FormTest::testSerializeCurrentlyDiscardsItsConstructedForm` | A | Return the built form | fixed (MOD-126) |
+| KD-25 | Collection | Data validator and filter run twice per added member | `Core/CollectionTest::testCurrentCallbacksRunTwicePerAddedMember` | A | Run each once | fixed (MOD-126) |
+| KD-26 | Map from object | Non-objects give an empty map; objects fail with `ArgumentCountError` | `Core/LegacyMappingTest::testNonObjectInputCurrentlyProducesAnEmptyMap`, `::testObjectMappingCurrentlyOmitsRequiredValueArgument` | A | Pass the missing value argument | fixed (MOD-126) |
 | KD-27 | CLI | Missing `$argv` throws an unqualified `flat\core\RuntimeException` (`Error`) | `Core/CliTest::testMissingArgvPreservesCurrentExceptionNamespaceFailure` | A | Throw `\RuntimeException` | fixed (MOD-124) |
 | KD-28 | Core mapper | Private-access options fail on the `setAcessible` typo | `Core/MapperTest::testKnownPrivateAccessReflectionTypo` | B | Q12 | fixed (MOD-113) |
 | KD-29 | Debug | `data2str` uses the object template for arrays and leaves placeholders for small scalars | `Core/DebugTest::testDataDescriptionsCharacterizeCurrentFormatting` | A | Use the matching template and fill it | open |
@@ -68,9 +68,9 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-33 | Legacy ORM | The static `get_data` facade discards its result | `Data/Orm/LegacyOrmTest::testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult` | A | Return the stored data | open |
 | KD-34 | Legacy ORM | A nonempty constructor array cannot act as a driver | `LegacyOrmTest::testNonemptyConstructorArrayStillCannotActAsADriver` | B | Q13 | open |
 | KD-35 | ORM session driver | `destroy` regenerates the id after ending the session (warning) | `Data/Orm/SessionDriverTest::testDestroyCurrentlyAttemptsRegenerationAfterEndingTheSession` | A | Regenerate before destroying, or not at all | open |
-| KD-36 | Data mapper | `webview` discards its HTML-encoded clone | `Data/MapperTest::testWebviewCurrentlyDiscardsTheHtmlEncodedClone` | A | Return the encoded clone | open |
-| KD-37 | Data mapper | `field_list($instance)` fails before creating its reflection | `Data/MapperTest::testFieldListWithInstanceCurrentlyFailsBeforeCreatingReflection` | A | Create the reflection for the instance | open |
-| KD-38 | Validation failure | The message argument is ignored | `Data/ErrorDetailsTest::testValidationFailureCollectsOnlyStringFieldsAndCurrentlyIgnoresMessage` | A | Store and return the message | open |
+| KD-36 | Data mapper | `webview` discards its HTML-encoded clone | `Data/MapperTest::testWebviewCurrentlyDiscardsTheHtmlEncodedClone` | A | Return the encoded clone | fixed (MOD-126) |
+| KD-37 | Data mapper | `field_list($instance)` fails before creating its reflection | `Data/MapperTest::testFieldListWithInstanceCurrentlyFailsBeforeCreatingReflection` | A | Create the reflection for the instance | fixed (MOD-126) |
+| KD-38 | Validation failure | The message argument is ignored | `Data/ErrorDetailsTest::testValidationFailureCollectsOnlyStringFieldsAndCurrentlyIgnoresMessage` | A | Store and return the message | fixed (MOD-126) |
 | KD-39 | Payments | Transaction adapter's `isset` guard drops SDK fields initialized to `null`, including `amount` | `Cloud/AuthorizeTransactionTest::testAdapterRetainsMappedInitializedFieldsAndCurrentNullFieldLimitation` | A | Map every declared SDK field | open |
 | KD-40 | Payments | Subscription `create` drops `billTo` (same `isset` rule) | `Cloud/AuthorizeSubscriptionTest::testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn` | A | Map declared SDK fields | open |
 | KD-41 | Payments | Subscription `create` returns `null`; its docblock promises the subscription id | same test | B | Q14 | open |
@@ -98,10 +98,11 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-62 | Mongo | `load_client()` without options loops over `null` (warning) | (follow-ups; source checked 2026-11) | A | Treat missing options as `[]` | open |
 | KD-63 | S3 | Multipart threshold is 10 GiB though the comment says 10 MB; a single S3 upload cannot exceed 5 GB, so 5 GB to 10 GiB files would fail | (follow-ups; source checked 2026-11) | B | Q20 | open |
 | KD-64 | S3 | Large (multipart) uploads do not pass on the file's MIME type | (follow-ups; not yet verified) | A | Pass the content type to the multipart upload | open |
-| KD-65 | Data mapper | `dump` HTML-encoding ignores its encoded clone (same pattern as KD-36) | (follow-ups; not yet verified) | A | Use the encoded clone | open |
+| KD-65 | Data mapper | `dump` HTML-encoding ignores its encoded clone (same pattern as KD-36) | (follow-ups; not yet verified) | A | Use the encoded clone | fixed (MOD-126) |
 | KD-66 | Exceptions | Exception wrapping `print_r`s traces including arguments and can exhaust memory on large objects | (follow-ups; not yet verified) | B | Q21 | open |
 | KD-67 | SSH | Temporary key files are not cleaned up when connection setup fails part-way; key encryption uses no explicit cipher | (follow-ups; not yet verified) | B | Q22 | open |
 | KD-68 | Validation controller | The validation body is unfinished; it inspects fields and then does nothing | (follow-ups; not yet verified) | C | Q23 | open |
+| KD-69 | Data mapper | `field_list()` caches one list for every `flat\data` subclass, so later classes get the first class's fields (and `is_field()` answers wrongly) | `Data/MapperTest::testFieldListUsesTheInstanceAndCachesPerClass` | A | Cache per class | fixed (MOD-126) |
 
 ## Test-strength tasks
 

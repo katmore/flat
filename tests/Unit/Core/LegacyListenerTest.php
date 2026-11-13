@@ -28,43 +28,26 @@ class LegacyListenerTest extends TestCase
         $factory->trigger_event('factory-event','payload');
         $this->assertSame(['payload'],$seen);
     }
-    /** @group known-defect */
-    public function testHookableCurrentlyDropsEventDataAndReportsItsUndefinedLocal()
+    public function testHookablePassesItsEventDataToTheHandler()
     {
-        $notices = []; $previous = null;
-        $previous = set_error_handler(function ($severity,$message,$file,$line) use (&$notices,&$previous) {
-            if (strpos($file,'/event/hookable.php') !== false && strpos($message,'event_data') !== false) { $notices[]=$message; return true; }
-            return $previous ? $previous($severity,$message,$file,$line) : false;
-        });
         $seen = []; $handler = function (...$args) use (&$seen) { $seen[]=$args; };
-        try {
-            $event = new HookableFixture('original','target',$handler,'ignored data');
-            $this->assertSame('original',$event->get_name()); $event->fire();
-            $event->resetParameters('updated','target',$handler,'also ignored');
-            $this->assertSame('updated',$event->get_name()); $event->fire();
-        } finally { restore_error_handler(); }
-        $this->assertSame([[],[]],$seen);
-        $this->assertCount(2,$notices);
+        $event = new HookableFixture('original','target',$handler,'first data');
+        $this->assertSame('original',$event->get_name()); $event->fire();
+        $event->resetParameters('updated','target',$handler,'second data');
+        $this->assertSame('updated',$event->get_name()); $event->fire();
+        $this->assertSame([['first data'],['second data']],$seen);
     }
     public function testListenerConstructorImmediatelyInvokesItsCallback()
     {
         $data = new \stdClass;
         $this->assertSame([$data,'event'],(new ConstructorListenerFixture($data,'event'))->seen);
     }
-    /** @group known-defect */
-    public function testStubCurrentlyReadsASeparateUndeclaredListenerProperty()
+    public function testStubReturnsTheListenersItWasGiven()
     {
-        $stub = new \flat\core\event\stub('local-stub'); $callback = function () {};
-        $stub->add_listener($callback);
-        $notices = []; $previous = null;
-        $previous = set_error_handler(function ($severity,$message,$file,$line) use (&$notices,&$previous) {
-            if (strpos($file,'/event/stub.php') !== false && strpos($message,'listeners') !== false) { $notices[]=$message; return true; }
-            return $previous ? $previous($severity,$message,$file,$line) : false;
-        });
-        try { $this->assertSame([],$stub->get_listeners()); }
-        finally { restore_error_handler(); }
-        $this->assertCount(1,$notices);
-        $stub->listeners = [$callback];
-        $this->assertSame([$callback],$stub->get_listeners());
+        $stub = new \flat\core\event\stub('local-stub');
+        $this->assertSame([],$stub->get_listeners());
+        $first = function () {}; $second = function () {};
+        $stub->add_listener($first); $stub->add_listener($second);
+        $this->assertSame([$first,$second],$stub->get_listeners());
     }
 }

@@ -3,14 +3,15 @@ namespace flat\test\Unit\Data;
 use PHPUnit\Framework\TestCase;
 class ErrorDetailsTest extends TestCase
 {
-    /** @group known-defect */
-    public function testValidationFailureCollectsOnlyStringFieldsAndCurrentlyIgnoresMessage()
+    public function testValidationFailureCollectsStringFieldsAndKeepsItsMessage()
     {
         foreach ([null, '', 42] as $field) {
-            $failure = new \flat\data\validate_failure($field, 'currently ignored');
+            $failure = new \flat\data\validate_failure($field, 'local message');
             $this->assertSame([], $failure->get_field());
-            $this->assertNull($failure->get_message());
+            $this->assertSame('local message', $failure->get_message());
+            $this->assertSame('local message', $failure->getMessage());
         }
+        $this->assertNull((new \flat\data\validate_failure('email'))->get_message());
         $failure = new \flat\data\validate_failure('email');
         $failure->add_field('name');
         $this->assertSame(['email','name'], $failure->get_field());

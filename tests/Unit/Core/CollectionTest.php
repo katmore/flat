@@ -63,23 +63,21 @@ class CollectionTest extends TestCase
         $this->expectExceptionMessage('position:0 is out of range');
         (new collection)->range();
     }
-    /** @group known-defect */
-    public function testCurrentCallbacksRunTwicePerAddedMember()
+    public function testCallbacksRunOncePerAddedMember()
     {
         $col = new collection; $validated = [];
         $col->set_data_validator(function ($data) use (&$validated) { $validated[] = $data; });
         $col->set_data_filter(function ($data) { return $data + 1; });
         $col->add(1, 'key');
-        $this->assertSame([1, 2], $validated);
-        $this->assertSame(3, $col->get('key')->get_data());
+        $this->assertSame([1], $validated);
+        $this->assertSame(2, $col->get('key')->get_data());
     }
-    public function testFilterCanIgnoreOnEitherInvocation()
+    public function testFilterCanIgnoreAMemberAndRunsOnce()
     {
-        $col = new collection; $col->set_data_filter(function () { return new ignore; });
+        $col = new collection; $calls = 0;
+        $col->set_data_filter(function () use (&$calls) { $calls++; return new ignore; });
         $this->assertNull($col->add('ignored')); $this->assertSame(0, $col->count());
-        $calls = 0;
-        $col->set_data_filter(function ($value) use (&$calls) { return ++$calls === 2 ? new ignore : $value; });
-        $this->assertNull($col->add('ignored')); $this->assertSame(0, $col->count());
+        $this->assertSame(1, $calls);
     }
     public function testValidatorExceptionsPropagate()
     {

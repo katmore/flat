@@ -77,7 +77,7 @@ trait mapper {
          // human dump fallback for every type other than 'var'.
          $dump=\flat\core\util\deepcopy::data($this);
          if (in_array('htmlencode',$flags)) {
-            $dump->htmlentities();
+            $dump = $dump->htmlentities();
          }
          //$dump->remove_non_visible();
          return new \flat\data\dump(print_r($dump,true));
@@ -536,24 +536,24 @@ trait mapper {
     * 
     * @return null|string[]
     */
-   private static $_field=NULL;
+   private static $_field=array();
    final public static function field_list(\flat\data $instance=NULL) {
 
       if ($instance) {
-         
+         $class_name = get_class($instance);
       } else {
          $class = "flat\\data";
          if (substr( get_called_class(), 0, strlen($class) ) == $class) {
             return null;
          }
-         /*
-          * only enumerate once
-          */
-         if (is_array(self::$_field)) return self::$_field;
-         
-         $r = new \ReflectionClass(get_called_class());
-         
+         $class_name = get_called_class();
       }
+      /*
+       * only enumerate once per class (the cache is shared by every subclass,
+       * so it is keyed by class name)
+       */
+      if (isset(self::$_field[$class_name])) return self::$_field[$class_name];
+      $r = new \ReflectionClass($class_name);
       $prop = $r->getProperties(\ReflectionProperty::IS_PUBLIC);
       $field = array();
       foreach ($prop as $p) $field[] = $p->getName();
@@ -561,7 +561,7 @@ trait mapper {
       /*
        * save list for later
        */
-      self::$_field = $field;
+      self::$_field[$class_name] = $field;
       return $field;      
    }
    
@@ -758,7 +758,10 @@ trait mapper {
       
       if ($this instanceof \flat\data\webview) {
          $this->utf8_fix();
-         $this->htmlentities();
+         // htmlentities() returns an encoded clone; apply its fields here.
+         foreach (get_object_vars($this->htmlentities()) as $field=>$value) {
+            $this->$field = $value;
+         }
       }
       
       /*
