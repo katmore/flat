@@ -2078,3 +2078,10 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   unchanged.
 - New root `CLAUDE.md` contains only `@AGENTS.md`, which imports it, so Claude
   Code reads the same rules as other agents; `AGENTS.md` stays the single source.
+
+## MOD-123 — Owner answers all remaining known-defect questions
+
+- The owner read every open question and the KD entries they reference and
+  agreed with all 20 recommendations (questions 1-5, 7-11, 13-15, 17-23).
+  Each question in `active/KNOWN-DEFECTS.md` is marked answered; every open
+  defect is now actionable. No code change in this entry; fixes follow.

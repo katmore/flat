@@ -8,11 +8,10 @@ model and the rules every phase follows are in [../README.md](../README.md).
 
 - **Tests:** 1,305 tests pass on PHP 7.2.34 with 100% class, method and line
   coverage. How to run them: [../TESTING.md](../TESTING.md).
-- **Known defects (in progress):** 68 tracked, 4 fixed, 64 open.
-  - 44 clear bugs: no input needed, being worked through.
-  - 18 need the owner's decision, and 2 unfinished stubs need implement-or-retire
-    decisions: 20 owner questions are open at the bottom of
-    [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+- **Known defects (in progress):** 68 tracked, 4 fixed, 64 open, all
+  actionable: the owner answered every question (agreeing with each
+  recommendation), so no input is pending. Work list:
+  [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
   - 5 test-strength tasks (TS-01 to TS-05).
 - **Not started:** functional tests against `flat-webapp`.
 - **Not done until** the owner declares the phase complete.
@@ -26,8 +25,8 @@ For a person or an agent picking this up:
 2. Run the tests (`docker/bin/test`, see [../TESTING.md](../TESTING.md)) and
    confirm they pass before changing anything.
 3. Pick open work from [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
-   Category A items can be fixed directly; B and C items wait for the owner's
-   answer to their question. `docker/bin/test unit --group known-defect` lists the
+   Category A items can be fixed directly; B and C items follow the owner's
+   answer to their question (all answered so far). `docker/bin/test unit --group known-defect` lists the
    tests that still assert defective behavior.
 4. For each fix, follow "How each fix lands" in
    [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): fix the source, rewrite
@@ -44,7 +43,7 @@ For a person or an agent picking this up:
 ## Next
 
 1. Fix the open category A defects in small, separately committed batches.
-2. Apply the owner's answers to the open questions (B and C items).
+2. Apply the owner's answers to the B and C items (all questions answered).
 3. Close the test-strength tasks.
 4. Write functional tests with `flat-webapp`.
 5. Owner decides the phase is complete; then it moves to `modernize-26`.

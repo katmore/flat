@@ -124,32 +124,53 @@ treating `0`/`false`/`"0"` as empty (TS-03), `csv::fields2csv([])` returning a n
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough.
+Each has a recommendation; "agree" is enough. All 23 are answered: the owner
+agreed with every recommendation.
 
 1. **KD-03 PDO fetch options.** Recommend: implement the documented meanings
    (true = generic data rows, class = rows as that class, callback = per row,
    false = raw arrays).
+   **Answered: agreed** (owner, 2026-11-13).
+
 2. **KD-05 DB `load_read`.** Recommend: call the subclass's `op_read()` when it
    implements `\flat\db\op\read` (the original body already did this).
+   **Answered: agreed** (owner, 2026-11-13).
+
 3. **KD-07 API `requestMethod()`.** Recommend: return the method actually
    dispatched to the handler (`GET` for a `HEAD` request served by `GET`).
+   **Answered: agreed** (owner, 2026-11-13).
+
 4. **KD-13 HTML specials.** Recommend: emit multiple strings/callbacks in the
    supplied order, with no self-dependency.
+   **Answered: agreed** (owner, 2026-11-13).
+
 5. **KD-14 unknown asset types/tags.** Recommend: throw the existing
    `bad_resource`/invalid-type error instead of printing nothing.
+   **Answered: agreed** (owner, 2026-11-13).
+
 6. **KD-16 repeated shutdown invocation.** Recommend: each callback runs at
    most once (restore `_clear()` after invocation).
    **Answered: agreed.** Fixed in MOD-112.
 7. **KD-19 Yasumi `get_date`.** Recommend: Unix timestamp, set for valid
    dates, and convert to `DateTime` when calling providers.
+   **Answered: agreed** (owner, 2026-11-13).
+
 8. **KD-20 validation factory.** Recommend: the default collects
    validator/data pairs, which is what its own helper builds.
+   **Answered: agreed** (owner, 2026-11-13).
+
 9. **KD-21 validation options.** Recommend: implement all four documented
    options.
+   **Answered: agreed** (owner, 2026-11-13).
+
 10. **KD-22 PCRE engine errors.** Recommend: throw `preg_error` (it already
     explains the native error); `false` hides bad input.
+    **Answered: agreed** (owner, 2026-11-13).
+
 11. **KD-23 image constructor with both bounds.** Recommend: treat them as
     minimums, scaling proportionally like `resize_min_proportional`.
+    **Answered: agreed** (owner, 2026-11-13).
+
 12. **KD-28 core mapper private access.** Recommend: remove the obsolete
     private-access options and throw a clear error, since you confirmed
     iteration is public-only (MOD-011).
@@ -157,10 +178,16 @@ Each has a recommendation; "agree" is enough.
     crashed. `set_private_property` already worked and is kept unchanged.
 13. **KD-34 legacy ORM constructor array.** Recommend: treat the array as
     driver configuration (resolve the driver from it).
+    **Answered: agreed** (owner, 2026-11-13).
+
 14. **KD-41 subscription `create` return.** Recommend: return the gateway's
     subscription id, as the docblock says.
+    **Answered: agreed** (owner, 2026-11-13).
+
 15. **KD-43 scalar `response_error`.** Recommend: the second argument is the
     message text; the first stays the code.
+    **Answered: agreed** (owner, 2026-11-13).
+
 16. **KD-45/46 unfinished payment conveniences and IP `load`.** Recommend:
     retire them (throw `BadMethodCallException`, as MOD-107 did for alerts)
     unless the consumer uses them.
@@ -168,17 +195,29 @@ Each has a recommendation; "agree" is enough.
     `get_transaction` was retired with them.
 17. **KD-55 random string invoke.** Recommend: an instance reuses its own
     configured pool and length.
+    **Answered: agreed** (owner, 2026-11-13).
+
 18. **KD-56 `rand::get` zero maximum.** Recommend: keep `0` meaning "default
     maximum", but reject a minimum above the resolved maximum.
+    **Answered: agreed** (owner, 2026-11-13).
 
 19. **KD-60 ORM delete after read.** Recommend: deleting a record that was read
     first must work; the guard looks meant to stop a repeated delete, not a
     delete after a read.
+    **Answered: agreed** (owner, 2026-11-13).
+
 20. **KD-63 S3 multipart threshold.** Recommend: 100 MB (Amazon's suggested
     multipart size); anything above 5 GB must use multipart regardless.
+    **Answered: agreed** (owner, 2026-11-13).
+
 21. **KD-66 exception trace formatting.** Recommend: summarize traces without
     argument values, like `app_error` summaries already do.
+    **Answered: agreed** (owner, 2026-11-13).
+
 22. **KD-67 SSH temporary keys.** Recommend: always remove temporary key files
     on failure, and encrypt them with an explicit cipher (AES-256).
+    **Answered: agreed** (owner, 2026-11-13).
+
 23. **KD-68 validation controller.** Recommend: retire it (clear exception)
     unless the consumer uses it; nothing in flat calls its unfinished body.
+    **Answered: agreed** (owner, 2026-11-13).
