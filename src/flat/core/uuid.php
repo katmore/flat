@@ -222,7 +222,7 @@ class uuid implements \flat\core\generator {
    * @see \flat\core\uuid::get()
    */
   public function __invoke($version=4,$namespace=null,$name=null) {
-     return self::get($version=4,$namespace=null,$name=null);
+     return self::get($version,$namespace,$name);
   }
   
   private $_version;

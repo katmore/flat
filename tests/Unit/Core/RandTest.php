@@ -92,4 +92,21 @@ class RandTest extends TestCase
             $this->assertLessThanOrEqual(10, $invoked);
         }
     }
+    /** @group known-defect */
+    public function testInvocationWithoutArgumentsCurrentlyIgnoresConstructedBounds()
+    {
+        $rand = new rand(5, 10);
+        for ($i = 0; $i < 50; $i++) {
+            $this->assertGreaterThanOrEqual(5, $rand->generate());
+            $this->assertLessThanOrEqual(10, $rand->generate());
+        }
+        // Invoked without arguments, the object falls back to 0..getrandmax().
+        $outside = 0;
+        for ($i = 0; $i < 100; $i++) {
+            $value = $rand();
+            $this->assertGreaterThanOrEqual(0, $value); $this->assertLessThanOrEqual(getrandmax(), $value);
+            if ($value > 10) $outside++;
+        }
+        $this->assertGreaterThan(0, $outside);
+    }
 }

@@ -2366,3 +2366,38 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   resolved and no test remains in `@group known-defect`.
 - Verified: `docker/bin/test all --coverage` passes 1,317 tests; 100% classes
   (331/331), methods (1,062/1,062), lines (8,050/8,050).
+
+## MOD-137 — Test-strength tasks TS-01 to TS-04; fix uuid invocation (KD-71); find KD-72
+
+- TS-01: UUID objects built with a version, namespace and name are tested
+  against the known v3 and v5 vectors through `generate()` and `(string)`; names
+  and versions are shown to be part of the state; a v4 object differs per call.
+- TS-03: `input\map` treats `0`, `false`, `'0'`, `''`, `0.0` and `[]` as empty
+  input (no properties) while whitespace, `'00'` and other non-empty scalars
+  become `data`.
+- TS-04: `csv::fields2csv([])` is an empty line (`"\n"`); non-scalars blank out.
+- TS-01 exposed KD-71: `uuid::__invoke()` assigned `$version=4,
+  $namespace=null, $name=null` in its call to `get()` instead of passing its
+  arguments, so calling a UUID object always returned a random v4 UUID, and the
+  test `testInvokeAlwaysReturnsV4` asserted that. It now returns the requested
+  version (documented as "versions 3, 4, or 5"). Verified the new test fails
+  with the old code restored.
+- TS-02 exposed KD-72: `$rand()` on an object built with bounds ignores them
+  (`generate()` uses them). It is a decision for the owner (Q25, the same as
+  Q17 for `rand\str`), so the behavior is pinned with a `known-defect` test.
+- Verified: see MOD-139 for the full-suite run after all TS work.
+
+## MOD-138 — Add the mutation probe (docker/bin/mutate)
+
+- Owner request (TS-05): a broader mutation probe, as repository tooling. New
+  `tests/tools/mutate.php` (PHP, token-based mutations: comparison, logic,
+  arithmetic, boolean and 0/1 swaps, negation removal) and the wrapper
+  `docker/bin/mutate`. The wrapper copies `src`, `tests` and the PHPUnit
+  configuration to `build/tests/mutate-work`, mounts that copy as `/app`, runs
+  the tool and deletes the copy, so the working tree is never touched; the tool
+  refuses to run without the copy's `.mutation-copy` marker. A baseline run of
+  the unmutated suite must pass first; each mutant gets a timeout; a mutant that
+  does not compile is skipped. The report is Markdown on stdout, progress on
+  stderr; a seed makes samples repeatable.
+- Verified on `core/session.php` (12 mutants: 7 caught, 5 survivors listed with
+  lines) and with a check that the working tree was unchanged afterwards.

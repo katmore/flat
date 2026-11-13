@@ -101,20 +101,35 @@ class UuidTest extends TestCase
             $this->addToAssertionCount(1);
         }
     }
-
-    /** Known quirk: __invoke() ignores its arguments and always returns v4. */
-    public function testInvokeAlwaysReturnsV4()
+    public function testInvokeGeneratesTheRequestedVersion()
     {
         $u = new uuid();
-        $value = $u(3, self::DNS, 'www.example.com');
-        $this->assertSame('4', $value[14]);
-        $this->assertNotSame('5df41881-3aed-3515-88a7-2f4a814cf09e', $value);
+        $this->assertSame('5df41881-3aed-3515-88a7-2f4a814cf09e', $u(3, self::DNS, 'www.example.com'));
+        $this->assertSame('2ed6657d-e927-568b-95e1-2665a8aea6a2', $u(5, self::DNS, 'www.example.com'));
+        $this->assertSame('4', $u()[14]);
+        $this->assertNotSame($u(), $u());
+        $this->assertSame('5df41881-3aed-3515-88a7-2f4a814cf09e', $u(['version'=>3,'namespace'=>self::DNS,'name'=>'www.example.com']));
     }
 
     public function testToStringReturnsUuidForConstructorState()
     {
         $uuid = new uuid(3, self::DNS, 'www.example.com');
         $this->assertSame('5df41881-3aed-3515-88a7-2f4a814cf09e', (string) $uuid);
+    }
+    public function testConfiguredStateDrivesGenerateAndStringConversion()
+    {
+        $v3 = new uuid(3, self::DNS, 'www.example.com');
+        $this->assertSame('5df41881-3aed-3515-88a7-2f4a814cf09e', $v3->generate());
+        $v5 = new uuid(5, self::DNS, 'www.example.com');
+        $this->assertSame('2ed6657d-e927-568b-95e1-2665a8aea6a2', $v5->generate());
+        $this->assertSame('2ed6657d-e927-568b-95e1-2665a8aea6a2', (string) $v5);
+        // Names and versions are part of the state: changing either changes the UUID.
+        $this->assertNotSame($v5->generate(), (new uuid(5, self::DNS, 'other.example.com'))->generate());
+        $this->assertNotSame($v5->generate(), $v3->generate());
+        // A version 4 object has no name to derive from, so each call is new.
+        $v4 = new uuid(4);
+        $this->assertSame('4', $v4->generate()[14]);
+        $this->assertNotSame($v4->generate(), $v4->generate());
     }
 
     public function testGenerateUsesConstructorState()

@@ -104,6 +104,8 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-68 | Validation controller | The validation body is unfinished; it inspects fields and then does nothing | (follow-ups; not yet verified) | C | Q23 | fixed (MOD-134) |
 | KD-69 | Data mapper | `field_list()` caches one list for every `flat\data` subclass, so later classes get the first class's fields (and `is_field()` answers wrongly) | `Data/MapperTest::testFieldListUsesTheInstanceAndCachesPerClass` | A | Cache per class | fixed (MOD-126) |
 | KD-70 | cURL config | The constructor's second loop re-assigns every text argument, so unset `request_method`, `user_agent`, `referrer` and `cache_dir` become `null` instead of their declared defaults (`GET`, `flat/curl`) | `Core/Curl/ConfigTest::testExplicitConfigurationAndNumericDefaults` | B | Q24 | fixed (MOD-136) |
+| KD-71 | UUID | `uuid::__invoke($version, $namespace, $name)` passed `$version=4, $namespace=null, $name=null` (assignments), so it always returned a random v4 UUID; its test asserted that | `Core/UuidTest::testInvokeGeneratesTheRequestedVersion` | A | Pass the arguments through | fixed (MOD-137) |
+| KD-72 | Random numbers | `$rand()` on an object built with bounds (`new rand(5, 10)`) ignores them and uses 0 to `getrandmax()`; `generate()` uses them | `Core/RandTest::testInvocationWithoutArgumentsCurrentlyIgnoresConstructedBounds` | B | Q25 | open |
 
 ## Test-strength tasks
 
@@ -113,10 +115,10 @@ strengthens assertions.
 
 | ID | Area | Gap | Status |
 | --- | --- | --- | --- |
-| TS-01 | UUID | `testGenerateUsesConstructorState` only checks a default v4; add configured v3/v5 state | open |
-| TS-02 | Random numbers | No test of invocation without arguments after constructing with custom bounds | open |
-| TS-03 | Input map | No test that `0`, `false` and `"0"` count as empty input | open |
-| TS-04 | CSV | No test that `fields2csv([])` returns a newline | open |
+| TS-01 | UUID | `testGenerateUsesConstructorState` only checks a default v4; add configured v3/v5 state | done (MOD-137) |
+| TS-02 | Random numbers | No test of invocation without arguments after constructing with custom bounds | done (MOD-137; found KD-72) |
+| TS-03 | Input map | No test that `0`, `false` and `"0"` count as empty input | done (MOD-137) |
+| TS-04 | CSV | No test that `fields2csv([])` returns a newline | done (MOD-137) |
 | TS-05 | Whole suite | Run a broader mutation probe; the 14-mutation sample in MOD-111 found two gaps | open |
 
 Reviewed and **not** treated as defects: `scalar` empty-input fallback (owner
@@ -126,8 +128,8 @@ treating `0`/`false`/`"0"` as empty (TS-03), `csv::fields2csv([])` returning a n
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. All 24 are answered: the owner agreed
-with every recommendation.
+Each has a recommendation; "agree" is enough. Questions 1-24 are answered (the owner
+agreed with every recommendation); question 25 is open.
 
 1. **KD-03 PDO fetch options.** Recommend: implement the documented meanings
    (true = generic data rows, class = rows as that class, callback = per row,
@@ -230,3 +232,8 @@ with every recommendation.
     the other text defaults, but leave `request_method` unset unless given, so
     requests with a body keep being sent as POST.
     **Answered: agreed** (owner, 2026-11-13). Fixed in MOD-136.
+25. **KD-72 `rand` invocation.** Same question as Q17 for `rand\str`: should
+    `$rand()` on an object built with bounds use those bounds? Recommend: yes,
+    when called without arguments (explicit arguments still win), so an object
+    built with `new rand(5, 10)` behaves the same through `generate()` and
+    `$rand()`.

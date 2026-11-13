@@ -6,12 +6,14 @@ model and the rules every phase follows are in [../README.md](../README.md).
 
 ## Status (2026-11-13)
 
-- **Tests:** 1,317 tests pass on PHP 7.2.34 with 100% class, method and line
+- **Tests:** 1,327 tests pass on PHP 7.2.34 with 100% class, method and line
   coverage. How to run them: [../TESTING.md](../TESTING.md).
-- **Known defects: done.** All 70 are resolved (fixed, already fixed, or
-  confirmed as intended) and every owner question is answered. Record:
-  [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
-- **Open:** 5 test-strength tasks (TS-01 to TS-05) in the same file.
+- **Known defects:** 72 tracked, 71 resolved (fixed, already fixed, or
+  confirmed as intended), 1 open: KD-72 waits for the owner's answer to Q25.
+  Record: [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+- **Test-strength tasks:** TS-01 to TS-04 done; TS-05 (mutation probe) in
+  progress with the new `docker/bin/mutate` tool (see
+  [../TESTING.md](../TESTING.md)).
 - **Not started:** functional tests against `flat-webapp`.
 - **Not done until** the owner declares the phase complete.
 
@@ -41,8 +43,8 @@ For a person or an agent picking this up:
 
 ## Next
 
-1. Close the test-strength tasks (TS-01 to TS-05), including a broader
-   mutation probe to find wrong behavior still asserted by untagged tests.
+1. Finish TS-05: triage the mutation probe's survivors (missing assertions
+   versus equivalent changes), add tests, and report any wrong behavior found.
 2. Write functional tests with `flat-webapp`.
 3. Owner decides the phase is complete; then it moves to `modernize-26`.
 

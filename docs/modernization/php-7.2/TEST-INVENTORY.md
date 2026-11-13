@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 719 test methods in 92 files, running 1317 test cases.
-- 117 methods use a data provider (one case per data set).
-- 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 724 test methods in 92 files, running 1327 test cases.
+- 118 methods use a data provider (one case per data set).
+- 1 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -394,15 +394,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 151 | `testDataDescriptionsUseTheMatchingFormat` | Data Descriptions Use The Matching Format |  |
 | 166 | `testCustomKillHandlerReceivesCallerAndConvertedMessage` | Custom Kill Handler Receives Caller And Converted Message |  |
 
-### `tests/Unit/Core/Encode/CsvTest.php` (5)
+### `tests/Unit/Core/Encode/CsvTest.php` (6)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 9 | `testFields2csvJoinsScalars` | Fields2csv Joins Scalars |  |
 | 14 | `testFields2csvKeepsNumbers` | Fields2csv Keeps Numbers |  |
-| 21 | `testFields2csvBlanksNonScalars` | Fields2csv Blanks Non Scalars |  |
-| 26 | `testFields2csvQuotesCommaAndQuote` | Fields2csv Quotes Comma And Quote |  |
-| 32 | `testSerializeAndUnserializeAreNoOps` | Serialize And Unserialize Are No Ops |  |
+| 20 | `testFields2csvOfNoFieldsIsAnEmptyLine` | Fields2csv Of No Fields Is An Empty Line |  |
+| 27 | `testFields2csvBlanksNonScalars` | Fields2csv Blanks Non Scalars |  |
+| 32 | `testFields2csvQuotesCommaAndQuote` | Fields2csv Quotes Comma And Quote |  |
+| 38 | `testSerializeAndUnserializeAreNoOps` | Serialize And Unserialize Are No Ops |  |
 
 ### `tests/Unit/Core/EventFacadeTest.php` (1)
 
@@ -557,7 +558,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 71 | `testStrNonStringCharpoolThrowsBadConfig` | Str Non String Charpool Throws Bad Config |  |
 | 77 | `testStrTooSmallCharpoolThrows` | Str Too Small Charpool Throws |  |
 
-### `tests/Unit/Core/RandTest.php` (9)
+### `tests/Unit/Core/RandTest.php` (10)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -570,6 +571,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 62 | `testGetRejectsBadMaxParameters` | Get Rejects Bad Max Parameters |  |
 | 74 | `testBytesLength` | Bytes Length |  |
 | 83 | `testInvokeAndGenerateMatchBounds` | Invoke And Generate Match Bounds |  |
+| 96 | `testInvocationWithoutArgumentsCurrentlyIgnoresConstructedBounds` | Invocation Without Arguments Currently Ignores Constructed Bounds | **known defect KD-72** |
 
 ### `tests/Unit/Core/Route/ControllerTest.php` (13)
 
@@ -797,7 +799,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 24 | `testScalarRequirementReturnsTheUnchangedScalar` | Scalar Requirement Returns The Unchanged Scalar | 8 data-provider cases |
 | 30 | `testInvalidScalarRequirementsAndFallbacks` | Invalid Scalar Requirements And Fallbacks |  |
 
-### `tests/Unit/Core/UuidTest.php` (13)
+### `tests/Unit/Core/UuidTest.php` (14)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -811,9 +813,10 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 74 | `testGetWithNamespaceAndBadVersionThrows` | Get With Namespace And Bad Version Throws |  |
 | 80 | `testGetWithoutNamespaceRejectsVersionsOtherThanThreeFourOrFive` | Get Without Namespace Rejects Versions Other Than Three Four Or Five |  |
 | 87 | `testInvalidNamespaceThrows` | Invalid Namespace Throws |  |
-| 106 | `testInvokeAlwaysReturnsV4` | Invoke Always Returns V4 |  |
+| 104 | `testInvokeGeneratesTheRequestedVersion` | Invoke Generates The Requested Version |  |
 | 114 | `testToStringReturnsUuidForConstructorState` | To String Returns Uuid For Constructor State |  |
-| 120 | `testGenerateUsesConstructorState` | Generate Uses Constructor State |  |
+| 119 | `testConfiguredStateDrivesGenerateAndStringConversion` | Configured State Drives Generate And String Conversion |  |
+| 135 | `testGenerateUsesConstructorState` | Generate Uses Constructor State |  |
 
 ### `tests/Unit/Core/Xml/DomTest.php` (15)
 
@@ -1090,14 +1093,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 137 | `testMissingQueueIsRejected` | Missing Queue Is Rejected | groups: services, rabbitmq |
 | 143 | `testConfigNamespaceSuppliesPresentKeysAndKeepsDefaults` | Config Namespace Supplies Present Keys And Keeps Defaults |  |
 
-### `tests/Unit/Input/MapTest.php` (4)
+### `tests/Unit/Input/MapTest.php` (6)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 9 | `testArrayBecomesProperties` | Array Becomes Properties |  |
 | 16 | `testObjectBecomesProperties` | Object Becomes Properties |  |
 | 26 | `testScalarGoesToData` | Scalar Goes To Data |  |
-| 32 | `testEmptyInputHasNoProperties` | Empty Input Has No Properties |  |
+| 31 | `testEmptyInputHasNoProperties` | Empty Input Has No Properties |  |
+| 40 | `testFalsyScalarInputIsTreatedAsEmpty` | Falsy Scalar Input Is Treated As Empty | 6 data-provider cases |
+| 45 | `testWhitespaceAndOtherNonEmptyScalarsAreData` | Whitespace And Other Non Empty Scalars Are Data |  |
 
 ### `tests/Unit/Lib/AppErrorTest.php` (3)
 

@@ -28,7 +28,6 @@ class MapTest extends TestCase
         $map = new map('hello');
         $this->assertSame('hello', $map->data);
     }
-
     public function testEmptyInputHasNoProperties()
     {
         $this->assertSame([], get_object_vars(new map()));
@@ -36,5 +35,15 @@ class MapTest extends TestCase
         // Nested arrays are kept as arrays, not converted to maps.
         $map = new map(['nested' => ['k' => 1]]);
         $this->assertSame(['k' => 1], $map->nested);
+    }
+    /** @dataProvider falsyInput */
+    public function testFalsyScalarInputIsTreatedAsEmpty($input)
+    {
+        $this->assertSame([], get_object_vars(new map($input)));
+    }
+    public function falsyInput() { return [[0], [false], ['0'], [''], [0.0], [[]]]; }
+    public function testWhitespaceAndOtherNonEmptyScalarsAreData()
+    {
+        foreach ([' ', 'a', 1, true, 1.5, '00'] as $input) $this->assertSame($input, (new map($input))->data);
     }
 }

@@ -17,6 +17,12 @@ class CsvTest extends TestCase
         // Booleans are scalars: true becomes 1, false becomes empty.
         $this->assertSame("t,1,\n", csv::fields2csv(['t', true, false]));
     }
+    public function testFields2csvOfNoFieldsIsAnEmptyLine()
+    {
+        $this->assertSame("\n", csv::fields2csv([]));
+        // Non-scalar fields are blanked, leaving the separators.
+        $this->assertSame(",\n", csv::fields2csv([[1], new \stdClass]));
+    }
 
     public function testFields2csvBlanksNonScalars()
     {

@@ -41,6 +41,23 @@ tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.2/active/KNO
 A redirect straight onto the inventory would empty it if the command fails (for
 example when Docker is not running); writing to a temporary file first avoids that.
 
+`docker/bin/mutate` is a mutation probe: it plants one small bug at a time (a
+flipped comparison, a negation removed, a `true`/`false` swap and similar) in a
+throwaway copy of the repository and checks that the unit suite notices. A
+mutant the suite does not notice "survives" and marks behavior that no test pins
+down, unless the change is unobservable (an equivalent mutant), which needs
+triage. It never touches the working tree: it copies the repository, mounts the
+copy as `/app` and refuses to run anywhere without the copy's marker file. It is
+slow (the unit suite runs once per mutant, about 6 seconds), so it samples:
+
+```sh
+docker/bin/mutate --list                          # candidate mutants per file
+docker/bin/mutate --limit=200 --seed=1 src/flat/core > build/tests/mutate-core.md
+```
+
+Every mutant that is not caught is listed with its file, line and change. Use
+a different `--seed` for a different sample; the same seed gives the same one.
+
 Every normal run builds/reuses the repository-defined image, waits for the
 selected services to be healthy, runs PHPUnit, and tears down its Compose
 containers, network and anonymous test-data volumes. Failure and interrupt paths
@@ -120,6 +137,8 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
   SDK dependencies used by the suite, separate from application dependencies.
 - `tests/docker/bootstrap.php`: container-local test bootstrap.
 - `tests/docker/compose.ca.yaml`: optional build CA trust input.
+- `tests/tools/mutate.php` and `docker/bin/mutate`: the mutation probe above
+  (logic in PHP; the wrapper creates the throwaway copy).
 - `tests/tools/inventory.php`: converts PHPUnit's `--list-tests-xml` output into
   the Markdown test inventory (`bin/test inventory`).
 
