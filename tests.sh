@@ -19,11 +19,14 @@ compose() {
 }
 usage() {
     echo 'Usage: ./tests.sh [all|unit|services|mongo|rabbitmq] [--offline] [--coverage] [PHPUnit arguments]'
+    echo '       ./tests.sh inventory [KNOWN-DEFECTS.md] [--offline] > TEST-INVENTORY.md'
     echo '  all (default): run everything, with MongoDB and RabbitMQ'
     echo '  unit:          run tests that need no external service containers'
     echo '  services:      run service-dependent tests with MongoDB and RabbitMQ'
     echo '  mongo:         run MongoDB-dependent tests, starting only MongoDB'
     echo '  rabbitmq:      run RabbitMQ-dependent tests, starting only RabbitMQ'
+    echo '  inventory:     print a Markdown inventory of every test to stdout, from'
+    echo '                 PHPUnit'"'"'s test list; KD IDs are added from a given defects file'
     echo '  --offline:     use existing images only; never build or pull'
     echo '  --coverage:    write reports under build/tests/<mode>/'
     echo '  --build:       build the test image; --down: remove this test stack'
@@ -37,6 +40,9 @@ action=run
 while [ "$#" -gt 0 ]; do
     case "$1" in
         all|unit|services|mongo|rabbitmq) test_mode=$1 ;;
+        inventory)
+            action=inventory
+            if [ "$#" -gt 1 ] && [ "${2#-}" = "$2" ]; then defects_file=$2; shift; fi ;;
         --coverage) coverage=true ;;
         --offline) offline=true ;;
         --build) action=build ;;
@@ -58,6 +64,8 @@ case "$test_mode" in
     mongo) service_names=mongo ;;
     rabbitmq) service_names=rabbitmq ;;
 esac
+# Listing tests needs no service containers.
+if [ "$action" = inventory ]; then service_names=; fi
 if "$offline"; then
     # Names come only from the fixed test-mode values above. No host parser or
     # private cache is required; Compose supplies the exact pinned image refs.
@@ -72,6 +80,21 @@ else
     compose build php
 fi
 if [ "$action" = build ]; then exit; fi
+if [ "$action" = inventory ]; then
+    # Only the Markdown goes to stdout; Compose progress goes to stderr.
+    list_dir=build/tests/inventory
+    mkdir -p "$list_dir"
+    [ "$(id -u)" = "$FLAT_TEST_UID" ] || chmod -R a+rwX "$list_dir"
+    compose run --rm -T --no-deps --pull never php --testsuite unit \
+        --list-tests-xml "/app/$list_dir/tests.xml" >/dev/null
+    exec_args="tests/docker/inventory.php $list_dir/tests.xml"
+    if [ -n "${defects_file:-}" ]; then
+        [ -f "$defects_file" ] || { printf 'Defects file not found: %s\n' "$defects_file" >&2; exit 2; }
+        exec_args="$exec_args $defects_file"
+    fi
+    compose run --rm -T --no-deps --pull never --entrypoint php php $exec_args
+    exit
+fi
 report_dir="build/tests/$test_mode"
 mkdir -p "$report_dir"
 # The container user may differ from the host user (see the root case above).

@@ -1,6 +1,6 @@
 # Pending behavior questions
 
-> **Historical, kept for the record:** replaced by the owner questions in [../active/known-defects.md](../active/known-defects.md).
+> **Historical, kept for the record:** replaced by the owner questions in [../active/KNOWN-DEFECTS.md](../active/KNOWN-DEFECTS.md).
 
 No owner answers have been inferred from silence. This document separates current
 coverage blockers from behavior changes that can wait while existing behavior is
@@ -24,7 +24,7 @@ through MOD-105/106/107; no owner answer was inferred from silence.
 
 The focused run passes 150 tests / 361 assertions with complete line coverage for
 all changed components. The final full-suite coverage run is recorded separately
-in [coverage-baseline.md](coverage-baseline.md) and [CHANGELOG.md](../CHANGELOG.md). No further owner input is
+in [COVERAGE-BASELINE.md](COVERAGE-BASELINE.md) and [CHANGELOG.md](../CHANGELOG.md). No further owner input is
 currently required to finish the coverage work; older questions below concern
 characterized behavior and later changes.
 

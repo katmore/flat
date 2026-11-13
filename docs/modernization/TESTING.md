@@ -16,6 +16,15 @@ prebuilt image is required. The only host script is POSIX shell orchestration.
 ./tests.sh --down               # explicit cleanup after an interrupted host
 ```
 
+`./tests.sh inventory` prints a Markdown inventory of every test to stdout,
+built from PHPUnit's `--list-tests-xml` by `tests/docker/inventory.php`. It needs
+no service containers. Pass a known-defects file to label `@group known-defect`
+tests with their KD IDs, and redirect the output where it belongs:
+
+```sh
+./tests.sh inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > docs/modernization/php-7.2/TEST-INVENTORY.md
+```
+
 Every normal run builds/reuses the repository-defined image, waits for the
 selected services to be healthy, runs PHPUnit, and tears down its Compose
 containers, network and anonymous test-data volumes. Failure and interrupt paths
@@ -92,6 +101,8 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
   SDK dependencies used by the suite, separate from application dependencies.
 - `tests/docker/bootstrap.php`: container-local test bootstrap.
 - `tests/docker/compose.ca.yaml`: optional build CA trust input.
+- `tests/docker/inventory.php`: converts PHPUnit's `--list-tests-xml` output into
+  the Markdown test inventory (`./tests.sh inventory`).
 
 The Composer-only archive-fetch stage uses the official Composer image and the
 locked PHP-7.2 platform constraints; it does not execute framework/tests. The

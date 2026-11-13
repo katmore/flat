@@ -19,5 +19,14 @@ Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP
  * Run PHP, Composer, the tests and their services in Docker configured in this repository, and record the exact PHP patch and tool versions used.
  * Rerun the whole test suite (and the flat-webapp functional tests) for every phase; record failures, skips and coverage gaps.
  * Never weaken an assertion or drop a check to make an upgrade pass. Changing tested behavior is a deliberate maintainer decision.
- * Keep runtime-compatibility fixes separate from behavior changes in each phase's CHANGELOG.md and in the commits, and list consumer-visible changes in the phase's `active/consumer-impact.md`.
+ * Keep runtime-compatibility fixes separate from behavior changes in each phase's CHANGELOG.md and in the commits, and list consumer-visible changes in the phase's `active/CONSUMER-IMPACT.md`.
  * The maintainer decides when a phase is complete. Creating or merging release branches and moving to the next PHP version need the maintainer's explicit go-ahead.
+
+### Conventions
+ * Each phase has a folder named after its branch (`php-7.2/`, `php-7.3/`, ...) with the same skeleton: `README.md` (status, how to resume, contents), `CHANGELOG.md`, `TEST-INVENTORY.md`, and the folders `active/` (current work), `notes/` (lasting reference per area) and `history/` (finished or replaced).
+ * Nothing is deleted. Superseded documents move to `history/` and start with a banner saying what replaced them.
+ * File names are UPPERCASE words joined by hyphens, with the `.md` extension: `KNOWN-DEFECTS.md`.
+ * File names have at most three words, preferably two. The folder says what kind of document it is; the file name says what it is about.
+ * Folder names are lowercase.
+ * `TEST-INVENTORY.md` is generated, never edited by hand: `./tests.sh inventory <phase>/active/KNOWN-DEFECTS.md > <phase>/TEST-INVENTORY.md`.
+ * How to run the tests, for every phase: [TESTING.md](./TESTING.md).

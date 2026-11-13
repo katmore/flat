@@ -39,7 +39,7 @@ PHP **7.2.34**, real Xdebug coverage; **1,278 tests / 5,166 assertions pass**.
 There are 53 uncovered lines in four files: core/ssh.php (19),
 db/driver/mongo.php (17), event/alert.php (2), event/alert/listener.php (15).
 Further work requires the three behavior decisions recorded in
-[pending-behavior-questions.md](pending-behavior-questions.md).
+[PENDING-QUESTIONS.md](PENDING-QUESTIONS.md).
 These are line/method/class metrics, not a branch-coverage percentage.
 No excluded files, skipped tests or invented coverage hits were added.
 
@@ -51,7 +51,7 @@ PHP-7.2 syntax checks. Changes and test findings are recorded through MOD-104 in
 
 Verified against `modernize-26` commit `ba9f93d` using PHP 7.2.34,
 PHPUnit 8.5.56, and Xdebug 2.9.8. Framework source and the existing tests were
-unchanged. Deferred assertion-strength findings are in `testing-follow-ups.md`.
+unchanged. Deferred assertion-strength findings are in `TESTING-FOLLOWUPS.md`.
 
 ## Results
 
@@ -131,7 +131,7 @@ repository-owned command is now:
 ./tests.sh all --coverage
 ```
 
-See [testing.md](../../testing.md) for pinned sources, dependency locks, service types,
+See [../../TESTING.md](../../TESTING.md) for pinned sources, dependency locks, service types,
 proxy CA input and automatic teardown. Earlier counts below remain historical.
 
 ## Coverage progress: configuration unit tests (MOD-009)
@@ -180,7 +180,7 @@ single PHPUnit process; it does not require applications to reinitialize config.
 
 ## Coverage progress: mapper unit tests (MOD-011 / MOD-012)
 
-See [notes/mapper.md](../notes/mapper.md) for the confirmed contract, per-edit rationale,
+See [../notes/MAPPER.md](../notes/MAPPER.md) for the confirmed contract, per-edit rationale,
 findings, and before/after compatibility check. Mapper reaches **100% lines
 (165/165) and methods (12/12)**. Configuration and the original six targets remain
 at 100%. Full suite: **95 passing tests, 1,722 assertions**. Overall coverage:
@@ -191,8 +191,8 @@ in comments; private-access failures remain as explicitly requested.
 ## Continuing progress through MOD-021
 
 Approved fixes and further unit tests are documented in
-[utility-and-event.md](../notes/utility-and-event.md), [data-and-xml.md](../notes/data-and-xml.md), and
-[collections-routing-cli.md](../notes/collections-routing-cli.md). The latest complete run executes **310
+[../notes/UTILITY-EVENT.md](../notes/UTILITY-EVENT.md), [../notes/DATA-XML.md](../notes/DATA-XML.md), and
+[../notes/COLLECTIONS-ROUTING-CLI.md](../notes/COLLECTIONS-ROUTING-CLI.md). The latest complete run executes **310
 tests / 2,366 assertions with 2 errors** exposing collection index copying and
 routing subclass cache access. Those behavior decisions are pending; this is not
 reported as a passing run. Coverage from the run is **20.07% lines**, **24.67%
@@ -208,7 +208,7 @@ assertions**, no errors/failures/skips. Framework coverage is **20.89% lines
 Collection class, its constraint and validator controllers, routing controller,
 and CLI helper now reach 100% measured lines/methods. Detailed behavior changes,
 regressions, and remaining key/range decisions are recorded in
-[collections-routing-cli.md](../notes/collections-routing-cli.md) and MOD-022–MOD-025.
+[../notes/COLLECTIONS-ROUTING-CLI.md](../notes/COLLECTIONS-ROUTING-CLI.md) and MOD-022–MOD-025.
 
 ## Continuing progress through MOD-029
 
@@ -217,7 +217,7 @@ controller trait is 100% lines/methods. Sessions/nonces and the HTTP request,
 configuration, and response classes also reach 100% measured lines/methods.
 Latest complete run: **404 tests / 2,609 assertions, all passing** on PHP 7.2.34.
 Framework: **25.25% lines**, **30.70% methods**, **24.17% classes**. See
-[session-and-http.md](../notes/session-and-http.md) for coverage evidence, runner inheritance details,
+[../notes/SESSION-HTTP.md](../notes/SESSION-HTTP.md) for coverage evidence, runner inheritance details,
 mock boundaries, and the pending request-format behavior question.
 
 ### MOD-030 — Approved JSON/raw request fixes

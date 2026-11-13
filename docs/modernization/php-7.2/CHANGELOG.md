@@ -1945,3 +1945,44 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 | `php-version-release-plan.md` | folded into `README.md` ("Rules for every phase") |
 
 - Verified: every relative Markdown link in the repository resolves.
+
+## MOD-116 — Uppercase short document names and a repository-owned test inventory
+
+- Owner direction: document file names are UPPERCASE, at most three words and
+  preferably two, for all modernization phases; the test inventory lives in the
+  phase folder as `TEST-INVENTORY.md` and is produced by the repository's own
+  test tooling. Conventions are recorded in `docs/modernization/README.md`.
+- New `./tests.sh inventory [KNOWN-DEFECTS.md]`: runs PHPUnit's
+  `--list-tests-xml` in the test container (no service containers) and converts
+  it with `tests/docker/inventory.php`, printing Markdown to stdout so it can be
+  redirected anywhere. Classes, methods, groups and data-provider cases come from
+  PHPUnit; file paths follow the PSR-4 test namespace and line numbers are read
+  from the source text, so no test code is loaded. With a defects file,
+  `@group known-defect` tests are labelled with their KD IDs. It replaces an
+  ad-hoc generator that lived outside the repository.
+- Renames under `docs/modernization/` (MOD-115 paths to new paths):
+
+| MOD-115 path | New path |
+| --- | --- |
+| `testing.md` | `TESTING.md` |
+| `php-7.2/active/test-inventory.md` | `php-7.2/TEST-INVENTORY.md` |
+| `php-7.2/active/known-defects.md` | `php-7.2/active/KNOWN-DEFECTS.md` |
+| `php-7.2/active/consumer-impact.md` | `php-7.2/active/CONSUMER-IMPACT.md` |
+| `php-7.2/notes/collections-routing-cli.md` | `php-7.2/notes/COLLECTIONS-ROUTING-CLI.md` |
+| `php-7.2/notes/data-and-xml.md` | `php-7.2/notes/DATA-XML.md` |
+| `php-7.2/notes/database-assets-minifier.md` | `php-7.2/notes/DATABASE-ASSETS-MINIFIER.md` |
+| `php-7.2/notes/debug-templates-text.md` | `php-7.2/notes/DEBUG-TEMPLATES-TEXT.md` |
+| `php-7.2/notes/mapper.md` | `php-7.2/notes/MAPPER.md` |
+| `php-7.2/notes/payment-and-alert.md` | `php-7.2/notes/PAYMENT-ALERT.md` |
+| `php-7.2/notes/session-and-http.md` | `php-7.2/notes/SESSION-HTTP.md` |
+| `php-7.2/notes/utility-and-event.md` | `php-7.2/notes/UTILITY-EVENT.md` |
+| `php-7.2/history/coverage-baseline.md` | `php-7.2/history/COVERAGE-BASELINE.md` |
+| `php-7.2/history/pending-behavior-questions.md` | `php-7.2/history/PENDING-QUESTIONS.md` |
+| `php-7.2/history/testing-follow-ups.md` | `php-7.2/history/TESTING-FOLLOWUPS.md` |
+| `php-7.2/history/branch-investigation.md` | `php-7.2/history/BRANCH-INVESTIGATION.md` |
+| `php-7.2/history/handoff-modernize-26.md` | `php-7.2/history/AGENT-HANDOFF.md` |
+| `php-7.2/history/legacy-test-environment.md` | `php-7.2/history/LEGACY-TESTING.md` |
+
+- Verified: `./tests.sh inventory` output matches the suite (704 methods, 1,305
+  cases, 46 known-defect methods all labelled with KD IDs; 29 service-group
+  methods marked); every relative Markdown link resolves.

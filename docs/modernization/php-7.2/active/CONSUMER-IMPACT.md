@@ -58,7 +58,7 @@ exception declarations (MOD-047/051/071/072/083/087/097), and the legacy ORM
 session fallback (MOD-100). A consumer that wrapped any of these in a broad
 `catch` and continued would now see them succeed.
 
-## Known-defect fixes (from `known-defects.md`)
+## Known-defect fixes (from `KNOWN-DEFECTS.md`)
 
 Every known-defect fix changes behavior a consumer might have relied on.
 

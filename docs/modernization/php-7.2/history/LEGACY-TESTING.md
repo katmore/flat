@@ -1,9 +1,9 @@
 # Docker test environment
 
-> **Historical, kept for the record:** the earlier test setup that lived outside the repository. It was replaced by the repository-owned harness in [../../testing.md](../../testing.md).
+> **Historical, kept for the record:** the earlier test setup that lived outside the repository. It was replaced by the repository-owned harness in [../../TESTING.md](../../TESTING.md).
 
 The supported entry point is now `./tests.sh`, with all setup files inside this
-repository. See [testing.md](../../testing.md) for reproducible commands,
+repository. See [../../TESTING.md](../../TESTING.md) for reproducible commands,
 test types, services, cleanup and optional CA configuration. No path outside this
 checkout is required. The older notes below are historical diagnostic records,
 not current operational instructions.
@@ -118,7 +118,7 @@ Holiday diagnostics additionally pin azuyalabs/yasumi 1.8.0 in php72-runtime-dep
 Measured full-suite runtime with the circuit-breaker case and actual Xdebug is 6.76 minutes (56 MB); its ~40-second standalone runtime was without coverage collection. It deliberately executes the real configured guard without patching counters. Raw PHPUnit coverage data is additionally retained outside the repository as php72-tools/coverage.php for review.
 
 
-Final MOD-104 verification: 1,278 tests / 5,166 assertions pass; line/method/class coverage is 99.34% / 99.34% / 98.79%. Runtime for this run is 9.59 minutes (56 MB); runtime varies with instrumentation/load. All 631 PHP source files pass PHP-7.2 syntax checks. The remaining 53 lines require the three decisions in pending-behavior-questions.md.
+Final MOD-104 verification: 1,278 tests / 5,166 assertions pass; line/method/class coverage is 99.34% / 99.34% / 98.79%. Runtime for this run is 9.59 minutes (56 MB); runtime varies with instrumentation/load. All 631 PHP source files pass PHP-7.2 syntax checks. The remaining 53 lines require the three decisions in PENDING-QUESTIONS.md.
 
 
 MOD-105/106/107 verification uses the existing PHP 7.2.34 image and MongoDB 4.0/RabbitMQ 3.8 services; those service containers had stopped when the environment resumed and were restarted. A test-owned native PHP TCP proxy forwards actual local MongoDB wire bytes and can close connections to exercise cached failure/retries. It creates no host-exposed port, fabricates no protocol reply and cleans up its child process/control files. The pthread scaffold is retired, so no fake Thread class or ZTS-runtime substitution is needed.
