@@ -12,7 +12,14 @@ Architecturally, it facilitates a broad swathe of design patterns using a client
  * Back-End Webservice: convienence classes to faciliate actual RESTful APIs
  * Command line scripts: convenience classes to faciliate creation of recurring (cron), deamons, and ad-hoc scripts
 
-## Tests (Docker only)
+## Tests
+
+There are two entry points with the same arguments:
+
+* `bin/test` runs the PHPUnit suite natively, on a machine with PHP 7.2 and the
+  Composer dev dependencies installed (`composer install`).
+* `docker/bin/test` needs only Docker. It runs `bin/test` inside the pinned
+  PHP 7.2.34 container and starts the MongoDB/RabbitMQ containers it needs.
 
 From the repository root, run `docker/bin/test`. It builds the pinned PHP 7.2.34 image,
 starts the required MongoDB/RabbitMQ containers, runs the tests, then removes the

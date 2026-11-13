@@ -1,4 +1,8 @@
 #!/bin/sh
+# Runs bin/test inside the repository's PHP 7.2 container. This script only
+# handles Docker: it builds or checks the image, starts the MongoDB/RabbitMQ
+# containers a test mode needs, runs bin/test with the same arguments, and
+# removes the containers afterwards. All test logic lives in bin/test.
 set -eu
 # The script lives in docker/bin/; work from the repository root.
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
@@ -19,54 +23,51 @@ compose() {
     fi
 }
 usage() {
-    echo 'Usage: docker/bin/test [all|unit|services|mongo|rabbitmq] [--offline] [--coverage] [PHPUnit arguments]'
-    echo '       docker/bin/test inventory [KNOWN-DEFECTS.md] [--offline] > TEST-INVENTORY.md'
-    echo '  all (default): run everything, with MongoDB and RabbitMQ'
-    echo '  unit:          run tests that need no external service containers'
-    echo '  services:      run service-dependent tests with MongoDB and RabbitMQ'
-    echo '  mongo:         run MongoDB-dependent tests, starting only MongoDB'
-    echo '  rabbitmq:      run RabbitMQ-dependent tests, starting only RabbitMQ'
-    echo '  inventory:     print a Markdown inventory of every test to stdout, from'
-    echo '                 PHPUnit'"'"'s test list; KD IDs are added from a given defects file'
+    echo 'Usage: docker/bin/test [bin/test arguments] [--offline]'
+    echo '       docker/bin/test --build | --down'
+    echo 'Runs bin/test in the PHP 7.2 container and starts the services its test mode'
+    echo 'needs. Docker-only options:'
     echo '  --offline:     use existing images only; never build or pull'
-    echo '  --coverage:    write reports under build/tests/<mode>/'
-    echo '  --build:       build the test image; --down: remove this test stack'
-    echo '  -h, --help:    show this usage'
+    echo '  --build:       build the test image only'
+    echo '  --down:        remove this test stack (after an interrupted run)'
     echo 'Examples: docker/bin/test unit --filter SshTest; docker/bin/test all --offline --coverage'
+    echo
+    echo 'bin/test arguments:'
+    bin/test --help | sed -n '1,/^  -h/p'
 }
-test_mode=all
-coverage=false
 offline=false
 action=run
-while [ "$#" -gt 0 ]; do
-    case "$1" in
-        all|unit|services|mongo|rabbitmq) test_mode=$1 ;;
-        inventory)
-            action=inventory
-            if [ "$#" -gt 1 ] && [ "${2#-}" = "$2" ]; then defects_file=$2; shift; fi ;;
-        --coverage) coverage=true ;;
-        --offline) offline=true ;;
-        --build) action=build ;;
-        --down) action=down ;;
-        -h|--help) usage; exit ;;
-        --) shift; break ;;
-        -*) break ;;
-        *) printf 'Unknown test type: %s\n' "$1" >&2; usage >&2; exit 2 ;;
-    esac
+test_mode=all
+inventory=false
+passthrough=true
+# Remove the Docker-only options; forward every other argument to bin/test.
+for arg do
     shift
+    if "$passthrough"; then
+        case "$arg" in
+            --offline) offline=true; continue ;;
+            --build) action=build; continue ;;
+            --down) action=down; continue ;;
+            -h|--help) usage; exit ;;
+            --) passthrough=false ;;
+            all|unit|services|mongo|rabbitmq) test_mode=$arg ;;
+            inventory) inventory=true ;;
+        esac
+    fi
+    set -- "$@" "$arg"
 done
 if [ "$action" = down ]; then compose down --volumes --remove-orphans; exit; fi
 if [ "$action" = build ] && "$offline"; then
     echo '--build and --offline cannot be combined' >&2; exit 2
 fi
 service_names=
-case "$test_mode" in
-    all|services) service_names='mongo rabbitmq' ;;
-    mongo) service_names=mongo ;;
-    rabbitmq) service_names=rabbitmq ;;
-esac
-# Listing tests needs no service containers.
-if [ "$action" = inventory ]; then service_names=; fi
+if ! "$inventory"; then
+    case "$test_mode" in
+        all|services) service_names='mongo rabbitmq' ;;
+        mongo) service_names=mongo ;;
+        rabbitmq) service_names=rabbitmq ;;
+    esac
+fi
 if "$offline"; then
     # Names come only from the fixed test-mode values above. No host parser or
     # private cache is required; Compose supplies the exact pinned image refs.
@@ -81,25 +82,10 @@ else
     compose build php
 fi
 if [ "$action" = build ]; then exit; fi
-if [ "$action" = inventory ]; then
-    # Only the Markdown goes to stdout; Compose progress goes to stderr.
-    list_dir=build/tests/inventory
-    mkdir -p "$list_dir"
-    [ "$(id -u)" = "$FLAT_TEST_UID" ] || chmod -R a+rwX "$list_dir"
-    compose run --rm -T --no-deps --pull never php --testsuite unit \
-        --list-tests-xml "/app/$list_dir/tests.xml" >/dev/null
-    exec_args="tests/docker/inventory.php $list_dir/tests.xml"
-    if [ -n "${defects_file:-}" ]; then
-        [ -f "$defects_file" ] || { printf 'Defects file not found: %s\n' "$defects_file" >&2; exit 2; }
-        exec_args="$exec_args $defects_file"
-    fi
-    compose run --rm -T --no-deps --pull never --entrypoint php php $exec_args
-    exit
-fi
-report_dir="build/tests/$test_mode"
-mkdir -p "$report_dir"
-# The container user may differ from the host user (see the root case above).
-[ "$(id -u)" = "$FLAT_TEST_UID" ] || chmod -R a+rwX "$report_dir"
+# bin/test writes reports and test lists under build/tests/. The container user
+# may differ from the host user (see the root case above).
+mkdir -p build/tests
+[ "$(id -u)" = "$FLAT_TEST_UID" ] || chmod -R a+rwX build/tests
 cleanup() {
     test_status=$?
     trap - EXIT INT TERM
@@ -113,18 +99,9 @@ if [ -n "$service_names" ]; then
     if "$offline"; then compose up -d --wait --pull never $service_names;
     else compose up -d --wait $service_names; fi
 fi
-case "$test_mode" in
-    unit) set -- --exclude-group services "$@" ;;
-    services) set -- --group services "$@" ;;
-    mongo) set -- --group mongo "$@" ;;
-    rabbitmq) set -- --group rabbitmq "$@" ;;
-esac
-if "$coverage"; then
-    compose run --rm --no-deps --pull never php --testsuite unit \
-        --coverage-text="/app/$report_dir/coverage.txt" \
-        --coverage-clover="/app/$report_dir/coverage.xml" \
-        --coverage-php="/app/$report_dir/coverage.php" \
-        --log-junit="/app/$report_dir/junit.xml" "$@"
+if "$inventory"; then
+    # No TTY, so only bin/test's Markdown reaches stdout.
+    compose run --rm -T --no-deps --pull never --entrypoint sh php bin/test "$@"
 else
-    compose run --rm --no-deps --pull never php --testsuite unit "$@"
+    compose run --rm --no-deps --pull never --entrypoint sh php bin/test "$@"
 fi

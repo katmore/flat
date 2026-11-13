@@ -1,5 +1,18 @@
 # Repository-owned Docker test workflow
 
+Two entry points take the same arguments. `bin/test` holds all test logic (modes,
+PHPUnit arguments, coverage reports, the inventory) and runs natively where PHP
+7.2 and PHPUnit are installed. `docker/bin/test` only handles Docker: it builds or
+checks the image, starts the services a mode needs, runs `bin/test` inside the PHP
+container with the same arguments, and removes the containers afterwards. The
+rest of this page uses `docker/bin/test`, the supported way to run the suite.
+
+For a native run, install the Composer dev dependencies, provide MongoDB and
+RabbitMQ for service tests (`FLAT_TEST_MONGODB_URI`, `FLAT_TEST_RABBITMQ_HOST`) and
+run e.g. `bin/test unit`. `FLAT_TEST_PHP`, `FLAT_TEST_PHPUNIT` and
+`FLAT_TEST_BOOTSTRAP` override the PHP binary, PHPUnit and its bootstrap; the
+Compose file sets the last two for the container's own PHPUnit install.
+
 Run from a fresh checkout with Docker Engine and Docker Compose v2.20 or newer.
 No host PHP, Composer, private virtual environment, sibling checkout or private
 prebuilt image is required. The only host script is POSIX shell orchestration.
@@ -17,7 +30,7 @@ docker/bin/test --down               # explicit cleanup after an interrupted hos
 ```
 
 `docker/bin/test inventory` prints a Markdown inventory of every test to stdout,
-built from PHPUnit's `--list-tests-xml` by `tests/docker/inventory.php`. It needs
+built from PHPUnit's `--list-tests-xml` by `tests/tools/inventory.php`. It needs
 no service containers. Pass a known-defects file to label `@group known-defect`
 tests with their KD IDs, and redirect the output where it belongs:
 
@@ -94,7 +107,10 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
 
 ## Files that make the setup reproducible
 
-- `docker/bin/test`: lifecycle and test-type selection.
+- `bin/test`: test modes, PHPUnit arguments, coverage reports and the inventory;
+  runs natively or inside the container.
+- `docker/bin/test`: Docker lifecycle (image, services, cleanup); runs `bin/test`
+  in the PHP container.
 - `docker/Dockerfile`: complete build from pinned public PHP/native sources;
   no FROM line refers to an agent-private image.
 - `docker/docker-compose.yml`: PHP plus health-checked MongoDB/RabbitMQ services.
@@ -104,8 +120,8 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
   SDK dependencies used by the suite, separate from application dependencies.
 - `tests/docker/bootstrap.php`: container-local test bootstrap.
 - `tests/docker/compose.ca.yaml`: optional build CA trust input.
-- `tests/docker/inventory.php`: converts PHPUnit's `--list-tests-xml` output into
-  the Markdown test inventory (`docker/bin/test inventory`).
+- `tests/tools/inventory.php`: converts PHPUnit's `--list-tests-xml` output into
+  the Markdown test inventory (`bin/test inventory`).
 
 The Composer-only archive-fetch stage uses the official Composer image and the
 locked PHP-7.2 platform constraints; it does not execute framework/tests. The

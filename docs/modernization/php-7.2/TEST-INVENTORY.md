@@ -1,9 +1,10 @@
 # Test inventory
 
 Every test in the `unit` suite, grouped by file. **Generated; do not edit by hand.**
-Regenerate with `docker/bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md`, which
-lists the suite with PHPUnit's `--list-tests-xml` and converts it with
-`tests/docker/inventory.php`.
+Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
+`docker/bin/test inventory ...` to run it in Docker), which lists the suite with
+PHPUnit's `--list-tests-xml` and converts it with
+`tests/tools/inventory.php`.
 
 - 704 test methods in 92 files, running 1305 test cases.
 - 118 methods use a data provider (one case per data set).

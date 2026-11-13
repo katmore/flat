@@ -9,6 +9,9 @@ services:
     volumes:
       - ..:/app
     environment:
+      # bin/test runs in this container with the image's own PHPUnit install.
+      FLAT_TEST_PHPUNIT: /opt/flat-test/tools/vendor/bin/phpunit
+      FLAT_TEST_BOOTSTRAP: /opt/flat-test/bootstrap.php
       FLAT_TEST_MONGODB_URI: mongodb://mongo:27017
       FLAT_TEST_RABBITMQ_HOST: rabbitmq
   mongo:

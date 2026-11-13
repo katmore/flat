@@ -2032,3 +2032,30 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   `docker/bin/test all --offline` passes 1,305 tests; the inventory regenerated
   with only its command line changed; all links and anchors resolve.
 - Undo: `git mv docker/bin/test bin/test` and restore the one-level root lookup.
+
+## MOD-120 — Split the test runner into native bin/test and the Docker wrapper
+
+- Owner direction: `bin/test` is the native runner that could run on any
+  machine with the tools installed; `docker/bin/test` only ensures the right
+  containers and runs it, without duplicating its logic.
+- New `bin/test` holds all test logic: modes (all/unit/services/mongo/rabbitmq),
+  PHPUnit pass-through, `--coverage` reports under `build/tests/<mode>/`, and
+  `inventory`. Explicit inputs: `FLAT_TEST_PHP`, `FLAT_TEST_PHPUNIT` (default
+  `vendor/bin/phpunit`), `FLAT_TEST_BOOTSTRAP`; without PHPUnit it stops with a
+  message pointing to `composer install` or `docker/bin/test`.
+- `docker/bin/test` keeps only Docker work: root/UID handling, CA build input,
+  `--offline`/`--build`/`--down`, starting the services a mode needs, cleanup.
+  It strips its own options and runs `bin/test` in the PHP container with the
+  remaining arguments. The Compose file sets `FLAT_TEST_PHPUNIT` and
+  `FLAT_TEST_BOOTSTRAP` to the image's PHPUnit install.
+- The inventory converter is no longer Docker-specific and moved from
+  `tests/docker/inventory.php` to `tests/tools/inventory.php`.
+- `AGENTS.md` records the placement rule: `bin/` for native scripts, `docker/`
+  for Docker-only wrappers that mirror and wrap them.
+- Verified through `docker/bin/test` (which runs `bin/test` on PHP 7.2.34):
+  unit 1,259, mongo 39, rabbitmq 7, services 46 tests pass; `all --coverage`
+  passes 1,305 tests with 100% classes/methods/lines and writes all reports;
+  PHPUnit options pass through (also after `--`); a PHPUnit error returns a
+  nonzero exit; no containers remain. Natively on this host (PHP 8.3, no
+  PHPUnit) `bin/test` reports the missing PHPUnit; a native PHP 7.2 install was
+  not available to test.
