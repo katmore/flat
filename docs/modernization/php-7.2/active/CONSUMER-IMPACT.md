@@ -79,6 +79,12 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-126 (KD-26) | Map from object | Mapping an object or array raised `ArgumentCountError` | Maps onto the subclass's declared properties; undeclared names raise `cannot_set_property` | `util\map\from_object` |
 | MOD-126 (KD-38) | Validation failure | The message argument was discarded | `get_message()` and `getMessage()` return it | `validate_failure(` with a message |
 | MOD-126 (KD-17, 18) | Legacy events | `hookable` passed no data to its handler (with notices); `stub::get_listeners()` returned nothing | The handler receives the event data; the added listeners are returned | `event\hookable`, `event\stub` |
+| MOD-127 (KD-07) | API request method | `_get_request_method()` always threw `missing_method` | Returns the method `set_input()` dispatched (`GET` for a `HEAD` request) | API subclasses calling `_get_request_method()` |
+| MOD-127 (KD-08) | API missing method | No method and no fallback raised `unknown_method` | Raises `missing_method` | Catches of `unknown_method` around `set_input(` |
+| MOD-127 (KD-58) | API `HEAD` flag | Once a controller served a `HEAD` request, `_is_HEAD_request()` stayed true for every later request | Reset per request | `_is_HEAD_request()` on reused controllers |
+| MOD-127 (KD-59) | API `TRACE` | Echoed an empty object (input fields were lost) | Echoes the input's fields | `TRACE` requests |
+| MOD-127 (KD-09) | API status formatting | `%class-type%`/`%class-description%` produced warnings and wrong text; `get_code_class_type()`/`_description()` returned literal placeholders | Filled from the RFC 7231 class table | `status_code_class_format(`, `format_code(`, `get_code_class_type(` |
+| MOD-127 (KD-57) | View resolution | The `view_resolved` event's `resolved` was always `\flat\design` (with notices) | The matched design class path, e.g. `\flat\design\sample\page` | `view_resolved` listeners |
 
 ## Suggested consumer check
 

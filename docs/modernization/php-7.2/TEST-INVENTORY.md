@@ -6,32 +6,33 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 704 test methods in 92 files, running 1305 test cases.
+- 705 test methods in 92 files, running 1306 test cases.
 - 118 methods use a data provider (one case per data set).
-- 30 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 27 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
 ## Files
 
-### `tests/Unit/Api/ControllerTest.php` (14)
+### `tests/Unit/Api/ControllerTest.php` (15)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 35 | `testMethodDispatchHeadTraceAndNoInterface` | Method Dispatch Head Trace And No Interface |  |
-| 47 | `testAnyInterfaceFallsBackToSpecificMethodOrUsesItsOwnResponse` | Any Interface Falls Back To Specific Method Or Uses Its Own Response |  |
-| 59 | `testResponseHandlerCanObserveOrReplaceResponses` | Response Handler Can Observe Or Replace Responses |  |
-| 68 | `testConstructorMapsInputsAndInvokesSuccessAndAlwaysCallbacks` | Constructor Maps Inputs And Invokes Success And Always Callbacks | 4 data-provider cases |
-| 77 | `testStringMethodConstructorAndDirectCallback` | String Method Constructor And Direct Callback |  |
-| 84 | `testResponseExceptionsFromHandlerReachConstructorErrorAndAlwaysCallbacks` | Response Exceptions From Handler Reach Constructor Error And Always Callbacks |  |
-| 94 | `testReturnedErrorResponseSuppliesItsOwnMetadata` | Returned Error Response Supplies Its Own Metadata |  |
-| 101 | `testNonErrorFailureStatusUsesNullOptionalErrorMetadata` | Non Error Failure Status Uses Null Optional Error Metadata |  |
-| 108 | `testOrdinaryHandledExceptionReturnsWithoutAnAlwaysResponse` | Ordinary Handled Exception Returns Without An Always Response |  |
-| 114 | `testUnhandledConstructorExceptionPropagates` | Unhandled Constructor Exception Propagates |  |
-| 119 | `testInvalidResponseIsRejected` | Invalid Response Is Rejected |  |
-| 126 | `testUnassignedRequestMethodGetterCurrentlyThrows` | Unassigned Request Method Getter Currently Throws | **known defect KD-07** |
-| 131 | `testInvalidFallbackMethodIsRejected` | Invalid Fallback Method Is Rejected |  |
-| 136 | `testMissingMethodCurrentlyRaisesUnknownMethod` | Missing Method Currently Raises Unknown Method | **known defect KD-08** |
+| 49 | `testAnyInterfaceFallsBackToSpecificMethodOrUsesItsOwnResponse` | Any Interface Falls Back To Specific Method Or Uses Its Own Response |  |
+| 61 | `testResponseHandlerCanObserveOrReplaceResponses` | Response Handler Can Observe Or Replace Responses |  |
+| 70 | `testConstructorMapsInputsAndInvokesSuccessAndAlwaysCallbacks` | Constructor Maps Inputs And Invokes Success And Always Callbacks | 4 data-provider cases |
+| 79 | `testStringMethodConstructorAndDirectCallback` | String Method Constructor And Direct Callback |  |
+| 86 | `testResponseExceptionsFromHandlerReachConstructorErrorAndAlwaysCallbacks` | Response Exceptions From Handler Reach Constructor Error And Always Callbacks |  |
+| 96 | `testReturnedErrorResponseSuppliesItsOwnMetadata` | Returned Error Response Supplies Its Own Metadata |  |
+| 103 | `testNonErrorFailureStatusUsesNullOptionalErrorMetadata` | Non Error Failure Status Uses Null Optional Error Metadata |  |
+| 110 | `testOrdinaryHandledExceptionReturnsWithoutAnAlwaysResponse` | Ordinary Handled Exception Returns Without An Always Response |  |
+| 116 | `testUnhandledConstructorExceptionPropagates` | Unhandled Constructor Exception Propagates |  |
+| 121 | `testInvalidResponseIsRejected` | Invalid Response Is Rejected |  |
+| 127 | `testRequestMethodGetterReturnsTheDispatchedMethod` | Request Method Getter Returns The Dispatched Method |  |
+| 135 | `testInvalidFallbackMethodIsRejected` | Invalid Fallback Method Is Rejected |  |
+| 139 | `testUnknownMethodIsRejected` | Unknown Method Is Rejected |  |
+| 144 | `testMissingMethodRaisesMissingMethod` | Missing Method Raises Missing Method |  |
 
 ### `tests/Unit/Api/ResponseTest.php` (11)
 
@@ -55,7 +56,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | --- | --- | --- | --- |
 | 17 | `testConcreteStatusesProvideExpectedCodeAndMessage` | Concrete Statuses Provide Expected Code And Message | 10 data-provider cases |
 | 33 | `testCodeClassesAndNumericInputBoundaries` | Code Classes And Numeric Input Boundaries |  |
-| 47 | `testCurrentFormattingUsesStringOffsetsInsteadOfClassMetadata` | Current Formatting Uses String Offsets Instead Of Class Metadata | **known defect KD-09** |
+| 46 | `testFormattingUsesTheCodeClassMetadata` | Formatting Uses The Code Class Metadata |  |
 
 ### `tests/Unit/Asset/AssetTest.php` (22)
 

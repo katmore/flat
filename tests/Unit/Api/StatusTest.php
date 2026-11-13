@@ -43,21 +43,19 @@ class StatusTest extends TestCase
         $this->assertSame('', (new FlexibleStatus('invalid', []))->format_code('%code%'));
         $this->assertSame('', status::status_code_class_format('invalid', '%class%'));
     }
-    /** @group known-defect */
-    public function testCurrentFormattingUsesStringOffsetsInsteadOfClassMetadata()
+    public function testFormattingUsesTheCodeClassMetadata()
     {
         $warnings = [];
-        set_error_handler(function ($level,$message) use (&$warnings) {
-            if (strpos($message,'Illegal string offset') !== false) { $warnings[] = $message; return true; }
-            return false;
-        });
+        set_error_handler(function ($level,$message) use (&$warnings) { $warnings[] = $message; return true; });
         try {
-            $this->assertSame('2xx|2|2', status::status_code_class_format('2xx','%class%|%class-type%|%class-description%'));
-            $status = new FlexibleStatus(200,'OK');
-            $this->assertSame('200 OK', $status->format_code('%code% %reason-phrase%'));
-            $this->assertSame('%type%', $status->get_code_class_type());
-            $this->assertSame('%description%', $status->get_code_class_description());
+            $this->assertSame('2xx|Successful|The request was successfully received, understood, and accepted',
+                status::status_code_class_format('2xx','%class%|%class-type%|%class-description%'));
+            $this->assertSame('', status::status_code_class_format('9xx','%class%'));
+            $status = new FlexibleStatus(404,'Not Found');
+            $this->assertSame('404 Not Found (4xx Client Error)', $status->format_code('%code% %reason-phrase% (%class% %class-type%)'));
+            $this->assertSame('Client Error', $status->get_code_class_type());
+            $this->assertSame('The request contains bad syntax or cannot be fulfilled', $status->get_code_class_description());
         } finally { restore_error_handler(); }
-        $this->assertCount(8, $warnings);
+        $this->assertSame([], $warnings);
     }
 }

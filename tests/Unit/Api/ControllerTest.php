@@ -39,7 +39,9 @@ class ControllerTest extends TestCase
         $this->assertFalse($api->isHead());
         $this->assertSame(42, $api->set_input($input,'HEAD')->value);
         $this->assertTrue($api->isHead());
-        $this->assertNull($api->set_input($input,'TRACE')->value); // Dynamic input export currently loses fields.
+        $this->assertSame(42, $api->set_input($input,'GET')->value);
+        $this->assertFalse($api->isHead()); // The HEAD flag is reset for each request.
+        $this->assertSame(42, $api->set_input($input,'TRACE')->value); // TRACE echoes the input's fields.
         $this->assertInstanceOf(response\no_interface::class, (new NoApi)->set_input($input,'POST'));
         api::set_method('GET'); $this->assertSame(42, $api->set_input($input)->value);
         api::set_accept_mtype('application/json'); $this->assertSame('application/json', api::get_accept_mtype());
@@ -122,20 +124,26 @@ class ControllerTest extends TestCase
         $this->expectException(\flat\core\controller\api\exception\bad_response::class);
         (new GetApi)->set_input(new \flat\input\map,'GET');
     }
-    /** @group known-defect */
-    public function testUnassignedRequestMethodGetterCurrentlyThrows()
+    public function testRequestMethodGetterReturnsTheDispatchedMethod()
     {
-        $api = new GetApi; $api->set_input(new \flat\input\map,'GET');
-        $this->expectException(\flat\core\controller\api\exception\missing_method::class); $api->requestMethod();
+        $api = new GetApi;
+        $api->set_input(new \flat\input\map,'GET'); $this->assertSame('GET',$api->requestMethod());
+        $api->set_input(new \flat\input\map,'HEAD'); $this->assertSame('GET',$api->requestMethod());
+        $this->expectException(\flat\core\controller\api\exception\missing_method::class);
+        (new GetApi)->requestMethod();
     }
     public function testInvalidFallbackMethodIsRejected()
     {
         $this->expectException(\flat\core\controller\api\exception\unknown_method::class); api::set_method('PATCH');
     }
-    /** @group known-defect */
-    public function testMissingMethodCurrentlyRaisesUnknownMethod()
+    public function testUnknownMethodIsRejected()
     {
         $this->expectException(\flat\core\controller\api\exception\unknown_method::class);
+        (new GetApi)->set_input(new \flat\input\map,'PATCH');
+    }
+    public function testMissingMethodRaisesMissingMethod()
+    {
+        $this->expectException(\flat\core\controller\api\exception\missing_method::class);
         (new GetApi)->set_input(new \flat\input\map);
     }
 }

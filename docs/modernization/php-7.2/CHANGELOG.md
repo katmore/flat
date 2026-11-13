@@ -2142,3 +2142,23 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   line-ending change).
 - Verified: `docker/bin/test all --coverage` passes 1,305 tests; 100% classes
   (331/331), methods (1,061/1,061), lines (7,993/7,993).
+
+## MOD-127 — Fix API controller, status and view defects (KD-07, 08, 09, 57, 58, 59)
+
+- KD-07 (owner answer Q3): `set_input()` records the method it dispatches, so
+  `_get_request_method()` returns it (`GET` for a `HEAD` request); the original
+  guard and return are restored in place of the "always throws" placeholder.
+- KD-08: a missing method (none given, no fallback) raises `missing_method`
+  before the unknown-method check. A new test covers a genuinely unknown method.
+- KD-58: the `HEAD` flag is set per request instead of only ever being set.
+- KD-59: `TRACE` echoes `get_object_vars($input)`; `get_as_assoc()` cannot see an
+  input map's dynamic properties, so it echoed nothing.
+- KD-09: `status_code_class_format()` reads type and description from
+  `CODE_CLASSES` (it indexed the class-name string), and the type/description
+  getters use the documented `%class-type%`/`%class-description%` tokens.
+- KD-57: the `view_resolved` event names the matched route instead of an
+  undefined `$resolved`.
+- Verified: `docker/bin/test all --coverage` passes 1,306 tests; 100% classes
+  (331/331), methods (1,061/1,061), lines (7,995/7,995). One earlier attempt
+  stopped before testing because the RabbitMQ container exited during startup;
+  the rerun was clean.
