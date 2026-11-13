@@ -118,6 +118,7 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-135 (KD-43) | Payment response errors | `response_error($code, $text)` ignored the text | Uses it as the message text | `response_error(` with two arguments; logs matching its message |
 | MOD-135 (KD-66) | Payment API exceptions | A failing SDK call threw an `\Exception` whose message was a `print_r` of the exception (could exhaust memory) | Message is `Class: message`; the original is `getPrevious()` | Code parsing that message |
 | MOD-135 (KD-63, 64) | S3 uploads | Files from 5 GB to 10 GiB went to a single upload, which S3 rejects; multipart uploads lost the content type | Files of 100 MB or more use multipart; the content type is kept | `s3::file_upload(` with large files or a content type |
+| MOD-136 (KD-70) | cURL request defaults | Requests without an explicit user agent sent none (the `flat/curl` default was replaced with `null`); `referrer`/`cache_dir` defaults were likewise lost | Default user agent `flat/curl` is sent; other text defaults are kept; the request method is still unset unless given (curl sends GET, or POST with a body) | `curl\config` / `curl::exec(` without a user agent; servers filtering on User-Agent |
 
 ## Suggested consumer check
 

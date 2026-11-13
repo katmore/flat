@@ -2352,3 +2352,17 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   (through `before_initiate`, not on each part).
 - Verified: `docker/bin/test all --coverage` passes 1,316 tests; 100% classes
   (331/331), methods (1,062/1,062), lines (8,050/8,050).
+
+## MOD-136 — Keep cURL text defaults; leave the request method unset (KD-70)
+
+- Owner answer Q24 (agreed): the constructor's second loop keeps declared
+  defaults when an argument is not given, so requests send the `flat/curl` user
+  agent. `request_method` stays unset (NULL) unless given, so curl keeps choosing
+  GET, or POST for requests with a body; its declaration changes from `"GET"`
+  to `NULL` to match the behavior it always had after construction.
+- A new response test checks what a default request with a body sends:
+  `User-Agent: flat/curl` and no explicit method.
+- This closes the known-defect list for the php-7.2 phase: all 70 entries are
+  resolved and no test remains in `@group known-defect`.
+- Verified: `docker/bin/test all --coverage` passes 1,317 tests; 100% classes
+  (331/331), methods (1,062/1,062), lines (8,050/8,050).

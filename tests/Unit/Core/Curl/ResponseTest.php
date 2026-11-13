@@ -20,6 +20,15 @@ namespace flat\test\Unit\Core\Curl {
             libxml_clear_errors(); libxml_use_internal_errors($this->libxml);
         }
         private function config($path = '/page') { return new config(new request('https://example.com'.$path), 'GET', 'UnitBot'); }
+        public function testDefaultRequestsSendTheFlatUserAgentAndKeepCurlsMethodChoice()
+        {
+            $response = new response(new config(new request('https://example.com/page', ['field'=>'value'])), []);
+            $handle = array_keys(CurlDouble::$options)[count(CurlDouble::$options)-1];
+            $this->assertSame('flat/curl', CurlDouble::$options[$handle][CURLOPT_USERAGENT]);
+            // No explicit method: curl sends a request with a body as POST.
+            $this->assertNull(CurlDouble::$options[$handle][CURLOPT_CUSTOMREQUEST]);
+            $this->assertInstanceOf(response::class, $response);
+        }
         public function testFacadeAcceptsUrlsAndConfigurationObjects()
         {
             foreach (['https://example.com/page',$this->config()] as $configuration) {

@@ -6,8 +6,7 @@ use PHPUnit\Framework\TestCase;
 class ConfigTest extends TestCase
 {
     private function request() { return new request('https://example.com/path'); }
-    /** @group known-defect */
-    public function testExplicitConfigurationAndNumericDefaults()
+    public function testExplicitConfigurationAndDefaults()
     {
         $request = $this->request();
         $config = new config($request, 'POST', 'custom-agent', 'https://ref.example/', 0, null, 12, 3);
@@ -17,8 +16,9 @@ class ConfigTest extends TestCase
         $this->assertSame(12, $config->timeout); $this->assertSame(3, $config->connect_timeout);
         $default = new config($request);
         $this->assertSame(300, $default->timeout); $this->assertSame(5, $default->connect_timeout);
-        // Legacy constructor overwrites the declared text defaults with null.
-        $this->assertNull($default->request_method); $this->assertNull($default->user_agent);
+        // Text defaults are kept; the request method stays unset so curl picks
+        // GET without a body and POST with one.
+        $this->assertSame('flat/curl', $default->user_agent); $this->assertNull($default->request_method);
     }
     public function testChromeSelectionProvidesTheChromeUserAgent()
     {

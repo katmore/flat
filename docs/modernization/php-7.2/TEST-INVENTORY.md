@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 718 test methods in 92 files, running 1316 test cases.
+- 719 test methods in 92 files, running 1317 test cases.
 - 117 methods use a data provider (one case per data set).
-- 1 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -332,7 +332,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 10 | `testExplicitConfigurationAndNumericDefaults` | Explicit Configuration And Numeric Defaults | **known defect KD-70** |
+| 9 | `testExplicitConfigurationAndDefaults` | Explicit Configuration And Defaults |  |
 | 23 | `testChromeSelectionProvidesTheChromeUserAgent` | Chrome Selection Provides The Chrome User Agent |  |
 | 30 | `testInvalidSettingsAreRejected` | Invalid Settings Are Rejected | 7 data-provider cases |
 | 40 | `testCachingUsesWritableTemporaryDirectoryByDefault` | Caching Uses Writable Temporary Directory By Default |  |
@@ -354,27 +354,28 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 83 | `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` | Null Remains The No Body Default For Json And Raw Modes |  |
 | 91 | `testEmptyUrlencodedQueryStringIsRejected` | Empty Urlencoded Query String Is Rejected |  |
 
-### `tests/Unit/Core/Curl/ResponseTest.php` (17)
+### `tests/Unit/Core/Curl/ResponseTest.php` (18)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 23 | `testFacadeAcceptsUrlsAndConfigurationObjects` | Facade Accepts Urls And Configuration Objects |  |
-| 32 | `testResponseDataStatusesAndTransferOptions` | Response Data Statuses And Transfer Options |  |
-| 46 | `testArrayConfigurationAndScalarUrl` | Array Configuration And Scalar Url |  |
-| 55 | `testFilesAndTemporaryCleanup` | Files And Temporary Cleanup |  |
-| 65 | `testCallerProvidedFilePersists` | Caller Provided File Persists |  |
-| 75 | `testSaveFlagsAndArraySavePaths` | Save Flags And Array Save Paths |  |
-| 91 | `testCookieOptionsAndAutomaticCookieCleanup` | Cookie Options And Automatic Cookie Cleanup |  |
-| 103 | `testInvalidCookieFile` | Invalid Cookie File | 2 data-provider cases |
-| 109 | `testDomAndXPathResults` | Dom And X Path Results |  |
-| 118 | `testInvalidXPathReportsQuery` | Invalid X Path Reports Query |  |
-| 126 | `testTransferFailureRetainsErrorDetails` | Transfer Failure Retains Error Details |  |
-| 136 | `testErrorAfterFileTransferStillFails` | Error After File Transfer Still Fails |  |
-| 146 | `testRobotsRules` | Robots Rules | 6 data-provider cases |
-| 159 | `testRobotsCheckCanDenyOrAllowConstructor` | Robots Check Can Deny Or Allow Constructor |  |
-| 168 | `testFalsyTextBodyInitializesDomOnDemand` | Falsy Text Body Initializes Dom On Demand |  |
-| 175 | `testMissingTransferInfoRaisesItsDeclaredException` | Missing Transfer Info Raises Its Declared Exception |  |
-| 182 | `testUnavailableSavePathRaisesSystemErrorAfterWarning` | Unavailable Save Path Raises System Error After Warning |  |
+| 23 | `testDefaultRequestsSendTheFlatUserAgentAndKeepCurlsMethodChoice` | Default Requests Send The Flat User Agent And Keep Curls Method Choice |  |
+| 32 | `testFacadeAcceptsUrlsAndConfigurationObjects` | Facade Accepts Urls And Configuration Objects |  |
+| 41 | `testResponseDataStatusesAndTransferOptions` | Response Data Statuses And Transfer Options |  |
+| 55 | `testArrayConfigurationAndScalarUrl` | Array Configuration And Scalar Url |  |
+| 64 | `testFilesAndTemporaryCleanup` | Files And Temporary Cleanup |  |
+| 74 | `testCallerProvidedFilePersists` | Caller Provided File Persists |  |
+| 84 | `testSaveFlagsAndArraySavePaths` | Save Flags And Array Save Paths |  |
+| 100 | `testCookieOptionsAndAutomaticCookieCleanup` | Cookie Options And Automatic Cookie Cleanup |  |
+| 112 | `testInvalidCookieFile` | Invalid Cookie File | 2 data-provider cases |
+| 118 | `testDomAndXPathResults` | Dom And X Path Results |  |
+| 127 | `testInvalidXPathReportsQuery` | Invalid X Path Reports Query |  |
+| 135 | `testTransferFailureRetainsErrorDetails` | Transfer Failure Retains Error Details |  |
+| 145 | `testErrorAfterFileTransferStillFails` | Error After File Transfer Still Fails |  |
+| 155 | `testRobotsRules` | Robots Rules | 6 data-provider cases |
+| 168 | `testRobotsCheckCanDenyOrAllowConstructor` | Robots Check Can Deny Or Allow Constructor |  |
+| 177 | `testFalsyTextBodyInitializesDomOnDemand` | Falsy Text Body Initializes Dom On Demand |  |
+| 184 | `testMissingTransferInfoRaisesItsDeclaredException` | Missing Transfer Info Raises Its Declared Exception |  |
+| 191 | `testUnavailableSavePathRaisesSystemErrorAfterWarning` | Unavailable Save Path Raises System Error After Warning |  |
 
 ### `tests/Unit/Core/DebugTest.php` (12)
 

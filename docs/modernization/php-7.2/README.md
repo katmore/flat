@@ -6,12 +6,12 @@ model and the rules every phase follows are in [../README.md](../README.md).
 
 ## Status (2026-11-13)
 
-- **Tests:** 1,316 tests pass on PHP 7.2.34 with 100% class, method and line
+- **Tests:** 1,317 tests pass on PHP 7.2.34 with 100% class, method and line
   coverage. How to run them: [../TESTING.md](../TESTING.md).
-- **Known defects (in progress):** 70 tracked, 69 resolved, 1 open. One owner
-  question is open (Q24, KD-70); everything else is actionable. Work list:
+- **Known defects: done.** All 70 are resolved (fixed, already fixed, or
+  confirmed as intended) and every owner question is answered. Record:
   [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
-  - 5 test-strength tasks (TS-01 to TS-05).
+- **Open:** 5 test-strength tasks (TS-01 to TS-05) in the same file.
 - **Not started:** functional tests against `flat-webapp`.
 - **Not done until** the owner declares the phase complete.
 
@@ -41,11 +41,10 @@ For a person or an agent picking this up:
 
 ## Next
 
-1. Fix the open category A defects in small, separately committed batches.
-2. Apply the owner's answers to the B and C items (all questions answered).
-3. Close the test-strength tasks.
-4. Write functional tests with `flat-webapp`.
-5. Owner decides the phase is complete; then it moves to `modernize-26`.
+1. Close the test-strength tasks (TS-01 to TS-05), including a broader
+   mutation probe to find wrong behavior still asserted by untagged tests.
+2. Write functional tests with `flat-webapp`.
+3. Owner decides the phase is complete; then it moves to `modernize-26`.
 
 ## Contents
 

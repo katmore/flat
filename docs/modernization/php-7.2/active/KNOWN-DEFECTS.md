@@ -103,7 +103,7 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-67 | SSH | Temporary key files are not cleaned up when connection setup fails part-way; key encryption uses no explicit cipher | (follow-ups; not yet verified) | B | Q22 | fixed (MOD-135) |
 | KD-68 | Validation controller | The validation body is unfinished; it inspects fields and then does nothing | (follow-ups; not yet verified) | C | Q23 | fixed (MOD-134) |
 | KD-69 | Data mapper | `field_list()` caches one list for every `flat\data` subclass, so later classes get the first class's fields (and `is_field()` answers wrongly) | `Data/MapperTest::testFieldListUsesTheInstanceAndCachesPerClass` | A | Cache per class | fixed (MOD-126) |
-| KD-70 | cURL config | The constructor's second loop re-assigns every text argument, so unset `request_method`, `user_agent`, `referrer` and `cache_dir` become `null` instead of their declared defaults (`GET`, `flat/curl`) | `Core/Curl/ConfigTest::testExplicitConfigurationAndNumericDefaults` | B | Q24 | open |
+| KD-70 | cURL config | The constructor's second loop re-assigns every text argument, so unset `request_method`, `user_agent`, `referrer` and `cache_dir` become `null` instead of their declared defaults (`GET`, `flat/curl`) | `Core/Curl/ConfigTest::testExplicitConfigurationAndNumericDefaults` | B | Q24 | fixed (MOD-136) |
 
 ## Test-strength tasks
 
@@ -126,8 +126,8 @@ treating `0`/`false`/`"0"` as empty (TS-03), `csv::fields2csv([])` returning a n
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 1-23 are answered (the
-owner agreed with every recommendation); question 24 is open.
+Each has a recommendation; "agree" is enough. All 24 are answered: the owner agreed
+with every recommendation.
 
 1. **KD-03 PDO fetch options.** Recommend: implement the documented meanings
    (true = generic data rows, class = rows as that class, callback = per row,
@@ -229,3 +229,4 @@ owner agreed with every recommendation); question 24 is open.
     curl sends them as POST). Recommend: restore the `flat/curl` user agent and
     the other text defaults, but leave `request_method` unset unless given, so
     requests with a body keep being sent as POST.
+    **Answered: agreed** (owner, 2026-11-13). Fixed in MOD-136.
