@@ -23,11 +23,11 @@ For a person or an agent picking this up:
 
 1. Read the phase rules in [../README.md](../README.md) and the repository
    rules in [`AGENTS.md`](../../../AGENTS.md).
-2. Run the tests (`./tests.sh`, see [../TESTING.md](../TESTING.md)) and
+2. Run the tests (`bin/test`, see [../TESTING.md](../TESTING.md)) and
    confirm they pass before changing anything.
 3. Pick open work from [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
    Category A items can be fixed directly; B and C items wait for the owner's
-   answer to their question. `./tests.sh unit --group known-defect` lists the
+   answer to their question. `bin/test unit --group known-defect` lists the
    tests that still assert defective behavior.
 4. For each fix, follow "How each fix lands" in
    [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): fix the source, rewrite
@@ -37,7 +37,7 @@ For a person or an agent picking this up:
 5. Before touching an area, read its file in [notes/](notes/) for how it is
    tested and which quirks are deliberate.
 6. After tests change, regenerate the test inventory:
-   `./tests.sh inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > docs/modernization/php-7.2/TEST-INVENTORY.md`
+   `bin/test inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > docs/modernization/php-7.2/TEST-INVENTORY.md`
 7. Update the status section above when the numbers change.
 
 ## Next
@@ -57,7 +57,7 @@ For a person or an agent picking this up:
 | **[active/](active/)** | **Work in progress; edited while the phase is open** | |
 | [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md) | Every known defect (KD) and test-strength task (TS), with category, fix and status; open owner questions at the bottom | Choosing what to fix; answering questions |
 | [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md) | Behavior changes that applications using flat may notice, and what to search their code for | Before releasing; when checking a consumer application |
-| [TEST-INVENTORY.md](TEST-INVENTORY.md) | All tests by file, with data-provider, service-group and known-defect markers. Generated from PHPUnit by `./tests.sh inventory`; do not edit by hand | Reviewing what the suite claims |
+| [TEST-INVENTORY.md](TEST-INVENTORY.md) | All tests by file, with data-provider, service-group and known-defect markers. Generated from PHPUnit by `bin/test inventory`; do not edit by hand | Reviewing what the suite claims |
 | **[notes/](notes/)** | **How each area is tested, its deliberate quirks and decisions; lasting reference** | |
 | [notes/COLLECTIONS-ROUTING-CLI.md](notes/COLLECTIONS-ROUTING-CLI.md) | Collections, routing controller, CLI | Working on those areas |
 | [notes/DATA-XML.md](notes/DATA-XML.md) | Data objects, XML encoding/decoding (incl. the 0.3 format) | " |

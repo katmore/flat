@@ -1,7 +1,7 @@
 # Test inventory
 
 Every test in the `unit` suite, grouped by file. **Generated; do not edit by hand.**
-Regenerate with `./tests.sh inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md`, which
+Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md`, which
 lists the suite with PHPUnit's `--list-tests-xml` and converts it with
 `tests/docker/inventory.php`.
 

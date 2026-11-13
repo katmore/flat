@@ -1986,3 +1986,18 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - Verified: `./tests.sh inventory` output matches the suite (704 methods, 1,305
   cases, 46 known-defect methods all labelled with KD IDs; 29 service-group
   methods marked); every relative Markdown link resolves.
+
+## MOD-117 — Rename the test entry point to bin/test
+
+- Owner direction: drop the `.sh` extension. A top-level `tests` file cannot
+  coexist with the `tests/` directory, so the script moved to `bin/test`
+  (`git mv`, executable bit kept). It now resolves the repository root from its
+  parent directory, so it works from any working directory.
+- Usage is unchanged apart from the name: `bin/test`, `bin/test unit`,
+  `bin/test inventory ...`. Live documentation, `AGENTS.md`, the help text and
+  `tests/docker/inventory.php` say `bin/test`; past entries and `history/`
+  files keep `tests.sh`, as written.
+- Verified: `bin/test all --offline` passes 1,305 tests; `../bin/test` from
+  `docs/` and an absolute path from `/` both work; `bin/test inventory`
+  regenerated TEST-INVENTORY.md.
+- Undo: `git mv bin/test tests.sh`, restore the root-resolution line.

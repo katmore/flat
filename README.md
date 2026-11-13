@@ -14,17 +14,17 @@ Architecturally, it facilitates a broad swathe of design patterns using a client
 
 ## Tests (Docker only)
 
-From the repository root, run `./tests.sh`. It builds the pinned PHP 7.2.34 image,
+From the repository root, run `bin/test`. It builds the pinned PHP 7.2.34 image,
 starts the required MongoDB/RabbitMQ containers, runs the tests, then removes the
 containers and their test data. Only Docker Engine and Docker Compose are needed.
 
 ```sh
-./tests.sh unit                  # no external service containers
-./tests.sh services              # service-dependent tests
-./tests.sh mongo                 # start only MongoDB
-./tests.sh rabbitmq              # start only RabbitMQ
-./tests.sh all --coverage        # full suite and coverage reports
-./tests.sh all --offline         # cached images only; no build or pull
+bin/test unit                  # no external service containers
+bin/test services              # service-dependent tests
+bin/test mongo                 # start only MongoDB
+bin/test rabbitmq              # start only RabbitMQ
+bin/test all --coverage        # full suite and coverage reports
+bin/test all --offline         # cached images only; no build or pull
 ```
 
 The default is `all`. Initial image preparation requires network access. Once

@@ -6,7 +6,7 @@ PHP version climb starts, so bug fixes and runtime upgrades never mix.
 This list comes from reading all 700 test methods and the testing documents.
 Each entry's test currently asserts the defective behavior (characterization).
 Its test carries `@group known-defect` until the fix lands, so
-`./tests.sh unit --group known-defect` lists what remains.
+`bin/test unit --group known-defect` lists what remains.
 
 ## Categories
 
@@ -26,7 +26,7 @@ Its test carries `@group known-defect` until the fix lands, so
 3. Add a row to [CONSUMER-IMPACT.md](CONSUMER-IMPACT.md): every fix is a silent change for
    consumers that might have depended on, or worked around, the old behavior.
 4. Mark the entry here as fixed, with its change-log ID.
-5. Regenerate [../TEST-INVENTORY.md](../TEST-INVENTORY.md) with `./tests.sh inventory`
+5. Regenerate [../TEST-INVENTORY.md](../TEST-INVENTORY.md) with `bin/test inventory`
    (see the phase README for the full command).
 
 ## Inventory

@@ -1,7 +1,7 @@
 <?php
 /**
  * Builds the Markdown test inventory from PHPUnit's --list-tests-xml output.
- * Run through `./tests.sh inventory`; it writes the result to stdout.
+ * Run through `bin/test inventory`; it writes the result to stdout.
  *
  * Usage: php tests/docker/inventory.php <list-tests.xml> [<KNOWN-DEFECTS.md>]
  * With a known-defects file, tests in @group known-defect get their KD IDs.
@@ -85,7 +85,7 @@ ksort($files);
 
 echo "# Test inventory\n\n";
 echo "Every test in the `unit` suite, grouped by file. **Generated; do not edit by hand.**\n";
-echo "Regenerate with `./tests.sh inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md`, which\n";
+echo "Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md`, which\n";
 echo "lists the suite with PHPUnit's `--list-tests-xml` and converts it with\n";
 echo "`tests/docker/inventory.php`.\n\n";
 echo "- $methodCount test methods in " . count($files) . " files, running $caseCount test cases.\n";

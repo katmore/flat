@@ -100,7 +100,7 @@ no failed or skipped tests in either successful run.
 Run through the repository-owned Docker wrapper:
 
 ```sh
-./tests.sh all --coverage
+bin/test all --coverage
 ```
 
 Current reports are under `build/tests/all/`. The earlier mapper differential

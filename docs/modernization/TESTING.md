@@ -5,24 +5,24 @@ No host PHP, Composer, private virtual environment, sibling checkout or private
 prebuilt image is required. The only host script is POSIX shell orchestration.
 
 ```sh
-./tests.sh                      # all tests, with both required services
-./tests.sh unit                 # no external service containers
-./tests.sh services             # service-dependent cases, both services
-./tests.sh mongo                # only MongoDB-dependent cases + MongoDB
-./tests.sh rabbitmq             # only RabbitMQ-dependent cases + RabbitMQ
-./tests.sh all --coverage       # full line/method/class coverage
-./tests.sh unit --filter SshTest
-./tests.sh --build              # build only
-./tests.sh --down               # explicit cleanup after an interrupted host
+bin/test                      # all tests, with both required services
+bin/test unit                 # no external service containers
+bin/test services             # service-dependent cases, both services
+bin/test mongo                # only MongoDB-dependent cases + MongoDB
+bin/test rabbitmq             # only RabbitMQ-dependent cases + RabbitMQ
+bin/test all --coverage       # full line/method/class coverage
+bin/test unit --filter SshTest
+bin/test --build              # build only
+bin/test --down               # explicit cleanup after an interrupted host
 ```
 
-`./tests.sh inventory` prints a Markdown inventory of every test to stdout,
+`bin/test inventory` prints a Markdown inventory of every test to stdout,
 built from PHPUnit's `--list-tests-xml` by `tests/docker/inventory.php`. It needs
 no service containers. Pass a known-defects file to label `@group known-defect`
 tests with their KD IDs, and redirect the output where it belongs:
 
 ```sh
-./tests.sh inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > docs/modernization/php-7.2/TEST-INVENTORY.md
+bin/test inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > docs/modernization/php-7.2/TEST-INVENTORY.md
 ```
 
 Every normal run builds/reuses the repository-defined image, waits for the
@@ -36,7 +36,7 @@ in CI): root ignores file permissions, so the unreadable-path tests could not
 fail. A root host therefore runs PHP as 1000:1000 and the report directory is
 made writable for it. RabbitMQ counts as healthy only once its listener ports
 accept connections (`check_port_connectivity`); its node `ping` succeeds a few
-seconds earlier, which previously made `./tests.sh rabbitmq` fail every time.
+seconds earlier, which previously made `bin/test rabbitmq` fail every time.
 
 Reports go to `build/tests/<mode>/`, which Git ignores. Only the `all` coverage
 report represents whole-suite coverage; filtered runs cover their selected cases.
@@ -46,12 +46,12 @@ guard without the former brute-force 100-million-detail scan.
 
 ## Offline operation
 
-Prepare the images online once with `./tests.sh all` (or build the PHP image and
+Prepare the images online once with `bin/test all` (or build the PHP image and
 pull the selected service images separately). Then, with those images cached:
 
 ```sh
-./tests.sh unit --offline
-./tests.sh all --offline --coverage
+bin/test unit --offline
+bin/test all --offline --coverage
 ```
 
 Offline mode checks that the selected local image refs exist, skips builds,
@@ -91,7 +91,7 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
 
 ## Files that make the setup reproducible
 
-- `tests.sh`: lifecycle and test-type selection.
+- `bin/test`: lifecycle and test-type selection.
 - `docker/Dockerfile`: complete build from pinned public PHP/native sources;
   no FROM line refers to an agent-private image.
 - `docker/docker-compose.yml`: PHP plus health-checked MongoDB/RabbitMQ services.
@@ -102,7 +102,7 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
 - `tests/docker/bootstrap.php`: container-local test bootstrap.
 - `tests/docker/compose.ca.yaml`: optional build CA trust input.
 - `tests/docker/inventory.php`: converts PHPUnit's `--list-tests-xml` output into
-  the Markdown test inventory (`./tests.sh inventory`).
+  the Markdown test inventory (`bin/test inventory`).
 
 The Composer-only archive-fetch stage uses the official Composer image and the
 locked PHP-7.2 platform constraints; it does not execute framework/tests. The
@@ -115,7 +115,7 @@ its dependency policy are unchanged by this isolated test setup.
 For a corporate/cloud proxy CA, set FLAT_TEST_CA_FILE to a readable CA bundle.
 The CA is a BuildKit secret mount, never copied into an image. Newer Compose
 builds through Bake, which refuses a secret read from outside the build context;
-tests.sh sets BUILDX_BAKE_ENTITLEMENTS_FS=0 for CA builds only (an explicit value
+bin/test sets BUILDX_BAKE_ENTITLEMENTS_FS=0 for CA builds only (an explicit value
 in the environment wins). Ordinary local builds
 need no CA override; Docker's standard proxy configuration is respected.
 
@@ -123,5 +123,5 @@ need no CA override; Docker's standard proxy configuration is respected.
 
 my human was disappointed and irritated with me because the previous harness
 lived outside the repository. This setup replaces that mistake: operational test
-instructions must refer to repository-owned files and `./tests.sh`, not a private
+instructions must refer to repository-owned files and `bin/test`, not a private
 workspace path. AGENTS.md makes that requirement explicit for later agents.

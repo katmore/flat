@@ -28,5 +28,5 @@ Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP
  * File names are UPPERCASE words joined by hyphens, with the `.md` extension: `KNOWN-DEFECTS.md`.
  * File names have at most three words, preferably two. The folder says what kind of document it is; the file name says what it is about.
  * Folder names are lowercase.
- * `TEST-INVENTORY.md` is generated, never edited by hand: `./tests.sh inventory <phase>/active/KNOWN-DEFECTS.md > <phase>/TEST-INVENTORY.md`.
+ * `TEST-INVENTORY.md` is generated, never edited by hand: `bin/test inventory <phase>/active/KNOWN-DEFECTS.md > <phase>/TEST-INVENTORY.md`.
  * How to run the tests, for every phase: [TESTING.md](./TESTING.md).
