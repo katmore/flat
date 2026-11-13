@@ -104,6 +104,12 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-133 (KD-35) | Session ORM destroy | Ended the session, then warned while regenerating the id | Regenerates (removing the old data), clears `$_SESSION` and ends the session, without warnings | `handler\native::destroy(` |
 | MOD-133 (KD-60, 61) | ORM objects | `delete()` did nothing on an object that had been read; `crud_error::get_op()` returned the details | Read objects can be deleted (once); `get_op()` returns the operation | `flat\orm` `delete(`, `crud_error` |
 | MOD-133 (KD-62) | Mongo client | `load_client()` without options warned about `foreach` on `null` | No warning | `mongo::load_client(` |
+| MOD-134 (KD-21) | Validation options | `value_on_pass`, `value_on_fail`, `fail_handler` and `exception_on_fail` were ignored: success returned the value, failure `null` | All four apply; on failure `fail_handler` wins, then `exception_on_fail`, then `value_on_fail` | `::validate(` with options |
+| MOD-134 (KD-22) | Regex validation | A PCRE engine error (e.g. invalid UTF-8) returned `false` like a mismatch | Throws `preg_error` | `match\regexp` validation of untrusted text |
+| MOD-134 (KD-20) | Validation factory | The default constraint rejected the pairs `add_validate()` builds | Accepts them; other members are rejected | `util\validate\factory` subclasses |
+| MOD-134 (KD-68) | Validation controller | Constructed and did nothing | Throws `BadMethodCallException` once its arguments are valid | `core\controller\validate` |
+| MOD-134 (KD-23) | Image constructor | Width and height together left the image unchanged | Both are proportional minimums (like `resize_min_proportional`) | `new image($source, $w, $h)` with both |
+| MOD-134 (KD-19) | Yasumi date queries | `get_date()`/`get_year()` were `null` for valid input; a cached provider was not attached; `isHoliday()`/`isWorkingDay()` threw; locale ignored; the epoch counted as unparseable | Timestamp and year are set; providers are shared per provider, year and locale; holiday queries work; locale passed to Yasumi | `azuyalabs\yasumi\dateQuery` |
 
 ## Suggested consumer check
 

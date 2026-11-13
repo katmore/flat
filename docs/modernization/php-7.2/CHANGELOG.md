@@ -2298,3 +2298,28 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - Verified: `docker/bin/test all --coverage` passes 1,315 tests (two
   characterization data providers became smaller behavior tests); 100% classes
   (331/331), methods (1,061/1,061), lines (8,038/8,038).
+
+## MOD-134 — Fix validation, image and Yasumi defects (KD-19-23, 68)
+
+- KD-21 (owner answer Q9): `validate::validate()` applies `value_on_pass`,
+  `value_on_fail`, `fail_handler` and `exception_on_fail` (options were merged
+  with `isset` against NULL defaults, so none applied). Failure precedence:
+  `fail_handler`, then `exception_on_fail` (the rule's own exception when it is
+  `exceptionable`, else `exception\fail`), then `value_on_fail`; the preserved
+  original only threw when `value_on_fail` was also set.
+- KD-22 (owner answer Q10): a `preg_match()` engine error throws `preg_error`;
+  the loose `== 0` check had treated `false` as a mismatch.
+- KD-20 (owner answer Q8): the validation factory's default member constraint
+  is `factory\data`, the pair its `add_validate()` builds.
+- KD-68 (owner answer Q23): the unfinished validation controller is retired;
+  construction with valid arguments and `set_input()` throw
+  `BadMethodCallException` (argument checks still raise `bad_param` first).
+- KD-23 (owner answer Q11): the image constructor treats width and height as
+  proportional minimums via `resize_min_proportional()`.
+- KD-19 (owner answer Q7): `dateQuery` stores the date as a Unix timestamp and
+  the year in every case, attaches cached providers, passes `DateTime` objects to
+  Yasumi's `isHoliday()`/`isWorkingDay()`, passes the documented `$locale`, and
+  accepts the epoch (`strtotime()` returns 0 for it). The file's CRLF line
+  endings are preserved.
+- Verified: `docker/bin/test all --coverage` passes 1,314 tests; 100% classes
+  (331/331), methods (1,062/1,062), lines (8,046/8,046).

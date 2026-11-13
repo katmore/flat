@@ -26,35 +26,32 @@ class YasumiDateQueryTest extends TestCase
         $this->assertSame(date('Y',$query->get_date()),$query->get_year());
         $this->assertInstanceOf(\Yasumi\Provider\USA::class,$query->getProvider());
     }
-    public function fallbackDates() { return [[null],[42],['unparseable date'],['1970-01-01 00:00:00 UTC']]; }
-    /** @group known-defect */
-    public function testValidDateAndExplicitYearCurrentlyLeaveTheirBackingFieldsUnset()
+    public function fallbackDates() { return [[null],[42],['unparseable date']]; }
+    public function testValidDateYearAndLocaleAreKept()
     {
-        $query=new dateQuery('2020-07-04','USA','2020','ignored locale');
-        $this->assertNull($query->get_date()); $this->assertNull($query->get_year());
+        $query=new dateQuery('2020-07-04','USA','2021','en_US');
+        $this->assertSame(strtotime('2020-07-04'),$query->get_date()); $this->assertSame('2021',$query->get_year());
         $this->assertInstanceOf(\Yasumi\Provider\USA::class,$query->getProvider());
+        $this->assertSame(2021,$query->getProvider()->getYear());
+        $epoch=new dateQuery('1970-01-01 00:00:00 UTC');
+        $this->assertSame(0,$epoch->get_date()); $this->assertSame('1970',$epoch->get_year());
     }
-    /** @group known-defect */
-    public function testProviderCacheCurrentlyDoesNotAttachItsHitToTheNextInstance()
+    public function testCachedProvidersAreSharedAndDatesUpdate()
     {
-        $first=new dateQuery(null); $second=new dateQuery(null);
+        $first=new dateQuery('2020-01-15'); $second=new dateQuery('2020-03-01');
         $this->assertInstanceOf(\Yasumi\Provider\AbstractProvider::class,$first->getProvider());
-        $this->assertNull($second->getProvider());
-        $first->set_date('2020-07-04','USA');
-        $this->assertSame('2020',$first->get_year());
-        // The valid-date branch does not update the prior timestamp.
-        $this->assertNotSame(strtotime('2020-07-04'),$first->get_date());
+        $this->assertSame($first->getProvider(),$second->getProvider());
+        $first->set_date('2019-07-04','USA');
+        $this->assertSame('2019',$first->get_year());
+        $this->assertSame(strtotime('2019-07-04'),$first->get_date());
     }
-    /**
-     * @dataProvider providerMethods
-     * @group known-defect
-     */
-    public function testRealProviderRejectsTheWrappersRawTimestamp($method)
+    public function testHolidayAndWorkingDayQueriesUseTheRealProvider()
     {
-        $query=new dateQuery(null);
-        $this->expectException(\Yasumi\Exception\InvalidDateException::class); $query->$method();
+        $holiday=new dateQuery('2020-07-04','USA');
+        $this->assertTrue($holiday->isHoliday()); $this->assertFalse($holiday->isWorkingDay());
+        $workday=new dateQuery('2020-07-08','USA');
+        $this->assertFalse($workday->isHoliday()); $this->assertTrue($workday->isWorkingDay());
     }
-    public function providerMethods() { return [['isWorkingDay'],['isHoliday']]; }
     public function testScheduleComparisonUsesActualNativeDateTimeObjects()
     {
         // Keep the actual current local clock near noon for repeatable native

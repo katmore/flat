@@ -99,6 +99,9 @@ class image {
             return;
          }
       }
+      // Both given: minimum width and height, scaling proportionally
+      // (owner answer, known-defects Q11).
+      self::resize_min_proportional($this->_imagick, $width, $height);
    }
    /**
     * retrieves dimension object for given image

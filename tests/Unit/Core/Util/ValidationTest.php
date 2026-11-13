@@ -7,6 +7,11 @@ use flat\core\util\validate\match\regexp;
 class AlwaysPass extends validate { protected static function _validate($value,array $param=null) { return true; } }
 class EchoValidation extends validate { protected static function _validate($value,array $param=null) { return $value; } }
 class DefaultValidation extends validate {}
+class OwnExceptionValidation extends validate implements \flat\core\util\validate\exceptionable
+{
+    protected static function _validate($value,array $param=null) { return false; }
+    public static function throw_exception(array $param=null) { throw new \DomainException('own: '.$param['value']); }
+}
 class DefinedRegex extends regexp implements regexp\definer { public function get_regexp() { return '/^a$/'; } }
 class RegexProbe extends regexp { public static function check($pattern) { return self::_check_regexp($pattern); } }
 class RegexConstructorProbe extends regexp
@@ -31,13 +36,18 @@ class ValidationTest extends TestCase
         $this->assertSame('',(string)new AlwaysPass(['value'=>['array'],'validate'=>'ignored']));
         $this->assertNull(EchoValidation::validate(false,[]));
     }
-    /** @group known-defect */
-    public function testNullDefaultOptionsCurrentlyCannotBeOverridden()
+    public function testValidationOptions()
     {
-        $called = false;
-        $this->assertSame('original',AlwaysPass::validate('original',['value_on_pass'=>'replacement']));
-        $this->assertNull(EchoValidation::validate(false,['value_on_fail'=>'fallback','exception_on_fail'=>true,'fail_handler'=>function () use (&$called) { $called=true; }]));
-        $this->assertFalse($called);
+        $this->assertSame('replacement',AlwaysPass::validate('original',['value_on_pass'=>'replacement']));
+        $this->assertSame('original',AlwaysPass::validate('original'));
+        $this->assertSame('fallback',EchoValidation::validate(false,['value_on_fail'=>'fallback']));
+        $this->assertNull(EchoValidation::validate(false));
+        // fail_handler wins over the other failure options.
+        $this->assertSame('handled: 0',EchoValidation::validate(0,['fail_handler'=>function ($v) { return 'handled: '.$v; },'exception_on_fail'=>true,'value_on_fail'=>'fallback']));
+        try { EchoValidation::validate('bad',['exception_on_fail'=>true,'value_on_fail'=>'fallback']); $this->fail('expected a failure'); }
+        catch (\flat\core\util\validate\exception\fail $e) { $this->assertStringContainsString("value 'bad' did not pass validation rule ".EchoValidation::class,$e->getMessage()); }
+        $this->expectException(\DomainException::class); $this->expectExceptionMessage('own: x');
+        OwnExceptionValidation::validate('x',['exception_on_fail'=>true]);
     }
     public function testExplicitRegexConstructorKeepsItsExistingArrayPayload()
     {
@@ -90,13 +100,14 @@ class ValidationTest extends TestCase
             $this->fail('Invalid regex syntax must fail');
         } finally { restore_error_handler(); }
     }
-    /** @group known-defect */
-    public function testPcreExecutionErrorCurrentlyReturnsFalse()
+    public function testPcreExecutionErrorRaisesPregError()
     {
-        $this->assertFalse(regexp::is_valid("\xB1",['regexp'=>'/./u']));
-        $this->assertSame(PREG_BAD_UTF8_ERROR,preg_last_error());
-        $error = new regexp\exception\preg_error;
-        $this->assertStringContainsString('PREG_BAD_UTF8_ERROR',$error->getMessage());
+        try { regexp::is_valid("\xB1",['regexp'=>'/./u']); $this->fail('expected preg_error'); }
+        catch (regexp\exception\preg_error $e) {
+            $this->assertSame(PREG_BAD_UTF8_ERROR,preg_last_error());
+            $this->assertStringContainsString('PREG_BAD_UTF8_ERROR',$e->getMessage());
+        }
+        $this->assertFalse(regexp::is_valid('b',['regexp'=>'/^a$/']));
     }
     /** @dataProvider nativePcreFailures */
     public function testPcreExceptionExplainsNativeEngineErrors($kind,$expected,$fragment)

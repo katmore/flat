@@ -47,8 +47,11 @@ abstract class factory
    implements 
    \flat\core\collection\member\constrainer\class_constraint 
 {
+   /**
+    * members are the validator/data pairs that add_validate() builds
+    */
    public function get_member_class_constraint() {
-      return "\\flat\\core\\factory";
+      return "\\flat\\core\\util\\validate\\factory\\data";
    }
    protected function add_validate(\flat\core\util\validate $validate,$data=NULL) {
       

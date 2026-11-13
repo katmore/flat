@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 715 test methods in 92 files, running 1315 test cases.
-- 118 methods use a data provider (one case per data set).
-- 12 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 716 test methods in 92 files, running 1314 test cases.
+- 117 methods use a data provider (one case per data set).
+- 5 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -680,12 +680,13 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 226 | `testConstructorAndPreparedInterfacesControlDisplayTiming` | Constructor And Prepared Interfaces Control Display Timing |  |
 | 245 | `testDefaultDisplayCallbackDelegatesToTemplateRendering` | Default Display Callback Delegates To Template Rendering |  |
 
-### `tests/Unit/Core/Template/ValidateControllerTest.php` (2)
+### `tests/Unit/Core/Template/ValidateControllerTest.php` (3)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 6 | `testControllerUnwrapsMembersBeforeInspectingInputFields` | Controller Unwraps Members Before Inspecting Input Fields |  |
-| 16 | `testConstructorRejectsInvalidInputAndCollection` | Constructor Rejects Invalid Input And Collection | 2 data-provider cases |
+| 6 | `testRetiredControllerFailsClearlyOnceItsArgumentsAreValid` | Retired Controller Fails Clearly Once Its Arguments Are Valid |  |
+| 12 | `testRetiredInputMethodFailsClearly` | Retired Input Method Fails Clearly |  |
+| 19 | `testConstructorRejectsInvalidInputAndCollection` | Constructor Rejects Invalid Input And Collection | 2 data-provider cases |
 
 ### `tests/Unit/Core/Template/ViewTest.php` (1)
 
@@ -724,7 +725,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 34 | `testSingleAxisResizePreservesTheOriginalRatio` | Single Axis Resize Preserves The Original Ratio | 6 data-provider cases |
 | 49 | `testMinimumBoundsAndEqualHeightDoNotIgnoreRequiredWidth` | Minimum Bounds And Equal Height Do Not Ignore Required Width |  |
 | 61 | `testSingleAxisConstructorsDelegateToProportionalResizing` | Single Axis Constructors Delegate To Proportional Resizing |  |
-| 72 | `testBothConstructorBoundsCurrentlyLeaveTheImageUnchanged` | Both Constructor Bounds Currently Leave The Image Unchanged | **known defect KD-23** |
+| 71 | `testBothConstructorBoundsAreProportionalMinimums` | Both Constructor Bounds Are Proportional Minimums |  |
 
 ### `tests/Unit/Core/Util/ListcheckTest.php` (4)
 
@@ -762,27 +763,27 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 16 | `testDefaultConstraintCurrentlyRejectsThePairBuiltByItsHelper` | Default Constraint Currently Rejects The Pair Built By Its Helper | **known defect KD-20** |
-| 23 | `testSubclassConstraintAllowsPairsAndPreservesTheirInputs` | Subclass Constraint Allows Pairs And Preserves Their Inputs |  |
+| 15 | `testDefaultConstraintAcceptsThePairsItsHelperBuilds` | Default Constraint Accepts The Pairs Its Helper Builds |  |
+| 25 | `testSubclassConstraintAllowsPairsAndPreservesTheirInputs` | Subclass Constraint Allows Pairs And Preserves Their Inputs |  |
 
 ### `tests/Unit/Core/Util/ValidationTest.php` (14)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 22 | `testOnlyStrictTruePassesAndStoredStringsAreAvailable` | Only Strict True Passes And Stored Strings Are Available |  |
-| 35 | `testNullDefaultOptionsCurrentlyCannotBeOverridden` | Null Default Options Currently Cannot Be Overridden | **known defect KD-21** |
-| 42 | `testExplicitRegexConstructorKeepsItsExistingArrayPayload` | Explicit Regex Constructor Keeps Its Existing Array Payload |  |
-| 47 | `testFactoryInterfaceFailureLoadsThroughBothNames` | Factory Interface Failure Loads Through Both Names |  |
-| 54 | `testHistoricalFactoryExceptionAutoloadsInAFreshProcess` | Historical Factory Exception Autoloads In A Fresh Process |  |
-| 60 | `testRegexMatchingAndMultiplePatterns` | Regex Matching And Multiple Patterns |  |
-| 69 | `testRegexConfigurationFailures` | Regex Configuration Failures | 4 data-provider cases |
-| 79 | `testInvalidRegexSyntaxProducesItsDescriptiveException` | Invalid Regex Syntax Produces Its Descriptive Exception |  |
-| 94 | `testPcreExecutionErrorCurrentlyReturnsFalse` | Pcre Execution Error Currently Returns False | **known defect KD-22** |
-| 102 | `testPcreExceptionExplainsNativeEngineErrors` | Pcre Exception Explains Native Engine Errors | 5 data-provider cases |
-| 125 | `testInvalidPatternExceptionIncludesPatternAndNativeCodeName` | Invalid Pattern Exception Includes Pattern And Native Code Name |  |
-| 133 | `testHostnameDefinerSuppliesAValidPatternWithoutChangingItsRawConstant` | Hostname Definer Supplies A Valid Pattern Without Changing Its Raw Constant | 8 data-provider cases |
-| 144 | `testSupportedFilterIdsConstructSuccessfully` | Supported Filter Ids Construct Successfully |  |
-| 150 | `testInvalidFilterUsesItsConcreteException` | Invalid Filter Uses Its Concrete Exception |  |
+| 27 | `testOnlyStrictTruePassesAndStoredStringsAreAvailable` | Only Strict True Passes And Stored Strings Are Available |  |
+| 39 | `testValidationOptions` | Validation Options |  |
+| 52 | `testExplicitRegexConstructorKeepsItsExistingArrayPayload` | Explicit Regex Constructor Keeps Its Existing Array Payload |  |
+| 57 | `testFactoryInterfaceFailureLoadsThroughBothNames` | Factory Interface Failure Loads Through Both Names |  |
+| 64 | `testHistoricalFactoryExceptionAutoloadsInAFreshProcess` | Historical Factory Exception Autoloads In A Fresh Process |  |
+| 70 | `testRegexMatchingAndMultiplePatterns` | Regex Matching And Multiple Patterns |  |
+| 79 | `testRegexConfigurationFailures` | Regex Configuration Failures | 4 data-provider cases |
+| 89 | `testInvalidRegexSyntaxProducesItsDescriptiveException` | Invalid Regex Syntax Produces Its Descriptive Exception |  |
+| 103 | `testPcreExecutionErrorRaisesPregError` | Pcre Execution Error Raises Preg Error |  |
+| 113 | `testPcreExceptionExplainsNativeEngineErrors` | Pcre Exception Explains Native Engine Errors | 5 data-provider cases |
+| 136 | `testInvalidPatternExceptionIncludesPatternAndNativeCodeName` | Invalid Pattern Exception Includes Pattern And Native Code Name |  |
+| 144 | `testHostnameDefinerSuppliesAValidPatternWithoutChangingItsRawConstant` | Hostname Definer Supplies A Valid Pattern Without Changing Its Raw Constant | 8 data-provider cases |
+| 155 | `testSupportedFilterIdsConstructSuccessfully` | Supported Filter Ids Construct Successfully |  |
+| 161 | `testInvalidFilterUsesItsConcreteException` | Invalid Filter Uses Its Concrete Exception |  |
 
 ### `tests/Unit/Core/Util/ValueTest.php` (4)
 
@@ -1183,8 +1184,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 22 | `testMissingAndUnparseableDatesUseTheCurrentTimestamp` | Missing And Unparseable Dates Use The Current Timestamp | 4 data-provider cases |
-| 31 | `testValidDateAndExplicitYearCurrentlyLeaveTheirBackingFieldsUnset` | Valid Date And Explicit Year Currently Leave Their Backing Fields Unset | **known defect KD-19** |
-| 38 | `testProviderCacheCurrentlyDoesNotAttachItsHitToTheNextInstance` | Provider Cache Currently Does Not Attach Its Hit To The Next Instance | **known defect KD-19** |
-| 52 | `testRealProviderRejectsTheWrappersRawTimestamp` | Real Provider Rejects The Wrappers Raw Timestamp | 2 data-provider cases; **known defect KD-19** |
-| 58 | `testScheduleComparisonUsesActualNativeDateTimeObjects` | Schedule Comparison Uses Actual Native Date Time Objects |  |
+| 22 | `testMissingAndUnparseableDatesUseTheCurrentTimestamp` | Missing And Unparseable Dates Use The Current Timestamp | 3 data-provider cases |
+| 30 | `testValidDateYearAndLocaleAreKept` | Valid Date Year And Locale Are Kept |  |
+| 39 | `testCachedProvidersAreSharedAndDatesUpdate` | Cached Providers Are Shared And Dates Update |  |
+| 48 | `testHolidayAndWorkingDayQueriesUseTheRealProvider` | Holiday And Working Day Queries Use The Real Provider |  |
+| 55 | `testScheduleComparisonUsesActualNativeDateTimeObjects` | Schedule Comparison Uses Actual Native Date Time Objects |  |

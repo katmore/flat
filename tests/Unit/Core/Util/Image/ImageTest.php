@@ -68,13 +68,12 @@ class ImageTest extends TestCase
             } finally { $native->clear(); }
         }
     }
-    /** @group known-defect */
-    public function testBothConstructorBoundsCurrentlyLeaveTheImageUnchanged()
+    public function testBothConstructorBoundsAreProportionalMinimums()
     {
         $native = $this->picture();
         try {
             $image = new image($native,40,40);
-            $this->assertSame(['width'=>20,'height'=>10],$image->get_imagick()->getImageGeometry());
+            $this->assertSame(['width'=>80,'height'=>40],$image->get_imagick()->getImageGeometry());
         } finally { $native->clear(); }
     }
 }

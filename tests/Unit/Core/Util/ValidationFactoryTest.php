@@ -12,13 +12,15 @@ class PairConstraintFactory extends ValidationFactoryFixture
 }
 class ValidationFactoryTest extends TestCase
 {
-    /** @group known-defect */
-    public function testDefaultConstraintCurrentlyRejectsThePairBuiltByItsHelper()
+    public function testDefaultConstraintAcceptsThePairsItsHelperBuilds()
     {
-        $factory = new ValidationFactoryFixture;
-        $this->assertSame('\\flat\\core\\factory',$factory->get_member_class_constraint());
+        $factory = new ValidationFactoryFixture; $rule = new FactoryValidationRule;
+        $this->assertSame('\\flat\\core\\util\\validate\\factory\\data',$factory->get_member_class_constraint());
+        $factory->push($rule,['context'=>'value']);
+        $this->assertSame(1,$factory->count());
+        $this->assertSame($rule,$factory->range()[0]->get_data()->validate);
         $this->expectException(\flat\core\collection\member\constrainer\exception\failed::class);
-        $factory->push(new FactoryValidationRule);
+        $factory->add(new \stdClass);
     }
     public function testSubclassConstraintAllowsPairsAndPreservesTheirInputs()
     {
