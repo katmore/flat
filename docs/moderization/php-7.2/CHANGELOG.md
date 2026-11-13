@@ -1,7 +1,7 @@
-# modernize-26 — running change log
+# php-7.2 — running change log
 
 Purpose: a running, human-readable record of every change made on the
-`modernize-26` branch, written so commit messages can be composed from it
+`php-7.2` branch, written so commit messages can be composed from it
 and so any change can be traced or reverted if issues arise later.
 
 Rules for this log:
