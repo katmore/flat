@@ -72,7 +72,8 @@ abstract class orm {
     */
    public function delete() {
       
-      if ($this->_read_done) return;
+      // Delete once; a record that was read first can still be deleted.
+      if ($this->_delete_done) return;
       
       if (!$this instanceof orm\crud\delete) return;
        

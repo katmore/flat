@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 713 test methods in 92 files, running 1318 test cases.
-- 119 methods use a data provider (one case per data set).
-- 20 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 715 test methods in 92 files, running 1315 test cases.
+- 118 methods use a data provider (one case per data set).
+- 12 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -894,9 +894,9 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 26 | `testStaticFacadeCachesALegalSubclassAndReturnsItsResults` | Static Facade Caches A Legal Subclass And Returns Its Results |  |
-| 37 | `testNonemptyConstructorArrayStillCannotActAsADriver` | Nonempty Constructor Array Still Cannot Act As A Driver | 2 data-provider cases; **known defect KD-34** |
-| 45 | `testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult` | Default Facade Uses Real Native Sessions While Retaining Its Void Get Result | **known defect KD-33** |
+| 33 | `testStaticFacadeCachesALegalSubclassAndReturnsItsResults` | Static Facade Caches A Legal Subclass And Returns Its Results |  |
+| 40 | `testConstructorArrayConfiguresTheDriver` | Constructor Array Configures The Driver |  |
+| 54 | `testDefaultFacadeUsesRealNativeSessionsAndReturnsStoredData` | Default Facade Uses Real Native Sessions And Returns Stored Data |  |
 
 ### `tests/Unit/Data/Orm/SessionDriverTest.php` (8)
 
@@ -909,7 +909,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 78 | `testInvalidKeysThrowTheDeclaredParameterError` | Invalid Keys Throw The Declared Parameter Error | 4 data-provider cases |
 | 84 | `testDisabledSessionStatusUsesItsFrameworkFailure` | Disabled Session Status Uses Its Framework Failure |  |
 | 94 | `testRealNativeSessionPersistsAcrossModernAndLegacyDriverNames` | Real Native Session Persists Across Modern And Legacy Driver Names |  |
-| 104 | `testDestroyCurrentlyAttemptsRegenerationAfterEndingTheSession` | Destroy Currently Attempts Regeneration After Ending The Session | **known defect KD-35** |
+| 103 | `testDestroyEndsTheSessionAndRemovesItsData` | Destroy Ends The Session And Removes Its Data |  |
 
 ### `tests/Unit/Data/OrmMapTest.php` (3)
 
@@ -960,8 +960,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 13 | `testDriverConstructionConnectsWithItsSuppliedParameters` | Driver Construction Connects With Its Supplied Parameters |  |
-| 20 | `testStaticReadCurrentlyWarnsAboutItsLiteralSelfAndReturnsNull` | Static Read Currently Warns About Its Literal Self And Returns Null | **known defect KD-05** |
+| 22 | `testDriverConstructionConnectsWithItsSuppliedParameters` | Driver Construction Connects With Its Supplied Parameters |  |
+| 28 | `testStaticReadUsesTheCalledClass` | Static Read Uses The Called Class |  |
 
 ### `tests/Unit/Db/Mongo/CaFileTest.php` (4)
 
@@ -970,7 +970,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 22 | `testFileAdapterCallsItsDeclaredPathHook` | File Adapter Calls Its Declared Path Hook |  |
 | 33 | `testLiteralContentUsesRequestedPathAndReusesWrittenFile` | Literal Content Uses Requested Path And Reuses Written File |  |
 | 47 | `testTemporaryCertificateIsRemovedAtNativePhpShutdown` | Temporary Certificate Is Removed At Native Php Shutdown |  |
-| 57 | `testFailedFileWriteCurrentlyReturnsNull` | Failed File Write Currently Returns Null | **known defect KD-04** |
+| 56 | `testFailedFileWriteRaisesAnError` | Failed File Write Raises An Error |  |
 
 ### `tests/Unit/Db/Mongo/CachedClientFailureTest.php` (1)
 
@@ -1003,7 +1003,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 222 | `testMissingDeletesAndInvalidWriteParameters` | Missing Deletes And Invalid Write Parameters | groups: services, mongo |
 | 229 | `testWriteParameterValidation` | Write Parameter Validation | 5 data-provider cases; groups: services, mongo |
 
-### `tests/Unit/Db/Mongo/DriverTest.php` (18)
+### `tests/Unit/Db/Mongo/DriverTest.php` (19)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -1024,7 +1024,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 150 | `testCollectionInterfaceRejectsManualNameChanges` | Collection Interface Rejects Manual Name Changes |  |
 | 154 | `testShortnameInterfaceRejectsManualNameChanges` | Shortname Interface Rejects Manual Name Changes |  |
 | 158 | `testInvalidDatabaseCollectionFactoryIsRejected` | Invalid Database Collection Factory Is Rejected |  |
-| 167 | `testPingOffsetIsSanitizedAndStoredWithClientCache` | Ping Offset Is Sanitized And Stored With Client Cache | groups: services, mongo |
+| 167 | `testClientLoadsWithoutOptionsAndWithoutWarnings` | Client Loads Without Options And Without Warnings | groups: services, mongo |
+| 180 | `testPingOffsetIsSanitizedAndStoredWithClientCache` | Ping Offset Is Sanitized And Stored With Client Cache | groups: services, mongo |
 
 ### `tests/Unit/Db/Pdo/ConnectionTest.php` (6)
 
@@ -1055,19 +1056,20 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 78 | `testBadSqlPathsReportPathAndReason` | Bad Sql Paths Report Path And Reason | 5 data-provider cases |
 | 102 | `testRecordsAndCallbacksUseNativeSqliteResults` | Records And Callbacks Use Native Sqlite Results |  |
 
-### `tests/Unit/Db/Pdo/StatementTest.php` (9)
+### `tests/Unit/Db/Pdo/StatementTest.php` (10)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 41 | `testPreparedSqlBindsCriteriaAndMapsColumnsAndOrdering` | Prepared Sql Binds Criteria And Maps Columns And Ordering |  |
-| 51 | `testLimitsDefaultSkipAndStringCriteria` | Limits Default Skip And String Criteria |  |
-| 60 | `testCriteriaJoinHashAndStructuredRelationsProduceExecutableJoins` | Criteria Join Hash And Structured Relations Produce Executable Joins |  |
-| 76 | `testInvalidStructuralRules` | Invalid Structural Rules | 15 data-provider cases |
-| 95 | `testEveryExplicitFetchOptionCurrentlyThrows` | Every Explicit Fetch Option Currently Throws | 8 data-provider cases; **known defect KD-03** |
-| 104 | `testFetchCallbackConsumesActualRowsThroughABufferedNativeStatement` | Fetch Callback Consumes Actual Rows Through A Buffered Native Statement |  |
-| 111 | `testExecutedRowsWithoutACallbackStillReferenceUndefinedDataClass` | Executed Rows Without A Callback Still Reference Undefined Data Class | **known defect KD-01** |
-| 117 | `testDeclaredJoinClauseCannotContainAStatementSeparator` | Declared Join Clause Cannot Contain A Statement Separator |  |
-| 124 | `testExecuteCurrentlyReportsNotFoundForSqliteSelectRowCount` | Execute Currently Reports Not Found For Sqlite Select Row Count | **known defect KD-02** |
+| 43 | `testPreparedSqlBindsCriteriaAndMapsColumnsAndOrdering` | Prepared Sql Binds Criteria And Maps Columns And Ordering |  |
+| 53 | `testLimitsDefaultSkipAndStringCriteria` | Limits Default Skip And String Criteria |  |
+| 62 | `testCriteriaJoinHashAndStructuredRelationsProduceExecutableJoins` | Criteria Join Hash And Structured Relations Produce Executable Joins |  |
+| 78 | `testInvalidStructuralRules` | Invalid Structural Rules | 15 data-provider cases |
+| 93 | `testFetchOptionsAddRowsToTheCollection` | Fetch Options Add Rows To The Collection |  |
+| 112 | `testInvalidFetchOptionsAreRejected` | Invalid Fetch Options Are Rejected | 4 data-provider cases |
+| 121 | `testFetchCallbackConsumesActualRowsThroughABufferedNativeStatement` | Fetch Callback Consumes Actual Rows Through A Buffered Native Statement |  |
+| 127 | `testExecutedRowsWithoutAFetchOptionAreAddedAsGenericData` | Executed Rows Without A Fetch Option Are Added As Generic Data |  |
+| 133 | `testDeclaredJoinClauseCannotContainAStatementSeparator` | Declared Join Clause Cannot Contain A Statement Separator |  |
+| 139 | `testNotFoundMeansNoRowsWereFetched` | Not Found Means No Rows Were Fetched |  |
 
 ### `tests/Unit/Db/RabbitMqTest.php` (10)
 
@@ -1124,10 +1126,10 @@ PHPUnit's `--list-tests-xml` and converts it with
 | --- | --- | --- | --- |
 | 29 | `testUnsupportedOperationsDoNothing` | Unsupported Operations Do Nothing |  |
 | 36 | `testCreateReadAndUpdateTrackTheirLifecycle` | Create Read And Update Track Their Lifecycle |  |
-| 48 | `testDeleteAndTheCurrentReadDoneGuard` | Delete And The Current Read Done Guard |  |
-| 58 | `testStorageHookFailuresExplainTheOperation` | Storage Hook Failures Explain The Operation | 8 data-provider cases |
-| 74 | `testExistenceChecksAreCachedOnlyAfterAConcreteAnswer` | Existence Checks Are Cached Only After A Concrete Answer |  |
-| 83 | `testKeyAndFieldMappingRetainNamedAndPositionalValues` | Key And Field Mapping Retain Named And Positional Values |  |
+| 48 | `testDeleteWorksAfterReadAndOnlyOnce` | Delete Works After Read And Only Once |  |
+| 60 | `testStorageHookFailuresExplainTheOperation` | Storage Hook Failures Explain The Operation | 8 data-provider cases |
+| 75 | `testExistenceChecksAreCachedOnlyAfterAConcreteAnswer` | Existence Checks Are Cached Only After A Concrete Answer |  |
+| 84 | `testKeyAndFieldMappingRetainNamedAndPositionalValues` | Key And Field Mapping Retain Named And Positional Values |  |
 
 ### `tests/Unit/Orm/ReportTest.php` (3)
 

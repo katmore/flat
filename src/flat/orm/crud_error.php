@@ -10,7 +10,7 @@ class crud_error extends exception {
    }
    private $_op;
    public function __construct($op,$details=null) {
-      $this->_op = $details;
+      $this->_op = $op;
       $this->_details = $details;
       if (is_string($op)) {
          $msg = "orm $op error";

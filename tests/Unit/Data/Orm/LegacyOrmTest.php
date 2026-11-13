@@ -10,6 +10,13 @@ class DispatchOrmFixture extends \flat\data\orm
     public function get($key) { return $this->records[$key] ?? null; }
     public function set($key,\flat\data $data) { $this->records[$key]=$data; return 'stored'; }
 }
+class ConfiguredOrmDriver
+{
+    public $config; public $stored = [];
+    public function __construct(array $param=null) { $this->config = $param; }
+    public function get_data($key) { return isset($this->stored[$key]) ? $this->stored[$key] : null; }
+    public function set_data($key,\flat\data $data) { $this->stored[$key] = $data; return 'stored'; }
+}
 class LegacyOrmTest extends TestCase
 {
     use \flat\test\Support\PhpSubprocess;
@@ -30,30 +37,32 @@ class LegacyOrmTest extends TestCase
         $this->assertSame($data,DispatchOrmFixture::get_data('key'));
         $this->assertNull(DispatchOrmFixture::get_data('missing')); $this->assertSame(1,DispatchOrmFixture::$constructed);
     }
-    /**
-     * @dataProvider directMethods
-     * @group known-defect
-     */
-    public function testNonemptyConstructorArrayStillCannotActAsADriver($method)
+    public function testConstructorArrayConfiguresTheDriver()
     {
-        $orm=new \flat\data\orm(['driver'=>'unresolved configuration']);
-        $this->expectException(\Error::class); $this->expectExceptionMessage('on array');
-        if ($method==='get') $orm->get('key'); else $orm->set('key',new \flat\data\generic);
+        $orm=new \flat\data\orm(['driver'=>ConfiguredOrmDriver::class,'option'=>'value']);
+        $data=new \flat\data\generic(['value'=>'kept']);
+        $this->assertSame('stored',$orm->set('key',$data));
+        $this->assertSame($data,$orm->get('key'));
+        $driver=new ConfiguredOrmDriver(['given'=>true]);
+        $this->assertNull((new \flat\data\orm(['driver'=>$driver]))->get('missing'));
+        $this->assertSame(['given'=>true],$driver->config);
+        $p=new \ReflectionProperty(\flat\data\orm::class,'_driver'); $p->setAccessible(true);
+        $this->assertSame(['option'=>'value'],$p->getValue($orm)->config);
+        $this->expectException(\flat\data\orm\exception\bad_param::class);
+        new \flat\data\orm(['driver'=>'unresolved configuration']);
     }
-    public function directMethods() { return [['get'],['set']]; }
-    /** @group known-defect */
-    public function testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult()
+    public function testDefaultFacadeUsesRealNativeSessionsAndReturnsStoredData()
     {
         $directory=sys_get_temp_dir().'/flat-legacy-orm-'.bin2hex(random_bytes(6)); mkdir($directory,0700);
         try {
             $body='session_save_path('.var_export($directory,true).'); session_id("flatlegacyorm"); '
                 .'\flat\data\orm\driver\session\handler\native::set_ormkey("flatlegacyorm"); '
                 .'$data=new \flat\data\generic(["value"=>"persisted"]); '
-                .'$set=\flat\data\orm::set_data("key",$data); $get=\flat\data\orm::get_data("key"); '
+                .'\flat\data\orm::set_data("key",$data); $get=\flat\data\orm::get_data("key"); '
                 .'$native=new \flat\data\orm\driver\session; '
-                .'echo json_encode([$set,$get,$native->get_data("key")->value]); session_write_close();';
+                .'echo json_encode([$get->value,$native->get_data("key")->value]); session_write_close();';
             list($status,$out,$err)=$this->subprocess($body);
-            $this->assertSame(0,$status,$err); $this->assertSame('',$err); $this->assertSame([null,null,'persisted'],json_decode($out,true));
+            $this->assertSame(0,$status,$err); $this->assertSame('',$err); $this->assertSame(['persisted','persisted'],json_decode($out,true));
         } finally { foreach (glob($directory.'/*') as $file) unlink($file); rmdir($directory); }
     }
 }

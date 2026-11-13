@@ -33,11 +33,11 @@ Its test carries `@group known-defect` until the fix lands, so
 
 | ID | Area | Defect | Test | Cat. | Proposed fix | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| KD-01 | PDO statement | Executing without a callback references an undefined data class (`Error`) | `Db/Pdo/StatementTest::testExecutedRowsWithoutACallbackStillReferenceUndefinedDataClass` | A | Map rows like the bare-record path does | open |
-| KD-02 | PDO statement | `execute` gates on SELECT `rowCount`, so SQLite reports `not_found` despite returning rows | `StatementTest::testExecuteCurrentlyReportsNotFoundForSqliteSelectRowCount` | A | Fetch rows instead, as MOD-033 did for `prepare_map` | open |
-| KD-03 | PDO statement | Every explicit `fetch` option (true/class/callback/false) throws `bad_option` | `StatementTest::testEveryExplicitFetchOptionCurrentlyThrows` | B | Q1 | open |
-| KD-04 | Mongo CA file | A failed certificate write returns `null` after a warning | `Db/Mongo/CaFileTest::testFailedFileWriteCurrentlyReturnsNull` | A | Throw an existing system/IO error | open |
-| KD-05 | DB controller | `load_read` tests the literal constant `self`, warns and returns `null` | `Db/LegacyControllerTest::testStaticReadCurrentlyWarnsAboutItsLiteralSelfAndReturnsNull` | B | Q2 | open |
+| KD-01 | PDO statement | Executing without a callback references an undefined data class (`Error`) | `Db/Pdo/StatementTest::testExecutedRowsWithoutACallbackStillReferenceUndefinedDataClass` | A | Map rows like the bare-record path does | fixed (MOD-133) |
+| KD-02 | PDO statement | `execute` gates on SELECT `rowCount`, so SQLite reports `not_found` despite returning rows | `StatementTest::testExecuteCurrentlyReportsNotFoundForSqliteSelectRowCount` | A | Fetch rows instead, as MOD-033 did for `prepare_map` | fixed (MOD-133) |
+| KD-03 | PDO statement | Every explicit `fetch` option (true/class/callback/false) throws `bad_option` | `StatementTest::testEveryExplicitFetchOptionCurrentlyThrows` | B | Q1 | fixed (MOD-133) |
+| KD-04 | Mongo CA file | A failed certificate write returns `null` after a warning | `Db/Mongo/CaFileTest::testFailedFileWriteCurrentlyReturnsNull` | A | Throw an existing system/IO error | fixed (MOD-133) |
+| KD-05 | DB controller | `load_read` tests the literal constant `self`, warns and returns `null` | `Db/LegacyControllerTest::testStaticReadCurrentlyWarnsAboutItsLiteralSelfAndReturnsNull` | B | Q2 | fixed (MOD-133) |
 | KD-06 | API response | Unknown error with a class caller calls the nonexistent `ReflectionMethod::getClassName` | `Api/ResponseTest::testUnknownErrorWithClassCallerCurrentlyCallsMissingReflectionMethod` | A | Use the declaring class name | fixed (MOD-124) |
 | KD-07 | API controller | `requestMethod()` reads a never-assigned field and always throws | `Api/ControllerTest::testUnassignedRequestMethodGetterCurrentlyThrows` | B | Q3 | fixed (MOD-127) |
 | KD-08 | API controller | `set_input` without a method raises `unknown_method` instead of `missing_method` | `Api/ControllerTest::testMissingMethodCurrentlyRaisesUnknownMethod` | A | Raise `missing_method` (verify against source first) | fixed (MOD-127) |
@@ -65,9 +65,9 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-30 | Debug | `kill` options overwrite the options array and read an undefined `fh_options` | (`../history/TESTING-FOLLOWUPS.md`; not yet asserted) | A | Keep the options array; define the handle options | fixed (MOD-132) |
 | KD-31 | cURL response | Missing curl info throws a nonexistent exception class (`Error`) | `Core/Curl/ResponseTest::testCurrentMissingInfoExceptionClassFailure` | A | Declare/use the exception | fixed (MOD-124) |
 | KD-32 | cURL config | Selecting the Chrome user agent is overwritten by the raw selector (`0`) | `Core/Curl/ConfigTest::testCurrentChromeSelectionIsOverwrittenByRawSelector` | A | Keep the selected user-agent string | fixed (MOD-132) |
-| KD-33 | Legacy ORM | The static `get_data` facade discards its result | `Data/Orm/LegacyOrmTest::testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult` | A | Return the stored data | open |
-| KD-34 | Legacy ORM | A nonempty constructor array cannot act as a driver | `LegacyOrmTest::testNonemptyConstructorArrayStillCannotActAsADriver` | B | Q13 | open |
-| KD-35 | ORM session driver | `destroy` regenerates the id after ending the session (warning) | `Data/Orm/SessionDriverTest::testDestroyCurrentlyAttemptsRegenerationAfterEndingTheSession` | A | Regenerate before destroying, or not at all | open |
+| KD-33 | Legacy ORM | The static `get_data` facade discards its result | `Data/Orm/LegacyOrmTest::testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult` | A | Return the stored data | fixed (MOD-133) |
+| KD-34 | Legacy ORM | A nonempty constructor array cannot act as a driver | `LegacyOrmTest::testNonemptyConstructorArrayStillCannotActAsADriver` | B | Q13 | fixed (MOD-133) |
+| KD-35 | ORM session driver | `destroy` regenerates the id after ending the session (warning) | `Data/Orm/SessionDriverTest::testDestroyCurrentlyAttemptsRegenerationAfterEndingTheSession` | A | Regenerate before destroying, or not at all | fixed (MOD-133) |
 | KD-36 | Data mapper | `webview` discards its HTML-encoded clone | `Data/MapperTest::testWebviewCurrentlyDiscardsTheHtmlEncodedClone` | A | Return the encoded clone | fixed (MOD-126) |
 | KD-37 | Data mapper | `field_list($instance)` fails before creating its reflection | `Data/MapperTest::testFieldListWithInstanceCurrentlyFailsBeforeCreatingReflection` | A | Create the reflection for the instance | fixed (MOD-126) |
 | KD-38 | Validation failure | The message argument is ignored | `Data/ErrorDetailsTest::testValidationFailureCollectsOnlyStringFieldsAndCurrentlyIgnoresMessage` | A | Store and return the message | fixed (MOD-126) |
@@ -93,9 +93,9 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-57 | Views | The `view_resolved` event payload uses an undefined `$resolved` | (follow-ups; source checked 2026-11) | A | Use the matched route | fixed (MOD-127) |
 | KD-58 | API controller | A `HEAD` request sets a flag that is never cleared, so a reused controller keeps treating later requests as `HEAD` | (follow-ups; source checked 2026-11) | A | Reset the flag per request | fixed (MOD-127) |
 | KD-59 | API controller | `TRACE` echoes input via `get_as_assoc()`, which cannot see the input map's dynamic properties | (follow-ups; source checked 2026-11) | A | Echo the actual input fields | fixed (MOD-127) |
-| KD-60 | ORM | `delete()` silently does nothing if the object was read first (`_read_done` guard) | `Orm/LifecycleTest::testDeleteAndTheCurrentReadDoneGuard` | B | Q19 | open |
-| KD-61 | ORM | `crud_error` stores its details in the operation field | (follow-ups; not yet verified) | A | Store operation and details separately | open |
-| KD-62 | Mongo | `load_client()` without options loops over `null` (warning) | (follow-ups; source checked 2026-11) | A | Treat missing options as `[]` | open |
+| KD-60 | ORM | `delete()` silently does nothing if the object was read first (`_read_done` guard) | `Orm/LifecycleTest::testDeleteAndTheCurrentReadDoneGuard` | B | Q19 | fixed (MOD-133) |
+| KD-61 | ORM | `crud_error` stores its details in the operation field | (follow-ups; not yet verified) | A | Store operation and details separately | fixed (MOD-133) |
+| KD-62 | Mongo | `load_client()` without options loops over `null` (warning) | (follow-ups; source checked 2026-11) | A | Treat missing options as `[]` | fixed (MOD-133) |
 | KD-63 | S3 | Multipart threshold is 10 GiB though the comment says 10 MB; a single S3 upload cannot exceed 5 GB, so 5 GB to 10 GiB files would fail | (follow-ups; source checked 2026-11) | B | Q20 | open |
 | KD-64 | S3 | Large (multipart) uploads do not pass on the file's MIME type | (follow-ups; not yet verified) | A | Pass the content type to the multipart upload | open |
 | KD-65 | Data mapper | `dump` HTML-encoding ignores its encoded clone (same pattern as KD-36) | (follow-ups; not yet verified) | A | Use the encoded clone | fixed (MOD-126) |

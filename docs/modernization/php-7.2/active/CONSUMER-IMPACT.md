@@ -97,6 +97,13 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-132 (KD-30) | Debug kill exit status | `debug::kill($msg, ['exit_status'=>N])` ignored N (only a nested form worked) and the fallback exit read undefined variables | The plain form sets the exit status; the nested form still works | `debug::kill(` |
 | MOD-132 (KD-29) | Debug value descriptions | Arrays read `{object class: %class%}`; numbers and booleans kept raw placeholders; `"0"` read as `{empty string}` | `{array count: N elements}`, `{integer} 42`, `{boolean} false`, `0` | Logs or tests matching `debug::data2str(` output |
 | MOD-132 (KD-53) | Template output buffers | A failing generated template, or a failure inside `tmpl::format()`, left an output buffer open, swallowing later output | Buffers are closed on failure | Code relying on output after a template failure |
+| MOD-133 (KD-01, 02, 03) | PDO statements | `fetch` options all threw `bad_option`; `execute` without a callback raised a PHP `Error`; drivers reporting `rowCount()` 0 for SELECT (SQLite) threw `not_found` even with rows | `fetch` true/class/callable add or pass each row, `false` executes without fetching; plain `execute` adds rows as `flat\data\generic`; `not_found` means no rows were fetched | `pdo\statement`, `'fetch'`, `'execute'`, `not_found` handling |
+| MOD-133 (KD-04) | Mongo CA file | A failed certificate write returned `null` | Throws `app_error` ("could not write CA file") | `ssl\cafile::get_file(` |
+| MOD-133 (KD-05) | DB controller `load_read` | Always returned `null` with an "undefined constant self" warning | Classes implementing `\flat\db\op\read` return `op_read()` (when defined) or `read($param)` | `::load_read(` |
+| MOD-133 (KD-33, 34) | Legacy data ORM | `orm::get_data()` and `get()` returned nothing; a constructor array raised a PHP `Error` | They return the stored data (`set()` returns the driver's result); the array is driver configuration (`'driver'` class or object, the rest passed on); an invalid driver throws `bad_param` | `flat\data\orm` |
+| MOD-133 (KD-35) | Session ORM destroy | Ended the session, then warned while regenerating the id | Regenerates (removing the old data), clears `$_SESSION` and ends the session, without warnings | `handler\native::destroy(` |
+| MOD-133 (KD-60, 61) | ORM objects | `delete()` did nothing on an object that had been read; `crud_error::get_op()` returned the details | Read objects can be deleted (once); `get_op()` returns the operation | `flat\orm` `delete(`, `crud_error` |
+| MOD-133 (KD-62) | Mongo client | `load_client()` without options warned about `foreach` on `null` | No warning | `mongo::load_client(` |
 
 ## Suggested consumer check
 

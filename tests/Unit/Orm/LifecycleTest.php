@@ -45,14 +45,16 @@ class LifecycleTest extends TestCase
         $read->update(); $read->update();
         $this->assertSame(['before-read','read','before-update','update','before-update','update'],$read->calls);
     }
-    public function testDeleteAndTheCurrentReadDoneGuard()
+    public function testDeleteWorksAfterReadAndOnlyOnce()
     {
         $deleted = new CrudModel(1); $deleted->delete();
         $this->assertFalse($deleted->exists());
         $this->assertSame(['before-delete','delete'],$deleted->calls);
         $read = new CrudModel(1); $read->read(); $read->delete();
-        $this->assertTrue($read->exists()); // Existing delete guard skips a previously read record.
-        $this->assertSame(['before-read','read'],$read->calls);
+        $this->assertFalse($read->exists()); // A record that was read can be deleted.
+        $this->assertSame(['before-read','read','before-delete','delete'],$read->calls);
+        $read->delete(); // A second delete does nothing.
+        $this->assertSame(['before-read','read','before-delete','delete'],$read->calls);
     }
     /** @dataProvider operationFailures */
     public function testStorageHookFailuresExplainTheOperation($operation,$result)
@@ -62,8 +64,7 @@ class LifecycleTest extends TestCase
         catch (\flat\orm\crud_error $e) {
             $this->assertStringContainsString('orm '.$operation.' error',$e->getMessage());
             $this->assertSame(is_string($result) ? $result : null,$e->get_details());
-            // Current getter copies details rather than the operation.
-            $this->assertSame($e->get_details(),$e->get_op()); return;
+            $this->assertSame($operation,$e->get_op()); return;
         }
         $this->fail('Failed hook must throw');
     }

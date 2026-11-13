@@ -24,6 +24,8 @@ class BufferedSqliteStatement extends \PDOStatement
 }
 class JoinRules extends rules { public $join_clause; }
 abstract class AbstractRow {}
+class AliasedRow extends \flat\data { public $i_id; public $i_name; }
+class PlainAliasedRow { public $i_id; public $i_name; }
 class StatementTest extends TestCase
 {
     private $pdo;
@@ -88,18 +90,33 @@ class StatementTest extends TestCase
             [['column_hash'=>['bad-prefix'=>['id']]],$bad], [['column_hash'=>['i'=>['bad-column']]],$bad],
             [['column_hash'=>['i'=>['bad-alias'=>'id']]],$bad]];
     }
-    /**
-     * @dataProvider currentlyRejectedFetchOptions
-     * @group known-defect
-     */
-    public function testEveryExplicitFetchOptionCurrentlyThrows($fetch)
+    public function testFetchOptionsAddRowsToTheCollection()
+    {
+        $generic = new statement($this->pdo, $this->rules(['options'=>['fetch'=>true]]));
+        $this->assertSame(1, $generic->count()); $generic->rewind();
+        $this->assertInstanceOf(\flat\data\generic::class, $generic->current());
+        $this->assertEquals('one', $generic->current()->i_name);
+        $data = new statement($this->pdo, $this->rules(['options'=>['fetch'=>AliasedRow::class]]));
+        $data->rewind(); $this->assertInstanceOf(AliasedRow::class, $data->current());
+        $this->assertEquals(['1','one'], [$data->current()->i_id, $data->current()->i_name]);
+        $plain = new statement($this->pdo, $this->rules(['options'=>['fetch'=>PlainAliasedRow::class]]));
+        $plain->rewind(); $this->assertInstanceOf(PlainAliasedRow::class, $plain->current());
+        $this->assertEquals(['1','one'], [$plain->current()->i_id, $plain->current()->i_name]);
+        $seen = [];
+        $callback = new statement($this->pdo, $this->rules(['options'=>['fetch'=>function ($row) use (&$seen) { $seen[] = $row; }]]));
+        $this->assertEquals([['i_id'=>1,'i_name'=>'one']], $seen); $this->assertSame(0, $callback->count());
+        $none = new statement($this->pdo, $this->rules(['options'=>['fetch'=>false,'execute'=>true]]));
+        $this->assertSame(0, $none->count());
+    }
+    /** @dataProvider invalidFetchOptions */
+    public function testInvalidFetchOptionsAreRejected($fetch)
     {
         $this->expectException(\flat\db\driver\pdo\exception\bad_option::class);
         new statement($this->pdo, $this->rules(['options'=>['fetch'=>$fetch]]));
     }
-    public function currentlyRejectedFetchOptions()
+    public function invalidFetchOptions()
     {
-        return [[true], [false], [RowFixture::class], [\stdClass::class], ['absent_class'], [AbstractRow::class], [function () {}], [42]];
+        return [['absent_class'], [AbstractRow::class], [42], [[1,2]]];
     }
     public function testFetchCallbackConsumesActualRowsThroughABufferedNativeStatement()
     {
@@ -107,12 +124,11 @@ class StatementTest extends TestCase
         $result=new statement($this->pdo,$this->rules(['options'=>['fetch_callback'=>function ($row) use (&$seen) { $seen[]=$row; }]]));
         $this->assertEquals([['i_id'=>1,'i_name'=>'one']],$seen); $this->assertSame(0,$result->count());
     }
-    /** @group known-defect */
-    public function testExecutedRowsWithoutACallbackStillReferenceUndefinedDataClass()
+    public function testExecutedRowsWithoutAFetchOptionAreAddedAsGenericData()
     {
-        $this->pdo->setAttribute(\PDO::ATTR_STATEMENT_CLASS,[BufferedSqliteStatement::class]);
-        $this->expectException(\Error::class); $this->expectExceptionMessage('Class name must be a valid object or a string');
-        new statement($this->pdo,$this->rules(['options'=>['execute'=>true]]));
+        $result = new statement($this->pdo,$this->rules(['options'=>['execute'=>true]]));
+        $this->assertSame(1, $result->count()); $result->rewind();
+        $this->assertInstanceOf(\flat\data\generic::class, $result->current());
     }
     public function testDeclaredJoinClauseCannotContainAStatementSeparator()
     {
@@ -120,16 +136,15 @@ class StatementTest extends TestCase
         $this->expectException(\flat\db\driver\pdo\exception\bad_rule::class); $this->expectExceptionMessage('invalid char ;');
         new statement($this->pdo,$rules);
     }
-    /** @group known-defect */
-    public function testExecuteCurrentlyReportsNotFoundForSqliteSelectRowCount()
+    public function testNotFoundMeansNoRowsWereFetched()
     {
-        try { new statement($this->pdo, $this->rules(['options'=>['execute'=>true]])); }
+        // SQLite reports rowCount() 0 for SELECT; rows are counted as fetched instead.
+        $this->assertSame(1, (new statement($this->pdo, $this->rules(['options'=>['execute'=>true]])))->count());
+        try { new statement($this->pdo, $this->rules(['criteria'=>['id'=>99],'options'=>['execute'=>true]])); }
         catch (\flat\db\driver\pdo\exception\not_found $e) {
-            $this->assertSame(['id'=>1], $e->get_criteria_keys_used());
-            // The query did return a row; the rowCount gate is a separate builder defect.
-            $this->assertSame('1', $this->pdo->last->fetchColumn());
+            $this->assertSame(['id'=>99], $e->get_criteria_keys_used());
             return;
         }
-        $this->fail('Current SQLite not_found failure should be exposed');
+        $this->fail('expected not_found for a criteria with no rows');
     }
 }

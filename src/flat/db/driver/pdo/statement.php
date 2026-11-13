@@ -119,77 +119,49 @@ class statement extends \flat\core\collection
 
         $fetch_callback = NULL;
         $fetch_class = NULL;
+        $fetch_disabled = false;
         $statement = $this;
 
         /**
-         * @var callable|NULL $fetch_callback
-         * @var string|NULL $fetch_class
+         * @var callable|NULL $fetch_callback invoked with each fetched row
+         * @var string|NULL $fetch_class class each fetched row is added as
          * @var \flat\db\driver\pdo\statement $statement
-         * 
-         * @todo complete implementation of the following
-         * $options['fetch'] sanitize and dereference:
-         *    if it's boolean true: 
-         *       add results as \flat\data\generic (self::default_fetch_class)
-         *       using \flat\core\collection parent methods
-         *    if it's a string:
-         *       enforce that its a valid instantiable class,
-         *       add results as that class using \flat\core\collection parent methods
+         *
+         * $options['fetch']:
+         *    (bool) true: add each row to this collection as self::default_fetch_class
+         *    (bool) false: execute without fetching any rows
+         *    (string) instantiable class name: add each row as that class; a
+         *       \flat\data class receives the row in its constructor, any other
+         *       class gets its visible properties set from the row
+         *    (callable): invoked with each row (assoc array)
          */
         if (isset($options['fetch'])) {
             if (is_bool($options['fetch'])) {
                 if ($options['fetch'] === true) {
                     $fetch_class = self::default_fetch_class;
-                    /* CONSERVATIVELY DISABLED local callback: it cannot escape or run
-                     * because every specified fetch option throws below. Original:
-                     * $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
-                     * $statement->add(new $fetch_class($data));
-                     * };
-                     */
                 } else {
-                    /* CONSERVATIVELY DISABLED local callback: it cannot escape or run
-                     * because every specified fetch option throws below. Original:
-                     * $fetch_callback = function () {
-                     * };
-                     */
+                    $fetch_disabled = true;
                 }
-            } else if (is_string($options['fetch'])) {
-                if (class_exists($options['fetch'])) {
-                    $fetch_class = $options['fetch'];
-                    $r = new \ReflectionClass($fetch_class);
-                    if (!$r->isInstantiable()) throw new exception\bad_option('fetch', "if string value, must be instantiable class name");
-
-                    /*
-                     * if it's a \flat\data object, 
-                     *    give assoc row data to constructor
-                     * --otherwise--
-                     *    iterate visible properties to set their values
-                     */
-                    if (is_a($fetch_class, "\\flat\\data", true)) {
-                        /* CONSERVATIVELY DISABLED local callback: it cannot escape or run
-                         * because every specified fetch option throws below. Original:
-                         * $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
-                         * $statement->add(new $fetch_class($data));
-                         * };
-                         */
-                    } else {
-                        /* CONSERVATIVELY DISABLED local callback: it cannot escape or run
-                         * because every specified fetch option throws below. Original:
-                         * $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
-                         * $fetch_object = new $fetch_class();
-                         * foreach ($fetch_object as $prop => &$val) {
-                         * if (isset($data[$prop])) $val = $data[$prop];
-                         * }
-                         * $statement->add($fetch_object);
-                         * };
-                         */
-                    }
-                } else {
-                    throw new exception\bad_option('fetch', "if string value, must be instantiable class name");
+            } else if (is_string($options['fetch']) && class_exists($options['fetch'])) {
+                $fetch_class = $options['fetch'];
+                $r = new \ReflectionClass($fetch_class);
+                if (!$r->isInstantiable()) throw new exception\bad_option('fetch', "if string value, must be instantiable class name");
+                if (!is_a($fetch_class, "\\flat\\data", true)) {
+                    $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
+                        $fetch_object = new $fetch_class();
+                        foreach ($fetch_object as $prop => &$val) {
+                            if (isset($data[$prop])) $val = $data[$prop];
+                        }
+                        $statement->add($fetch_object);
+                    };
                 }
             } else if (is_callable($options['fetch'])) {
                 $fetch_callback = $options['fetch'];
+            } else if (is_string($options['fetch'])) {
+                throw new exception\bad_option('fetch', "if string value, must be instantiable class name");
+            } else {
+                throw new exception\bad_option('fetch', "if specified, value must be one of the following types: " . "(callable) {callback function to invoke for each row}, or " . "(string) '{instantiable class name}' adds new instance of class to this collection for each row, " . "(bool) {false: no fetch occurs | true: creates and adds generic object to this collection for each row}");
             }
-            throw new exception\bad_option('fetch', "if specified, value must be one of the following types: " . "(callable) {callback function to invoke for each row}, or " . "(string) '{instantiable class name}' adds new instance of class to this collection for each row, " . "(bool) {false: no fetch occurs | true: creates and adds generic object to this collection for each row}");
         }
 
         /**
@@ -404,18 +376,29 @@ $skip_limit_clause
             }
             $sth->bindValue(":$key", $val, $type);
         }
-        if (!empty($options['execute']) || !empty($options['fetch']) || !empty($options['fetch_callback'])) {
-            $sth->execute();
-            if (!$sth->rowCount()) throw new exception\not_found($bind);
+        if (empty($options['execute']) && empty($options['fetch']) && empty($options['fetch_callback'])) return;
+
+        $sth->execute();
+        if ($fetch_disabled) return;
+
+        if (!empty($options['fetch_callback'])) $fetch_callback = $options['fetch_callback'];
+        if ($fetch_callback === null) {
+            if ($fetch_class === null) $fetch_class = self::default_fetch_class;
+            $fetch_callback = function (array $data) use (&$statement, $fetch_class) {
+                $statement->add(new $fetch_class($data));
+            };
         }
-        if (!empty($options['fetch_callback'])) {
-            $callback = $options['fetch_callback'];
-            while ($data = $sth->fetch(\PDO::FETCH_ASSOC))
-                $callback($data);
-            return;
+
+        /*
+         * Count fetched rows rather than trusting rowCount(), which drivers such
+         * as SQLite report as 0 for SELECT statements.
+         */
+        $rows = 0;
+        while ($data = $sth->fetch(\PDO::FETCH_ASSOC)) {
+            $rows++;
+            $fetch_callback($data);
         }
-        while ($data = $sth->fetch(\PDO::FETCH_ASSOC))
-            new $data_class($data);
+        if (!$rows) throw new exception\not_found($bind);
     }
 }
 

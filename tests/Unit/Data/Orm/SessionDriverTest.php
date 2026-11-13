@@ -100,12 +100,14 @@ class SessionDriverTest extends TestCase
         list($status,$out,$err) = $this->subprocess($body);
         $this->assertSame(0,$status,$out.$err); $this->assertSame('',$err); $this->assertSame(['persisted',null],json_decode($out,true));
     }
-    /** @group known-defect */
-    public function testDestroyCurrentlyAttemptsRegenerationAfterEndingTheSession()
+    public function testDestroyEndsTheSessionAndRemovesItsData()
     {
-        $body = $this->sessionPrefix().'$h=new \\flat\\data\\orm\\driver\\session\\handler\\native; $h->set("key",new \\flat\\data\\generic(["value"=>"local"])); $warnings=[]; set_error_handler(function($n,$m)use(&$warnings){$warnings[]=$m;return true;}); try { $h::destroy(); } finally { restore_error_handler(); } echo json_encode([session_status(),$warnings]);';
+        $body = $this->sessionPrefix().'$h=new \\flat\\data\\orm\\driver\\session\\handler\\native; $h->set("key",new \\flat\\data\\generic(["value"=>"local"])); session_write_close(); session_start(); $warnings=[]; set_error_handler(function($n,$m)use(&$warnings){$warnings[]=$m;return true;}); try { $h::destroy(); } finally { restore_error_handler(); } echo json_encode([session_status(),$warnings,count(glob(session_save_path()."/sess_*")),$_SESSION]);';
         list($status,$out,$err) = $this->subprocess($body); $result = json_decode($out,true);
-        $this->assertSame(0,$status,$out.$err); $this->assertSame('',$err); $this->assertSame(PHP_SESSION_NONE,$result[0]);
-        $this->assertCount(1,$result[1]); $this->assertStringContainsString('session_regenerate_id',$result[1][0]);
+        $this->assertSame(0,$status,$out.$err); $this->assertSame('',$err);
+        $this->assertSame(PHP_SESSION_NONE,$result[0]);
+        $this->assertSame([],$result[1]);
+        $this->assertSame(0,$result[2]); // no session data file remains
+        $this->assertSame([],$result[3]);
     }
 }

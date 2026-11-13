@@ -53,8 +53,7 @@ class CaFileTest extends TestCase
         $this->assertStringContainsString('cafile',$out);
         $this->assertFileNotExists($out);
     }
-    /** @group known-defect */
-    public function testFailedFileWriteCurrentlyReturnsNull()
+    public function testFailedFileWriteRaisesAnError()
     {
         $certificate = new CaLiteralFixture; $warnings = [];
         $previous = null;
@@ -62,8 +61,12 @@ class CaFileTest extends TestCase
             if (strpos($file,'/ssl/cafile.php') !== false && strpos($message,'file_put_contents') !== false) { $warnings[]=$message; return true; }
             return $previous ? $previous($severity,$message,$file,$line) : false;
         });
-        try { $this->assertNull($certificate->get_file(['path'=>sys_get_temp_dir()])); }
-        finally { restore_error_handler(); }
+        try {
+            $certificate->get_file(['path'=>sys_get_temp_dir()]);
+            $this->fail('expected an error for an unwritable path');
+        } catch (\flat\lib\exception\app_error $e) {
+            $this->assertStringContainsString('could not write CA file: '.sys_get_temp_dir(), $e->getMessage());
+        } finally { restore_error_handler(); }
         $this->assertCount(1,$warnings);
     }
 }

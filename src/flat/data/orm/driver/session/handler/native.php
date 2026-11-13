@@ -41,9 +41,11 @@ class native extends \flat\data\orm\driver\session\handler {
    public static function destroy(array $options=NULL) {
       self::_init_session($options);
       
-      session_destroy();
-      
+      // Replace the id (deleting the old session's data) before ending the
+      // session; regenerating after session_destroy() only raised a warning.
       session_regenerate_id(true);
+      $_SESSION = [];
+      session_destroy();
    }
    
    protected static function _start_session(array $options=NULL) {

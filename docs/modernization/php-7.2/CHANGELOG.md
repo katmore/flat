@@ -2259,3 +2259,42 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   interface); verified to load and implement it on PHP 7.2.34.
 - Verified: `docker/bin/test all --coverage` passes 1,318 tests; 100% classes
   (331/331), methods (1,061/1,061), lines (8,015/8,015).
+
+## MOD-133 — Fix database, ORM and Mongo defects (KD-01-05, 33-35, 60-62)
+
+- KD-03 (owner answer Q1): PDO `fetch` options work as the code documents them:
+  `true` adds rows as `flat\data\generic`, a class name adds rows as that class
+  (a `flat\data` class receives the row; other classes get visible properties
+  set), a callable is called per row, and `false` executes without fetching.
+  Note: the Q1 recommendation text said "false = raw arrays"; the code's own
+  documentation says "false: no fetch occurs", which is what was implemented.
+- KD-01: `execute` without a fetch option adds rows as `flat\data\generic`
+  instead of constructing an undefined `$data_class` and discarding it.
+- KD-02: `not_found` means no rows were fetched; the `rowCount()` gate is gone
+  (SQLite reports 0 for SELECT).
+- KD-04: a failed CA-file write throws `app_error` instead of returning `null`.
+- KD-05 (owner answer Q2): `load_read()` tests the called class (it tested the
+  literal constant `self`) and returns `op_read()` as the original body did.
+  Addition beyond the answer: classes implementing `\flat\db\op\read` without
+  an `op_read()` hook get the interface's declared `read($param)` instead of a
+  fatal error.
+- KD-33: the legacy `data\orm` `get()` returns the driver's data (and `set()` its
+  result), so `orm::get_data()` works.
+- KD-34 (owner answer Q13): a constructor array is driver configuration:
+  `'driver'` (class name or object) selects it and the rest goes to its
+  constructor; without `'driver'` the fallback session driver gets it. Drivers
+  are accepted by capability (`get_data`/`set_data`), because the fallback
+  session driver does not extend `data\orm\driver`. Noted, not changed: the
+  `data\orm\driver` base declares `get_data`/`set_data` protected although
+  `orm` calls them publicly.
+- KD-35: native session `destroy()` regenerates the id (deleting the old data),
+  clears `$_SESSION` and then ends the session; it used to regenerate after
+  ending, which only warned.
+- KD-60 (owner answer Q19): `orm::delete()` guards on `_delete_done` (a copy of
+  read()'s `_read_done` guard made read records undeletable).
+- KD-61: `crud_error` stores the operation in its op field. A Lifecycle test
+  that asserted the bug without a `known-defect` tag now asserts the operation.
+- KD-62: `mongo::load_client()` treats missing options as an empty array.
+- Verified: `docker/bin/test all --coverage` passes 1,315 tests (two
+  characterization data providers became smaller behavior tests); 100% classes
+  (331/331), methods (1,061/1,061), lines (8,038/8,038).

@@ -43,25 +43,41 @@ class orm implements \flat\core\controller {
    /* CONSERVATIVELY DISABLED unused private placeholder: no callers exist.
     * private function _get_default_driver() {}
     */
+   /**
+    * @param array $driver (optional) driver configuration. 'driver' selects the
+    *    driver: a \flat\data\orm\driver class name or object. The remaining
+    *    entries are given to the driver's constructor. Without 'driver', the
+    *    fallback session driver receives the configuration.
+    * @throws \flat\data\orm\exception\bad_param
+    */
    public function __construct(array $driver=NULL) {
-      //\flat\data\orm\driver
-      if (!$driver) {
-         $driver = self::fallback_driver;
-         $this->_driver = new $driver();
-         return;
+      $config = $driver ? $driver : [];
+      $selected = self::fallback_driver;
+      if (isset($config['driver'])) {
+         $selected = $config['driver'];
+         unset($config['driver']);
       }
-      /* CONSERVATIVELY DISABLED empty placeholder referencing an undefined
-       * local: if (isset($param['driver'])) {}. Constructor input is $driver.
-       */
-      $this->_driver = $driver; 
-      
+      // A driver is anything providing the get_data()/set_data() calls made
+      // below; the fallback session driver does not extend orm\driver.
+      $is_driver = function ($candidate) {
+         return method_exists($candidate, 'get_data') && method_exists($candidate, 'set_data');
+      };
+      if (is_object($selected) && $is_driver($selected)) {
+         $this->_driver = $selected;
+      } elseif (is_string($selected) && class_exists($selected) && $is_driver($selected)) {
+         $this->_driver = new $selected($config ? $config : NULL);
+      } else {
+         throw new orm\exception\bad_param(
+            "'driver' option must be either: a class name string, or orm driver object"
+         );
+      }
    }
    
    public function get($key) {
-      $this->_driver->get_data($key);
+      return $this->_driver->get_data($key);
    }
    public function set($key,\flat\data $data) {
-      $this->_driver->set_data($key,$data);
+      return $this->_driver->set_data($key,$data);
    } 
    
    private static $_s=NULL;

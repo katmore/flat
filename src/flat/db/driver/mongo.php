@@ -288,6 +288,7 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
       $param = array(
          'ping_offset'=>0,
       );
+      if ($options === NULL) $options = [];
       foreach ($options as $key=>$val) {
          if (isset($param[$key])) {
             $param[$key] = $val;

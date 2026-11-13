@@ -164,6 +164,19 @@ class DriverTest extends TestCase
      * @group services
      * @group mongo
      */
+    public function testClientLoadsWithoutOptionsAndWithoutWarnings()
+    {
+        $warnings = [];
+        set_error_handler(function ($level,$message) use (&$warnings) { $warnings[] = $message; return true; });
+        try { $client = mongo::load_client(getenv('FLAT_TEST_MONGODB_URI')); }
+        finally { restore_error_handler(); }
+        $this->assertInstanceOf(\MongoClient::class,$client);
+        $this->assertSame([],$warnings);
+    }
+    /**
+     * @group services
+     * @group mongo
+     */
     public function testPingOffsetIsSanitizedAndStoredWithClientCache()
     {
         $before = time();
