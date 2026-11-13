@@ -91,7 +91,7 @@ echo "`tests/docker/inventory.php`.\n\n";
 echo "- $methodCount test methods in " . count($files) . " files, running $caseCount test cases.\n";
 echo "- $providerCount methods use a data provider (one case per data set).\n";
 echo "- $defectCount methods still assert defective behavior (`@group known-defect`)"
-    . ($defectsFile ? "; KD IDs are from `" . basename($defectsFile) . "`" : '') . ".\n";
+    . ($defectsFile ? "; KD IDs are from `" . $defectsFile . "`" : '') . ".\n";
 echo "- \"Reads as\" splits the method name into words; the name is the test's claim.\n";
 echo "- Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.\n\n";
 echo "## Files\n";

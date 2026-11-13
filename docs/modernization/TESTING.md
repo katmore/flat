@@ -22,8 +22,11 @@ no service containers. Pass a known-defects file to label `@group known-defect`
 tests with their KD IDs, and redirect the output where it belongs:
 
 ```sh
-bin/test inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > docs/modernization/php-7.2/TEST-INVENTORY.md
+tmp=$(mktemp) && bin/test inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > "$tmp" && mv "$tmp" docs/modernization/php-7.2/TEST-INVENTORY.md
 ```
+
+A redirect straight onto the inventory would empty it if the command fails (for
+example when Docker is not running); writing to a temporary file first avoids that.
 
 Every normal run builds/reuses the repository-defined image, waits for the
 selected services to be healthy, runs PHPUnit, and tears down its Compose

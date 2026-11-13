@@ -2001,3 +2001,19 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   `docs/` and an absolute path from `/` both work; `bin/test inventory`
   regenerated TEST-INVENTORY.md.
 - Undo: `git mv bin/test tests.sh`, restore the root-resolution line.
+
+## MOD-118 — Reference audit after the renames
+
+- Audit of every tracked file after MOD-115 to MOD-117: all 63 relative
+  Markdown links and their `#` anchors resolve; no old document name,
+  `tests.sh`, `moderization` or `modernization-26` remains outside past
+  CHANGELOG entries and `history/` files (kept as written). Shorthand source
+  and test paths in the notes resolve under `src/flat/` and `tests/Unit/`.
+  `bin/test` is stored executable (100755).
+- The inventory header now names the defects file by the path given to
+  `bin/test inventory`, so the reference resolves from the repository root.
+- Documented regeneration now writes to a temporary file first. A redirect
+  straight onto TEST-INVENTORY.md emptied it when `bin/test` failed (the Docker
+  daemon was not running); the file was restored before any commit.
+- Verified: `bin/test all --offline` passes 1,305 tests; the documented
+  command replaces the inventory on success and leaves it untouched on failure.

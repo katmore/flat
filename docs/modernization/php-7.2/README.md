@@ -37,7 +37,8 @@ For a person or an agent picking this up:
 5. Before touching an area, read its file in [notes/](notes/) for how it is
    tested and which quirks are deliberate.
 6. After tests change, regenerate the test inventory:
-   `bin/test inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > docs/modernization/php-7.2/TEST-INVENTORY.md`
+   `tmp=$(mktemp) && bin/test inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > "$tmp" && mv "$tmp" docs/modernization/php-7.2/TEST-INVENTORY.md`
+   (writing to a temporary file first keeps the old inventory if the command fails).
 7. Update the status section above when the numbers change.
 
 ## Next
