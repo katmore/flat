@@ -42,24 +42,23 @@ class AuthorizeTransactionTest extends TestCase
         }
         $this->fail('Expected mismatched transaction rejection');
     }
-    /** @group known-defect */
-    public function testAdapterRetainsMappedInitializedFieldsAndCurrentNullFieldLimitation()
+    public function testAdapterMapsEveryDeclaredSdkField()
     {
         $tax = (object)['amount'=>'1.00','name'=>'tax','description'=>'local'];
         $data = new transaction\authcapture(['amount'=>'12.34','tax'=>$tax]);
         $adapter = new transaction\authcapture\AuthorizeNetTransaction($data);
         $this->assertSame($tax,$adapter->tax);
-        // Current isset guard drops SDK fields initialized to null.
-        $this->assertNull($adapter->amount);
+        $this->assertSame('12.34',$adapter->amount);
     }
-    /** @group known-defect */
-    public function testExplicitFalseValidationIsRejectedAndOtherReturnTypesCurrentlyPass()
+    public function testOnlyTrueValidationPasses()
     {
         try {
-            ControlledTransactionAdapter::$validation = false;
-            try { new ControlledTransactionAdapter(new transaction\authcapture); $this->fail('Expected explicit false rejection'); }
-            catch (\flat\cloud\authorize\bad_param $error) { $this->assertSame('invalid transaction type',$error->get_reason()); }
-            ControlledTransactionAdapter::$validation = null;
+            foreach ([false=>'invalid transaction type', 'null'=>'invalid transaction type', 'reason'=>'reason'] as $returned=>$reason) {
+                ControlledTransactionAdapter::$validation = $returned === 'null' ? null : ($returned === 0 ? false : $returned);
+                try { new ControlledTransactionAdapter(new transaction\authcapture); $this->fail('Expected rejection'); }
+                catch (\flat\cloud\authorize\bad_param $error) { $this->assertSame($reason,$error->get_reason()); }
+            }
+            ControlledTransactionAdapter::$validation = true;
             $this->assertInstanceOf(\AuthorizeNetTransaction::class,new ControlledTransactionAdapter(new transaction\authcapture));
         } finally { ControlledTransactionAdapter::$validation = null; }
     }

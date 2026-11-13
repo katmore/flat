@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 716 test methods in 92 files, running 1314 test cases.
+- 718 test methods in 92 files, running 1316 test cases.
 - 117 methods use a data provider (one case per data set).
-- 5 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 1 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -139,28 +139,29 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 117 | `testFactoryMapsActualSdkCodesToResponseKindsAndStatus` | Factory Maps Actual Sdk Codes To Response Kinds And Status | 4 data-provider cases |
 | 129 | `testUnknownSdkResponseCodeStillReturnsNull` | Unknown Sdk Response Code Still Returns Null |  |
 
-### `tests/Unit/Cloud/AuthorizeSubscriptionTest.php` (18)
+### `tests/Unit/Cloud/AuthorizeSubscriptionTest.php` (19)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 61 | `testNativeArbConstructionUsesTheApplicationPreparationHookAndCachesItsClient` | Native Arb Construction Uses The Application Preparation Hook And Caches Its Client |  |
-| 69 | `testExistingSubscriptionOperationsRequireTheirIdentifier` | Existing Subscription Operations Require Their Identifier | 5 data-provider cases |
-| 75 | `testUpdateAmountAndCancelPassValidatedIdentifiersToTheirClient` | Update Amount And Cancel Pass Validated Identifiers To Their Client |  |
-| 84 | `testRetiredGetTransactionFailsClearlyWithoutCallingTheGateway` | Retired Get Transaction Fails Clearly Without Calling The Gateway |  |
-| 93 | `testUpdateAmountRetainsItsExistingIntegerRestriction` | Update Amount Retains Its Existing Integer Restriction | 2 data-provider cases |
-| 99 | `testStatusAndUpdatabilityUseTheExistingStatusMethod` | Status And Updatability Use The Existing Status Method | 3 data-provider cases |
-| 107 | `testGatewayRejectionsUseTheDeclaredResponseError` | Gateway Rejections Use The Declared Response Error | 5 data-provider cases |
-| 118 | `testPaymentFormsProduceRealSdkSubscriptionObjects` | Payment Forms Produce Real Sdk Subscription Objects | 6 data-provider cases |
-| 135 | `testInvalidPaymentShapesFailBeforeClientTransmission` | Invalid Payment Shapes Fail Before Client Transmission | 4 data-provider cases |
-| 149 | `testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn` | Create Maps Its Amount And Optional Order Without Guessing An Identifier Return | **known defect KD-40** |
-| 161 | `testCreateRejectsMissingOrMalformedDocumentedFields` | Create Rejects Missing Or Malformed Documented Fields | 5 data-provider cases |
-| 172 | `testCreateAcceptsAnExistingScheduleObject` | Create Accepts An Existing Schedule Object |  |
-| 178 | `testInfoSurfacesAListRejectionAfterSuccessfulStatusLookup` | Info Surfaces A List Rejection After Successful Status Lookup |  |
-| 184 | `testInfoStopsAfterFullPageExceedsDeclaredTotal` | Info Stops After Full Page Exceeds Declared Total |  |
-| 190 | `testInfoCircuitBreakerBoundsRepeatedFullPages` | Info Circuit Breaker Bounds Repeated Full Pages |  |
-| 200 | `testInfoFindsASubscriptionInActualXmlDetails` | Info Finds A Subscription In Actual Xml Details |  |
-| 207 | `testInfoMissingTotalUsesUnexpectedResponseWithoutAnIndexZeroWarning` | Info Missing Total Uses Unexpected Response Without An Index Zero Warning |  |
-| 212 | `testInactiveInfoWithoutAMatchUsesNotFound` | Inactive Info Without A Match Uses Not Found |  |
+| 72 | `testNativeArbConstructionUsesTheApplicationPreparationHookAndCachesItsClient` | Native Arb Construction Uses The Application Preparation Hook And Caches Its Client |  |
+| 80 | `testExistingSubscriptionOperationsRequireTheirIdentifier` | Existing Subscription Operations Require Their Identifier | 5 data-provider cases |
+| 86 | `testUpdateAmountAndCancelPassValidatedIdentifiersToTheirClient` | Update Amount And Cancel Pass Validated Identifiers To Their Client |  |
+| 95 | `testRetiredGetTransactionFailsClearlyWithoutCallingTheGateway` | Retired Get Transaction Fails Clearly Without Calling The Gateway |  |
+| 104 | `testUpdateAmountRetainsItsExistingIntegerRestriction` | Update Amount Retains Its Existing Integer Restriction | 2 data-provider cases |
+| 110 | `testStatusAndUpdatabilityUseTheExistingStatusMethod` | Status And Updatability Use The Existing Status Method | 3 data-provider cases |
+| 118 | `testGatewayRejectionsUseTheDeclaredResponseError` | Gateway Rejections Use The Declared Response Error | 5 data-provider cases |
+| 129 | `testPaymentFormsProduceRealSdkSubscriptionObjects` | Payment Forms Produce Real Sdk Subscription Objects | 6 data-provider cases |
+| 146 | `testInvalidPaymentShapesFailBeforeClientTransmission` | Invalid Payment Shapes Fail Before Client Transmission | 4 data-provider cases |
+| 159 | `testCreateMapsItsFieldsAndReturnsTheSubscriptionId` | Create Maps Its Fields And Returns The Subscription Id |  |
+| 171 | `testCreateRejectsMissingOrMalformedDocumentedFields` | Create Rejects Missing Or Malformed Documented Fields | 5 data-provider cases |
+| 182 | `testCreateAcceptsAnExistingScheduleObject` | Create Accepts An Existing Schedule Object |  |
+| 188 | `testInfoSurfacesAListRejectionAfterSuccessfulStatusLookup` | Info Surfaces A List Rejection After Successful Status Lookup |  |
+| 194 | `testInfoStopsAfterFullPageExceedsDeclaredTotal` | Info Stops After Full Page Exceeds Declared Total |  |
+| 200 | `testInfoCircuitBreakerBoundsRepeatedFullPages` | Info Circuit Breaker Bounds Repeated Full Pages |  |
+| 210 | `testInfoRequestsEachPageInTurn` | Info Requests Each Page In Turn |  |
+| 220 | `testInfoFindsASubscriptionInActualXmlDetails` | Info Finds A Subscription In Actual Xml Details |  |
+| 227 | `testInfoMissingTotalUsesUnexpectedResponseWithoutAnIndexZeroWarning` | Info Missing Total Uses Unexpected Response Without An Index Zero Warning |  |
+| 232 | `testInactiveInfoWithoutAMatchUsesNotFound` | Inactive Info Without A Match Uses Not Found |  |
 
 ### `tests/Unit/Cloud/AuthorizeTest.php` (7)
 
@@ -170,8 +171,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 53 | `testSuccessfulResponseIsReturnedAndEndpointPassedToController` | Successful Response Is Returned And Endpoint Passed To Controller |  |
 | 60 | `testRejectedResponseRetainsSdkMessages` | Rejected Response Retains Sdk Messages |  |
 | 74 | `testNullResponseBecomesResponseError` | Null Response Becomes Response Error |  |
-| 85 | `testControllerExceptionIsWrappedUsingExistingDiagnosticFormat` | Controller Exception Is Wrapped Using Existing Diagnostic Format |  |
-| 95 | `testResponseWithoutMessagesAndLegacyScalarErrors` | Response Without Messages And Legacy Scalar Errors | **known defect KD-43** |
+| 80 | `testControllerExceptionIsSummarizedAndKeptAsPrevious` | Controller Exception Is Summarized And Kept As Previous |  |
+| 91 | `testResponseWithoutMessagesAndScalarErrors` | Response Without Messages And Scalar Errors |  |
 | 108 | `testParameterErrorsExposeDetails` | Parameter Errors Expose Details |  |
 
 ### `tests/Unit/Cloud/AuthorizeTransactionTest.php` (6)
@@ -181,9 +182,9 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 17 | `testTransactionKindsAreLoadableTypedData` | Transaction Kinds Are Loadable Typed Data | 3 data-provider cases |
 | 27 | `testLegacyClassNameHookStillUsesItsOriginalCustomerPrefix` | Legacy Class Name Hook Still Uses Its Original Customer Prefix |  |
 | 32 | `testSdkAdaptersAcceptOnlyTheirMatchingType` | Sdk Adapters Accept Only Their Matching Type | 3 data-provider cases |
-| 46 | `testAdapterRetainsMappedInitializedFieldsAndCurrentNullFieldLimitation` | Adapter Retains Mapped Initialized Fields And Current Null Field Limitation | **known defect KD-39** |
-| 56 | `testExplicitFalseValidationIsRejectedAndOtherReturnTypesCurrentlyPass` | Explicit False Validation Is Rejected And Other Return Types Currently Pass | **known defect KD-44** |
-| 66 | `testLegacyPaymentTypeNamesAutoloadWithoutRenamingTheirImplementations` | Legacy Payment Type Names Autoload Without Renaming Their Implementations |  |
+| 45 | `testAdapterMapsEveryDeclaredSdkField` | Adapter Maps Every Declared Sdk Field |  |
+| 53 | `testOnlyTrueValidationPasses` | Only True Validation Passes |  |
+| 65 | `testLegacyPaymentTypeNamesAutoloadWithoutRenamingTheirImplementations` | Legacy Payment Type Names Autoload Without Renaming Their Implementations |  |
 
 ### `tests/Unit/Cloud/AwsConfigTest.php` (1)
 
@@ -214,13 +215,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 85 | `testTransportFailureCarriesCurlContext` | Transport Failure Carries Curl Context |  |
 | 98 | `testRetiredStaticLoadFailsClearlyWithoutTouchingTheCache` | Retired Static Load Fails Clearly Without Touching The Cache |  |
 
-### `tests/Unit/Cloud/S3MultipartTest.php` (3)
+### `tests/Unit/Cloud/S3MultipartTest.php` (4)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 49 | `testThresholdRoutesToRealSdkMultipartWorkflow` | Threshold Routes To Real Sdk Multipart Workflow |  |
-| 59 | `testPartFailureAbortsTheStartedUploadAndWrapsSdkFailure` | Part Failure Aborts The Started Upload And Wraps Sdk Failure |  |
-| 72 | `testInitiationFailureDoesNotAttemptAbortWithoutAnUploadId` | Initiation Failure Does Not Attempt Abort Without An Upload Id |  |
+| 59 | `testMultipartUploadKeepsTheContentTypeAndThresholdStaysBelowTheSinglePutLimit` | Multipart Upload Keeps The Content Type And Threshold Stays Below The Single Put Limit |  |
+| 68 | `testPartFailureAbortsTheStartedUploadAndWrapsSdkFailure` | Part Failure Aborts The Started Upload And Wraps Sdk Failure |  |
+| 81 | `testInitiationFailureDoesNotAttemptAbortWithoutAnUploadId` | Initiation Failure Does Not Attempt Abort Without An Upload Id |  |
 
 ### `tests/Unit/Cloud/TwitterUserInfoTest.php` (2)
 
@@ -638,28 +640,28 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 70 | `testConnectionFailureIsReported` | Connection Failure Is Reported |  |
 | 75 | `testPasswordFailureUsesTheExistingFrameworkException` | Password Failure Uses The Existing Framework Exception |  |
 | 81 | `testPublicKeyPathRunsRealOpenSslAndRemovesItsTemporaryFiles` | Public Key Path Runs Real Open Ssl And Removes Its Temporary Files | 2 data-provider cases |
-| 91 | `testProvidedFingerprintIsChecked` | Provided Fingerprint Is Checked |  |
-| 96 | `testFingerprintMismatchIsReported` | Fingerprint Mismatch Is Reported |  |
-| 101 | `testPublicKeyAuthenticationFailureIsReported` | Public Key Authentication Failure Is Reported |  |
-| 107 | `testLocalCryptoFailureBoundariesAreReported` | Local Crypto Failure Boundaries Are Reported | 4 data-provider cases |
-| 118 | `testOperationsRequireAConnection` | Operations Require A Connection | 6 data-provider cases |
-| 124 | `testFailedRemoteExecutionIsReported` | Failed Remote Execution Is Reported |  |
-| 129 | `testDisconnectIgnoresMissingConnectionOnlyWhenRequested` | Disconnect Ignores Missing Connection Only When Requested |  |
-| 136 | `testProcessChecksPreserveZeroExitCodeSemanticsAndLegacyHooks` | Process Checks Preserve Zero Exit Code Semantics And Legacy Hooks |  |
-| 142 | `testMissingRemoteProcessThrowsUnlessIgnored` | Missing Remote Process Throws Unless Ignored |  |
-| 147 | `testInvalidPidUsesTheLegacyCompatibleParameterException` | Invalid Pid Uses The Legacy Compatible Parameter Exception |  |
-| 152 | `testBackgroundExecutionReturnsPidAndChecksRequestedRuntime` | Background Execution Returns Pid And Checks Requested Runtime | 3 data-provider cases |
-| 159 | `testBackgroundExecutionNeedsAPid` | Background Execution Needs A Pid |  |
-| 165 | `testKillArgumentsAreValidatedBeforeSendingSignals` | Kill Arguments Are Validated Before Sending Signals | 8 data-provider cases |
-| 171 | `testProcessCanExitAfterEitherSignal` | Process Can Exit After Either Signal |  |
-| 179 | `testSignalAndStillRunningFailuresAreReported` | Signal And Still Running Failures Are Reported | 3 data-provider cases |
-| 185 | `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` | Sftp Open Failures Are Reported Before The Missing Helper |  |
-| 190 | `testSftpLocalOpenFailureIsReported` | Sftp Local Open Failure Is Reported |  |
-| 195 | `testLegacyParameterAliasAutoloadsInAFreshRuntime` | Legacy Parameter Alias Autoloads In A Fresh Runtime |  |
-| 200 | `testSuccessfulReadsRestartTheIdleTimeoutAcrossALongerTransfer` | Successful Reads Restart The Idle Timeout Across A Longer Transfer |  |
-| 211 | `testAnIdleTimeoutStopsTheNextReadAndClosesBothStreams` | An Idle Timeout Stops The Next Read And Closes Both Streams |  |
-| 224 | `testNativeReadsHandleShortEmptyAndZeroBodies` | Native Reads Handle Short Empty And Zero Bodies | 5 data-provider cases |
-| 238 | `testCallbackFailureStillClosesTheLocalAndRemoteStreams` | Callback Failure Still Closes The Local And Remote Streams |  |
+| 93 | `testProvidedFingerprintIsChecked` | Provided Fingerprint Is Checked |  |
+| 98 | `testFingerprintMismatchIsReported` | Fingerprint Mismatch Is Reported |  |
+| 106 | `testPublicKeyAuthenticationFailureIsReported` | Public Key Authentication Failure Is Reported |  |
+| 112 | `testLocalCryptoFailureBoundariesAreReported` | Local Crypto Failure Boundaries Are Reported | 4 data-provider cases |
+| 127 | `testOperationsRequireAConnection` | Operations Require A Connection | 6 data-provider cases |
+| 133 | `testFailedRemoteExecutionIsReported` | Failed Remote Execution Is Reported |  |
+| 138 | `testDisconnectIgnoresMissingConnectionOnlyWhenRequested` | Disconnect Ignores Missing Connection Only When Requested |  |
+| 145 | `testProcessChecksPreserveZeroExitCodeSemanticsAndLegacyHooks` | Process Checks Preserve Zero Exit Code Semantics And Legacy Hooks |  |
+| 151 | `testMissingRemoteProcessThrowsUnlessIgnored` | Missing Remote Process Throws Unless Ignored |  |
+| 156 | `testInvalidPidUsesTheLegacyCompatibleParameterException` | Invalid Pid Uses The Legacy Compatible Parameter Exception |  |
+| 161 | `testBackgroundExecutionReturnsPidAndChecksRequestedRuntime` | Background Execution Returns Pid And Checks Requested Runtime | 3 data-provider cases |
+| 168 | `testBackgroundExecutionNeedsAPid` | Background Execution Needs A Pid |  |
+| 174 | `testKillArgumentsAreValidatedBeforeSendingSignals` | Kill Arguments Are Validated Before Sending Signals | 8 data-provider cases |
+| 180 | `testProcessCanExitAfterEitherSignal` | Process Can Exit After Either Signal |  |
+| 188 | `testSignalAndStillRunningFailuresAreReported` | Signal And Still Running Failures Are Reported | 3 data-provider cases |
+| 194 | `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` | Sftp Open Failures Are Reported Before The Missing Helper |  |
+| 199 | `testSftpLocalOpenFailureIsReported` | Sftp Local Open Failure Is Reported |  |
+| 204 | `testLegacyParameterAliasAutoloadsInAFreshRuntime` | Legacy Parameter Alias Autoloads In A Fresh Runtime |  |
+| 209 | `testSuccessfulReadsRestartTheIdleTimeoutAcrossALongerTransfer` | Successful Reads Restart The Idle Timeout Across A Longer Transfer |  |
+| 220 | `testAnIdleTimeoutStopsTheNextReadAndClosesBothStreams` | An Idle Timeout Stops The Next Read And Closes Both Streams |  |
+| 233 | `testNativeReadsHandleShortEmptyAndZeroBodies` | Native Reads Handle Short Empty And Zero Bodies | 5 data-provider cases |
+| 247 | `testCallbackFailureStillClosesTheLocalAndRemoteStreams` | Callback Failure Still Closes The Local And Remote Streams |  |
 
 ### `tests/Unit/Core/Template/ControllerTest.php` (14)
 

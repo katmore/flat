@@ -248,6 +248,8 @@ class ssh {
           *    in addition to being called explicitly after ssh2 authentication is complete 
           *    
           */
+         // Any failure below removes the temporary key files before it propagates.
+         try {
          $this->pubkey_file = tempnam(sys_get_temp_dir(), "sfnpub");
          file_put_contents($this->pubkey_file, $this->auth->pubkey);
          
@@ -265,9 +267,9 @@ class ssh {
 
          if (empty($this->auth->passphrase)) {
             //escapeshellarg($this->privkey_file)
-            $openssl_cmd = "/usr/bin/openssl rsa -in /dev/stdin -out ".escapeshellarg($this->privkey_file)." -passout pass:".escapeshellarg($passphrase)."";
+            $openssl_cmd = "/usr/bin/openssl rsa -in /dev/stdin -aes256 -out ".escapeshellarg($this->privkey_file)." -passout pass:".escapeshellarg($passphrase)."";
          } else {
-            $openssl_cmd = "/usr/bin/openssl rsa -in /dev/stdin -passin pass:".escapeshellarg($this->auth->passphrase)." -out ".escapeshellarg($this->privkey_file)." -passout pass:".escapeshellarg($passphrase)."";
+            $openssl_cmd = "/usr/bin/openssl rsa -in /dev/stdin -passin pass:".escapeshellarg($this->auth->passphrase)." -aes256 -out ".escapeshellarg($this->privkey_file)." -passout pass:".escapeshellarg($passphrase)."";
          }
          //$openssl_cmd .= " <<< '".$this->auth->privkey."\n'";
          //$out = shell_exec($openssl_cmd ." 2>&1");
@@ -304,8 +306,11 @@ class ssh {
          }
          
          if (!ssh2_auth_pubkey_file ( $connection , $this->auth->username , $this->pubkey_file, $this->privkey_file, $passphrase )) {
-            $this->delete_keyfiles();
             throw new exception\auth\failure\pubkey();
+         }
+         } catch (\Throwable $e) {
+            $this->delete_keyfiles();
+            throw $e;
          }
       }
       $this->delete_keyfiles();

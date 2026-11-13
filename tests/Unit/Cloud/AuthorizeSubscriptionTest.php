@@ -10,7 +10,9 @@ class ArbResponseDouble
     public $status = 'ACTIVE';
     public $totals = ['1'];
     public $details = [];
+    public $subscriptionId = 'sub-created';
     public function isError() { return $this->error; }
+    public function getSubscriptionId() { return $this->subscriptionId; }
     public function getMessageCode() { return 'E-local'; }
     public function getMessageText() { return 'local rejection'; }
     public function getSubscriptionStatus() { return $this->status; }
@@ -23,6 +25,15 @@ class ArbClientDouble
     public $responses = [];
     public function __construct() { $this->response = new ArbResponseDouble; }
     public function __call($method,$arguments) { $this->calls[] = [$method,$arguments]; return $this->responses ? array_shift($this->responses) : $this->response; }
+}
+class PagingArbClientDouble extends ArbClientDouble
+{
+    public $offsets = [];
+    public function __call($method,$arguments)
+    {
+        if ($method === 'getSubscriptionList') $this->offsets[] = $arguments[0]->paging->offset;
+        return parent::__call($method,$arguments);
+    }
 }
 class CountingArbClientDouble extends ArbClientDouble
 {
@@ -145,15 +156,14 @@ class AuthorizeSubscriptionTest extends TestCase
             [['payment'=>['creditCard'=>42]],authorize\bad_param::class],
             [['payment'=>[]],authorize\bad_param::class]];
     }
-    /** @group known-defect */
-    public function testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn()
+    public function testCreateMapsItsFieldsAndReturnsTheSubscriptionId()
     {
         $service = new SubscriptionFixture; $params=$this->createParams();
         $params['order']=['name'=>'local order']; $params['billTo']=new authorize\subscription\billTo(['firstName'=>'Local']);
-        $this->assertNull($service->create($params));
+        $this->assertSame('sub-created',$service->create($params));
         $dto=$service->client->calls[0][1][0]; $this->assertSame('12.34',$dto->amount); $this->assertSame('local order',$dto->name);
-        // Other SDK fields remain filtered by the historical isset rule.
-        $this->assertNull($dto->billToFirstName);
+        $this->assertSame('Local',$dto->billToFirstName);
+        $this->assertSame('months',$dto->intervalUnit); $this->assertSame(1,$dto->intervalLength);
         $params['order']=new authorize\subscription\order(['name'=>'object order']); $service->create($params);
         $this->assertSame('object order',$service->client->calls[1][1][0]->name);
     }
@@ -173,7 +183,7 @@ class AuthorizeSubscriptionTest extends TestCase
     {
         $service=new SubscriptionFixture; $params=$this->createParams();
         $params['payment']['schedule']=new authorize\subscription\schedule(['interval'=>['unit'=>'months','length'=>1]]);
-        $this->assertNull($service->create($params)); $this->assertCount(1,$service->client->calls);
+        $this->assertSame('sub-created',$service->create($params)); $this->assertCount(1,$service->client->calls);
     }
     public function testInfoSurfacesAListRejectionAfterSuccessfulStatusLookup()
     {
@@ -196,6 +206,16 @@ class AuthorizeSubscriptionTest extends TestCase
         try { $service->get_info(['subscriptionId'=>'sub']); $this->fail('Expected bounded not found'); }
         catch (authorize\subscription\not_found $error) { $this->assertSame('sub',$error->get_subscriptionId()); }
         $this->assertSame(BoundedSubscriptionFixture::arb_search_max_tics+3,$service->client->count);
+    }
+    public function testInfoRequestsEachPageInTurn()
+    {
+        $service=new SubscriptionFixture; $service->client=new PagingArbClientDouble;
+        $page=function (array $details) { $r=new ArbResponseDouble; $r->totals=['2000']; $r->details=$details; return $r; };
+        $service->client->responses=[new ArbResponseDouble,
+            $page(array_fill(0,1000,new \SimpleXMLElement('<subscriptionDetail><id>other</id></subscriptionDetail>'))),
+            $page([new \SimpleXMLElement('<subscriptionDetail><id>sub</id><name>second page</name></subscriptionDetail>')])];
+        $this->assertSame('second page',$service->get_info(['subscriptionId'=>'sub'])->name);
+        $this->assertSame([1,2],$service->client->offsets);
     }
     public function testInfoFindsASubscriptionInActualXmlDetails()
     {

@@ -79,8 +79,11 @@ namespace flat\core {
     function ssh2_auth_pubkey_file($connection,$username,$public,$private,$passphrase = null)
     {
         if (!Boundary::$active) return \ssh2_auth_pubkey_file($connection,$username,$public,$private,$passphrase);
-        $key = \openssl_pkey_get_private(\file_get_contents($private),$passphrase);
-        Boundary::$pubkeyCalls[] = ['public'=>$public,'private'=>$private,'parsed'=>is_resource($key),'passphrase'=>$passphrase];
+        $pem = \file_get_contents($private);
+        $key = \openssl_pkey_get_private($pem,$passphrase);
+        Boundary::$pubkeyCalls[] = ['public'=>$public,'private'=>$private,'parsed'=>is_resource($key),'passphrase'=>$passphrase,
+            // An encrypted PEM (traditional or PKCS#8) says so in its header.
+            'encrypted'=>strpos($pem,'ENCRYPTED') !== false];
         if (is_resource($key)) \openssl_pkey_free($key);
         return Boundary::$pubkeyOk;
     }

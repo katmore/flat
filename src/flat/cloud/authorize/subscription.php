@@ -234,7 +234,7 @@ abstract class subscription extends \flat\cloud\authorize
        */
        foreach($schedule_map as $k=>$v) {
           $prop = $k;
-          if (isset($subscription->$prop)) $subscription->$prop = $v;
+          if (property_exists($subscription,$prop)) $subscription->$prop = $v;
        }
     
        /*
@@ -242,7 +242,7 @@ abstract class subscription extends \flat\cloud\authorize
         */
        foreach($interval as $k=>$v) {
           $prop = "interval".ucfirst($k); //camelCase the property name
-          if (isset($subscription->$prop)) $subscription->$prop = $v;
+          if (property_exists($subscription,$prop)) $subscription->$prop = $v;
        }
     
        /*
@@ -266,7 +266,7 @@ abstract class subscription extends \flat\cloud\authorize
              }
              foreach($object as $k=>$v) {
                 $prop = $shortname.ucfirst($k); //camelCase the property name
-                if (isset($subscription->$prop)) $subscription->$prop = $v;
+                if (property_exists($subscription,$prop)) $subscription->$prop = $v;
              }
           }
        }
@@ -297,7 +297,7 @@ abstract class subscription extends \flat\cloud\authorize
        if ($response->isError()) {
           throw new authorize\response_error($response->getMessageCode(), $response->getMessageText());
        }
-    
+       return $response->getSubscriptionId();
     }
    const arb_search_max_tics = 100000;
    const arb_search_result_ttl = 3600; //1 hour ttl
@@ -380,6 +380,8 @@ abstract class subscription extends \flat\cloud\authorize
       if (count($subscriptionDetail)<1000) {
             break 1;
       }
+            // Request the next page (paging offset is a 1-based page number).
+            $list->paging->offset++;
             if ($s>$total) break 1;
             if ($i>static::arb_search_max_tics) break 1;
          $i++;

@@ -71,12 +71,12 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-36 | Data mapper | `webview` discards its HTML-encoded clone | `Data/MapperTest::testWebviewCurrentlyDiscardsTheHtmlEncodedClone` | A | Return the encoded clone | fixed (MOD-126) |
 | KD-37 | Data mapper | `field_list($instance)` fails before creating its reflection | `Data/MapperTest::testFieldListWithInstanceCurrentlyFailsBeforeCreatingReflection` | A | Create the reflection for the instance | fixed (MOD-126) |
 | KD-38 | Validation failure | The message argument is ignored | `Data/ErrorDetailsTest::testValidationFailureCollectsOnlyStringFieldsAndCurrentlyIgnoresMessage` | A | Store and return the message | fixed (MOD-126) |
-| KD-39 | Payments | Transaction adapter's `isset` guard drops SDK fields initialized to `null`, including `amount` | `Cloud/AuthorizeTransactionTest::testAdapterRetainsMappedInitializedFieldsAndCurrentNullFieldLimitation` | A | Map every declared SDK field | open |
-| KD-40 | Payments | Subscription `create` drops `billTo` (same `isset` rule) | `Cloud/AuthorizeSubscriptionTest::testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn` | A | Map declared SDK fields | open |
-| KD-41 | Payments | Subscription `create` returns `null`; its docblock promises the subscription id | same test | B | Q14 | open |
-| KD-42 | Payments | Subscription search pagination offset never advances | (`../history/PENDING-QUESTIONS.md` row 8) | A | Advance the offset per page | open |
-| KD-43 | Payments | Scalar `response_error` ignores its second argument | `Cloud/AuthorizeTest::testResponseWithoutMessagesAndLegacyScalarErrors` | B | Q15 | open |
-| KD-44 | Payments | Transaction validation accepts any return except explicit `false` | `AuthorizeTransactionTest::testExplicitFalseValidationIsRejectedAndOtherReturnTypesCurrentlyPass` | A | Accept only `true` | open |
+| KD-39 | Payments | Transaction adapter's `isset` guard drops SDK fields initialized to `null`, including `amount` | `Cloud/AuthorizeTransactionTest::testAdapterRetainsMappedInitializedFieldsAndCurrentNullFieldLimitation` | A | Map every declared SDK field | fixed (MOD-135) |
+| KD-40 | Payments | Subscription `create` drops `billTo` (same `isset` rule) | `Cloud/AuthorizeSubscriptionTest::testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn` | A | Map declared SDK fields | fixed (MOD-135) |
+| KD-41 | Payments | Subscription `create` returns `null`; its docblock promises the subscription id | same test | B | Q14 | fixed (MOD-135) |
+| KD-42 | Payments | Subscription search pagination offset never advances | (`../history/PENDING-QUESTIONS.md` row 8) | A | Advance the offset per page | fixed (MOD-135) |
+| KD-43 | Payments | Scalar `response_error` ignores its second argument | `Cloud/AuthorizeTest::testResponseWithoutMessagesAndLegacyScalarErrors` | B | Q15 | fixed (MOD-135) |
+| KD-44 | Payments | Transaction validation accepts any return except explicit `false` | `AuthorizeTransactionTest::testExplicitFalseValidationIsRejectedAndOtherReturnTypesCurrentlyPass` | A | Accept only `true` | fixed (MOD-135) |
 | KD-45 | Payments | Customer convenience operations (void, refund, authonly, authcapture, captureonly, get_transaction) return `null` | `Cloud/AuthorizeCustomerTest::testUnimplementedConvenienceOperationsCurrentlyReturnNull` | C | Q16 | fixed (MOD-114) |
 | KD-46 | IP lookup | Static `load` does nothing | `Cloud/IpInfoDbTest::testStaticLoadCurrentlyDoesNothing` | C | Q16 | fixed (MOD-114) |
 | KD-47 | Exceptions | `bad_interface` message drops the class when a method is given and ignores the reason | `Core/BadInterfaceTest::testMessageFormattingRetainsCurrentMethodAndReasonBehavior` | A | Include class, method and reason | fixed (MOD-124) |
@@ -96,11 +96,11 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-60 | ORM | `delete()` silently does nothing if the object was read first (`_read_done` guard) | `Orm/LifecycleTest::testDeleteAndTheCurrentReadDoneGuard` | B | Q19 | fixed (MOD-133) |
 | KD-61 | ORM | `crud_error` stores its details in the operation field | (follow-ups; not yet verified) | A | Store operation and details separately | fixed (MOD-133) |
 | KD-62 | Mongo | `load_client()` without options loops over `null` (warning) | (follow-ups; source checked 2026-11) | A | Treat missing options as `[]` | fixed (MOD-133) |
-| KD-63 | S3 | Multipart threshold is 10 GiB though the comment says 10 MB; a single S3 upload cannot exceed 5 GB, so 5 GB to 10 GiB files would fail | (follow-ups; source checked 2026-11) | B | Q20 | open |
-| KD-64 | S3 | Large (multipart) uploads do not pass on the file's MIME type | (follow-ups; not yet verified) | A | Pass the content type to the multipart upload | open |
+| KD-63 | S3 | Multipart threshold is 10 GiB though the comment says 10 MB; a single S3 upload cannot exceed 5 GB, so 5 GB to 10 GiB files would fail | (follow-ups; source checked 2026-11) | B | Q20 | fixed (MOD-135) |
+| KD-64 | S3 | Large (multipart) uploads do not pass on the file's MIME type | (follow-ups; not yet verified) | A | Pass the content type to the multipart upload | fixed (MOD-135) |
 | KD-65 | Data mapper | `dump` HTML-encoding ignores its encoded clone (same pattern as KD-36) | (follow-ups; not yet verified) | A | Use the encoded clone | fixed (MOD-126) |
-| KD-66 | Exceptions | Exception wrapping `print_r`s traces including arguments and can exhaust memory on large objects | (follow-ups; not yet verified) | B | Q21 | open |
-| KD-67 | SSH | Temporary key files are not cleaned up when connection setup fails part-way; key encryption uses no explicit cipher | (follow-ups; not yet verified) | B | Q22 | open |
+| KD-66 | Exceptions | Exception wrapping `print_r`s traces including arguments and can exhaust memory on large objects | (follow-ups; not yet verified) | B | Q21 | fixed (MOD-135) |
+| KD-67 | SSH | Temporary key files are not cleaned up when connection setup fails part-way; key encryption uses no explicit cipher | (follow-ups; not yet verified) | B | Q22 | fixed (MOD-135) |
 | KD-68 | Validation controller | The validation body is unfinished; it inspects fields and then does nothing | (follow-ups; not yet verified) | C | Q23 | fixed (MOD-134) |
 | KD-69 | Data mapper | `field_list()` caches one list for every `flat\data` subclass, so later classes get the first class's fields (and `is_field()` answers wrongly) | `Data/MapperTest::testFieldListUsesTheInstanceAndCachesPerClass` | A | Cache per class | fixed (MOD-126) |
 | KD-70 | cURL config | The constructor's second loop re-assigns every text argument, so unset `request_method`, `user_agent`, `referrer` and `cache_dir` become `null` instead of their declared defaults (`GET`, `flat/curl`) | `Core/Curl/ConfigTest::testExplicitConfigurationAndNumericDefaults` | B | Q24 | open |

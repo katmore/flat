@@ -110,6 +110,14 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-134 (KD-68) | Validation controller | Constructed and did nothing | Throws `BadMethodCallException` once its arguments are valid | `core\controller\validate` |
 | MOD-134 (KD-23) | Image constructor | Width and height together left the image unchanged | Both are proportional minimums (like `resize_min_proportional`) | `new image($source, $w, $h)` with both |
 | MOD-134 (KD-19) | Yasumi date queries | `get_date()`/`get_year()` were `null` for valid input; a cached provider was not attached; `isHoliday()`/`isWorkingDay()` threw; locale ignored; the epoch counted as unparseable | Timestamp and year are set; providers are shared per provider, year and locale; holiday queries work; locale passed to Yasumi | `azuyalabs\yasumi\dateQuery` |
+| MOD-135 (KD-67) | **SSH private keys (security)** | The temporary private key written for ssh2 was **unencrypted** (`openssl rsa` ignores `-passout` without a cipher), and failures left temporary key files behind | Written encrypted with AES-256 under the random passphrase; every failure removes the temporary files | Hosts that ran `flat\core\ssh` public-key logins: consider rotating keys and clearing stray `sfnpriv*` files in the temp directory |
+| MOD-135 (KD-39) | Payment transactions | The transaction adapter dropped every SDK field initialized to `null`, **including `amount`** | All declared fields are mapped | `customer\transaction\*\AuthorizeNetTransaction`; transactions sent without an amount |
+| MOD-135 (KD-44) | Payment transaction validation | Any validation result except `false` or a string passed (e.g. `null`) | Only `true` passes | `_validate_transaction_type(` implementations |
+| MOD-135 (KD-40, 41) | Subscription create | `billTo`/`shipTo`/schedule fields initialized to `null` were dropped; `create()` returned `null` | Fields are mapped; `create()` returns the new subscription id | `subscription::create(` |
+| MOD-135 (KD-42) | Subscription search | Every page request asked for page 1, so a subscription beyond the first 1,000 was never found | Pages advance | `subscription::get_info(` |
+| MOD-135 (KD-43) | Payment response errors | `response_error($code, $text)` ignored the text | Uses it as the message text | `response_error(` with two arguments; logs matching its message |
+| MOD-135 (KD-66) | Payment API exceptions | A failing SDK call threw an `\Exception` whose message was a `print_r` of the exception (could exhaust memory) | Message is `Class: message`; the original is `getPrevious()` | Code parsing that message |
+| MOD-135 (KD-63, 64) | S3 uploads | Files from 5 GB to 10 GiB went to a single upload, which S3 rejects; multipart uploads lost the content type | Files of 100 MB or more use multipart; the content type is kept | `s3::file_upload(` with large files or a content type |
 
 ## Suggested consumer check
 

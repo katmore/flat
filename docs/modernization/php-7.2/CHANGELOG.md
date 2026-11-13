@@ -2323,3 +2323,32 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   endings are preserved.
 - Verified: `docker/bin/test all --coverage` passes 1,314 tests; 100% classes
   (331/331), methods (1,062/1,062), lines (8,046/8,046).
+
+## MOD-135 — Fix payment, S3, exception and SSH defects (KD-39-44, 63, 64, 66, 67)
+
+- KD-67 (owner answer Q22), **security**: the `openssl rsa` command that writes
+  the temporary private key for ssh2 had no cipher option, so OpenSSL ignored
+  `-passout` and wrote the key **unencrypted**, contrary to the code's comment.
+  It now uses `-aes256`. All failures during key setup (passphrase, openssl,
+  fingerprint, authentication) remove the temporary key files before the error
+  propagates. Verified both ways: removing `-aes256` or the cleanup makes the
+  new SSH assertions fail.
+- KD-39/40: the transaction adapter and subscription `create()` map SDK fields
+  with `property_exists()`; `isset()` skipped every field the SDK initializes
+  to `null`, including the transaction `amount`.
+- KD-44: transaction validation passes only on `true`.
+- KD-41 (owner answer Q14): `subscription::create()` returns the gateway's
+  subscription id (`AuthorizeNetARB_Response::getSubscriptionId()`). An
+  untagged test that asserted `null` was updated.
+- KD-42: subscription search advances the paging offset (page number) for each
+  request; it requested page 1 every time.
+- KD-43 (owner answer Q15): scalar `response_error($code, $text)` uses the text.
+- KD-66 (owner answer Q21): a failing Authorize.Net SDK call is rethrown with a
+  `Class: message` summary and the original as `getPrevious()`, instead of a
+  `print_r()` of the exception and its trace arguments.
+- KD-63 (owner answer Q20): the S3 multipart threshold is 100 MB (it was 10 GiB
+  with a "10MB" comment; a single upload cannot exceed 5 GB).
+- KD-64: multipart uploads set the content type on `CreateMultipartUpload`
+  (through `before_initiate`, not on each part).
+- Verified: `docker/bin/test all --coverage` passes 1,316 tests; 100% classes
+  (331/331), methods (1,062/1,062), lines (8,050/8,050).

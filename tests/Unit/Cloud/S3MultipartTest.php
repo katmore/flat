@@ -56,6 +56,15 @@ namespace flat\test\Unit\Cloud {
                 $this->assertSame('prefix/object',$command['params']['Key']);
             }
         }
+        public function testMultipartUploadKeepsTheContentTypeAndThresholdStaysBelowTheSinglePutLimit()
+        {
+            $this->assertSame(100 * 1024 * 1024, s3::multipart_min_size);
+            $this->assertLessThan(5 * 1000 * 1000 * 1000, s3::multipart_min_size);
+            $client = $this->client([new \Aws\Result(['UploadId'=>'local-upload']),new \Aws\Result(['ETag'=>'local-part']),new \Aws\Result(['ETag'=>'local-object'])]);
+            s3::file_upload($client,'local-bucket',$this->file,'object','','video/mp4');
+            $this->assertSame('video/mp4',$this->commands[0]['params']['ContentType']);
+            $this->assertArrayNotHasKey('ContentType',$this->commands[1]['params']);
+        }
         public function testPartFailureAbortsTheStartedUploadAndWrapsSdkFailure()
         {
             $failure = new \Aws\S3\Exception\S3Exception('local rejection',new \Aws\Command('UploadPart'),['code'=>'AccessDenied']);

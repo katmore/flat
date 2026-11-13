@@ -77,28 +77,28 @@ class AuthorizeTest extends TestCase
         $this->expectExceptionMessage('authorize.net response error');
         (new AuthorizeFixture)->execute(new AuthorizeControllerDouble(null));
     }
-
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
-    public function testControllerExceptionIsWrappedUsingExistingDiagnosticFormat()
+    public function testControllerExceptionIsSummarizedAndKeptAsPrevious()
     {
         $controller = new AuthorizeControllerDouble(null);
-        $controller->failure = new \RuntimeException('local transport failure');
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('local transport failure');
-        (new AuthorizeFixture)->execute($controller);
+        $controller->failure = new \RuntimeException('local transport failure', 7);
+        try { (new AuthorizeFixture)->execute($controller); $this->fail('expected the wrapped failure'); }
+        catch (\Exception $e) {
+            $this->assertSame('RuntimeException: local transport failure', $e->getMessage());
+            $this->assertSame(7, $e->getCode());
+            $this->assertSame($controller->failure, $e->getPrevious());
+        }
     }
-
-    /** @group known-defect */
-    public function testResponseWithoutMessagesAndLegacyScalarErrors()
+    public function testResponseWithoutMessagesAndScalarErrors()
     {
         $empty = new authorize\response_error(new Api\ANetApiResponseType);
         $this->assertNull($empty->get_message_code());
         $this->assertNull($empty->get_message_text());
+        $error = new authorize\response_error('E00027', 'The transaction was unsuccessful.');
+        $this->assertSame('E00027', $error->get_message_code());
+        $this->assertSame('The transaction was unsuccessful.', $error->get_message_text());
+        $this->assertSame("authorize.net response error 'E00027': The transaction was unsuccessful.", $error->getMessage());
         foreach ([null, false, 0, 12, 'declined'] as $value) {
-            $error = new authorize\response_error($value, 'ignored legacy second argument');
+            $error = new authorize\response_error($value);
             $this->assertSame($value, $error->get_message_code());
             $this->assertSame($value, $error->get_message_text());
             $this->assertNull($error->get_response());

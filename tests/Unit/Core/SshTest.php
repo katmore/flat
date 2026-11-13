@@ -83,6 +83,8 @@ class SshTest extends TestCase
         $client = $this->pubkey($encrypted); $client->connect();
         $this->assertInstanceOf(ssh\auth\pubkey::class,$client->get_auth()); $this->assertTrue($client->is_connected());
         $this->assertTrue(Boundary::$pubkeyCalls[0]['parsed']);
+        // The private key written for ssh2 is encrypted with the temporary passphrase.
+        $this->assertTrue(Boundary::$pubkeyCalls[0]['encrypted']);
         $this->assertSame(str_repeat('p',128),Boundary::$pubkeyCalls[0]['passphrase']);
         $this->assertSame('local-fingerprint',$client->get_auth()->fingerprint);
         foreach (Boundary::$keyPaths as $path) $this->assertFileNotExists($path);
@@ -96,7 +98,10 @@ class SshTest extends TestCase
     public function testFingerprintMismatchIsReported()
     {
         $client = $this->pubkey(); $client->get_auth()->fingerprint = 'different';
-        $this->expectException(ssh\exception\syserror::class); $this->expectExceptionMessage('fingerprint mismatch'); $client->connect();
+        try { $client->connect(); $this->fail('expected a fingerprint mismatch'); }
+        catch (ssh\exception\syserror $e) { $this->assertSame('system error: fingerprint mismatch',$e->getMessage()); }
+        $this->assertNotEmpty(Boundary::$keyPaths);
+        foreach (Boundary::$keyPaths as $path) $this->assertFileNotExists($path);
     }
     public function testPublicKeyAuthenticationFailureIsReported()
     {
@@ -111,7 +116,11 @@ class SshTest extends TestCase
         elseif ($kind === 'process') Boundary::$processFailure = true;
         elseif ($kind === 'stderr') Boundary::$stderrError = true;
         else Boundary::$emptyKey = true;
-        $this->expectException(ssh\exception\syserror::class); $client->connect();
+        try { $client->connect(); $this->fail('expected a local crypto failure'); }
+        catch (ssh\exception\syserror $e) {}
+        // No temporary key file outlives the failure.
+        $this->assertNotEmpty(Boundary::$keyPaths);
+        foreach (Boundary::$keyPaths as $path) $this->assertFileNotExists($path);
     }
     public function cryptoFailures() { return [['passphrase'],['process'],['stderr'],['empty']]; }
     /** @dataProvider connectedOperations */
