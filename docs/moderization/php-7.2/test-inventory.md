@@ -7,7 +7,7 @@ editing it by hand.
 - 704 test methods in 92 files. 118 use a data provider, so the
   suite runs more cases than methods.
 - 46 methods currently assert defective behavior (`@group known-defect`);
-  their IDs refer to `docs/known-defects.md`.
+  their IDs refer to [known-defects.md](known-defects.md).
 - "Reads as" splits the method name into words; the name is the test's claim.
 
 ## Files

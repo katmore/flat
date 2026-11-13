@@ -44,7 +44,7 @@ No excluded files, skipped tests or invented coverage hits were added.
 Full run: 9.59 minutes / 56 MB. The real 100,000-tick subscription guard test
 accounts for most of the runtime under Xdebug. All 631 PHP source files also pass
 PHP-7.2 syntax checks. Changes and test findings are recorded through MOD-104 in
-[modernization-26.md](modernization-26.md). Earlier checkpoints follow.
+[CHANGELOG.md](CHANGELOG.md). Earlier checkpoints follow.
 
 
 Verified against `modernize-26` commit `ba9f93d` using PHP 7.2.34,
@@ -129,7 +129,7 @@ repository-owned command is now:
 ./tests.sh all --coverage
 ```
 
-See `docs/docker-testing.md` for pinned sources, dependency locks, service types,
+See [docker-testing.md](docker-testing.md) for pinned sources, dependency locks, service types,
 proxy CA input and automatic teardown. Earlier counts below remain historical.
 
 ## Coverage progress: configuration unit tests (MOD-009)

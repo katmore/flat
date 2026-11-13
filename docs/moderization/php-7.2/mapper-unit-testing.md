@@ -105,4 +105,4 @@ Run through the repository-owned Docker wrapper:
 
 Current reports are under `build/tests/all/`. The earlier mapper differential
 check is historical evidence; its private diagnostic helper is no longer a
-supported test entry point. See `docs/docker-testing.md` for portable setup.
+supported test entry point. See [docker-testing.md](docker-testing.md) for portable setup.

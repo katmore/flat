@@ -30,7 +30,7 @@ containers and their test data. Only Docker Engine and Docker Compose are needed
 The default is `all`. Initial image preparation requires network access. Once
 the built PHP test image and selected service images are cached, `--offline` runs
 without builds or pulls. Reports are written under `build/tests/<mode>/`.
-See [Docker test instructions](docs/docker-testing.md) for details.
+See [Docker test instructions](docs/moderization/php-7.2/docker-testing.md) for details.
 
 ## Installation
 **The Flat Framework** can be the basis of a **new project** or added to an **existing project**

@@ -23,7 +23,7 @@ application and regressions can be traced.
 - Characterization tests preserve existing behavior, including explicitly
   documented quirks. Changes to that behavior require a deliberate maintainer
   decision; passing coverage percentages alone do not establish completeness.
-- Maintain a running change log in `docs/modernization-26.md`, recording what
+- Maintain a running change log in `CHANGELOG.md` (one per phase folder), recording what
   changed, why, compatibility effects, validation, and suggested commit messages.
 
 ## Release cycle
