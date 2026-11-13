@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
-# The script lives in bin/; work from the repository root.
-repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+# The script lives in docker/bin/; work from the repository root.
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo_dir"
 export FLAT_TEST_UID="$(id -u)" FLAT_TEST_GID="$(id -g)"
 # Root ignores file permissions, so tests of unreadable/unwritable paths cannot
@@ -19,8 +19,8 @@ compose() {
     fi
 }
 usage() {
-    echo 'Usage: bin/test [all|unit|services|mongo|rabbitmq] [--offline] [--coverage] [PHPUnit arguments]'
-    echo '       bin/test inventory [KNOWN-DEFECTS.md] [--offline] > TEST-INVENTORY.md'
+    echo 'Usage: docker/bin/test [all|unit|services|mongo|rabbitmq] [--offline] [--coverage] [PHPUnit arguments]'
+    echo '       docker/bin/test inventory [KNOWN-DEFECTS.md] [--offline] > TEST-INVENTORY.md'
     echo '  all (default): run everything, with MongoDB and RabbitMQ'
     echo '  unit:          run tests that need no external service containers'
     echo '  services:      run service-dependent tests with MongoDB and RabbitMQ'
@@ -32,7 +32,7 @@ usage() {
     echo '  --coverage:    write reports under build/tests/<mode>/'
     echo '  --build:       build the test image; --down: remove this test stack'
     echo '  -h, --help:    show this usage'
-    echo 'Examples: bin/test unit --filter SshTest; bin/test all --offline --coverage'
+    echo 'Examples: docker/bin/test unit --filter SshTest; docker/bin/test all --offline --coverage'
 }
 test_mode=all
 coverage=false
@@ -73,7 +73,7 @@ if "$offline"; then
     image_refs=$(compose config --images php $service_names)
     for image_ref in $image_refs; do
         if ! docker image inspect "$image_ref" >/dev/null 2>&1; then
-            printf 'Offline image missing: %s\nRun bin/test all online once to prepare the images.\n' "$image_ref" >&2
+            printf 'Offline image missing: %s\nRun docker/bin/test all online once to prepare the images.\n' "$image_ref" >&2
             exit 1
         fi
     done

@@ -21,7 +21,7 @@ workspace instead of reproducible from the repository. Do not repeat this.
   private container names to executable tooling; accept generic explicit inputs.
 - Run PHP, Composer, unit tests and their external services through Docker.
   Do not depend on host PHP or an agent-private virtual environment.
-- `bin/test` is the repository-owned entry point. Setup must work from a fresh
+- `docker/bin/test` is the repository-owned entry point. Setup must work from a fresh
   checkout without `/workspace/flat-environment` or locally prebuilt private images.
 - Do not archive agent-private harnesses, vendor trees, or scratch environments
   inside the repository, even as ignored files. Discard obsolete scratch setup.

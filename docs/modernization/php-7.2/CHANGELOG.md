@@ -2017,3 +2017,18 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   daemon was not running); the file was restored before any commit.
 - Verified: `bin/test all --offline` passes 1,305 tests; the documented
   command replaces the inventory on success and leaves it untouched on failure.
+
+## MOD-119 — Move the test entry point to docker/bin/test
+
+- Owner direction: `bin/` reads as the package's own executables (Composer can
+  install `bin/` scripts into consumers' `vendor/bin`), which is misleading for
+  a script that only drives Docker. It moves next to the Dockerfile and Compose
+  file it uses: `docker/bin/test` (`git mv`, still 100755). It resolves the
+  repository root two levels up, so it works from any working directory.
+- Live documentation, `AGENTS.md`, help text and `tests/docker/inventory.php`
+  now say `docker/bin/test`; past entries and `history/` files keep the names
+  they were written with.
+- Verified: runs from the repository root, from `docs/` and by absolute path;
+  `docker/bin/test all --offline` passes 1,305 tests; the inventory regenerated
+  with only its command line changed; all links and anchors resolve.
+- Undo: `git mv docker/bin/test bin/test` and restore the one-level root lookup.
