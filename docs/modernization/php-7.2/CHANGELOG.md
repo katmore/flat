@@ -2059,3 +2059,13 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   nonzero exit; no containers remain. Natively on this host (PHP 8.3, no
   PHPUnit) `bin/test` reports the missing PHPUnit; a native PHP 7.2 install was
   not available to test.
+
+## MOD-121 — Record documentation, defect and communication rules in AGENTS.md
+
+- Owner direction: record the working rules established while organizing the
+  phase documents. `AGENTS.md` gains three sections: documentation rules
+  (conventions, never delete, generated files, consumer impact for every
+  behavior change, change log never rewritten, link checks after moves), the
+  known-defect process, and communicating with the maintainer (summaries in
+  chat, long listings in files, questions instead of guesses).
+- Documentation only; no code or test change.

@@ -38,6 +38,44 @@ workspace instead of reproducible from the repository. Do not repeat this.
   documented in the current phase folder under `docs/modernization/`. Ask the maintainer about unknown method/class purposes;
   do not guess behavior to obtain coverage.
 
+## Documentation rules
+
+- Follow the naming and layout conventions in `docs/modernization/README.md`
+  ("Conventions"): UPPERCASE file names of at most three words (preferably
+  two), one folder per phase with `active/`, `notes/` and `history/`.
+- Never delete documents. A finished or replaced document moves to the phase's
+  `history/` folder and starts with a banner saying what replaced it.
+- Generated files are never edited by hand. Regenerate the phase's
+  `TEST-INVENTORY.md` whenever tests change, writing to a temporary file first
+  so a failed run cannot empty it (see the phase `README.md` for the command).
+- Every behavior change, bug fixes included, gets a row in the phase's
+  `active/CONSUMER-IMPACT.md`: what consumers saw before, what they see now,
+  and what to search for in their code.
+- Change-log entries are never rewritten. A correction, rename or move gets a
+  new entry; when files move, the entry includes an old-to-new path map. Old
+  paths in past entries and in `history/` stay as written.
+- After moving or renaming anything, check that every relative Markdown link
+  and anchor still resolves and that no live document uses the old name.
+
+## Known-defect process
+
+- The phase's `active/KNOWN-DEFECTS.md` is the work list. Category A (clear
+  bug) items may be fixed directly. Category B (intent needed) and C
+  (unfinished stub) items wait for the maintainer's answer to their question.
+- Each fix follows "How each fix lands" in that file: fix the source, rewrite
+  the test to assert the correct behavior, remove `@group known-defect`, add
+  the consumer-impact row, mark the entry fixed, add a change-log entry and
+  regenerate the test inventory.
+- Fix all of a phase's known defects before its PHP version step, so bug fixes
+  and runtime upgrades never mix.
+
+## Communicating with the maintainer
+
+- Keep chat replies to summaries. Long listings, inventories and reports go
+  into a file under the phase folder; point to it instead of printing it.
+- Ask before guessing: when a fix needs a decision, add it to the open
+  questions with a recommendation rather than choosing silently.
+
 ## Commit cadence
 
 My human requested more frequent commits for logical groups of related changes.
