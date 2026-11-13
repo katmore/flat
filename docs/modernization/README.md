@@ -12,3 +12,12 @@ Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP
 
 ### Progress
  * php-7.2: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
+
+### Rules for every phase
+ * Advance one PHP minor version at a time and skip none: 7.2, 7.3, 7.4, 8.0, 8.1, and onward.
+ * Fix the phase's known bugs before starting the next phase, so bug fixes and PHP upgrades never mix.
+ * Run PHP, Composer, the tests and their services in Docker configured in this repository, and record the exact PHP patch and tool versions used.
+ * Rerun the whole test suite (and the flat-webapp functional tests) for every phase; record failures, skips and coverage gaps.
+ * Never weaken an assertion or drop a check to make an upgrade pass. Changing tested behavior is a deliberate maintainer decision.
+ * Keep runtime-compatibility fixes separate from behavior changes in each phase's CHANGELOG.md and in the commits, and list consumer-visible changes in the phase's consumer-impact-review.md.
+ * The maintainer decides when a phase is complete. Creating or merging release branches and moving to the next PHP version need the maintainer's explicit go-ahead.
