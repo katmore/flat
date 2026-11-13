@@ -2107,3 +2107,14 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   Consumer impact rows added.
 - Verified: `docker/bin/test all --coverage` passes 1,305 tests; 100% classes
   (331/331), methods (1,061/1,061), lines (7,996/7,996).
+
+## MOD-125 — Remove empty, unused exception files
+
+- Owner direction: remove empty exception files whose classes are unused.
+- `src/flat/core/curl/exception/empty_response.php` and `not_ok.php` were 0-byte
+  files: they declared nothing, and no code, test or document referenced
+  `empty_response` or `not_ok`. Both are deleted.
+- Not touched: six other empty files that are not exceptions
+  (`src/flat/cloud/disqus.php` and five under `src/flat/cloud/pci/`).
+- Verified: `docker/bin/test all` passes 1,305 tests after the removal.
+- Undo: restore both files from the previous commit.
