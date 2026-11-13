@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 709 test methods in 92 files, running 1312 test cases.
+- 711 test methods in 92 files, running 1314 test cases.
 - 119 methods use a data provider (one case per data set).
-- 26 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 23 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -58,7 +58,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 33 | `testCodeClassesAndNumericInputBoundaries` | Code Classes And Numeric Input Boundaries |  |
 | 46 | `testFormattingUsesTheCodeClassMetadata` | Formatting Uses The Code Class Metadata |  |
 
-### `tests/Unit/Asset/AssetTest.php` (22)
+### `tests/Unit/Asset/AssetTest.php` (24)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -73,17 +73,19 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 172 | `testOverriddenSystemPathsAndReadFailuresRemainGuarded` | Overridden System Paths And Read Failures Remain Guarded | 3 data-provider cases |
 | 181 | `testExplicitCssContentAndExtensionFallbackTags` | Explicit Css Content And Extension Fallback Tags |  |
 | 186 | `testHtmlSpecialAcceptsImplicitPositionAndSingleItemsWithoutExecutingCycles` | Html Special Accepts Implicit Position And Single Items Without Executing Cycles |  |
-| 201 | `testUnimplementedResourceAndTagCasesCurrentlyProduceNoOutput` | Unimplemented Resource And Tag Cases Currently Produce No Output | **known defect KD-14** |
-| 206 | `testExplicitOutputAssetsResourcesAndCallbacksAreRegistered` | Explicit Output Assets Resources And Callbacks Are Registered |  |
-| 216 | `testRegistrationsDeduplicateAndRespectResourceAndPositionFilters` | Registrations Deduplicate And Respect Resource And Position Filters |  |
-| 232 | `testInvalidRegistrationPositionFails` | Invalid Registration Position Fails | 2 data-provider cases |
-| 238 | `testDependenciesRunBeforeParentsAndAreOnlyEmittedOnce` | Dependencies Run Before Parents And Are Only Emitted Once |  |
-| 251 | `testHtmlCallbacksAndArraysAreRegistered` | Html Callbacks And Arrays Are Registered |  |
-| 263 | `testMultipleHtmlItemsCurrentlyCreateAnAccidentalSelfDependency` | Multiple Html Items Currently Create An Accidental Self Dependency | **known defect KD-13** |
-| 272 | `testNewInlineSourceCurrentlyCannotResolveAFilePath` | New Inline Source Currently Cannot Resolve A File Path | **known defect KD-12** |
-| 277 | `testBuiltinDependenciesAreRegisteredOncePerAssetClass` | Builtin Dependencies Are Registered Once Per Asset Class |  |
-| 283 | `testResolvedHandlerCanRewriteResources` | Resolved Handler Can Rewrite Resources |  |
-| 290 | `testStringConversionReportsUrlFailureAsNotice` | String Conversion Reports Url Failure As Notice |  |
+| 198 | `testUnsupportedContentRequestsFailClearly` | Unsupported Content Requests Fail Clearly |  |
+| 208 | `testExplicitOutputAssetsResourcesAndCallbacksAreRegistered` | Explicit Output Assets Resources And Callbacks Are Registered |  |
+| 218 | `testRegistrationsDeduplicateAndRespectResourceAndPositionFilters` | Registrations Deduplicate And Respect Resource And Position Filters |  |
+| 234 | `testInvalidRegistrationPositionFails` | Invalid Registration Position Fails | 2 data-provider cases |
+| 240 | `testDependenciesRunBeforeParentsAndAreOnlyEmittedOnce` | Dependencies Run Before Parents And Are Only Emitted Once |  |
+| 253 | `testHtmlCallbacksAndArraysAreRegistered` | Html Callbacks And Arrays Are Registered |  |
+| 264 | `testMultipleHtmlItemsPrintInOrderWithoutASelfDependency` | Multiple Html Items Print In Order Without A Self Dependency |  |
+| 271 | `testRegisteringOutputForAnExistingAssetKeepsTheFirstWithoutASelfDependency` | Registering Output For An Existing Asset Keeps The First Without A Self Dependency |  |
+| 279 | `testFileAssetHasNoInlineSourceToPrint` | File Asset Has No Inline Source To Print |  |
+| 284 | `testInlineSourcePrintsWithoutAFilePath` | Inline Source Prints Without A File Path |  |
+| 289 | `testBuiltinDependenciesAreRegisteredOncePerAssetClass` | Builtin Dependencies Are Registered Once Per Asset Class |  |
+| 295 | `testResolvedHandlerCanRewriteResources` | Resolved Handler Can Rewrite Resources |  |
+| 302 | `testStringConversionReportsUrlFailureAsNotice` | String Conversion Reports Url Failure As Notice |  |
 
 ### `tests/Unit/Asset/CascadeTest.php` (4)
 

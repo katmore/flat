@@ -189,19 +189,21 @@ class AssetTest extends TestCase
         $this->assertInstanceOf(asset::class,asset::register_html_special(asset::POSITION_HEAD,'single'));
         asset::register_html('typed',['hash'=>'typed','type'=>asset::RESOURCE_CSS]);
         asset::register_html('invalid position',['hash'=>'invalid','type'=>asset::RESOURCE_JS,'position'=>123]);
-        $seen = [];
-        // Cyclic special-output entries above are deliberately not iterated.
         $this->assertCount(4,$this->registeredHashes());
     }
     private function registeredHashes()
     {
         $p = new \ReflectionProperty(asset::class,'register_hash'); $p->setAccessible(true); return $p->getValue();
     }
-    /** @group known-defect */
-    public function testUnimplementedResourceAndTagCasesCurrentlyProduceNoOutput()
+    public function testUnsupportedContentRequestsFailClearly()
     {
-        $this->assertSame('',$this->output(function () { (new LocalAsset('unknown.bin'))->print_contents(); }));
-        $this->assertSame('',$this->output(function () { (new LocalAsset('app.css'))->print_tag(asset::TAG_STYLE_SOURCE); }));
+        try { $this->output(function () { (new LocalAsset('unknown.bin'))->print_contents(); }); $this->fail('expected an error'); }
+        catch (\flat\lib\exception\app_error $e) { $this->assertStringContainsString("unsupported resource type for 'unknown.bin'", $e->getMessage()); }
+        try { $this->output(function () { (new LocalAsset('app.css'))->print_tag(asset::TAG_STYLE_SOURCE); }); $this->fail('expected an error'); }
+        catch (\flat\lib\exception\app_error $e) { $this->assertStringContainsString('unsupported tag type '.asset::TAG_STYLE_SOURCE, $e->getMessage()); }
+        // An asset with no tag form still prints nothing when no tag is requested,
+        // which print_registered_assets() relies on.
+        $this->assertSame('', $this->output(function () { (new LocalAsset('unknown.bin'))->print_tag(); }));
     }
     public function testExplicitOutputAssetsResourcesAndCallbacksAreRegistered()
     {
@@ -259,20 +261,30 @@ class AssetTest extends TestCase
         $this->assertStringContainsString('special', $output);
 
     }
-    /** @group known-defect */
-    public function testMultipleHtmlItemsCurrentlyCreateAnAccidentalSelfDependency()
+    public function testMultipleHtmlItemsPrintInOrderWithoutASelfDependency()
     {
-        $asset = asset::register_html_special(asset::POSITION_HEAD, 'first', 'second');
+        $asset = asset::register_html_special(asset::POSITION_HEAD, 'first;', function () { echo 'second;'; }, 'third;');
         $p = new \ReflectionProperty(asset::class, 'reigster_depends'); $p->setAccessible(true);
-        $dependencies = $p->getValue();
-        $this->assertSame($asset, $dependencies[$asset->get_hash()][$asset->get_hash()]);
-        // Do not execute this cyclic queue: behavior repair is awaiting owner input.
+        $this->assertSame([], $p->getValue()[$asset->get_hash()]);
+        $this->assertSame('first;second;third;', $this->output(function () { asset::print_registered_assets(); }));
     }
-    /** @group known-defect */
-    public function testNewInlineSourceCurrentlyCannotResolveAFilePath()
+    public function testRegisteringOutputForAnExistingAssetKeepsTheFirstWithoutASelfDependency()
     {
-        $this->expectException(\TypeError::class);
-        (new LocalAsset('code', ['type'=>asset::RESOURCE_JS_SOURCE]))->print_contents();
+        $asset = asset::register_html_special(asset::POSITION_HEAD, 'base;');
+        $this->assertSame($asset, asset::register_html('more;', ['resolved' => $asset, 'position' => asset::POSITION_HEAD]));
+        $p = new \ReflectionProperty(asset::class, 'reigster_depends'); $p->setAccessible(true);
+        $this->assertSame([], $p->getValue()[$asset->get_hash()]);
+        $this->assertSame('base;', $this->output(function () { asset::print_registered_assets(); }));
+    }
+    public function testFileAssetHasNoInlineSourceToPrint()
+    {
+        $this->expectException(\flat\lib\exception\app_error::class);
+        $this->output(function () { (new LocalAsset('app.js'))->print_contents(asset::RESOURCE_JS_SOURCE); });
+    }
+    public function testInlineSourcePrintsWithoutAFilePath()
+    {
+        $output = $this->output(function () { (new LocalAsset('var inline = 1;', ['type'=>asset::RESOURCE_JS_SOURCE]))->print_contents(); });
+        $this->assertStringContainsString('<script>var inline = 1;</script>', $output);
     }
     public function testBuiltinDependenciesAreRegisteredOncePerAssetClass()
     {

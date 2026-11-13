@@ -88,6 +88,9 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-129 (KD-15) | Shutdown weights | Weight `0` joined the default queue; weights outside -50 to 50 were silently queued as default | `0` is ordered among the weights; out-of-range integers throw `bad_priority` | `shutdown::register(` with integer priorities |
 | MOD-129 (KD-52) | UUID versions | `uuid::get()` with an invalid version and no namespace returned a v4 UUID | Throws `invalid_version` (versions 3, 4 and 5 still fall back to v4 without a namespace) | `uuid::get(` with a computed version |
 | MOD-129 (KD-55) | Random strings | Invoking a `rand\str` instance (`$generator()`) ignored its configured pool and length | Uses the instance's pool and length; `$generator(5)` changes only the length; options still build a new pool | `rand\str` objects called as functions |
+| MOD-130 (KD-13) | Asset HTML output | Several items in one `register_html_special()`/`register_html([...])` call kept only the first and made the asset depend on itself | All items print, in the order given; no self-dependency (also when `register_html()` gets `resolved`) | `register_html_special(` with several items, `register_html(` with arrays |
+| MOD-130 (KD-12) | Inline asset source | `print_contents()` on an inline JavaScript source raised `TypeError` | Prints the `<script>` with the source | `RESOURCE_JS_SOURCE` assets |
+| MOD-130 (KD-14) | Asset printing | `print_contents()` of an unprintable type and `print_tag(TAG_STYLE_SOURCE)` printed nothing; inline-source printing of a file asset printed an empty `<script></script>` | These explicit requests throw `app_error`; `print_tag()` without a tag type still prints nothing for assets with no tag form | `print_contents(`, `print_tag(` with explicit types |
 
 ## Suggested consumer check
 

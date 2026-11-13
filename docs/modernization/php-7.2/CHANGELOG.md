@@ -2200,3 +2200,23 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   Documented in `rand::get()` and pinned by a new test; no code change.
 - Verified: `docker/bin/test all --coverage` passes 1,312 tests; 100% classes
   (331/331), methods (1,061/1,061), lines (7,999/7,999).
+
+## MOD-130 — Fix asset printing and multi-item output (KD-12, 13, 14)
+
+- KD-12: `print_contents()` prints inline JavaScript source before looking for a
+  file path (an inline source has none, which raised `TypeError`).
+- KD-13 (owner answer Q4): several output items registered at once run, in the
+  given order, from one callback. Registering them one by one through recursion
+  kept only the first and passed the shared asset back in as `resolved`, which
+  `register()` then treated as a dependency of itself. A caller-supplied
+  `resolved` key is now removed after use for the same reason.
+- KD-14 (owner answer Q5): explicit requests that cannot be printed throw
+  `app_error` instead of printing nothing: `print_contents()` of an unprintable
+  type, `print_tag(TAG_STYLE_SOURCE)` (declared, never implemented) and
+  inline-source printing of a file asset (which printed an empty `<script>`).
+  Refinement of the answer: `print_tag()` called without a tag type still prints
+  nothing for assets that have no tag form, because
+  `print_registered_assets()` calls it for every registered asset; throwing
+  there would break a page that registers, for example, an image.
+- Verified: `docker/bin/test all --coverage` passes 1,314 tests; 100% classes
+  (331/331), methods (1,061/1,061), lines (8,005/8,005).

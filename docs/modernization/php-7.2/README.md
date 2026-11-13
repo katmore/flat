@@ -6,9 +6,9 @@ model and the rules every phase follows are in [../README.md](../README.md).
 
 ## Status (2026-11-13)
 
-- **Tests:** 1,312 tests pass on PHP 7.2.34 with 100% class, method and line
+- **Tests:** 1,314 tests pass on PHP 7.2.34 with 100% class, method and line
   coverage. How to run them: [../TESTING.md](../TESTING.md).
-- **Known defects (in progress):** 69 tracked, 32 resolved, 37 open, all
+- **Known defects (in progress):** 69 tracked, 35 resolved, 34 open, all
   actionable: the owner answered every question (agreeing with each
   recommendation), so no input is pending. Work list:
   [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).

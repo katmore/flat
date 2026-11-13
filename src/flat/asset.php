@@ -567,6 +567,11 @@ class asset extends core\controller\asset implements core\app
 
     public function print_contents(int $resource_type = null): void
     {
+        // Inline JavaScript source has no file; print it before looking one up.
+        if ($this->explicit_type === self::RESOURCE_JS_SOURCE) {
+            $this->print_script_source_tag();
+            return;
+        }
         if (null === ($system_path = $this->get_system())) return;
 
         if (!in_array($resource_type, self::VALID_RESOURCES, true)) {
@@ -574,9 +579,7 @@ class asset extends core\controller\asset implements core\app
         }
 
         switch ($resource_type) {
-            case self::RESOURCE_JS_SOURCE:
-                $this->print_script_source_tag();
-                return;
+            // Inline JavaScript source is handled above; a file asset has none.
             case self::RESOURCE_JS:
                 $this->print_contents_script_tag();
                 return;
@@ -584,6 +587,7 @@ class asset extends core\controller\asset implements core\app
                 $this->print_contents_style_tag();
                 return;
         }
+        throw new exception\app_error("cannot print contents: unsupported resource type for '" . $this->get_resource() . "'");
     }
 
     /**
@@ -623,6 +627,9 @@ class asset extends core\controller\asset implements core\app
                 $this->print_css_link_tag();
                 return;
         }
+        // A tag type was requested (or implied by the resource type) that has no
+        // implementation; assets without any tag form still print nothing above.
+        throw new exception\app_error("cannot print tag: unsupported tag type $tag_type for '" . $this->get_resource() . "'");
     }
 
     /**
@@ -1328,6 +1335,9 @@ class asset extends core\controller\asset implements core\app
 
         if (isset($param['resolved'])) {
             $asset = $param['resolved'];
+            // Not a dependency: left in $param, register() would make the
+            // asset depend on itself.
+            unset($param['resolved']);
         } else {
 
             $asset = $resource = null;
@@ -1361,18 +1371,24 @@ class asset extends core\controller\asset implements core\app
             if (isset($param['hash_handle_prefix'])) unset($param['hash_handle_prefix']);
         }
         if (is_array($output)) {
-
-            $param['resolved'] = $asset;
-
+            // Several items share one asset: run them in the given order from
+            // a single callback (registering each separately kept only the
+            // first and made the asset depend on itself).
+            $callbacks = [];
             foreach ($output as $o) {
-                static::register_output($o, $param);
+                if (is_callable($o)) {
+                    $callbacks[] = $o;
+                } elseif (is_string($o)) {
+                    $callbacks[] = function () use ($o) {
+                        echo $o;
+                    };
+                }
             }
             unset($o);
-
-            return $asset;
-        }
-
-        if (is_callable($output)) {
+            $callback = function (...$args) use ($callbacks) {
+                foreach ($callbacks as $item) $item(...$args);
+            };
+        } else if (is_callable($output)) {
             $callback = $output;
         } else if (is_string($output)) {
             $callback = function () use (&$output) {
