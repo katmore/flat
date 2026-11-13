@@ -2085,3 +2085,25 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   agreed with all 20 recommendations (questions 1-5, 7-11, 13-15, 17-23).
   Each question in `active/KNOWN-DEFECTS.md` is marked answered; every open
   defect is now actionable. No code change in this entry; fixes follow.
+
+## MOD-124 — Fix exception and status defects (KD-06, 10, 11, 27, 31, 47, 48, 49)
+
+- KD-10: `api\not_found` reports status 404 instead of 500.
+- KD-06: an unknown API response error raised inside a class named the class
+  through the nonexistent `ReflectionMethod::getClassName`; it uses
+  `ReflectionClass::getName`.
+- KD-27: the CLI's missing-`$argv` error throws `\RuntimeException` (it named an
+  unqualified `flat\core\RuntimeException`, which does not exist).
+- KD-31: `curl\exception\missing_curlinfo.php` was an empty file, so throwing it
+  raised a PHP `Error`. It now declares the exception.
+- KD-11: asset `not_resolvable` says "could not resolve".
+- KD-47: `bad_interface\message` includes the class with the method
+  (`class::method()`) and the reason; it used to drop both.
+- KD-48: SSH `auth\not_ready` and `auth\failure\pubkey` append ": detail" to
+  their message instead of replacing it, like their sibling classes.
+- KD-49: `duplicate_key` no longer warns on array indexes ("(non-scalar index)")
+  and no longer ends messages with ", " when the default empty index is used.
+- Tests now assert the corrected behavior and lost their `known-defect` tag.
+  Consumer impact rows added.
+- Verified: `docker/bin/test all --coverage` passes 1,305 tests; 100% classes
+  (331/331), methods (1,061/1,061), lines (7,996/7,996).

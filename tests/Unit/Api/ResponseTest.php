@@ -87,12 +87,11 @@ class ResponseTest extends TestCase
         $this->assertSame('an unknown error has occurred',$exception->get_response()->message);
         $this->assertSame(500,$exception->get_response()->get_status()->get_code());
     }
-    /** @group known-defect */
-    public function testUnknownErrorWithClassCallerCurrentlyCallsMissingReflectionMethod()
+    public function testUnknownErrorWithClassCallerNamesTheCallingClass()
     {
-        $this->expectException(\Error::class);
-        $this->expectExceptionMessage('getClassName');
-        new response\exception(null);
+        $exception = new response\exception(null);
+        $this->assertSame('an unknown error has occurred by '.self::class,$exception->get_response()->message);
+        $this->assertSame(500,$exception->get_response()->get_status()->get_code());
     }
     public function testMissingStatusReportsTheResponseAndInvalidValue()
     {

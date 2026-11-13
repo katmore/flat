@@ -8,7 +8,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - 704 test methods in 92 files, running 1305 test cases.
 - 118 methods use a data provider (one case per data set).
-- 46 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 39 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -43,11 +43,11 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 65 | `testBadRequestAddsMessageToArrayOrObjectWithoutOverwritingIt` | Bad Request Adds Message To Array Or Object Without Overwriting It |  |
 | 73 | `testResponseExceptionsPreserveTheResponseAndStatus` | Response Exceptions Preserve The Response And Status |  |
 | 84 | `testUnknownErrorWithoutClassCallerGetsGenericMessage` | Unknown Error Without Class Caller Gets Generic Message |  |
-| 91 | `testUnknownErrorWithClassCallerCurrentlyCallsMissingReflectionMethod` | Unknown Error With Class Caller Currently Calls Missing Reflection Method | **known defect KD-06** |
-| 97 | `testMissingStatusReportsTheResponseAndInvalidValue` | Missing Status Reports The Response And Invalid Value |  |
-| 106 | `testHeadersExposeFieldAndValueAndReplaceDuplicateFields` | Headers Expose Field And Value And Replace Duplicate Fields |  |
-| 123 | `testAnyMethodFallbackResourcesReturnTheirStatusAndMessage` | Any Method Fallback Resources Return Their Status And Message |  |
-| 133 | `testEmptyHeaderFieldThrowsItsDeclaredLegacyException` | Empty Header Field Throws Its Declared Legacy Exception |  |
+| 90 | `testUnknownErrorWithClassCallerNamesTheCallingClass` | Unknown Error With Class Caller Names The Calling Class |  |
+| 96 | `testMissingStatusReportsTheResponseAndInvalidValue` | Missing Status Reports The Response And Invalid Value |  |
+| 105 | `testHeadersExposeFieldAndValueAndReplaceDuplicateFields` | Headers Expose Field And Value And Replace Duplicate Fields |  |
+| 122 | `testAnyMethodFallbackResourcesReturnTheirStatusAndMessage` | Any Method Fallback Resources Return Their Status And Message |  |
+| 132 | `testEmptyHeaderFieldThrowsItsDeclaredLegacyException` | Empty Header Field Throws Its Declared Legacy Exception |  |
 
 ### `tests/Unit/Api/StatusTest.php` (3)
 
@@ -249,7 +249,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 6 | `testBothInterfaceNamesAutoloadAndRemainCompatible` | Both Interface Names Autoload And Remain Compatible |  |
-| 16 | `testMessageFormattingRetainsCurrentMethodAndReasonBehavior` | Message Formatting Retains Current Method And Reason Behavior | **known defect KD-47** |
+| 15 | `testMessageIncludesClassMethodAndReason` | Message Includes Class Method And Reason |  |
 
 ### `tests/Unit/Core/CliTest.php` (12)
 
@@ -265,8 +265,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 99 | `testDefaultPrintAndDumpOutput` | Default Print And Dump Output |  |
 | 108 | `testLineAndErrorHandlers` | Line And Error Handlers |  |
 | 117 | `testNormalQuietAndErrorOutput` | Normal Quiet And Error Output |  |
-| 124 | `testMissingArgvPreservesCurrentExceptionNamespaceFailure` | Missing Argv Preserves Current Exception Namespace Failure | **known defect KD-27** |
-| 132 | `testGetoptWrapperUsesTheReturnedOperandIndex` | Getopt Wrapper Uses The Returned Operand Index |  |
+| 123 | `testMissingArgvRaisesARuntimeException` | Missing Argv Raises A Runtime Exception |  |
+| 131 | `testGetoptWrapperUsesTheReturnedOperandIndex` | Getopt Wrapper Uses The Returned Operand Index |  |
 
 ### `tests/Unit/Core/Collection/ConstraintTest.php` (9)
 
@@ -368,8 +368,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 146 | `testRobotsRules` | Robots Rules | 6 data-provider cases |
 | 159 | `testRobotsCheckCanDenyOrAllowConstructor` | Robots Check Can Deny Or Allow Constructor |  |
 | 168 | `testFalsyTextBodyInitializesDomOnDemand` | Falsy Text Body Initializes Dom On Demand |  |
-| 176 | `testCurrentMissingInfoExceptionClassFailure` | Current Missing Info Exception Class Failure | **known defect KD-31** |
-| 183 | `testUnavailableSavePathRaisesSystemErrorAfterWarning` | Unavailable Save Path Raises System Error After Warning |  |
+| 175 | `testMissingTransferInfoRaisesItsDeclaredException` | Missing Transfer Info Raises Its Declared Exception |  |
+| 182 | `testUnavailableSavePathRaisesSystemErrorAfterWarning` | Unavailable Save Path Raises System Error After Warning |  |
 
 ### `tests/Unit/Core/DebugTest.php` (11)
 
@@ -465,25 +465,25 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 17 | `testErrorsRetainOperationContext` | Errors Retain Operation Context | 45 data-provider cases; **known defect KD-11, KD-48** |
-| 73 | `testDuplicateKeyRetainsNonScalarValueDescription` | Duplicate Key Retains Non Scalar Value Description |  |
-| 78 | `testConfigReferenceErrorRetainsAllLookupKeys` | Config Reference Error Retains All Lookup Keys |  |
-| 85 | `testScalarDefaultErrorAndThreadFailureRetainDetails` | Scalar Default Error And Thread Failure Retain Details |  |
-| 96 | `testIgnoredCollectionMemberRemainsAnEmptyString` | Ignored Collection Member Remains An Empty String |  |
-| 103 | `testUploadAndBrokerErrorsRetainTheOriginalExceptionContext` | Upload And Broker Errors Retain The Original Exception Context |  |
-| 113 | `testValidationFailureDescribesTheSuppliedValueAndRule` | Validation Failure Describes The Supplied Value And Rule | 4 data-provider cases |
-| 122 | `testRouteMissingErrorExposesBothCoordinates` | Route Missing Error Exposes Both Coordinates |  |
-| 131 | `testCrudErrorAcceptsUnspecifiedOperation` | Crud Error Accepts Unspecified Operation |  |
-| 136 | `testDuplicateKeyErrorRetainsIndexAndNonScalarValue` | Duplicate Key Error Retains Index And Non Scalar Value |  |
-| 143 | `testDuplicateKeyDescribesANonemptyScalarValue` | Duplicate Key Describes A Nonempty Scalar Value |  |
-| 150 | `testEmptyNonScalarDuplicateIndexUsesItsEmptyDescription` | Empty Non Scalar Duplicate Index Uses Its Empty Description | **known defect KD-49** |
-| 157 | `testBadApiResponseRetainsDocumentedClassAndMethod` | Bad Api Response Retains Documented Class And Method |  |
-| 163 | `testSessionErrorsRetainReasonAndExpirationMetadata` | Session Errors Retain Reason And Expiration Metadata |  |
-| 171 | `testCurlSystemErrorRetainsDataAndDetails` | Curl System Error Retains Data And Details |  |
-| 178 | `testLegacyNotFoundStatusCurrentlyReportsServerErrorCode` | Legacy Not Found Status Currently Reports Server Error Code | **known defect KD-10** |
-| 184 | `testXpathErrorRetainsActualLibxmlDetailsWithoutDuplicatingMessage` | Xpath Error Retains Actual Libxml Details Without Duplicating Message |  |
-| 200 | `testScalarTypeErrorUsesItsSuppliedTypeWithoutAnUndefinedLocal` | Scalar Type Error Uses Its Supplied Type Without An Undefined Local |  |
-| 207 | `testLegacySshParameterErrorRetainsItsDeclaredNameAndMessage` | Legacy Ssh Parameter Error Retains Its Declared Name And Message |  |
+| 14 | `testErrorsRetainOperationContext` | Errors Retain Operation Context | 45 data-provider cases |
+| 69 | `testDuplicateKeyRetainsNonScalarValueDescription` | Duplicate Key Retains Non Scalar Value Description |  |
+| 74 | `testConfigReferenceErrorRetainsAllLookupKeys` | Config Reference Error Retains All Lookup Keys |  |
+| 81 | `testScalarDefaultErrorAndThreadFailureRetainDetails` | Scalar Default Error And Thread Failure Retain Details |  |
+| 92 | `testIgnoredCollectionMemberRemainsAnEmptyString` | Ignored Collection Member Remains An Empty String |  |
+| 99 | `testUploadAndBrokerErrorsRetainTheOriginalExceptionContext` | Upload And Broker Errors Retain The Original Exception Context |  |
+| 109 | `testValidationFailureDescribesTheSuppliedValueAndRule` | Validation Failure Describes The Supplied Value And Rule | 4 data-provider cases |
+| 118 | `testRouteMissingErrorExposesBothCoordinates` | Route Missing Error Exposes Both Coordinates |  |
+| 127 | `testCrudErrorAcceptsUnspecifiedOperation` | Crud Error Accepts Unspecified Operation |  |
+| 132 | `testDuplicateKeyErrorRetainsIndexAndNonScalarValue` | Duplicate Key Error Retains Index And Non Scalar Value |  |
+| 139 | `testDuplicateKeyDescribesANonemptyScalarValue` | Duplicate Key Describes A Nonempty Scalar Value |  |
+| 145 | `testDuplicateKeyDescribesIndexesWithoutWarnings` | Duplicate Key Describes Indexes Without Warnings |  |
+| 159 | `testBadApiResponseRetainsDocumentedClassAndMethod` | Bad Api Response Retains Documented Class And Method |  |
+| 165 | `testSessionErrorsRetainReasonAndExpirationMetadata` | Session Errors Retain Reason And Expiration Metadata |  |
+| 173 | `testCurlSystemErrorRetainsDataAndDetails` | Curl System Error Retains Data And Details |  |
+| 179 | `testNotFoundStatusReportsCode404` | Not Found Status Reports Code404 |  |
+| 185 | `testXpathErrorRetainsActualLibxmlDetailsWithoutDuplicatingMessage` | Xpath Error Retains Actual Libxml Details Without Duplicating Message |  |
+| 201 | `testScalarTypeErrorUsesItsSuppliedTypeWithoutAnUndefinedLocal` | Scalar Type Error Uses Its Supplied Type Without An Undefined Local |  |
+| 208 | `testLegacySshParameterErrorRetainsItsDeclaredNameAndMessage` | Legacy Ssh Parameter Error Retains Its Declared Name And Message |  |
 
 ### `tests/Unit/Core/LegacyListenerTest.php` (4)
 

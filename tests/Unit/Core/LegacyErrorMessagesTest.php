@@ -10,10 +10,7 @@ class UnlabeledDuplicateError extends \flat\db\op\exception\duplicate_key
 }
 class LegacyErrorMessagesTest extends TestCase
 {
-    /**
-     * @dataProvider messages
-     * @group known-defect
-     */
+    /** @dataProvider messages */
     public function testErrorsRetainOperationContext($class, $arguments, $expected)
     {
         $error = new $class(...$arguments);
@@ -39,7 +36,7 @@ class LegacyErrorMessagesTest extends TestCase
             ['flat\\core\\shutdown\\exception\\bad_priority',[], "priority must be NULL, (string) 'first', (string) 'last', or (int) 0 or greater."],
             ['flat\\core\\controller\\asset\\exception\\bad_resource',['LocalAsset'], "asset 'LocalAsset' must be given (string) for resource"],
             ['flat\\core\\controller\\asset\\exception\\missing_system_base',['LocalAsset'], "to get system path, 'LocalAsset' must have \\flat\\asset\\system_base interface"],
-            ['flat\\core\\controller\\asset\\exception\\not_resolvable',['LocalAsset','path.png'], "asset 'LocalAsset' could resolve 'path.png'"],
+            ['flat\\core\\controller\\asset\\exception\\not_resolvable',['LocalAsset','path.png'], "asset 'LocalAsset' could not resolve 'path.png'"],
             ['flat\\core\\util\\image\\exception\\system_err',['native failure'], 'system error: native failure.'],
             ['flat\\core\\controller\\api\\exception\\interface_not_allowed',['GET','LocalApi'], 'GET interface is not allowed for API resource LocalApi'],
             ['flat\\core\\controller\\api\\exception\\method_mismatch',['PATCH'], "requested method 'PATCH' does not match api interface"],
@@ -48,17 +45,16 @@ class LegacyErrorMessagesTest extends TestCase
             ['flat\\db\\driver\\mongo\\db\\exception\\connect_failure',[], 'connection failure'],
             ['flat\\db\\driver\\mongo\\db\\exception\\connect_failure',['offline'], 'connection failure, details: offline'],
         ];
-        foreach ([['auth\\not_ready','ssh2 authorization has not occured',true],
-            ['auth\\failure\\password','password auth failure',false],
-            ['auth\\failure\\pubkey','pubkey auth failure',true],
-            ['connection\\failure','connection failure',false],
-            ['connection\\missing','not connected',false],
-            ['exec\\pid\\missing','server did not provide pid as expected',false],
-            ['exec\\pid\\not_running','failed to find running process',false]] as $spec) {
-            list($name,$base,$replaces) = $spec;
+        foreach ([['auth\\not_ready','ssh2 authorization has not occured'],
+            ['auth\\failure\\password','password auth failure'],
+            ['auth\\failure\\pubkey','pubkey auth failure'],
+            ['connection\\failure','connection failure'],
+            ['connection\\missing','not connected'],
+            ['exec\\pid\\missing','server did not provide pid as expected'],
+            ['exec\\pid\\not_running','failed to find running process']] as $spec) {
+            list($name,$base) = $spec;
             $rows[] = [$ssh.$name, [], $base];
-            // The two marked constructors currently replace their prefix.
-            $rows[] = [$ssh.$name, ['local detail'], ($replaces ? '' : $base).': local detail'];
+            $rows[] = [$ssh.$name, ['local detail'], $base.': local detail'];
         }
         $rows[] = [$ssh.'exec\\pid\\kill',[42], 'kill command failed'];
         $rows[] = [$ssh.'exec\\pid\\kill',[42,'local detail'], 'kill command failed: local detail'];
@@ -146,13 +142,19 @@ class LegacyErrorMessagesTest extends TestCase
         $this->assertSame(42,$error->get_value());
         $this->assertSame('duplicate key in: records, index: id (value: 42)',$error->getMessage());
     }
-    /** @group known-defect */
-    public function testEmptyNonScalarDuplicateIndexUsesItsEmptyDescription()
+    public function testDuplicateKeyDescribesIndexesWithoutWarnings()
     {
         $warnings=[]; set_error_handler(function ($level,$message) use (&$warnings) { $warnings[]=$message; return true; });
-        try { $error=new UnlabeledDuplicateError('records',[]); } finally { restore_error_handler(); }
-        $this->assertSame([],$error->get_index()); $this->assertSame('duplicate key in: records',$error->getMessage());
-        $this->assertCount(1,$warnings); $this->assertStringContainsString('Array to string conversion',$warnings[0]);
+        try {
+            $empty=new UnlabeledDuplicateError('records',[]);
+            $nested=new UnlabeledDuplicateError('records',['a','b']);
+            $default=new UnlabeledDuplicateError('records');
+        } finally { restore_error_handler(); }
+        $this->assertSame([],$warnings);
+        $this->assertSame([],$empty->get_index()); $this->assertSame('duplicate key in: records',$empty->getMessage());
+        $this->assertSame('duplicate key in: records, index: (non-scalar index)',$nested->getMessage());
+        // The default empty index adds nothing (it used to leave a trailing ", ").
+        $this->assertSame('duplicate key in: records',$default->getMessage());
     }
     public function testBadApiResponseRetainsDocumentedClassAndMethod()
     {
@@ -174,11 +176,10 @@ class LegacyErrorMessagesTest extends TestCase
         $this->assertSame('local error',$error->get_details());
         $this->assertSame(['path'=>'fixture'],$error->get_data());
     }
-    /** @group known-defect */
-    public function testLegacyNotFoundStatusCurrentlyReportsServerErrorCode()
+    public function testNotFoundStatusReportsCode404()
     {
         $status = new \flat\core\controller\api\not_found;
-        $this->assertSame(500,$status->get_status_code());
+        $this->assertSame(404,$status->get_status_code());
         $this->assertSame('Not Found',$status->get_status_string());
     }
     public function testXpathErrorRetainsActualLibxmlDetailsWithoutDuplicatingMessage()

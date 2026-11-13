@@ -39,17 +39,14 @@ class message implements \flat\core\controller, \flat\core\bad_interface {
       return $this->_msg;
    }
    public function __construct($interface,$class,$method="",$reason="") {
-      if (!empty($method)) {
-         if (is_string($method))
-            $class = "::".$method."()";
+      $where = $class;
+      if (!empty($method) && is_string($method)) {
+         $where .= "::".$method."()";
       }
-      if (empty($reason)) {
-         $reason = "";
-      } else {
-         if (is_string($reason)) {
-            $reason = ", reason: $reason";
-         }
+      $detail = "";
+      if (!empty($reason) && is_string($reason)) {
+         $detail = ", reason: $reason";
       }
-      $this->_msg = "interface $interface is bad in $class";
+      $this->_msg = "interface $interface is bad in $where".$detail;
    }
 }

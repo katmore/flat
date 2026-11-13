@@ -92,7 +92,7 @@ class cli {
        * enforce argv global exists
        */
       if (!isset($GLOBALS['argv'])) {
-         throw new RuntimeException('cannot get command-line arguments because "argv" global does not exist');
+         throw new \RuntimeException('cannot get command-line arguments because "argv" global does not exist');
       }
       
       /*

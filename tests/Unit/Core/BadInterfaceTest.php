@@ -12,14 +12,14 @@ class BadInterfaceTest extends TestCase
         $this->assertInstanceOf(\flat\core\exception\bad_interface::class,$exception);
         $this->assertStringContainsString('interface example is bad in class',$exception->getMessage());
     }
-    /** @group known-defect */
-    public function testMessageFormattingRetainsCurrentMethodAndReasonBehavior()
+    public function testMessageIncludesClassMethodAndReason()
     {
         $plain = new \flat\core\exception\bad_interface\message('interface','class');
         $this->assertSame('interface interface is bad in class',$plain->get_string());
         $this->assertSame($plain->get_string(),(string)$plain);
         $method = new \flat\core\exception\bad_interface\message('interface','class','method','reason');
-        $this->assertSame('interface interface is bad in ::method()',$method->get_string());
+        $this->assertSame('interface interface is bad in class::method(), reason: reason',$method->get_string());
+        $this->assertSame('interface interface is bad in class::method()',(new \flat\core\exception\bad_interface\message('interface','class','method'))->get_string());
         $other = new \flat\core\exception\bad_interface\message('interface','class',42,42);
         $this->assertSame('interface interface is bad in class',(string)$other);
     }

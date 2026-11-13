@@ -172,12 +172,11 @@ namespace flat\test\Unit\Core\Curl {
             $this->assertInstanceOf(\DOMDocument::class, $response->get_dom());
             $this->assertStringContainsString('0', $response->get_dom()->textContent);
         }
-        /** @group known-defect */
-        public function testCurrentMissingInfoExceptionClassFailure()
+        public function testMissingTransferInfoRaisesItsDeclaredException()
         {
             CurlDouble::$responses['https://example.com/page'] = ['body'=>'text','missing_info'=>true];
-            $this->expectException(\Error::class);
-            $this->expectExceptionMessage('flat\\core\\curl\\exception\\missing_curlinfo');
+            $this->expectException(\flat\core\curl\exception\missing_curlinfo::class);
+            $this->expectExceptionMessage('curl_getinfo returned no transfer information');
             new response($this->config(), []);
         }
         public function testUnavailableSavePathRaisesSystemErrorAfterWarning()

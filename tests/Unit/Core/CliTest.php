@@ -120,12 +120,11 @@ class CliTest extends TestCase
         cli::set_argv(['tool']); cli::line('normal');
         cli::set_argv(['tool','--quiet']); cli::line('hidden'); cli::line('failure', ['error'=>true]);
     }
-    /** @group known-defect */
-    public function testMissingArgvPreservesCurrentExceptionNamespaceFailure()
+    public function testMissingArgvRaisesARuntimeException()
     {
         $old = $GLOBALS['argv']; unset($GLOBALS['argv']);
         try {
-            $this->expectException(\Error::class); $this->expectExceptionMessage('flat\\core\\RuntimeException');
+            $this->expectException(\RuntimeException::class); $this->expectExceptionMessage('"argv" global does not exist');
             cli::getopt_and_operand();
         } finally { $GLOBALS['argv'] = $old; }
     }
