@@ -89,7 +89,6 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-54 | Templates | `tmpl/display` declares a class extending an interface; loading it aborts PHP | (`../history/TESTING-FOLLOWUPS.md`) | A | Implement the interface | already fixed (MOD-040; verified in MOD-132) |
 | KD-55 | Random strings | Invoking an instance ignores its configured character pool | (`../history/TESTING-FOLLOWUPS.md`) | B | Q17 | fixed (MOD-129) |
 | KD-56 | Random numbers | `rand::get(1, 0)`: a zero maximum means "default", so inverted bounds pass | (`../history/TESTING-FOLLOWUPS.md`) | B | Q18 | confirmed, no change (MOD-129) |
-
 | KD-57 | Views | The `view_resolved` event payload uses an undefined `$resolved` | (follow-ups; source checked 2026-11) | A | Use the matched route | fixed (MOD-127) |
 | KD-58 | API controller | A `HEAD` request sets a flag that is never cleared, so a reused controller keeps treating later requests as `HEAD` | (follow-ups; source checked 2026-11) | A | Reset the flag per request | fixed (MOD-127) |
 | KD-59 | API controller | `TRACE` echoes input via `get_as_assoc()`, which cannot see the input map's dynamic properties | (follow-ups; source checked 2026-11) | A | Echo the actual input fields | fixed (MOD-127) |

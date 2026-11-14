@@ -2466,3 +2466,13 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   interpolated `"..."` strings (it had mutated `>` characters in markup).
 - No behavior change. Files changed: tests and `tests/tools/mutate.php` only.
 - Verified: `docker/bin/test all --coverage` passes 1,405 tests; 100% methods (1,062/1,062) and lines (8,051/8,051).
+
+## MOD-142 — Broken table in KNOWN-DEFECTS.md; check-docs now catches it
+
+- A blank line after the KD-56 row ended the inventory table, so rows KD-57 to
+  KD-76 rendered as one paragraph in Markdown previews. The blank line is
+  removed; the content of the rows is unchanged.
+- `bin/check-docs` now reports a table split by a blank line (rows after the
+  blank line would not render as a table). Confirmed it fails when the blank
+  line is put back.
+- No code change. Undo: revert this commit.
