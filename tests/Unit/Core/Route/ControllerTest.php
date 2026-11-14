@@ -87,6 +87,11 @@ namespace flat\test\Unit\Core\Route {
             $single = $this->controller('ParentApp/Leaf', [['ns' => 'flat\\test\\Unit\\RouteApps', 'iterate' => false, 'weight' => 0]]);
             $this->assertSame(1, $single->get_resolve_count());
         }
+    public function testRulesIterateOverTheRouteByDefault()
+    {
+        $controller = $this->controller('ParentApp/Leaf', [['ns' => 'flat\\test\\Unit\\RouteApps', 'weight' => 0]]);
+        $this->assertSame(2, $controller->get_resolve_count());
+    }
         /**
          * Resources usually come from request paths, so empty segments from
          * leading, trailing or repeated separators must not change resolution.

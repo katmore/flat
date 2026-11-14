@@ -12,6 +12,12 @@ class RandStrTest extends TestCase
         $this->assertSame(20, strlen($value));
         $this->assertSame(1, preg_match('/^[A-Za-z0-9]+$/', $value), $value);
     }
+    public function testDefaultPoolDrawsFromDigitsAndBothCases()
+    {
+        $sample = str::get(600);
+        $this->assertSame(600,strlen($sample));
+        foreach (['/[0-9]/','/[a-z]/','/[A-Z]/'] as $class) $this->assertSame(1,preg_match($class,$sample),$class);
+    }
 
     public function testStrCustomCharpoolAndLength()
     {

@@ -6,6 +6,7 @@ class ExceptionFixture extends \flat\core\exception
     public function metadata(array $data) { $this->_set_exception_data($data); }
 }
 class LegacyExceptionFixture extends \flat\exception {}
+class FeatureNotReadyCaller { public function build() { return new \flat\core\status\exception\feature_not_ready; } }
 function feature_not_ready_fixture() { return new \flat\core\status\exception\feature_not_ready; }
 class ExceptionTest extends TestCase
 {
@@ -24,6 +25,8 @@ class ExceptionTest extends TestCase
         $explicit = new ExceptionFixture('message',42);
         $this->assertSame(42,$explicit->getCode()); $this->assertSame('message',$explicit->getMessage());
         $this->assertIsInt((new ExceptionFixture('derived','invalid'))->getCode());
+        // A non-integer code is ignored: the code is derived exactly as when none is given.
+        $this->assertSame((new ExceptionFixture('derived',0))->getCode(),(new ExceptionFixture('derived','invalid'))->getCode());
         $explicit->metadata(['key'=>['nested'=>false]]);
         $this->assertEquals((object) ['key'=>['nested'=>false]],$explicit->get_exception_data());
         $explicit->metadata([1,2]);
@@ -34,6 +37,16 @@ class ExceptionTest extends TestCase
     {
         $e = new \flat\core\status\exception\feature_not_ready($param);
         $this->assertStringContainsString($message,$e->getMessage());
+    }
+    public function testUnavailableFeatureNamesTheClassAndMethodThatRaisedIt()
+    {
+        $message = (new FeatureNotReadyCaller)->build()->getMessage();
+        $this->assertStringEndsWith('FeatureNotReadyCaller::build() not ready',$message);
+        $this->assertStringStartsWith('feature not ready: ',$message);
+    }
+    public function testUnavailableFeatureRaisedByAPlainFunctionNamesOnlyTheFunction()
+    {
+        $this->assertSame('feature not ready: '.__NAMESPACE__.'\\feature_not_ready_fixture() not ready',feature_not_ready_fixture()->getMessage());
     }
     public function unavailableFeatures()
     {

@@ -152,6 +152,13 @@ class MapperTest extends TestCase
         $m->params_to_properties([]);
         $this->assertSame(10, $m->first);
     }
+    public function testParamsWithNumericKeysAreAPositionalList()
+    {
+        $m = new MapperFixture;
+        $m->params_to_properties([1 => 'a', 2 => 'b']);
+        $this->assertSame('a', $m->first);
+        $this->assertSame('b', $m->second);
+    }
 
     public function testVisitReadsAndUpdatesSelectedPublicProperties()
     {

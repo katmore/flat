@@ -115,8 +115,11 @@ class ConfigTest extends TestCase
         $this->assertSame(42, config::get('Prefix\\settings\\a', ['key_name_base' => 'Prefix\\']));
         $this->assertSame(42, config::get('Prefix\\settings\\a', ['key_name_base' => 'Prefix/']));
         $this->assertSame(42, config::get('settings/a', ['key_name_base' => 'Unrelated']));
-        // Characterize the legacy top-level-prefix truncation; do not correct it here.
-        $this->assertSame('fallback', config::get('flat/settings/a', ['default' => 'fallback']));
+        // The top-level "flat/" namespace is removed from the front of a key.
+        $this->assertSame(42, config::get('flat/settings/a'));
+        $this->assertSame(42, config::get(' \\flat\\settings\\a '));
+        // Only the exact prefix counts.
+        $this->assertSame('fallback', config::get('flatten/settings/a', ['default' => 'fallback']));
     }
 
     public function testNonStringKeyThrows()

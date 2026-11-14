@@ -2401,3 +2401,37 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   stderr; a seed makes samples repeatable.
 - Verified on `core/session.php` (12 mutants: 7 caught, 5 survivors listed with
   lines) and with a check that the working tree was unchanged afterwards.
+
+## MOD-139 — Mutation probe findings: tests for the gaps, and a config fix (KD-73, 74, 75)
+
+- TS-05 first sample (400 mutants, 73.4% caught) triaged in
+  [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md): 30 surviving lines now
+  pinned by tests (re-running the same lines catches everything except equivalent
+  mutants), 14 shown equivalent, 54 left as TS-06.
+- KD-73 (fix): `config` removed the last five characters of a key beginning with
+  `flat/` instead of the prefix (`substr($path,0,-5)`), so those keys never
+  resolved; the test said "do not correct it here". It now removes the prefix.
+  Consumer impact row added (such keys now return their configured value).
+- KD-74 (question 26): `ipinfodb::location_ttl` is commented "1 day" but is 7 days.
+  Not changed; the new test pins the expiry boundary, not the length.
+- KD-75 (fix, no behavior change): `mongo::getMongoDBClient()` had
+  `if (!$options===null)`, a condition that can never be true.
+- Tests added or strengthened: SSH `kill_process` (nothing is sent for an invalid
+  pid, waits are honored, elapsed time reported), robots.txt agent matching, IP
+  cache expiry boundary, shutdown weight ceiling, exception code handling, XML
+  array type detection, `rand` exception message, phone country codes (all second
+  digits), legacy ORM driver capability, PDO `force_new` (exact `true` only),
+  mapper numeric keys, caller naming in `feature_not_ready` and the response
+  classes (including plain-function callers and trace offsets), default
+  random-string pool, silent `check_design`, PDO column alias rules, rule
+  iteration default, alert listener expiry, and three Mongo service tests.
+- A mistake the probe caught in my own work: a test I had just written for
+  `force_new` passed but could no longer fail, because an added assertion reset the
+  state the following assertions depended on. Reordering fixed it, and re-running
+  the line confirmed it.
+- Tool changes (MOD-138 follow-up): `--with-services`/`--services` and
+  `--at=FILE:LINE`; the wrapper uses a per-run work copy and Compose project, so
+  several runs can go in parallel, and cleans up on interrupt.
+- Verified: `docker/bin/test all --coverage` passes 1,374 tests; 100% classes
+  (331/331), methods (1,062/1,062), lines (8,050/8,050). One `known-defect` test
+  remains (KD-72, awaiting Q25).

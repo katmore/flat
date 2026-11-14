@@ -113,6 +113,13 @@ class CrudTest extends TestCase
         $this->assertInstanceOf(\MongoClient::class,$this->driver->get_client(42));
         $this->assertInstanceOf(\MongoClient::class,$this->driver->connect(['server'=>$uri,'client_options'=>['connect'=>true],'driver_options'=>[]]));
     }
+    public function testClientOptionsChooseTheServer()
+    {
+        // An unreachable server in the options must win over the driver's own URI.
+        $client = $this->driver->getMongoDBClient(['uri'=>'mongodb://127.0.0.1:1','uriOptions'=>['serverSelectionTimeoutMS'=>100,'connectTimeoutMS'=>100],'driverOptions'=>[]]);
+        $this->expectException(\MongoDB\Driver\Exception\Exception::class);
+        $client->selectDatabase($this->database)->command(['ping'=>1]);
+    }
     public function testExpiredCachedPingUsesTheRealDatabaseAndKeepsTheClient()
     {
         $client = $this->driver->get_client();

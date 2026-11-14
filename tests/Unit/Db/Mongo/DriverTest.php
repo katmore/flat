@@ -187,4 +187,33 @@ class DriverTest extends TestCase
         $this->assertCount(1,$timestamps);
         $this->assertGreaterThanOrEqual($before+60,reset($timestamps));
     }
+    /**
+     * @group services
+     * @group mongo
+     */
+    public function testPingTimestampWithoutAnOffsetIsNow()
+    {
+        $before = time();
+        mongo::load_client(getenv('FLAT_TEST_MONGODB_URI'),['client_options'=>['connect'=>true,'serverSelectionTimeoutMS'=>2500]]);
+        $after = time();
+        $property = new \ReflectionProperty(mongo::class,'_client_ping'); $property->setAccessible(true);
+        $timestamp = max($property->getValue());
+        $this->assertGreaterThanOrEqual($before,$timestamp);
+        $this->assertLessThanOrEqual($after,$timestamp);
+    }
+    /**
+     * @group services
+     * @group mongo
+     */
+    public function testRefreshedPingKeepsTheConfiguredOffset()
+    {
+        $uri = getenv('FLAT_TEST_MONGODB_URI');
+        $options = ['ping_offset'=>'60','client_options'=>['connect'=>true,'serverSelectionTimeoutMS'=>1500]];
+        $client = mongo::load_client($uri,$options);
+        $property = new \ReflectionProperty(mongo::class,'_client_ping'); $property->setAccessible(true);
+        $property->setValue(null,array_map(function () { return time() - mongo::client_ping_expire - 100; },$property->getValue()));
+        $before = time();
+        $this->assertSame($client,mongo::load_client($uri,$options));
+        $this->assertGreaterThanOrEqual($before + 60,max($property->getValue()));
+    }
 }

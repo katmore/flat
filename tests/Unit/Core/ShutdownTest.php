@@ -108,4 +108,12 @@ class ShutdownTest extends TestCase
         $this->expectException(shutdown\exception\weight_ceiling::class);
         for ($i=0; $i<shutdown::weight_ceiling; $i++) shutdown::register(function () {},1);
     }
+    public function testWeightCeilingAllowsExactlyTheRemainingSlots()
+    {
+        $registered = 0;
+        try { for ($i=0; $i<2*shutdown::weight_ceiling; $i++) { shutdown::register(function () {},1); $registered++; } }
+        catch (shutdown\exception\weight_ceiling $e) {}
+        // Weight 1 starts at slot 51 (offset 50); slots run up to the ceiling, inclusive.
+        $this->assertSame(shutdown::weight_ceiling - 51 + 1, $registered);
+    }
 }

@@ -38,6 +38,21 @@ class ConnectionTest extends TestCase
         $this->assertNotSame($forced->get_pdo(), $forced->get_pdo(true));
         $this->assertNull($first->command()); // The declared command hook is currently a stub.
     }
+    public function testConnectReturnsAnIsolatedConnectionOnlyWhenForced()
+    {
+        $driver = new DriverFixture(['dsn'=>'sqlite::memory:']);
+        $shared = $driver->get_pdo();
+        $this->assertSame($shared, $driver->connect(['dsn'=>'sqlite::memory:']));
+        $isolated = $driver->connect(['dsn'=>'sqlite::memory:','force_new'=>true]);
+        $this->assertNotSame($shared, $isolated);
+        // The isolated connection is not cached for anyone else, and forcing does
+        // not stick to the driver: its later connections are shared again.
+        $this->assertSame($shared, $driver->get_pdo());
+        $this->assertSame($shared, (new DriverFixture(['dsn'=>'sqlite::memory:']))->get_pdo());
+        // Last, because connect() replaces the driver's parameters: only an exact
+        // true forces a new connection; another truthy value does not.
+        $this->assertSame($shared, $driver->connect(['dsn'=>'sqlite::memory:','force_new'=>1]));
+    }
     public function testInterfaceSuppliesConnectionParameters()
     {
         $driver = new SuppliedDriver;

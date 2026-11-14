@@ -17,6 +17,8 @@ class ConfiguredOrmDriver
     public function get_data($key) { return isset($this->stored[$key]) ? $this->stored[$key] : null; }
     public function set_data($key,\flat\data $data) { $this->stored[$key] = $data; return 'stored'; }
 }
+class GetOnlyOrmDriver { public function get_data($key) {} }
+class SetOnlyOrmDriver { public function set_data($key,\flat\data $data) {} }
 class LegacyOrmTest extends TestCase
 {
     use \flat\test\Support\PhpSubprocess;
@@ -50,6 +52,13 @@ class LegacyOrmTest extends TestCase
         $this->assertSame(['option'=>'value'],$p->getValue($orm)->config);
         $this->expectException(\flat\data\orm\exception\bad_param::class);
         new \flat\data\orm(['driver'=>'unresolved configuration']);
+    }
+    public function testADriverNeedsBothGetAndSet()
+    {
+        foreach ([GetOnlyOrmDriver::class, SetOnlyOrmDriver::class] as $class) {
+            try { new \flat\data\orm(['driver'=>$class]); $this->fail("$class is not a complete driver"); }
+            catch (\flat\data\orm\exception\bad_param $e) { $this->assertStringContainsString("'driver' option",$e->getMessage()); }
+        }
     }
     public function testDefaultFacadeUsesRealNativeSessionsAndReturnsStoredData()
     {

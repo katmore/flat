@@ -12,7 +12,13 @@
  * wrapper creates.
  *
  * Usage (inside the copy):
- *   php tests/tools/mutate.php [--limit=N] [--seed=N] [--timeout=SECONDS] [--list] [path...]
+ *   php tests/tools/mutate.php [--limit=N] [--seed=N] [--timeout=SECONDS] [--list]
+ *                              [--with-services] [--at=FILE:LINE ...] [path...]
+ *
+ * --with-services also runs the MongoDB/RabbitMQ tests (the services must be
+ * reachable; docker/bin/mutate --services starts them). Without it those tests
+ * are excluded, so mutants in code only they cover wrongly survive.
+ * --at=FILE:LINE (repeatable) re-tests only the mutants on that line.
  *
  * Paths are files or folders under the copy (default: src/flat). Third-party
  * code in `vendor/` folders is skipped. When there are more mutants than
@@ -28,14 +34,16 @@ if (!is_file("$root/.mutation-copy")) {
     exit(2);
 }
 
-$limit = 150; $seed = 1; $timeout = 60; $listOnly = false; $paths = [];
+$limit = 150; $limitGiven = false; $seed = 1; $timeout = 60; $listOnly = false; $withServices = false; $at = []; $paths = [];
 foreach (array_slice($argv, 1) as $arg) {
-    if (preg_match('/^--limit=(\d+)$/', $arg, $m)) $limit = (int) $m[1];
+    if (preg_match('/^--limit=(\d+)$/', $arg, $m)) { $limit = (int) $m[1]; $limitGiven = true; }
+    elseif ($arg === '--with-services') $withServices = true;
+    elseif (preg_match('/^--at=(.+):(\d+)$/', $arg, $m)) $at[] = [$m[1], (int) $m[2]];
     elseif (preg_match('/^--seed=(\d+)$/', $arg, $m)) $seed = (int) $m[1];
     elseif (preg_match('/^--timeout=(\d+)$/', $arg, $m)) $timeout = (int) $m[1];
     elseif ($arg === '--list') $listOnly = true;
     elseif ($arg !== '' && $arg[0] === '-') {
-        fwrite(STDERR, "usage: php tests/tools/mutate.php [--limit=N] [--seed=N] [--timeout=SECONDS] [--list] [path...]\n");
+        fwrite(STDERR, "usage: php tests/tools/mutate.php [--limit=N] [--seed=N] [--timeout=SECONDS] [--list] [--with-services] [--at=FILE:LINE ...] [path...]\n");
         exit(2);
     } else $paths[] = $arg;
 }
@@ -107,12 +115,13 @@ function render(array $tokens, $index, $replacement) {
 }
 
 /** Runs the unit suite; returns the process exit status (124 = timed out). */
-function run_suite($timeout) {
+function run_suite($timeout, $withServices = false) {
     $phpunit = getenv('FLAT_TEST_PHPUNIT') ?: 'vendor/bin/phpunit';
     $bootstrap = getenv('FLAT_TEST_BOOTSTRAP');
     $command = 'timeout -k 5 ' . (int) $timeout . ' ' . escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($phpunit)
         . ($bootstrap ? ' --bootstrap ' . escapeshellarg($bootstrap) : '')
-        . ' --testsuite unit --exclude-group services --stop-on-failure --stop-on-error --no-coverage >/dev/null 2>&1';
+        . ' --testsuite unit' . ($withServices ? '' : ' --exclude-group services')
+        . ' --stop-on-failure --stop-on-error --no-coverage >/dev/null 2>&1';
     exec($command, $unused, $status);
     return $status;
 }
@@ -124,14 +133,25 @@ foreach ($files as $file) {
     $perFile[$file] = count($mutations);
     foreach ($mutations as $mutation) $all[] = $mutation + ['file' => $file];
 }
+if ($at) {
+    $all = array_values(array_filter($all, function ($m) use ($at) {
+        foreach ($at as $target) {
+            if ($m['line'] === $target[1] && ($m['file'] === $target[0] || substr($m['file'], -strlen($target[0])) === $target[0])) return true;
+        }
+        return false;
+    }));
+    if (!$limitGiven) $limit = count($all);
+}
 if ($listOnly) {
-    foreach ($perFile as $file => $count) if ($count) printf("%5d  %s\n", $count, $file);
+    $perFile = [];
+    foreach ($all as $m) $perFile[$m['file']] = ($perFile[$m['file']] ?? 0) + 1;
+    foreach ($perFile as $file => $count) printf("%5d  %s\n", $count, $file);
     printf("%5d  total mutants in %d files\n", count($all), count($files));
     exit(0);
 }
 
 fwrite(STDERR, "baseline run...\n");
-if (run_suite($timeout * 4) !== 0) {
+if (run_suite($timeout * 4, $withServices) !== 0) {
     fwrite(STDERR, "The unmutated suite does not pass; fix that before probing.\n");
     exit(1);
 }
@@ -152,7 +172,7 @@ foreach ($sample as $n => $m) {
         exec(escapeshellarg(PHP_BINARY) . ' -l ' . escapeshellarg($path) . ' >/dev/null 2>&1', $unused, $lint);
         if ($lint !== 0) { $result = 'invalid'; $invalid++; }
         else {
-            $status = run_suite($timeout);
+            $status = run_suite($timeout, $withServices);
             if ($status === 0) { $result = 'SURVIVED'; $survivors[] = [$m, trim(explode("\n", $original)[$m['line'] - 1])]; }
             elseif ($status === 124 || $status === 137) { $result = 'timeout'; $timedOut++; }
             else { $result = 'killed'; $killed++; }
@@ -165,8 +185,8 @@ foreach ($sample as $n => $m) {
 
 $run = count($sample) - $invalid;
 echo "# Mutation probe\n\n";
-printf("- Source files: %d; candidate mutants: %d; run: %d (seed %d, limit %d); invalid (did not compile): %d.\n",
-    count($files), $total, count($sample), $seed, $limit, $invalid);
+printf("- Source files: %d; candidate mutants: %d; run: %d (seed %d, limit %d%s); invalid (did not compile): %d.\n",
+    count($files), $total, count($sample), $seed, $limit, $withServices ? ', with services' : '', $invalid);
 printf("- Killed: %d; timed out (counted as killed): %d; **survived: %d** of %d valid mutants",
     $killed, $timedOut, count($survivors), $run);
 if ($run) printf(" (%.1f%% caught).\n", 100 * ($killed + $timedOut) / $run); else echo ".\n";

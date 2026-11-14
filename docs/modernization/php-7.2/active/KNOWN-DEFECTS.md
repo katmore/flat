@@ -106,6 +106,9 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-70 | cURL config | The constructor's second loop re-assigns every text argument, so unset `request_method`, `user_agent`, `referrer` and `cache_dir` become `null` instead of their declared defaults (`GET`, `flat/curl`) | `Core/Curl/ConfigTest::testExplicitConfigurationAndNumericDefaults` | B | Q24 | fixed (MOD-136) |
 | KD-71 | UUID | `uuid::__invoke($version, $namespace, $name)` passed `$version=4, $namespace=null, $name=null` (assignments), so it always returned a random v4 UUID; its test asserted that | `Core/UuidTest::testInvokeGeneratesTheRequestedVersion` | A | Pass the arguments through | fixed (MOD-137) |
 | KD-72 | Random numbers | `$rand()` on an object built with bounds (`new rand(5, 10)`) ignores them and uses 0 to `getrandmax()`; `generate()` uses them | `Core/RandTest::testInvocationWithoutArgumentsCurrentlyIgnoresConstructedBounds` | B | Q25 | open |
+| KD-73 | Config | A key starting with the `flat/` namespace removed its last five characters instead of the prefix (`flat/settings/a` became `flat/s`), so such keys never resolved; a test asserted that ("do not correct it here") | `Core/ConfigTest::testPathsAreNormalizedAndBaseNamesAreRemoved` | A | Remove the prefix from the front | fixed (MOD-139) |
+| KD-74 | IP lookup | `ipinfodb::location_ttl = 604800` is commented "1 day" but 604800 seconds is 7 days (a day is 86400) | `Cloud/IpInfoDbTest::testCachedRecordExpiresExactlyAtItsTimeToLive` (pins the boundary, not the length) | B | Q26 | open |
+| KD-75 | Mongo driver | `getMongoDBClient()` guarded its default with `if (!$options===null)`, which parses as `(!$options)===null` and can never be true | `Db/Mongo/CrudTest::testClientOptionsChooseTheServer` | A | `if ($options===null)` (no behavior change: `isset()` on `null` already worked) | fixed (MOD-139) |
 
 ## Test-strength tasks
 
@@ -119,7 +122,8 @@ strengthens assertions.
 | TS-02 | Random numbers | No test of invocation without arguments after constructing with custom bounds | done (MOD-137; found KD-72) |
 | TS-03 | Input map | No test that `0`, `false` and `"0"` count as empty input | done (MOD-137) |
 | TS-04 | CSV | No test that `fields2csv([])` returns a newline | done (MOD-137) |
-| TS-05 | Whole suite | Run a broader mutation probe; the 14-mutation sample in MOD-111 found two gaps | open |
+| TS-05 | Whole suite | Run a broader mutation probe; the 14-mutation sample in MOD-111 found two gaps | first sample done (MOD-139; [MUTATION-PROBE.md](MUTATION-PROBE.md)) |
+| TS-06 | Whole suite | 54 survivor lines from the first probe sample are not yet pinned or shown equivalent (listed in [MUTATION-PROBE.md](MUTATION-PROBE.md)); then run further seeds and the services mode | open |
 
 Reviewed and **not** treated as defects: `scalar` empty-input fallback (owner
 contract), Mongo affected-record policy, `app_error` summaries, `input\map`
@@ -129,7 +133,7 @@ treating `0`/`false`/`"0"` as empty (TS-03), `csv::fields2csv([])` returning a n
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 1-24 are answered (the owner
-agreed with every recommendation); question 25 is open.
+agreed with every recommendation); questions 25 and 26 are open.
 
 1. **KD-03 PDO fetch options.** Recommend: implement the documented meanings
    (true = generic data rows, class = rows as that class, callback = per row,
@@ -237,3 +241,7 @@ agreed with every recommendation); question 25 is open.
     when called without arguments (explicit arguments still win), so an object
     built with `new rand(5, 10)` behaves the same through `generate()` and
     `$rand()`.
+26. **KD-74 IP location cache lifetime.** The constant is 604800 seconds (7 days)
+    but its comment says "1 day". Which is intended? Recommend: keep 7 days (a
+    week is a sensible lifetime for IP location data, and a change would send
+    seven times as many lookups to the paid external API) and correct the comment.

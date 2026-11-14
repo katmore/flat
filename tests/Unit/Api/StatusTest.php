@@ -58,4 +58,10 @@ class StatusTest extends TestCase
         } finally { restore_error_handler(); }
         $this->assertSame([], $warnings);
     }
+    public function testUnknownCodeNumberFormatsAsAnEmptyString()
+    {
+        // No status-code class exists for 0, so the whole format comes back empty.
+        $this->assertSame('', (new FlexibleStatus(0,'Unknown'))->format_code('[%code%]'));
+        $this->assertSame('[200]', (new FlexibleStatus(200,'OK'))->format_code('[%code%]'));
+    }
 }

@@ -76,9 +76,12 @@ class AlertTest extends TestCase
     public function testListenerDecodesMessagesAndRefreshesExpiryOnTimeout($timeout)
     {
         $channel = AlertFixture::$driver->channel; $channel->timeout = $timeout;
-        $seen = [];
+        $seen = []; $before = time();
         AlertFixture::add_listener(function ($data) use (&$seen) { $seen[] = $data; });
         $data = AlertFixture::$crud->calls[0][1];
+        // A new listener is registered to expire a time to live from now.
+        $this->assertGreaterThanOrEqual($before + AlertFixture::listener_ttl, $data->expires);
+        $this->assertLessThanOrEqual(time() + AlertFixture::listener_ttl, $data->expires);
         $this->assertSame(['sub_collection'=>'listener'], AlertFixture::$crud->calls[0][2]);
         $this->assertSame('local-alert.listener:'.$data->uuid, $channel->calls[0][1][0]);
         $this->assertSame(42, $seen[0]->answer);

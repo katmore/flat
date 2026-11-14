@@ -114,6 +114,18 @@ class StatementTest extends TestCase
         $this->expectException(\flat\db\driver\pdo\exception\bad_option::class);
         new statement($this->pdo, $this->rules(['options'=>['fetch'=>$fetch]]));
     }
+    /** @dataProvider badColumnAliases */
+    public function testInvalidAliasedColumnNamesAreRejected($alias)
+    {
+        $this->expectException(\flat\db\driver\pdo\exception\bad_rule::class);
+        new statement($this->pdo, $this->rules(['column_hash'=>['i'=>['id'=>$alias,'name']]]));
+    }
+    public function badColumnAliases() { return [['1bad'],['_bad'],['9'],[''],[42],['has space'],['dash-ed']]; }
+    public function testAliasedColumnNamesMayContainDigitsAndUnderscoresAfterTheFirstLetter()
+    {
+        $result = new statement($this->pdo, $this->rules(['column_hash'=>['i'=>['id'=>'a_1','name']]]));
+        $this->assertStringContainsString('i.id as i_a_1',$this->pdo->last->queryString);
+    }
     public function invalidFetchOptions()
     {
         return [['absent_class'], [AbstractRow::class], [42], [[1,2]]];

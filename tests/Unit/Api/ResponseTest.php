@@ -7,6 +7,19 @@ class HeaderResponse extends response
 {
     public function add(\flat\api\response_header $header) { $this->_add_header($header); }
 }
+function response_made_outside_a_class() { return [new response\bad_request(), new response\forbidden()]; }
+function responses_made_through_a_function($offset) { $maker = new ResponseMaker; return [$maker->badRequest($offset), $maker->forbidden($offset)]; }
+class ResponseMaker
+{
+    public function forbiddenByDefault() { return new response\forbidden(); }
+    public function badRequest($offset=0) { return new response\bad_request('',null,$offset); }
+    public function forbidden($offset=0) { return new response\forbidden('',null,$offset); }
+}
+class OuterResponseMaker
+{
+    public function badRequest($offset) { return (new ResponseMaker)->badRequest($offset); }
+    public function forbidden($offset) { return (new ResponseMaker)->forbidden($offset); }
+}
 class ResponseTest extends TestCase
 {
     private $savedEvent;
@@ -92,6 +105,36 @@ class ResponseTest extends TestCase
         $exception = new response\exception(null);
         $this->assertSame('an unknown error has occurred by '.self::class,$exception->get_response()->message);
         $this->assertSame(500,$exception->get_response()->get_status()->get_code());
+    }
+    public function testGeneratedMessagesNameTheClassThatCreatedTheResponse()
+    {
+        $this->assertSame('Bad request indicated by ResponseMaker',(new ResponseMaker)->badRequest()->message);
+        $this->assertSame('error indicated by '.ResponseMaker::class,(new ResponseMaker)->forbidden()->message);
+        // A trace offset of 1 names the caller one level further up.
+        $this->assertSame('Bad request indicated by OuterResponseMaker',(new OuterResponseMaker)->badRequest(1)->message);
+        $this->assertSame('error indicated by '.OuterResponseMaker::class,(new OuterResponseMaker)->forbidden(1)->message);
+        $this->assertSame('Bad request indicated by ResponseMaker',(new OuterResponseMaker)->badRequest(0)->message);
+    }
+    public function testDefaultTraceOffsetNamesTheDirectCaller()
+    {
+        $this->assertSame('error indicated by '.ResponseMaker::class,(new ResponseMaker)->forbiddenByDefault()->message);
+    }
+    public function testResponsesCreatedOutsideAnyClassNameNoCaller()
+    {
+        list($bad,$forbidden) = response_made_outside_a_class();
+        $this->assertStringNotContainsString('indicated by',(string) $bad->message);
+        $this->assertStringNotContainsString('indicated by',(string) $forbidden->message);
+    }
+    public function testTraceOffsetLandingOnAFunctionNamesNoCaller()
+    {
+        // With offset 1 the named frame is the plain function, which has no class.
+        list($bad,$forbidden) = responses_made_through_a_function(1);
+        $this->assertStringNotContainsString('indicated by',(string) $bad->message);
+        $this->assertStringNotContainsString('indicated by',(string) $forbidden->message);
+        // With offset 0 the named frame is still the class that made the response.
+        list($bad,$forbidden) = responses_made_through_a_function(0);
+        $this->assertSame('Bad request indicated by ResponseMaker',$bad->message);
+        $this->assertSame('error indicated by '.ResponseMaker::class,$forbidden->message);
     }
     public function testMissingStatusReportsTheResponseAndInvalidValue()
     {

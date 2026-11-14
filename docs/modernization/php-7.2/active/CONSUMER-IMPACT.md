@@ -120,6 +120,7 @@ Every known-defect fix changes behavior a consumer might have relied on.
 | MOD-135 (KD-63, 64) | S3 uploads | Files from 5 GB to 10 GiB went to a single upload, which S3 rejects; multipart uploads lost the content type | Files of 100 MB or more use multipart; the content type is kept | `s3::file_upload(` with large files or a content type |
 | MOD-136 (KD-70) | cURL request defaults | Requests without an explicit user agent sent none (the `flat/curl` default was replaced with `null`); `referrer`/`cache_dir` defaults were likewise lost | Default user agent `flat/curl` is sent; other text defaults are kept; the request method is still unset unless given (curl sends GET, or POST with a body) | `curl\config` / `curl::exec(` without a user agent; servers filtering on User-Agent |
 | MOD-137 (KD-71) | UUID objects | `$uuid(3, $namespace, $name)` and `$uuid(5, ...)` (calling the object) ignored their arguments and returned a random v4 UUID | Returns the requested version (v3/v5 are deterministic); `$uuid()` is still a random v4 | UUID objects used as callables: `$u(` with arguments |
+| MOD-139 (KD-73) | Config keys | A key starting with `flat/` (e.g. `config::get('flat/data/orm/driver')`) was cut to a nonsense key and returned the default or null | The `flat/` prefix is removed, so the key resolves to the real setting | `config::get(`, `enum_values(` with a first segment `flat`: those calls may now return configured values where they used to return defaults |
 
 ## Suggested consumer check
 

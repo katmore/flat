@@ -70,6 +70,11 @@ class RandTest extends TestCase
         $this->expectException(\flat\core\rand\exception\bad_param::class);
         rand::get(0, getrandmax() + 1);
     }
+    public function testBadParamMessageNamesTheParameterAndOptionalDetails()
+    {
+        $this->assertSame("bad param 'min'", (new rand\exception\bad_param('min'))->getMessage());
+        $this->assertSame("bad param 'min': too small", (new rand\exception\bad_param('min','too small'))->getMessage());
+    }
 
     public function testBytesLength()
     {

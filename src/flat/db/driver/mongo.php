@@ -701,7 +701,7 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
     * @link https://docs.mongodb.com/php-library/v1.2/reference/method/MongoDBClient__construct/
     */
    public function getMongoDBClient(array $options=null) : \MongoDB\Client {
-      if (!$options===null) $options = [];
+      if ($options===null) $options = [];
       
       if (isset($options['uri'])) {
          $uri = $options['uri'];

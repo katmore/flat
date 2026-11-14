@@ -173,6 +173,13 @@ namespace flat\test\Unit\Core\Curl {
             $this->expectException(\flat\core\curl\exception\robots_denied::class);
             new response($this->config(), ['use_robots']);
         }
+        public function testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel()
+        {
+            CurlDouble::$responses['https://example.com/robots.txt'] = ['body'=>"User-agent: other\nDisallow: /",'code'=>200];
+            // An agent named "agent" must not match the label "User-agent" itself.
+            $this->assertTrue(response::is_robots_allowed('https://example.com/page','agent'));
+            $this->assertFalse(response::is_robots_allowed('https://example.com/page','other'));
+        }
 
         public function testFalsyTextBodyInitializesDomOnDemand()
         {

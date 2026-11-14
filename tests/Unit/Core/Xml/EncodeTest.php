@@ -81,6 +81,15 @@ class EncodeTest extends TestCase
         $this->assertSame('extxs:Mixed[3]',$root->getAttribute('extxs:ArrayType'));
         $this->assertSame('array',$root->getElementsByTagNameNS(encode::xmlns,'data')->item(0)->getAttribute('fx:php-type'));
     }
+    public function testArrayTypeDetectionInspectsTheFirstTenKeys()
+    {
+        $detect = new \ReflectionMethod(encode::class,'_get_xsi_type'); $detect->setAccessible(true);
+        $tenth = array_fill(0,9,'v') + ['key'=>'v'];      // the string key is the 10th element
+        $eleventh = array_fill(0,10,'v') + ['key'=>'v'];  // the string key is the 11th element
+        $this->assertSame('extxs:Hashmap',$detect->invoke(null,$tenth));
+        $this->assertSame('extxs:Array',$detect->invoke(null,$eleventh));
+        $this->assertSame('extxs:Array',$detect->invoke(null,range(1,12)));
+    }
     public function testDumpEnabledEmptyAndNumericStringObjectKeys()
     {
         $object = new \stdClass; $object->{''}='empty'; $object->{'0'}='zero';

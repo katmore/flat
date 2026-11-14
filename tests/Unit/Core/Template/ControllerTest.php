@@ -159,6 +159,14 @@ class ControllerTest extends TestCase
         $this->assertTrue(TemplateController::check_design('large'));
         $this->assertFalse(TemplateController::check_design('missing'));
     }
+    public function testCheckingADesignNeverPrintsIt()
+    {
+        $this->file('tmpl/loud.php','<?php echo "loud output";');
+        ob_start(); $found = TemplateController::check_design('loud'); $printed = ob_get_clean();
+        $this->assertTrue($found);
+        $this->assertSame('',$printed);
+        $this->assertSame('loud output',$this->render('loud'));
+    }
     public function testMarkdownAndGeneratedMarkdownFiles()
     {
         $this->file('tmpl/readme.md', '# Readme');

@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 724 test methods in 92 files, running 1327 test cases.
-- 118 methods use a data provider (one case per data set).
+- 749 test methods in 92 files, running 1374 test cases.
+- 119 methods use a data provider (one case per data set).
 - 1 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -34,29 +34,34 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 139 | `testUnknownMethodIsRejected` | Unknown Method Is Rejected |  |
 | 144 | `testMissingMethodRaisesMissingMethod` | Missing Method Raises Missing Method |  |
 
-### `tests/Unit/Api/ResponseTest.php` (11)
+### `tests/Unit/Api/ResponseTest.php` (15)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 22 | `testSuccessAndExplicitStatusMapping` | Success And Explicit Status Mapping |  |
-| 40 | `testErrorMessagesDataAndStatusCodes` | Error Messages Data And Status Codes | 6 data-provider cases |
-| 56 | `testNotFoundPreservesFalsyAndAlreadyMessagedPayloads` | Not Found Preserves Falsy And Already Messaged Payloads |  |
-| 65 | `testBadRequestAddsMessageToArrayOrObjectWithoutOverwritingIt` | Bad Request Adds Message To Array Or Object Without Overwriting It |  |
-| 73 | `testResponseExceptionsPreserveTheResponseAndStatus` | Response Exceptions Preserve The Response And Status |  |
-| 84 | `testUnknownErrorWithoutClassCallerGetsGenericMessage` | Unknown Error Without Class Caller Gets Generic Message |  |
-| 90 | `testUnknownErrorWithClassCallerNamesTheCallingClass` | Unknown Error With Class Caller Names The Calling Class |  |
-| 96 | `testMissingStatusReportsTheResponseAndInvalidValue` | Missing Status Reports The Response And Invalid Value |  |
-| 105 | `testHeadersExposeFieldAndValueAndReplaceDuplicateFields` | Headers Expose Field And Value And Replace Duplicate Fields |  |
-| 122 | `testAnyMethodFallbackResourcesReturnTheirStatusAndMessage` | Any Method Fallback Resources Return Their Status And Message |  |
-| 132 | `testEmptyHeaderFieldThrowsItsDeclaredLegacyException` | Empty Header Field Throws Its Declared Legacy Exception |  |
+| 35 | `testSuccessAndExplicitStatusMapping` | Success And Explicit Status Mapping |  |
+| 53 | `testErrorMessagesDataAndStatusCodes` | Error Messages Data And Status Codes | 6 data-provider cases |
+| 69 | `testNotFoundPreservesFalsyAndAlreadyMessagedPayloads` | Not Found Preserves Falsy And Already Messaged Payloads |  |
+| 78 | `testBadRequestAddsMessageToArrayOrObjectWithoutOverwritingIt` | Bad Request Adds Message To Array Or Object Without Overwriting It |  |
+| 86 | `testResponseExceptionsPreserveTheResponseAndStatus` | Response Exceptions Preserve The Response And Status |  |
+| 97 | `testUnknownErrorWithoutClassCallerGetsGenericMessage` | Unknown Error Without Class Caller Gets Generic Message |  |
+| 103 | `testUnknownErrorWithClassCallerNamesTheCallingClass` | Unknown Error With Class Caller Names The Calling Class |  |
+| 109 | `testGeneratedMessagesNameTheClassThatCreatedTheResponse` | Generated Messages Name The Class That Created The Response |  |
+| 118 | `testDefaultTraceOffsetNamesTheDirectCaller` | Default Trace Offset Names The Direct Caller |  |
+| 122 | `testResponsesCreatedOutsideAnyClassNameNoCaller` | Responses Created Outside Any Class Name No Caller |  |
+| 128 | `testTraceOffsetLandingOnAFunctionNamesNoCaller` | Trace Offset Landing On A Function Names No Caller |  |
+| 139 | `testMissingStatusReportsTheResponseAndInvalidValue` | Missing Status Reports The Response And Invalid Value |  |
+| 148 | `testHeadersExposeFieldAndValueAndReplaceDuplicateFields` | Headers Expose Field And Value And Replace Duplicate Fields |  |
+| 165 | `testAnyMethodFallbackResourcesReturnTheirStatusAndMessage` | Any Method Fallback Resources Return Their Status And Message |  |
+| 175 | `testEmptyHeaderFieldThrowsItsDeclaredLegacyException` | Empty Header Field Throws Its Declared Legacy Exception |  |
 
-### `tests/Unit/Api/StatusTest.php` (3)
+### `tests/Unit/Api/StatusTest.php` (4)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 17 | `testConcreteStatusesProvideExpectedCodeAndMessage` | Concrete Statuses Provide Expected Code And Message | 10 data-provider cases |
 | 33 | `testCodeClassesAndNumericInputBoundaries` | Code Classes And Numeric Input Boundaries |  |
 | 46 | `testFormattingUsesTheCodeClassMetadata` | Formatting Uses The Code Class Metadata |  |
+| 61 | `testUnknownCodeNumberFormatsAsAnEmptyString` | Unknown Code Number Formats As An Empty String |  |
 
 ### `tests/Unit/Asset/AssetTest.php` (24)
 
@@ -205,15 +210,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 88 | `testS3ParameterMappingUrlsAndBodySetterUsingAnExplicitClientBoundary` | S3 Parameter Mapping Urls And Body Setter Using An Explicit Client Boundary |  |
 | 101 | `testConstructorUploadAndFileSetterUseTheSameBoundary` | Constructor Upload And File Setter Use The Same Boundary |  |
 
-### `tests/Unit/Cloud/IpInfoDbTest.php` (5)
+### `tests/Unit/Cloud/IpInfoDbTest.php` (6)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 40 | `testCacheHitUsesStoredRecordWithoutHttp` | Cache Hit Uses Stored Record Without Http |  |
-| 53 | `testMissingOrExpiredCacheFetchesMapsAndStoresResponse` | Missing Or Expired Cache Fetches Maps And Stores Response | 3 data-provider cases |
-| 73 | `testHttpFailureCarriesStatusContext` | Http Failure Carries Status Context |  |
-| 85 | `testTransportFailureCarriesCurlContext` | Transport Failure Carries Curl Context |  |
-| 98 | `testRetiredStaticLoadFailsClearlyWithoutTouchingTheCache` | Retired Static Load Fails Clearly Without Touching The Cache |  |
+| 52 | `testCachedRecordExpiresExactlyAtItsTimeToLive` | Cached Record Expires Exactly At Its Time To Live |  |
+| 72 | `testMissingOrExpiredCacheFetchesMapsAndStoresResponse` | Missing Or Expired Cache Fetches Maps And Stores Response | 3 data-provider cases |
+| 92 | `testHttpFailureCarriesStatusContext` | Http Failure Carries Status Context |  |
+| 104 | `testTransportFailureCarriesCurlContext` | Transport Failure Carries Curl Context |  |
+| 117 | `testRetiredStaticLoadFailsClearlyWithoutTouchingTheCache` | Retired Static Load Fails Clearly Without Touching The Cache |  |
 
 ### `tests/Unit/Cloud/S3MultipartTest.php` (4)
 
@@ -245,9 +251,9 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 52 | `testQueueProviderSuffixAndFallback` | Queue Provider Suffix And Fallback |  |
 | 61 | `testSubscriptionsStoreExpirationAndUniqueId` | Subscriptions Store Expiration And Unique Id | 6 data-provider cases |
 | 76 | `testListenerDecodesMessagesAndRefreshesExpiryOnTimeout` | Listener Decodes Messages And Refreshes Expiry On Timeout | 2 data-provider cases |
-| 92 | `testRetiredPublisherFailsBeforeInvokingCallbacksOrChangingSubscriptions` | Retired Publisher Fails Before Invoking Callbacks Or Changing Subscriptions |  |
-| 101 | `testRetiredPthreadScaffoldingNoLongerDeclaresAThreadClass` | Retired Pthread Scaffolding No Longer Declares A Thread Class |  |
-| 105 | `testUnimplementedLogAndSubscriptionListenerMethodsAreNoOps` | Unimplemented Log And Subscription Listener Methods Are No Ops |  |
+| 95 | `testRetiredPublisherFailsBeforeInvokingCallbacksOrChangingSubscriptions` | Retired Publisher Fails Before Invoking Callbacks Or Changing Subscriptions |  |
+| 104 | `testRetiredPthreadScaffoldingNoLongerDeclaresAThreadClass` | Retired Pthread Scaffolding No Longer Declares A Thread Class |  |
+| 108 | `testUnimplementedLogAndSubscriptionListenerMethodsAreNoOps` | Unimplemented Log And Subscription Listener Methods Are No Ops |  |
 
 ### `tests/Unit/Core/BadInterfaceTest.php` (2)
 
@@ -316,17 +322,17 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 81 | `testInvalidBaseDirectory` | Invalid Base Directory | 3 data-provider cases |
 | 98 | `testLoadsValuesAndCachesThem` | Loads Values And Caches Them |  |
 | 110 | `testPathsAreNormalizedAndBaseNamesAreRemoved` | Paths Are Normalized And Base Names Are Removed |  |
-| 122 | `testNonStringKeyThrows` | Non String Key Throws |  |
-| 129 | `testMissingKeysAreCachedAndDefaultsPreserveTypes` | Missing Keys Are Cached And Defaults Preserve Types |  |
-| 140 | `testInvalidPhpConfigIsRejectedAndCanUseDefault` | Invalid Php Config Is Rejected And Can Use Default |  |
-| 149 | `testEnumeratesValuesWithReferences` | Enumerates Values With References |  |
-| 163 | `testReferenceValuesAndNamespaceCaching` | Reference Values And Namespace Caching |  |
-| 175 | `testRejectsInvalidReferenceDocuments` | Rejects Invalid Reference Documents | 4 data-provider cases |
-| 193 | `testMissingReferenceDocumentAndCachedMisses` | Missing Reference Document And Cached Misses |  |
-| 206 | `testWholeReferencesAndNestedValues` | Whole References And Nested Values |  |
-| 224 | `testMissingWholeReferenceReportsTheOriginalKey` | Missing Whole Reference Reports The Original Key |  |
-| 233 | `testInlineReferencesIncludingDuplicatesBooleansAndMalformedTokens` | Inline References Including Duplicates Booleans And Malformed Tokens |  |
-| 249 | `testNonScalarInlineReferenceThrows` | Non Scalar Inline Reference Throws |  |
+| 125 | `testNonStringKeyThrows` | Non String Key Throws |  |
+| 132 | `testMissingKeysAreCachedAndDefaultsPreserveTypes` | Missing Keys Are Cached And Defaults Preserve Types |  |
+| 143 | `testInvalidPhpConfigIsRejectedAndCanUseDefault` | Invalid Php Config Is Rejected And Can Use Default |  |
+| 152 | `testEnumeratesValuesWithReferences` | Enumerates Values With References |  |
+| 166 | `testReferenceValuesAndNamespaceCaching` | Reference Values And Namespace Caching |  |
+| 178 | `testRejectsInvalidReferenceDocuments` | Rejects Invalid Reference Documents | 4 data-provider cases |
+| 196 | `testMissingReferenceDocumentAndCachedMisses` | Missing Reference Document And Cached Misses |  |
+| 209 | `testWholeReferencesAndNestedValues` | Whole References And Nested Values |  |
+| 227 | `testMissingWholeReferenceReportsTheOriginalKey` | Missing Whole Reference Reports The Original Key |  |
+| 236 | `testInlineReferencesIncludingDuplicatesBooleansAndMalformedTokens` | Inline References Including Duplicates Booleans And Malformed Tokens |  |
+| 252 | `testNonScalarInlineReferenceThrows` | Non Scalar Inline Reference Throws |  |
 
 ### `tests/Unit/Core/Curl/ConfigTest.php` (5)
 
@@ -354,7 +360,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 83 | `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` | Null Remains The No Body Default For Json And Raw Modes |  |
 | 91 | `testEmptyUrlencodedQueryStringIsRejected` | Empty Urlencoded Query String Is Rejected |  |
 
-### `tests/Unit/Core/Curl/ResponseTest.php` (18)
+### `tests/Unit/Core/Curl/ResponseTest.php` (19)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -373,9 +379,10 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 145 | `testErrorAfterFileTransferStillFails` | Error After File Transfer Still Fails |  |
 | 155 | `testRobotsRules` | Robots Rules | 6 data-provider cases |
 | 168 | `testRobotsCheckCanDenyOrAllowConstructor` | Robots Check Can Deny Or Allow Constructor |  |
-| 177 | `testFalsyTextBodyInitializesDomOnDemand` | Falsy Text Body Initializes Dom On Demand |  |
-| 184 | `testMissingTransferInfoRaisesItsDeclaredException` | Missing Transfer Info Raises Its Declared Exception |  |
-| 191 | `testUnavailableSavePathRaisesSystemErrorAfterWarning` | Unavailable Save Path Raises System Error After Warning |  |
+| 176 | `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` | Robots Rules For Another Agent Ignore The User Agent Label |  |
+| 184 | `testFalsyTextBodyInitializesDomOnDemand` | Falsy Text Body Initializes Dom On Demand |  |
+| 191 | `testMissingTransferInfoRaisesItsDeclaredException` | Missing Transfer Info Raises Its Declared Exception |  |
+| 198 | `testUnavailableSavePathRaisesSystemErrorAfterWarning` | Unavailable Save Path Raises System Error After Warning |  |
 
 ### `tests/Unit/Core/DebugTest.php` (12)
 
@@ -441,14 +448,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 84 | `testInvalidName` | Invalid Name | 2 data-provider cases |
 | 94 | `testInvalidDataKey` | Invalid Data Key | 2 data-provider cases |
 
-### `tests/Unit/Core/ExceptionTest.php` (4)
+### `tests/Unit/Core/ExceptionTest.php` (6)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 12 | `testLegacyExceptionBaseKeepsExplicitCodesAndDerivesMissingCodes` | Legacy Exception Base Keeps Explicit Codes And Derives Missing Codes |  |
-| 22 | `testExplicitAndDerivedCodesAndMetadata` | Explicit And Derived Codes And Metadata |  |
-| 33 | `testUnavailableFeaturesExplainTheirContext` | Unavailable Features Explain Their Context | 6 data-provider cases |
-| 44 | `testUnavailableFunctionContext` | Unavailable Function Context |  |
+| 13 | `testLegacyExceptionBaseKeepsExplicitCodesAndDerivesMissingCodes` | Legacy Exception Base Keeps Explicit Codes And Derives Missing Codes |  |
+| 23 | `testExplicitAndDerivedCodesAndMetadata` | Explicit And Derived Codes And Metadata |  |
+| 36 | `testUnavailableFeaturesExplainTheirContext` | Unavailable Features Explain Their Context | 6 data-provider cases |
+| 41 | `testUnavailableFeatureNamesTheClassAndMethodThatRaisedIt` | Unavailable Feature Names The Class And Method That Raised It |  |
+| 47 | `testUnavailableFeatureRaisedByAPlainFunctionNamesOnlyTheFunction` | Unavailable Feature Raised By A Plain Function Names Only The Function |  |
+| 57 | `testUnavailableFunctionContext` | Unavailable Function Context |  |
 
 ### `tests/Unit/Core/Html/EncodeTest.php` (5)
 
@@ -514,7 +523,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 35 | `testObjectFieldsMapOntoDeclaredProperties` | Object Fields Map Onto Declared Properties |  |
 | 42 | `testControllerExportsAreLimitedToFlatDataObjects` | Controller Exports Are Limited To Flat Data Objects |  |
 
-### `tests/Unit/Core/MapperTest.php` (16)
+### `tests/Unit/Core/MapperTest.php` (17)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -528,12 +537,13 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 113 | `testListsAndObjectsPopulateProperties` | Lists And Objects Populate Properties |  |
 | 125 | `testArgumentMapping` | Argument Mapping | 6 data-provider cases |
 | 144 | `testParamsSupportNamedPositionalAndEmptyLists` | Params Support Named Positional And Empty Lists |  |
-| 156 | `testVisitReadsAndUpdatesSelectedPublicProperties` | Visit Reads And Updates Selected Public Properties |  |
-| 174 | `testRetiredPrivateReadOptionsRaiseAClearMappingError` | Retired Private Read Options Raise A Clear Mapping Error | 3 data-provider cases |
-| 184 | `testPrivateReadFlagIsHarmlessForPublicOnlyObjects` | Private Read Flag Is Harmless For Public Only Objects |  |
-| 194 | `testProtectedVisitPreservesReflectionFailure` | Protected Visit Preserves Reflection Failure |  |
-| 200 | `testPrivateVisitIsIgnoredEvenWithObsoleteFlags` | Private Visit Is Ignored Even With Obsolete Flags |  |
-| 207 | `testMissingVisitThrowsCannotGetProperty` | Missing Visit Throws Cannot Get Property |  |
+| 155 | `testParamsWithNumericKeysAreAPositionalList` | Params With Numeric Keys Are A Positional List |  |
+| 163 | `testVisitReadsAndUpdatesSelectedPublicProperties` | Visit Reads And Updates Selected Public Properties |  |
+| 181 | `testRetiredPrivateReadOptionsRaiseAClearMappingError` | Retired Private Read Options Raise A Clear Mapping Error | 3 data-provider cases |
+| 191 | `testPrivateReadFlagIsHarmlessForPublicOnlyObjects` | Private Read Flag Is Harmless For Public Only Objects |  |
+| 201 | `testProtectedVisitPreservesReflectionFailure` | Protected Visit Preserves Reflection Failure |  |
+| 207 | `testPrivateVisitIsIgnoredEvenWithObsoleteFlags` | Private Visit Is Ignored Even With Obsolete Flags |  |
+| 214 | `testMissingVisitThrowsCannotGetProperty` | Missing Visit Throws Cannot Get Property |  |
 
 ### `tests/Unit/Core/Md/ConvertTest.php` (4)
 
@@ -544,21 +554,22 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 29 | `testNonStringSourceIsRejected` | Non String Source Is Rejected |  |
 | 34 | `testMissingFileRaisesInvalidSource` | Missing File Raises Invalid Source |  |
 
-### `tests/Unit/Core/RandStrTest.php` (9)
+### `tests/Unit/Core/RandStrTest.php` (10)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 9 | `testStrDefaultLengthAndCharset` | Str Default Length And Charset |  |
-| 16 | `testStrCustomCharpoolAndLength` | Str Custom Charpool And Length |  |
-| 30 | `testStrGenerateAndInvoke` | Str Generate And Invoke |  |
-| 41 | `testInvokingAnInstanceReusesItsPoolAndLength` | Invoking An Instance Reuses Its Pool And Length |  |
-| 50 | `testStrGetStringWithExplicitLength` | Str Get String With Explicit Length |  |
-| 58 | `testStrOptionsAsList` | Str Options As List |  |
-| 65 | `testStrWithoutLowerAlpha` | Str Without Lower Alpha |  |
-| 71 | `testStrNonStringCharpoolThrowsBadConfig` | Str Non String Charpool Throws Bad Config |  |
-| 77 | `testStrTooSmallCharpoolThrows` | Str Too Small Charpool Throws |  |
+| 15 | `testDefaultPoolDrawsFromDigitsAndBothCases` | Default Pool Draws From Digits And Both Cases |  |
+| 22 | `testStrCustomCharpoolAndLength` | Str Custom Charpool And Length |  |
+| 36 | `testStrGenerateAndInvoke` | Str Generate And Invoke |  |
+| 47 | `testInvokingAnInstanceReusesItsPoolAndLength` | Invoking An Instance Reuses Its Pool And Length |  |
+| 56 | `testStrGetStringWithExplicitLength` | Str Get String With Explicit Length |  |
+| 64 | `testStrOptionsAsList` | Str Options As List |  |
+| 71 | `testStrWithoutLowerAlpha` | Str Without Lower Alpha |  |
+| 77 | `testStrNonStringCharpoolThrowsBadConfig` | Str Non String Charpool Throws Bad Config |  |
+| 83 | `testStrTooSmallCharpoolThrows` | Str Too Small Charpool Throws |  |
 
-### `tests/Unit/Core/RandTest.php` (10)
+### `tests/Unit/Core/RandTest.php` (11)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -569,27 +580,29 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 44 | `testGetRejectsNegativeMin` | Get Rejects Negative Min |  |
 | 50 | `testGetRejectsNonIntParams` | Get Rejects Non Int Params |  |
 | 62 | `testGetRejectsBadMaxParameters` | Get Rejects Bad Max Parameters |  |
-| 74 | `testBytesLength` | Bytes Length |  |
-| 83 | `testInvokeAndGenerateMatchBounds` | Invoke And Generate Match Bounds |  |
-| 96 | `testInvocationWithoutArgumentsCurrentlyIgnoresConstructedBounds` | Invocation Without Arguments Currently Ignores Constructed Bounds | **known defect KD-72** |
+| 73 | `testBadParamMessageNamesTheParameterAndOptionalDetails` | Bad Param Message Names The Parameter And Optional Details |  |
+| 79 | `testBytesLength` | Bytes Length |  |
+| 88 | `testInvokeAndGenerateMatchBounds` | Invoke And Generate Match Bounds |  |
+| 101 | `testInvocationWithoutArgumentsCurrentlyIgnoresConstructedBounds` | Invocation Without Arguments Currently Ignores Constructed Bounds | **known defect KD-72** |
 
-### `tests/Unit/Core/Route/ControllerTest.php` (13)
+### `tests/Unit/Core/Route/ControllerTest.php` (14)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 63 | `testResolutionInjectsInputsLifecycleAndStatus` | Resolution Injects Inputs Lifecycle And Status |  |
 | 76 | `testSameWeightIsSkippedAndLaterWeightsResolve` | Same Weight Is Skipped And Later Weights Resolve |  |
 | 82 | `testTraversalCanResolveAParentAndItsChild` | Traversal Can Resolve A Parent And Its Child |  |
-| 95 | `testEmptyPathSegmentsResolveLikeTheCleanResource` | Empty Path Segments Resolve Like The Clean Resource | 5 data-provider cases |
-| 115 | `testResolverCanConsumeUnmatchedSuffix` | Resolver Can Consume Unmatched Suffix |  |
-| 123 | `testResourceTransformsAndNullTransformFallback` | Resource Transforms And Null Transform Fallback |  |
-| 131 | `testCyclesAndDemands` | Cycles And Demands | 4 data-provider cases |
-| 137 | `testIgnoredOrAbstractClassesDoNotResolve` | Ignored Or Abstract Classes Do Not Resolve | 4 data-provider cases |
-| 142 | `testUnresolvedAndProviderClassesDoNotStopIteration` | Unresolved And Provider Classes Do Not Stop Iteration |  |
-| 148 | `testDebugSuppressInterface` | Debug Suppress Interface |  |
-| 153 | `testStringFactoryAndBaseInterface` | String Factory And Base Interface |  |
-| 158 | `testReservedNodesAndCustomSetsAreCachedSeparately` | Reserved Nodes And Custom Sets Are Cached Separately |  |
-| 167 | `testInvalidControllerParameters` | Invalid Controller Parameters | 4 data-provider cases |
+| 90 | `testRulesIterateOverTheRouteByDefault` | Rules Iterate Over The Route By Default |  |
+| 100 | `testEmptyPathSegmentsResolveLikeTheCleanResource` | Empty Path Segments Resolve Like The Clean Resource | 5 data-provider cases |
+| 120 | `testResolverCanConsumeUnmatchedSuffix` | Resolver Can Consume Unmatched Suffix |  |
+| 128 | `testResourceTransformsAndNullTransformFallback` | Resource Transforms And Null Transform Fallback |  |
+| 136 | `testCyclesAndDemands` | Cycles And Demands | 4 data-provider cases |
+| 142 | `testIgnoredOrAbstractClassesDoNotResolve` | Ignored Or Abstract Classes Do Not Resolve | 4 data-provider cases |
+| 147 | `testUnresolvedAndProviderClassesDoNotStopIteration` | Unresolved And Provider Classes Do Not Stop Iteration |  |
+| 153 | `testDebugSuppressInterface` | Debug Suppress Interface |  |
+| 158 | `testStringFactoryAndBaseInterface` | String Factory And Base Interface |  |
+| 163 | `testReservedNodesAndCustomSetsAreCachedSeparately` | Reserved Nodes And Custom Sets Are Cached Separately |  |
+| 172 | `testInvalidControllerParameters` | Invalid Controller Parameters | 4 data-provider cases |
 
 ### `tests/Unit/Core/Session/SessionTest.php` (18)
 
@@ -614,7 +627,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 179 | `testMissingSessionGlobalIsRejectedEvenWhenActive` | Missing Session Global Is Rejected Even When Active |  |
 | 187 | `testFailedStorageRetriesAndReturnsNoId` | Failed Storage Retries And Returns No Id |  |
 
-### `tests/Unit/Core/ShutdownTest.php` (10)
+### `tests/Unit/Core/ShutdownTest.php` (11)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -628,8 +641,9 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 94 | `testEqualWeightsRunNewestFirstWithoutLosingCallbacks` | Equal Weights Run Newest First Without Losing Callbacks |  |
 | 101 | `testRegisteredCallbackRunsAtActualPhpShutdown` | Registered Callback Runs At Actual Php Shutdown |  |
 | 106 | `testWeightCeilingStopsUnboundedInsertion` | Weight Ceiling Stops Unbounded Insertion |  |
+| 111 | `testWeightCeilingAllowsExactlyTheRemainingSlots` | Weight Ceiling Allows Exactly The Remaining Slots |  |
 
-### `tests/Unit/Core/SshTest.php` (32)
+### `tests/Unit/Core/SshTest.php` (34)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -655,18 +669,20 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 156 | `testInvalidPidUsesTheLegacyCompatibleParameterException` | Invalid Pid Uses The Legacy Compatible Parameter Exception |  |
 | 161 | `testBackgroundExecutionReturnsPidAndChecksRequestedRuntime` | Background Execution Returns Pid And Checks Requested Runtime | 3 data-provider cases |
 | 168 | `testBackgroundExecutionNeedsAPid` | Background Execution Needs A Pid |  |
-| 174 | `testKillArgumentsAreValidatedBeforeSendingSignals` | Kill Arguments Are Validated Before Sending Signals | 8 data-provider cases |
-| 180 | `testProcessCanExitAfterEitherSignal` | Process Can Exit After Either Signal |  |
-| 188 | `testSignalAndStillRunningFailuresAreReported` | Signal And Still Running Failures Are Reported | 3 data-provider cases |
-| 194 | `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` | Sftp Open Failures Are Reported Before The Missing Helper |  |
-| 199 | `testSftpLocalOpenFailureIsReported` | Sftp Local Open Failure Is Reported |  |
-| 204 | `testLegacyParameterAliasAutoloadsInAFreshRuntime` | Legacy Parameter Alias Autoloads In A Fresh Runtime |  |
-| 209 | `testSuccessfulReadsRestartTheIdleTimeoutAcrossALongerTransfer` | Successful Reads Restart The Idle Timeout Across A Longer Transfer |  |
-| 220 | `testAnIdleTimeoutStopsTheNextReadAndClosesBothStreams` | An Idle Timeout Stops The Next Read And Closes Both Streams |  |
-| 233 | `testNativeReadsHandleShortEmptyAndZeroBodies` | Native Reads Handle Short Empty And Zero Bodies | 5 data-provider cases |
-| 247 | `testCallbackFailureStillClosesTheLocalAndRemoteStreams` | Callback Failure Still Closes The Local And Remote Streams |  |
+| 174 | `testKillArgumentsAreValidatedBeforeSendingSignals` | Kill Arguments Are Validated Before Sending Signals | 11 data-provider cases |
+| 183 | `testProcessCanExitAfterEitherSignal` | Process Can Exit After Either Signal |  |
+| 190 | `testKillWaitsForTheFirstSignalBeforeSendingTheSecond` | Kill Waits For The First Signal Before Sending The Second |  |
+| 202 | `testAProcessThatNeverExitsReportsTheTimeWaited` | A Process That Never Exits Reports The Time Waited |  |
+| 212 | `testSignalAndStillRunningFailuresAreReported` | Signal And Still Running Failures Are Reported | 3 data-provider cases |
+| 218 | `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` | Sftp Open Failures Are Reported Before The Missing Helper |  |
+| 223 | `testSftpLocalOpenFailureIsReported` | Sftp Local Open Failure Is Reported |  |
+| 228 | `testLegacyParameterAliasAutoloadsInAFreshRuntime` | Legacy Parameter Alias Autoloads In A Fresh Runtime |  |
+| 233 | `testSuccessfulReadsRestartTheIdleTimeoutAcrossALongerTransfer` | Successful Reads Restart The Idle Timeout Across A Longer Transfer |  |
+| 244 | `testAnIdleTimeoutStopsTheNextReadAndClosesBothStreams` | An Idle Timeout Stops The Next Read And Closes Both Streams |  |
+| 257 | `testNativeReadsHandleShortEmptyAndZeroBodies` | Native Reads Handle Short Empty And Zero Bodies | 5 data-provider cases |
+| 271 | `testCallbackFailureStillClosesTheLocalAndRemoteStreams` | Callback Failure Still Closes The Local And Remote Streams |  |
 
-### `tests/Unit/Core/Template/ControllerTest.php` (14)
+### `tests/Unit/Core/Template/ControllerTest.php` (15)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -676,14 +692,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 124 | `testAbsolutePhpFileAndDisplayClass` | Absolute Php File And Display Class |  |
 | 132 | `testFileReadFailuresReportLibraryExceptions` | File Read Failures Report Library Exceptions | 4 data-provider cases |
 | 146 | `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` | Php And Plain Html Files Render And Check Without Output |  |
-| 162 | `testMarkdownAndGeneratedMarkdownFiles` | Markdown And Generated Markdown Files |  |
-| 178 | `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` | Object And Class Designs Receive Data And Check Only Flag |  |
-| 192 | `testInvalidDesignsAreRejected` | Invalid Designs Are Rejected | 4 data-provider cases |
-| 198 | `testDesignBasesPrefixesAndSeparators` | Design Bases Prefixes And Separators |  |
-| 206 | `testFormattingFlagsReplacementsAndOutput` | Formatting Flags Replacements And Output |  |
-| 215 | `testLoggerWritesDesignKindAndNormalizedName` | Logger Writes Design Kind And Normalized Name |  |
-| 226 | `testConstructorAndPreparedInterfacesControlDisplayTiming` | Constructor And Prepared Interfaces Control Display Timing |  |
-| 245 | `testDefaultDisplayCallbackDelegatesToTemplateRendering` | Default Display Callback Delegates To Template Rendering |  |
+| 162 | `testCheckingADesignNeverPrintsIt` | Checking A Design Never Prints It |  |
+| 170 | `testMarkdownAndGeneratedMarkdownFiles` | Markdown And Generated Markdown Files |  |
+| 186 | `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` | Object And Class Designs Receive Data And Check Only Flag |  |
+| 200 | `testInvalidDesignsAreRejected` | Invalid Designs Are Rejected | 4 data-provider cases |
+| 206 | `testDesignBasesPrefixesAndSeparators` | Design Bases Prefixes And Separators |  |
+| 214 | `testFormattingFlagsReplacementsAndOutput` | Formatting Flags Replacements And Output |  |
+| 223 | `testLoggerWritesDesignKindAndNormalizedName` | Logger Writes Design Kind And Normalized Name |  |
+| 234 | `testConstructorAndPreparedInterfacesControlDisplayTiming` | Constructor And Prepared Interfaces Control Display Timing |  |
+| 253 | `testDefaultDisplayCallbackDelegatesToTemplateRendering` | Default Display Callback Delegates To Template Rendering |  |
 
 ### `tests/Unit/Core/Template/ValidateControllerTest.php` (3)
 
@@ -838,7 +855,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 132 | `testObjectConversionUsesNameAndIndexAttributes` | Object Conversion Uses Name And Index Attributes |  |
 | 138 | `testObjectConversionCanPreserveMixedParentText` | Object Conversion Can Preserve Mixed Parent Text |  |
 
-### `tests/Unit/Core/Xml/EncodeTest.php` (15)
+### `tests/Unit/Core/Xml/EncodeTest.php` (16)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -850,13 +867,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 66 | `testNamedNestedStructureAndRealFloatValues` | Named Nested Structure And Real Float Values |  |
 | 72 | `testStructureMetadataFallbackForNonScalarMetaOption` | Structure Metadata Fallback For Non Scalar Meta Option |  |
 | 78 | `testNestedArrayAndObjectTypeDetection` | Nested Array And Object Type Detection |  |
-| 84 | `testDumpEnabledEmptyAndNumericStringObjectKeys` | Dump Enabled Empty And Numeric String Object Keys |  |
-| 91 | `testResourceFallbackWithAndWithoutDumpPreservesWarnings` | Resource Fallback With And Without Dump Preserves Warnings |  |
-| 109 | `testLegacyIndexAndScalarTypeDecoding` | Legacy Index And Scalar Type Decoding |  |
-| 115 | `testInstanceAndCompatibilityAlias` | Instance And Compatibility Alias |  |
-| 123 | `testRoundTripsValuesWithExplicitMetadata` | Round Trips Values With Explicit Metadata | 18 data-provider cases |
-| 139 | `testAssocDecodingConvertsObjectsWithoutChangingScalarTypes` | Assoc Decoding Converts Objects Without Changing Scalar Types |  |
-| 145 | `testLegacyXmlWithoutNewMetadataCanStillBeRead` | Legacy Xml Without New Metadata Can Still Be Read |  |
+| 84 | `testArrayTypeDetectionInspectsTheFirstTenKeys` | Array Type Detection Inspects The First Ten Keys |  |
+| 93 | `testDumpEnabledEmptyAndNumericStringObjectKeys` | Dump Enabled Empty And Numeric String Object Keys |  |
+| 100 | `testResourceFallbackWithAndWithoutDumpPreservesWarnings` | Resource Fallback With And Without Dump Preserves Warnings |  |
+| 118 | `testLegacyIndexAndScalarTypeDecoding` | Legacy Index And Scalar Type Decoding |  |
+| 124 | `testInstanceAndCompatibilityAlias` | Instance And Compatibility Alias |  |
+| 132 | `testRoundTripsValuesWithExplicitMetadata` | Round Trips Values With Explicit Metadata | 18 data-provider cases |
+| 148 | `testAssocDecodingConvertsObjectsWithoutChangingScalarTypes` | Assoc Decoding Converts Objects Without Changing Scalar Types |  |
+| 154 | `testLegacyXmlWithoutNewMetadataCanStillBeRead` | Legacy Xml Without New Metadata Can Still Be Read |  |
 
 ### `tests/Unit/Data/ErrorDetailsTest.php` (5)
 
@@ -897,13 +915,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 264 | `testRuleObjectConstructorAndRemapping` | Rule Object Constructor And Remapping |  |
 | 273 | `testInvalidMappingRules` | Invalid Mapping Rules | 3 data-provider cases |
 
-### `tests/Unit/Data/Orm/LegacyOrmTest.php` (3)
+### `tests/Unit/Data/Orm/LegacyOrmTest.php` (4)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
-| 33 | `testStaticFacadeCachesALegalSubclassAndReturnsItsResults` | Static Facade Caches A Legal Subclass And Returns Its Results |  |
-| 40 | `testConstructorArrayConfiguresTheDriver` | Constructor Array Configures The Driver |  |
-| 54 | `testDefaultFacadeUsesRealNativeSessionsAndReturnsStoredData` | Default Facade Uses Real Native Sessions And Returns Stored Data |  |
+| 35 | `testStaticFacadeCachesALegalSubclassAndReturnsItsResults` | Static Facade Caches A Legal Subclass And Returns Its Results |  |
+| 42 | `testConstructorArrayConfiguresTheDriver` | Constructor Array Configures The Driver |  |
+| 56 | `testADriverNeedsBothGetAndSet` | A Driver Needs Both Get And Set |  |
+| 63 | `testDefaultFacadeUsesRealNativeSessionsAndReturnsStoredData` | Default Facade Uses Real Native Sessions And Returns Stored Data |  |
 
 ### `tests/Unit/Data/Orm/SessionDriverTest.php` (8)
 
@@ -933,8 +952,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 8 | `testNationalAndLocalNanpFormatting` | National And Local Nanp Formatting |  |
 | 21 | `testEmptyInputAndProtectedValueExtensionPoint` | Empty Input And Protected Value Extension Point |  |
 | 30 | `testCountryOneAndTextExtensions` | Country One And Text Extensions |  |
-| 47 | `testInternationalNumbersGetTheirCountryCode` | International Numbers Get Their Country Code | 28 data-provider cases |
-| 66 | `testInternationalDialingPrefixAndExistingFormattedMetadata` | International Dialing Prefix And Existing Formatted Metadata |  |
+| 47 | `testInternationalNumbersGetTheirCountryCode` | International Numbers Get Their Country Code | 41 data-provider cases |
+| 68 | `testInternationalDialingPrefixAndExistingFormattedMetadata` | International Dialing Prefix And Existing Formatted Metadata |  |
 
 ### `tests/Unit/Data/ScalarTest.php` (6)
 
@@ -985,7 +1004,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | --- | --- | --- | --- |
 | 35 | `testFailedCachedPingEvictsTheActualClientAndRetriesAfterATransportOutage` | Failed Cached Ping Evicts The Actual Client And Retries After A Transport Outage | groups: services, mongo |
 
-### `tests/Unit/Db/Mongo/CrudTest.php` (20)
+### `tests/Unit/Db/Mongo/CrudTest.php` (21)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -995,22 +1014,23 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 85 | `testClassAndCloneRecordsAndCallbacks` | Class And Clone Records And Callbacks | groups: services, mongo |
 | 98 | `testPrefixReadsAndNamespacedCollections` | Prefix Reads And Namespaced Collections | groups: services, mongo |
 | 105 | `testModernClientOptionAliasesAndExplicitDatabaseNames` | Modern Client Option Aliases And Explicit Database Names | groups: services, mongo |
-| 116 | `testExpiredCachedPingUsesTheRealDatabaseAndKeepsTheClient` | Expired Cached Ping Uses The Real Database And Keeps The Client | groups: services, mongo |
-| 126 | `testCreateUpdateAndDeleteRoundTrip` | Create Update And Delete Round Trip | groups: services, mongo |
-| 136 | `testCreateSubcollectionsUpsertsAndDuplicateKeys` | Create Subcollections Upserts And Duplicate Keys | groups: services, mongo |
-| 150 | `testDocumentedCollectionNamespaceAliasForCreate` | Documented Collection Namespace Alias For Create | groups: services, mongo |
-| 155 | `testReplacementOperatorAndNamespacedWrites` | Replacement Operator And Namespaced Writes | groups: services, mongo |
-| 168 | `testUpdatedRecordCountUsesTheRealAdapterWriteResult` | Updated Record Count Uses The Real Adapter Write Result | groups: services, mongo |
-| 172 | `testUpdateCountModesForReplacementAndOperators` | Update Count Modes For Replacement And Operators | groups: services, mongo |
-| 180 | `testInvalidDocumentWritePreservesTheDriverException` | Invalid Document Write Preserves The Driver Exception | groups: services, mongo |
-| 185 | `testLoadDefaultsAliasesAndStartWindow` | Load Defaults Aliases And Start Window | groups: services, mongo |
-| 200 | `testLoadOptionsAreValidated` | Load Options Are Validated | 9 data-provider cases; groups: services, mongo |
-| 210 | `testInvalidReadParametersFail` | Invalid Read Parameters Fail | 6 data-provider cases; groups: services, mongo |
-| 218 | `testMissingRecordsThrow` | Missing Records Throw | groups: services, mongo |
-| 222 | `testMissingDeletesAndInvalidWriteParameters` | Missing Deletes And Invalid Write Parameters | groups: services, mongo |
-| 229 | `testWriteParameterValidation` | Write Parameter Validation | 5 data-provider cases; groups: services, mongo |
+| 116 | `testClientOptionsChooseTheServer` | Client Options Choose The Server | groups: services, mongo |
+| 123 | `testExpiredCachedPingUsesTheRealDatabaseAndKeepsTheClient` | Expired Cached Ping Uses The Real Database And Keeps The Client | groups: services, mongo |
+| 133 | `testCreateUpdateAndDeleteRoundTrip` | Create Update And Delete Round Trip | groups: services, mongo |
+| 143 | `testCreateSubcollectionsUpsertsAndDuplicateKeys` | Create Subcollections Upserts And Duplicate Keys | groups: services, mongo |
+| 157 | `testDocumentedCollectionNamespaceAliasForCreate` | Documented Collection Namespace Alias For Create | groups: services, mongo |
+| 162 | `testReplacementOperatorAndNamespacedWrites` | Replacement Operator And Namespaced Writes | groups: services, mongo |
+| 175 | `testUpdatedRecordCountUsesTheRealAdapterWriteResult` | Updated Record Count Uses The Real Adapter Write Result | groups: services, mongo |
+| 179 | `testUpdateCountModesForReplacementAndOperators` | Update Count Modes For Replacement And Operators | groups: services, mongo |
+| 187 | `testInvalidDocumentWritePreservesTheDriverException` | Invalid Document Write Preserves The Driver Exception | groups: services, mongo |
+| 192 | `testLoadDefaultsAliasesAndStartWindow` | Load Defaults Aliases And Start Window | groups: services, mongo |
+| 207 | `testLoadOptionsAreValidated` | Load Options Are Validated | 9 data-provider cases; groups: services, mongo |
+| 217 | `testInvalidReadParametersFail` | Invalid Read Parameters Fail | 6 data-provider cases; groups: services, mongo |
+| 225 | `testMissingRecordsThrow` | Missing Records Throw | groups: services, mongo |
+| 229 | `testMissingDeletesAndInvalidWriteParameters` | Missing Deletes And Invalid Write Parameters | groups: services, mongo |
+| 236 | `testWriteParameterValidation` | Write Parameter Validation | 5 data-provider cases; groups: services, mongo |
 
-### `tests/Unit/Db/Mongo/DriverTest.php` (19)
+### `tests/Unit/Db/Mongo/DriverTest.php` (21)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -1033,17 +1053,20 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 158 | `testInvalidDatabaseCollectionFactoryIsRejected` | Invalid Database Collection Factory Is Rejected |  |
 | 167 | `testClientLoadsWithoutOptionsAndWithoutWarnings` | Client Loads Without Options And Without Warnings | groups: services, mongo |
 | 180 | `testPingOffsetIsSanitizedAndStoredWithClientCache` | Ping Offset Is Sanitized And Stored With Client Cache | groups: services, mongo |
+| 194 | `testPingTimestampWithoutAnOffsetIsNow` | Ping Timestamp Without An Offset Is Now | groups: services, mongo |
+| 208 | `testRefreshedPingKeepsTheConfiguredOffset` | Refreshed Ping Keeps The Configured Offset | groups: services, mongo |
 
-### `tests/Unit/Db/Pdo/ConnectionTest.php` (6)
+### `tests/Unit/Db/Pdo/ConnectionTest.php` (7)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 25 | `testEquivalentParametersReuseTheConnectionAndForceNewIsIsolated` | Equivalent Parameters Reuse The Connection And Force New Is Isolated |  |
-| 41 | `testInterfaceSuppliesConnectionParameters` | Interface Supplies Connection Parameters |  |
-| 47 | `testInvalidDriverDsnIsWrappedAsConnectError` | Invalid Driver Dsn Is Wrapped As Connect Error |  |
-| 53 | `testMissingConnectionParametersAreReported` | Missing Connection Parameters Are Reported |  |
-| 59 | `testLoadStatementMapsRuleArrays` | Load Statement Maps Rule Arrays |  |
-| 67 | `testIncompleteMultipleArgumentRulesAreRejected` | Incomplete Multiple Argument Rules Are Rejected |  |
+| 41 | `testConnectReturnsAnIsolatedConnectionOnlyWhenForced` | Connect Returns An Isolated Connection Only When Forced |  |
+| 56 | `testInterfaceSuppliesConnectionParameters` | Interface Supplies Connection Parameters |  |
+| 62 | `testInvalidDriverDsnIsWrappedAsConnectError` | Invalid Driver Dsn Is Wrapped As Connect Error |  |
+| 68 | `testMissingConnectionParametersAreReported` | Missing Connection Parameters Are Reported |  |
+| 74 | `testLoadStatementMapsRuleArrays` | Load Statement Maps Rule Arrays |  |
+| 82 | `testIncompleteMultipleArgumentRulesAreRejected` | Incomplete Multiple Argument Rules Are Rejected |  |
 
 ### `tests/Unit/Db/Pdo/FileConfigTest.php` (1)
 
@@ -1063,7 +1086,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 78 | `testBadSqlPathsReportPathAndReason` | Bad Sql Paths Report Path And Reason | 5 data-provider cases |
 | 102 | `testRecordsAndCallbacksUseNativeSqliteResults` | Records And Callbacks Use Native Sqlite Results |  |
 
-### `tests/Unit/Db/Pdo/StatementTest.php` (10)
+### `tests/Unit/Db/Pdo/StatementTest.php` (12)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -1073,10 +1096,12 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 78 | `testInvalidStructuralRules` | Invalid Structural Rules | 15 data-provider cases |
 | 93 | `testFetchOptionsAddRowsToTheCollection` | Fetch Options Add Rows To The Collection |  |
 | 112 | `testInvalidFetchOptionsAreRejected` | Invalid Fetch Options Are Rejected | 4 data-provider cases |
-| 121 | `testFetchCallbackConsumesActualRowsThroughABufferedNativeStatement` | Fetch Callback Consumes Actual Rows Through A Buffered Native Statement |  |
-| 127 | `testExecutedRowsWithoutAFetchOptionAreAddedAsGenericData` | Executed Rows Without A Fetch Option Are Added As Generic Data |  |
-| 133 | `testDeclaredJoinClauseCannotContainAStatementSeparator` | Declared Join Clause Cannot Contain A Statement Separator |  |
-| 139 | `testNotFoundMeansNoRowsWereFetched` | Not Found Means No Rows Were Fetched |  |
+| 118 | `testInvalidAliasedColumnNamesAreRejected` | Invalid Aliased Column Names Are Rejected | 7 data-provider cases |
+| 124 | `testAliasedColumnNamesMayContainDigitsAndUnderscoresAfterTheFirstLetter` | Aliased Column Names May Contain Digits And Underscores After The First Letter |  |
+| 133 | `testFetchCallbackConsumesActualRowsThroughABufferedNativeStatement` | Fetch Callback Consumes Actual Rows Through A Buffered Native Statement |  |
+| 139 | `testExecutedRowsWithoutAFetchOptionAreAddedAsGenericData` | Executed Rows Without A Fetch Option Are Added As Generic Data |  |
+| 145 | `testDeclaredJoinClauseCannotContainAStatementSeparator` | Declared Join Clause Cannot Contain A Statement Separator |  |
+| 151 | `testNotFoundMeansNoRowsWereFetched` | Not Found Means No Rows Were Fetched |  |
 
 ### `tests/Unit/Db/RabbitMqTest.php` (10)
 

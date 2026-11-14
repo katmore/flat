@@ -49,6 +49,25 @@ class IpInfoDbTest extends TestCase
         $stored->created = null;
         $this->assertSame($stored, (new IpLookupFixture('192.0.2.1'))->result());
     }
+    public function testCachedRecordExpiresExactlyAtItsTimeToLive()
+    {
+        $raw = 'OK;;192.0.2.1;US;United States;Region;City;12345;1.2;3.4;-07:00';
+        // Younger than the ttl: served from the cache, no HTTP.
+        IpLookupFixture::$cache->record = new ipinfodb\result(['ip'=>'192.0.2.1','created'=>date('c',time() - ipinfodb::location_ttl + 30)]);
+        new IpLookupFixture('192.0.2.1');
+        $this->assertSame([],CurlDouble::$handles);
+        // Exactly the ttl old: refreshed. (A second ticking mid-check only makes it older,
+        // so retry until the whole check fits in one second.)
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            CurlDouble::$handles = CurlDouble::$urls = [];
+            CurlDouble::$responses[$this->url] = ['body'=>$raw,'code'=>200];
+            $now = time();
+            IpLookupFixture::$cache->record = new ipinfodb\result(['ip'=>'192.0.2.1','created'=>date('c',$now - ipinfodb::location_ttl)]);
+            new IpLookupFixture('192.0.2.1');
+            if (time() === $now) { $this->assertNotSame([],CurlDouble::$urls); return; }
+        }
+        $this->fail('the clock advanced during every attempt');
+    }
     /** @dataProvider lookupCases */
     public function testMissingOrExpiredCacheFetchesMapsAndStoresResponse($expired, $raw, $location)
     {

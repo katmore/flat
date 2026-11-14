@@ -173,16 +173,40 @@ class SshTest extends TestCase
     /** @dataProvider invalidKillArguments */
     public function testKillArgumentsAreValidatedBeforeSendingSignals($args)
     {
-        $client = $this->client(['connect'=>true]); $this->expectException(ssh\exception\input_error\bad_param::class);
-        $client->kill_process(...$args);
+        $client = $this->client(['connect'=>true]);
+        try { $client->kill_process(...$args); $this->fail('expected bad_param'); }
+        catch (ssh\exception\input_error\bad_param $e) {}
+        // Nothing may reach the shell before every argument has been validated.
+        $this->assertSame([], Boundary::$execCalls);
     }
-    public function invalidKillArguments() { return [[['bad']],[[42,0]],[[42,16]],[[42,1,-1]],[[42,1,61]],[[42,1,0,0]],[[42,1,0,9,-1]],[[42,1,0,9,61]]]; }
+    public function invalidKillArguments() { return [[['bad']],[[0]],[[-3]],[['42; id']],[[42,0]],[[42,16]],[[42,1,-1]],[[42,1,61]],[[42,1,0,0]],[[42,1,0,9,-1]],[[42,1,0,9,61]]]; }
     public function testProcessCanExitAfterEitherSignal()
     {
         $client = $this->client(['connect'=>true]); Boundary::$clock = 100; Boundary::$execReplies = ['0','1'];
         $this->assertTrue($client->kill_process(42,1,0,9,0));
         Boundary::$execReplies = ['0','0','0','1'];
         $this->assertTrue($client->kill_process(42,1,0,9,0));
+    }
+    public function testKillWaitsForTheFirstSignalBeforeSendingTheSecond()
+    {
+        $client = $this->client(['connect'=>true]); Boundary::$clock = 100;
+        // kill -1 succeeds, three polls find the process running, kill -9 succeeds, one poll finds it gone.
+        Boundary::$execReplies = ['0','0','0','0','0','1'];
+        $this->assertTrue($client->kill_process(42,1,3,9,5));
+        $commands = Boundary::$execCalls;
+        $this->assertCount(6,$commands);
+        $this->assertStringContainsString('kill -1 42',$commands[0]);
+        foreach ([1,2,3,5] as $i) $this->assertStringContainsString('kill -0 42',$commands[$i]);
+        $this->assertStringContainsString('kill -9 42',$commands[4]);
+    }
+    public function testAProcessThatNeverExitsReportsTheTimeWaited()
+    {
+        $client = $this->client(['connect'=>true]); Boundary::$clock = 100;
+        Boundary::$execReplies = ['0','0','0','0','0','0','0'];
+        try { $client->kill_process(42,1,3,9,5); $this->fail('expected cannot_kill'); }
+        catch (ssh\exception\exec\pid\cannot_kill $e) { $this->assertStringContainsString('after 5 seconds',$e->getMessage()); }
+        // Signal 1, three polls, signal 9, then two more polls: the waits end exactly on time.
+        $this->assertCount(7,Boundary::$execCalls);
     }
     /** @dataProvider failedKillReplies */
     public function testSignalAndStillRunningFailuresAreReported($replies,$exception)
