@@ -19,6 +19,14 @@ class LegacyOptionsTest extends TestCase
         $this->assertNull(LegacyOptionsFixture::data_to_refs_on());
         $this->assertNull(LegacyOptionsFixture::data_to_refs_off());
     }
+    public function testFlagsAreOnlyReadFromAnArrayOfFlags()
+    {
+        $this->assertFalse(LegacyOptionsFixture::flag('a',['flag'=>'a']));
+        $this->assertFalse(LegacyOptionsFixture::flag('a',['flag'=>[]]));
+        $this->assertFalse(LegacyOptionsFixture::flag('a',['other'=>['a']]));
+        $this->assertFalse(LegacyOptionsFixture::flag('a','flag'));
+        $this->assertFalse(LegacyOptionsFixture::flag('a',null));
+    }
     public function testOptionsReturnPresentValuesOrFallback()
     {
         $this->assertSame('fallback',LegacyOptionsFixture::option([],[], 'fallback'));

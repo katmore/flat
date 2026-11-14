@@ -34,6 +34,11 @@ class ErrorDetailsTest extends TestCase
             $this->assertSame('failed to create random value'.($length === 12 ? ' of 12 length' : ''), $error->getMessage());
         }
     }
+    public function testMissingOrEmptyDataStaysAnEmptyArray()
+    {
+        $this->assertSame([],(new \flat\cli\error('x',1,true,null))->get_data());
+        $this->assertSame([],(new \flat\cli\error('x',1,true,[]))->get_data());
+    }
     public function testCliErrorExposesStatusUsageFlagAndData()
     {
         $error = new \flat\cli\error('bad input', 7, true, ['field'=>'id']);

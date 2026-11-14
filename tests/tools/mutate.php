@@ -77,11 +77,19 @@ function find_mutations($code) {
     $tokens = token_get_all($code);
     $swap = ['>' => '>=', '>=' => '>', '<' => '<=', '<=' => '<', '==' => '!=', '!=' => '==', '<>' => '==',
              '===' => '!==', '!==' => '===', '&&' => '||', '||' => '&&', '++' => '--', '--' => '++'];
-    $mutations = []; $line = 1; $previous = null;
+    $mutations = []; $line = 1; $previous = null; $inString = false;
     foreach ($tokens as $i => $token) {
         $id = is_array($token) ? $token[0] : null;
         $text = is_array($token) ? $token[1] : $token;
         $replacement = null;
+        // Text inside an interpolated "..." string arrives as separate tokens; it is not code.
+        if ($id === null && $text === '"') $inString = !$inString;
+        elseif ($id === T_START_HEREDOC) $inString = true;
+        elseif ($id === T_END_HEREDOC) $inString = false;
+        if ($inString || $text === '"') {
+            $line += substr_count($text, "\n");
+            continue;
+        }
         if (isset($swap[$text]) && ($id !== null || $text === '>' || $text === '<')) {
             $replacement = $swap[$text];
         } elseif (($text === '+' || $text === '-') && $id === null) {

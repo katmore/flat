@@ -124,7 +124,7 @@ strengthens assertions.
 | TS-03 | Input map | No test that `0`, `false` and `"0"` count as empty input | done (MOD-137) |
 | TS-04 | CSV | No test that `fields2csv([])` returns a newline | done (MOD-137) |
 | TS-05 | Whole suite | Run a broader mutation probe; the 14-mutation sample in MOD-111 found two gaps | first sample done (MOD-139; [MUTATION-PROBE.md](MUTATION-PROBE.md)) |
-| TS-06 | Whole suite | The 54 survivor lines from the first probe sample were re-probed on 2026-11-14 with the services running: some are now pinned or caught, **31 lines (41 mutants) still survive** and are listed in [MUTATION-PROBE.md](MUTATION-PROBE.md#ts-06-follow-up); each needs a test or an equivalence note; then run further seeds | open (in progress) |
+| TS-06 | Whole suite | The 54 survivor lines from the first probe sample are all closed: pinned by tests or shown equivalent (reasons in [MUTATION-PROBE.md](MUTATION-PROBE.md#ts-06-outcome)); further seeds can be run any time | done (MOD-141) |
 
 Reviewed and **not** treated as defects: `scalar` empty-input fallback (owner
 contract), Mongo affected-record policy, `app_error` summaries, `input\map`

@@ -2453,3 +2453,16 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md#ts-06-follow-up).
 - Files changed: `src/flat/core/rand.php`, `src/flat/cloud/ipinfodb.php`, tests.
 - Undo: revert this commit.- Verified: `docker/bin/test all --coverage` passes 1,393 tests; 100% methods (1,062/1,062) and lines (8,051/8,051). The suite has one `known-defect` test left (KD-76).
+
+## MOD-141 — TS-06 closed: remaining survivor lines pinned or shown equivalent
+
+- Tests added for CLI resource index fallback, empty CLI error data, legacy
+  asset flags, output asset hashes, dependency registration (none, several,
+  groups), config directories and unreadable files, template PHP designs that
+  are directories or unreadable, and typed loader fallbacks.
+- The remaining survivors (25 mutants) are all equivalent; reasons per line in
+  [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md#ts-06-outcome).
+- Tool fix: `tests/tools/mutate.php` no longer mutates the text inside
+  interpolated `"..."` strings (it had mutated `>` characters in markup).
+- No behavior change. Files changed: tests and `tests/tools/mutate.php` only.
+- Verified: `docker/bin/test all --coverage` passes 1,405 tests; 100% methods (1,062/1,062) and lines (8,051/8,051).

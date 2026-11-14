@@ -295,6 +295,32 @@ class AssetTest extends TestCase
         $this->assertSame([], $p->getValue()[$asset->get_hash()]);
         $this->assertSame('base;', $this->output(function () { asset::print_registered_assets(); }));
     }
+    public function testOutputAssetsGetAnOutputHashUnlessTheCallerChoosesOne()
+    {
+        $base = new LocalAsset('base.js');
+        $fromAsset = LocalAsset::register_html('x', ['asset' => $base]);
+        $this->assertNotSame($base, $fromAsset);
+        $this->assertStringStartsWith('output.', $fromAsset->get_hash());
+        $this->assertStringStartsWith('custom.', LocalAsset::register_html('x', ['hash_handle_prefix' => 'custom.'])->get_hash());
+        $this->assertStringStartsWith('output.', LocalAsset::register_html('x', ['hash_handle_prefix' => 5])->get_hash());
+        $this->assertSame('fixed', LocalAsset::register_html('x', ['hash' => 'fixed'])->get_hash());
+    }
+    public function testDependencyGroupsWithoutUsableNestedDependenciesRegisterOnlyThemselves()
+    {
+        $p = new \ReflectionProperty(asset::class, 'reigster_depends'); $p->setAccessible(true);
+        $parent = new LocalAsset('p.js');
+        $parent->depends(null, [['asset' => new LocalAsset('plain.css')], ['asset' => new LocalAsset('odd.css'), 'depends' => 'not-a-list']]);
+        $this->assertCount(2, $p->getValue()[$parent->get_hash()]);
+    }
+    public function testDependsTakesAnyNumberOfDependencies()
+    {
+        $p = new \ReflectionProperty(asset::class, 'reigster_depends'); $p->setAccessible(true);
+        $parent = new LocalAsset('p.js'); $a = new LocalAsset('a.js'); $b = new LocalAsset('b.js');
+        $this->assertSame($parent, $parent->depends());
+        $this->assertSame([], $p->getValue()[$parent->get_hash()] ?? []);
+        $parent->depends($a, $b);
+        $this->assertCount(2, $p->getValue()[$parent->get_hash()]);
+    }
     public function testFileAssetHasNoInlineSourceToPrint()
     {
         $this->expectException(\flat\lib\exception\app_error::class);

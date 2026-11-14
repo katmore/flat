@@ -25,6 +25,7 @@ class EncodeTest extends TestCase
         $root = $this->document([1, 2])->documentElement;
         $this->assertSame('xs:integer[2]', $root->getAttribute('extxs:ArrayType'));
         $this->assertSame('extxs:Hashmap', $this->document(['key' => 1])->documentElement->getAttribute('xsi:type'));
+        $this->assertSame('xs:string[2]', $this->document(['hello', 'world'])->documentElement->getAttribute('extxs:ArrayType'));
         $this->assertSame('extxs:Mixed[2]', $this->document([1, 'text'])->documentElement->getAttribute('extxs:ArrayType'));
         $this->assertSame('xs:integer[12]', $this->document(range(1, 12))->documentElement->getAttribute('extxs:ArrayType'));
         $this->assertSame('Generic', $this->document((object) ['key' => 'value'])->documentElement->getAttribute('extxs:ObjectType'));

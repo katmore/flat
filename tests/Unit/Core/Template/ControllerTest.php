@@ -159,6 +159,18 @@ class ControllerTest extends TestCase
         $this->assertTrue(TemplateController::check_design('large'));
         $this->assertFalse(TemplateController::check_design('missing'));
     }
+    public function testUnusablePhpDesignsFallBackToHtml()
+    {
+        $this->file('tmpl/folder.html', 'html folder');
+        mkdir($this->root.'/tmpl/folder.php');
+        $this->assertSame('html folder', $this->render('folder'));
+        if (!function_exists('posix_geteuid') || posix_geteuid() !== 0) {
+            $this->file('tmpl/locked.php', '<?php echo "php";'); $locked = $this->root.'/tmpl/locked.php';
+            $this->file('tmpl/locked.html', 'html locked');
+            chmod($locked, 0000);
+            try { $this->assertSame('html locked', $this->render('locked')); } finally { chmod($locked, 0600); }
+        }
+    }
     public function testCheckingADesignNeverPrintsIt()
     {
         $this->file('tmpl/loud.php','<?php echo "loud output";');

@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 765 test methods in 92 files, running 1393 test cases.
-- 120 methods use a data provider (one case per data set).
+- 774 test methods in 92 files, running 1405 test cases.
+- 121 methods use a data provider (one case per data set).
 - 1 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - "Reads as" splits the method name into words; the name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -63,7 +63,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 46 | `testFormattingUsesTheCodeClassMetadata` | Formatting Uses The Code Class Metadata |  |
 | 61 | `testUnknownCodeNumberFormatsAsAnEmptyString` | Unknown Code Number Formats As An Empty String |  |
 
-### `tests/Unit/Asset/AssetTest.php` (26)
+### `tests/Unit/Asset/AssetTest.php` (29)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -88,11 +88,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 272 | `testHtmlCallbacksAndArraysAreRegistered` | Html Callbacks And Arrays Are Registered |  |
 | 283 | `testMultipleHtmlItemsPrintInOrderWithoutASelfDependency` | Multiple Html Items Print In Order Without A Self Dependency |  |
 | 290 | `testRegisteringOutputForAnExistingAssetKeepsTheFirstWithoutASelfDependency` | Registering Output For An Existing Asset Keeps The First Without A Self Dependency |  |
-| 298 | `testFileAssetHasNoInlineSourceToPrint` | File Asset Has No Inline Source To Print |  |
-| 303 | `testInlineSourcePrintsWithoutAFilePath` | Inline Source Prints Without A File Path |  |
-| 308 | `testBuiltinDependenciesAreRegisteredOncePerAssetClass` | Builtin Dependencies Are Registered Once Per Asset Class |  |
-| 314 | `testResolvedHandlerCanRewriteResources` | Resolved Handler Can Rewrite Resources |  |
-| 321 | `testStringConversionReportsUrlFailureAsNotice` | String Conversion Reports Url Failure As Notice |  |
+| 298 | `testOutputAssetsGetAnOutputHashUnlessTheCallerChoosesOne` | Output Assets Get An Output Hash Unless The Caller Chooses One |  |
+| 308 | `testDependencyGroupsWithoutUsableNestedDependenciesRegisterOnlyThemselves` | Dependency Groups Without Usable Nested Dependencies Register Only Themselves |  |
+| 315 | `testDependsTakesAnyNumberOfDependencies` | Depends Takes Any Number Of Dependencies |  |
+| 324 | `testFileAssetHasNoInlineSourceToPrint` | File Asset Has No Inline Source To Print |  |
+| 329 | `testInlineSourcePrintsWithoutAFilePath` | Inline Source Prints Without A File Path |  |
+| 334 | `testBuiltinDependenciesAreRegisteredOncePerAssetClass` | Builtin Dependencies Are Registered Once Per Asset Class |  |
+| 340 | `testResolvedHandlerCanRewriteResources` | Resolved Handler Can Rewrite Resources |  |
+| 347 | `testStringConversionReportsUrlFailureAsNotice` | String Conversion Reports Url Failure As Notice |  |
 
 ### `tests/Unit/Asset/CascadeTest.php` (4)
 
@@ -103,12 +106,13 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 57 | `testArrayDependencyGroupsPreserveTheirOrder` | Array Dependency Groups Preserve Their Order |  |
 | 63 | `testNestedDependencyInputsAndParameterForms` | Nested Dependency Inputs And Parameter Forms |  |
 
-### `tests/Unit/Asset/LegacyOptionsTest.php` (2)
+### `tests/Unit/Asset/LegacyOptionsTest.php` (3)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 12 | `testFlagsSupportListAndAssociativeForms` | Flags Support List And Associative Forms |  |
-| 22 | `testOptionsReturnPresentValuesOrFallback` | Options Return Present Values Or Fallback |  |
+| 22 | `testFlagsAreOnlyReadFromAnArrayOfFlags` | Flags Are Only Read From An Array Of Flags |  |
+| 30 | `testOptionsReturnPresentValuesOrFallback` | Options Return Present Values Or Fallback |  |
 
 ### `tests/Unit/Cloud/AuthorizeCustomerTest.php` (14)
 
@@ -265,7 +269,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 6 | `testBothInterfaceNamesAutoloadAndRemainCompatible` | Both Interface Names Autoload And Remain Compatible |  |
 | 15 | `testMessageIncludesClassMethodAndReason` | Message Includes Class Method And Reason |  |
 
-### `tests/Unit/Core/CliTest.php` (14)
+### `tests/Unit/Core/CliTest.php` (15)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -274,15 +278,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 55 | `testOptionFormsAndAliases` | Option Forms And Aliases |  |
 | 65 | `testShortAliasTakesTheArgumentAfterItsOwnOptionOnly` | Short Alias Takes The Argument After Its Own Option Only |  |
 | 73 | `testResourceIndexZeroIsAllowedAndShortOptionValuesAreEnumerated` | Resource Index Zero Is Allowed And Short Option Values Are Enumerated |  |
-| 81 | `testEnumerationsMatchDocumentedExample` | Enumerations Match Documented Example |  |
-| 89 | `testInputLineCallbacks` | Input Line Callbacks |  |
-| 97 | `testWrappedLinesAndWidthHandlers` | Wrapped Lines And Width Handlers |  |
-| 107 | `testPrintAndDumpHandlers` | Print And Dump Handlers |  |
-| 115 | `testDefaultPrintAndDumpOutput` | Default Print And Dump Output |  |
-| 124 | `testLineAndErrorHandlers` | Line And Error Handlers |  |
-| 133 | `testNormalQuietAndErrorOutput` | Normal Quiet And Error Output |  |
-| 139 | `testMissingArgvRaisesARuntimeException` | Missing Argv Raises A Runtime Exception |  |
-| 147 | `testGetoptWrapperUsesTheReturnedOperandIndex` | Getopt Wrapper Uses The Returned Operand Index |  |
+| 82 | `testUnusableResourceIndexFallsBackToTheFirstArgument` | Unusable Resource Index Falls Back To The First Argument | 4 data-provider cases |
+| 88 | `testEnumerationsMatchDocumentedExample` | Enumerations Match Documented Example |  |
+| 96 | `testInputLineCallbacks` | Input Line Callbacks |  |
+| 104 | `testWrappedLinesAndWidthHandlers` | Wrapped Lines And Width Handlers |  |
+| 114 | `testPrintAndDumpHandlers` | Print And Dump Handlers |  |
+| 122 | `testDefaultPrintAndDumpOutput` | Default Print And Dump Output |  |
+| 131 | `testLineAndErrorHandlers` | Line And Error Handlers |  |
+| 140 | `testNormalQuietAndErrorOutput` | Normal Quiet And Error Output |  |
+| 146 | `testMissingArgvRaisesARuntimeException` | Missing Argv Raises A Runtime Exception |  |
+| 154 | `testGetoptWrapperUsesTheReturnedOperandIndex` | Getopt Wrapper Uses The Returned Operand Index |  |
 
 ### `tests/Unit/Core/Collection/ConstraintTest.php` (9)
 
@@ -318,7 +323,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 140 | `testRangeLimitIsACountAndClipsAtTheEnd` | Range Limit Is A Count And Clips At The End |  |
 | 155 | `testRangeRejectsStartAtTheMemberCount` | Range Rejects Start At The Member Count |  |
 
-### `tests/Unit/Core/ConfigTest.php` (17)
+### `tests/Unit/Core/ConfigTest.php` (19)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -331,14 +336,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 135 | `testNonStringKeyThrows` | Non String Key Throws |  |
 | 142 | `testMissingKeysAreCachedAndDefaultsPreserveTypes` | Missing Keys Are Cached And Defaults Preserve Types |  |
 | 153 | `testInvalidPhpConfigIsRejectedAndCanUseDefault` | Invalid Php Config Is Rejected And Can Use Default |  |
-| 162 | `testEnumeratesValuesWithReferences` | Enumerates Values With References |  |
-| 176 | `testReferenceValuesAndNamespaceCaching` | Reference Values And Namespace Caching |  |
-| 188 | `testRejectsInvalidReferenceDocuments` | Rejects Invalid Reference Documents | 4 data-provider cases |
-| 206 | `testMissingReferenceDocumentAndCachedMisses` | Missing Reference Document And Cached Misses |  |
-| 219 | `testWholeReferencesAndNestedValues` | Whole References And Nested Values |  |
-| 237 | `testMissingWholeReferenceReportsTheOriginalKey` | Missing Whole Reference Reports The Original Key |  |
-| 246 | `testInlineReferencesIncludingDuplicatesBooleansAndMalformedTokens` | Inline References Including Duplicates Booleans And Malformed Tokens |  |
-| 262 | `testNonScalarInlineReferenceThrows` | Non Scalar Inline Reference Throws |  |
+| 162 | `testDirectoriesAndUnreadableFilesAreNotLoadedAsConfig` | Directories And Unreadable Files Are Not Loaded As Config |  |
+| 173 | `testReferenceFilesAreReadOnlyOncePerNamespace` | Reference Files Are Read Only Once Per Namespace |  |
+| 182 | `testEnumeratesValuesWithReferences` | Enumerates Values With References |  |
+| 196 | `testReferenceValuesAndNamespaceCaching` | Reference Values And Namespace Caching |  |
+| 208 | `testRejectsInvalidReferenceDocuments` | Rejects Invalid Reference Documents | 4 data-provider cases |
+| 226 | `testMissingReferenceDocumentAndCachedMisses` | Missing Reference Document And Cached Misses |  |
+| 239 | `testWholeReferencesAndNestedValues` | Whole References And Nested Values |  |
+| 257 | `testMissingWholeReferenceReportsTheOriginalKey` | Missing Whole Reference Reports The Original Key |  |
+| 266 | `testInlineReferencesIncludingDuplicatesBooleansAndMalformedTokens` | Inline References Including Duplicates Booleans And Malformed Tokens |  |
+| 282 | `testNonScalarInlineReferenceThrows` | Non Scalar Inline Reference Throws |  |
 
 ### `tests/Unit/Core/Curl/ConfigTest.php` (5)
 
@@ -692,7 +699,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 257 | `testNativeReadsHandleShortEmptyAndZeroBodies` | Native Reads Handle Short Empty And Zero Bodies | 5 data-provider cases |
 | 271 | `testCallbackFailureStillClosesTheLocalAndRemoteStreams` | Callback Failure Still Closes The Local And Remote Streams |  |
 
-### `tests/Unit/Core/Template/ControllerTest.php` (15)
+### `tests/Unit/Core/Template/ControllerTest.php` (16)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
@@ -702,15 +709,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 | 124 | `testAbsolutePhpFileAndDisplayClass` | Absolute Php File And Display Class |  |
 | 132 | `testFileReadFailuresReportLibraryExceptions` | File Read Failures Report Library Exceptions | 4 data-provider cases |
 | 146 | `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` | Php And Plain Html Files Render And Check Without Output |  |
-| 162 | `testCheckingADesignNeverPrintsIt` | Checking A Design Never Prints It |  |
-| 170 | `testMarkdownAndGeneratedMarkdownFiles` | Markdown And Generated Markdown Files |  |
-| 186 | `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` | Object And Class Designs Receive Data And Check Only Flag |  |
-| 200 | `testInvalidDesignsAreRejected` | Invalid Designs Are Rejected | 4 data-provider cases |
-| 206 | `testDesignBasesPrefixesAndSeparators` | Design Bases Prefixes And Separators |  |
-| 214 | `testFormattingFlagsReplacementsAndOutput` | Formatting Flags Replacements And Output |  |
-| 223 | `testLoggerWritesDesignKindAndNormalizedName` | Logger Writes Design Kind And Normalized Name |  |
-| 234 | `testConstructorAndPreparedInterfacesControlDisplayTiming` | Constructor And Prepared Interfaces Control Display Timing |  |
-| 253 | `testDefaultDisplayCallbackDelegatesToTemplateRendering` | Default Display Callback Delegates To Template Rendering |  |
+| 162 | `testUnusablePhpDesignsFallBackToHtml` | Unusable Php Designs Fall Back To Html |  |
+| 174 | `testCheckingADesignNeverPrintsIt` | Checking A Design Never Prints It |  |
+| 182 | `testMarkdownAndGeneratedMarkdownFiles` | Markdown And Generated Markdown Files |  |
+| 198 | `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` | Object And Class Designs Receive Data And Check Only Flag |  |
+| 212 | `testInvalidDesignsAreRejected` | Invalid Designs Are Rejected | 4 data-provider cases |
+| 218 | `testDesignBasesPrefixesAndSeparators` | Design Bases Prefixes And Separators |  |
+| 226 | `testFormattingFlagsReplacementsAndOutput` | Formatting Flags Replacements And Output |  |
+| 235 | `testLoggerWritesDesignKindAndNormalizedName` | Logger Writes Design Kind And Normalized Name |  |
+| 246 | `testConstructorAndPreparedInterfacesControlDisplayTiming` | Constructor And Prepared Interfaces Control Display Timing |  |
+| 265 | `testDefaultDisplayCallbackDelegatesToTemplateRendering` | Default Display Callback Delegates To Template Rendering |  |
 
 ### `tests/Unit/Core/Template/ValidateControllerTest.php` (3)
 
@@ -871,32 +879,33 @@ PHPUnit's `--list-tests-xml` and converts it with
 | --- | --- | --- | --- |
 | 15 | `testScalarDocuments` | Scalar Documents | 8 data-provider cases |
 | 23 | `testObjectAndArrayTypes` | Object And Array Types |  |
-| 33 | `testNestedNodesEscapingAndTypeDetection` | Nested Nodes Escaping And Type Detection |  |
-| 43 | `testInvalidAndNumericKeysUseDefaultNodeAndPreserveKey` | Invalid And Numeric Keys Use Default Node And Preserve Key |  |
-| 53 | `testMetaOptionsCustomRootChecksumsAndIndentation` | Meta Options Custom Root Checksums And Indentation |  |
-| 66 | `testNamedNestedStructureAndRealFloatValues` | Named Nested Structure And Real Float Values |  |
-| 72 | `testStructureMetadataFallbackForNonScalarMetaOption` | Structure Metadata Fallback For Non Scalar Meta Option |  |
-| 78 | `testNestedArrayAndObjectTypeDetection` | Nested Array And Object Type Detection |  |
-| 84 | `testDateAndBinaryLookingStringsGetTheirSchemaTypes` | Date And Binary Looking Strings Get Their Schema Types |  |
-| 92 | `testSingleLettersAreCurrentlyTypedAsDateTime` | Single Letters Are Currently Typed As Date Time | **known defect KD-76** |
-| 99 | `testArrayTypeDetectionInspectsTheFirstTenKeys` | Array Type Detection Inspects The First Ten Keys |  |
-| 108 | `testDumpEnabledEmptyAndNumericStringObjectKeys` | Dump Enabled Empty And Numeric String Object Keys |  |
-| 115 | `testResourceFallbackWithAndWithoutDumpPreservesWarnings` | Resource Fallback With And Without Dump Preserves Warnings |  |
-| 133 | `testLegacyIndexAndScalarTypeDecoding` | Legacy Index And Scalar Type Decoding |  |
-| 139 | `testInstanceAndCompatibilityAlias` | Instance And Compatibility Alias |  |
-| 147 | `testRoundTripsValuesWithExplicitMetadata` | Round Trips Values With Explicit Metadata | 18 data-provider cases |
-| 163 | `testAssocDecodingConvertsObjectsWithoutChangingScalarTypes` | Assoc Decoding Converts Objects Without Changing Scalar Types |  |
-| 169 | `testLegacyXmlWithoutNewMetadataCanStillBeRead` | Legacy Xml Without New Metadata Can Still Be Read |  |
+| 34 | `testNestedNodesEscapingAndTypeDetection` | Nested Nodes Escaping And Type Detection |  |
+| 44 | `testInvalidAndNumericKeysUseDefaultNodeAndPreserveKey` | Invalid And Numeric Keys Use Default Node And Preserve Key |  |
+| 54 | `testMetaOptionsCustomRootChecksumsAndIndentation` | Meta Options Custom Root Checksums And Indentation |  |
+| 67 | `testNamedNestedStructureAndRealFloatValues` | Named Nested Structure And Real Float Values |  |
+| 73 | `testStructureMetadataFallbackForNonScalarMetaOption` | Structure Metadata Fallback For Non Scalar Meta Option |  |
+| 79 | `testNestedArrayAndObjectTypeDetection` | Nested Array And Object Type Detection |  |
+| 85 | `testDateAndBinaryLookingStringsGetTheirSchemaTypes` | Date And Binary Looking Strings Get Their Schema Types |  |
+| 93 | `testSingleLettersAreCurrentlyTypedAsDateTime` | Single Letters Are Currently Typed As Date Time | **known defect KD-76** |
+| 100 | `testArrayTypeDetectionInspectsTheFirstTenKeys` | Array Type Detection Inspects The First Ten Keys |  |
+| 109 | `testDumpEnabledEmptyAndNumericStringObjectKeys` | Dump Enabled Empty And Numeric String Object Keys |  |
+| 116 | `testResourceFallbackWithAndWithoutDumpPreservesWarnings` | Resource Fallback With And Without Dump Preserves Warnings |  |
+| 134 | `testLegacyIndexAndScalarTypeDecoding` | Legacy Index And Scalar Type Decoding |  |
+| 140 | `testInstanceAndCompatibilityAlias` | Instance And Compatibility Alias |  |
+| 148 | `testRoundTripsValuesWithExplicitMetadata` | Round Trips Values With Explicit Metadata | 18 data-provider cases |
+| 164 | `testAssocDecodingConvertsObjectsWithoutChangingScalarTypes` | Assoc Decoding Converts Objects Without Changing Scalar Types |  |
+| 170 | `testLegacyXmlWithoutNewMetadataCanStillBeRead` | Legacy Xml Without New Metadata Can Still Be Read |  |
 
-### `tests/Unit/Data/ErrorDetailsTest.php` (5)
+### `tests/Unit/Data/ErrorDetailsTest.php` (6)
 
 | Line | Method | Reads as | Notes |
 | --- | --- | --- | --- |
 | 6 | `testValidationFailureCollectsStringFieldsAndKeepsItsMessage` | Validation Failure Collects String Fields And Keeps Its Message |  |
 | 21 | `testDataNotFoundRetainsLookupContext` | Data Not Found Retains Lookup Context |  |
 | 29 | `testRandomFailurePreservesRequestedLength` | Random Failure Preserves Requested Length |  |
-| 37 | `testCliErrorExposesStatusUsageFlagAndData` | Cli Error Exposes Status Usage Flag And Data |  |
-| 48 | `testCloudErrorsExposeParameterAndChildClass` | Cloud Errors Expose Parameter And Child Class |  |
+| 37 | `testMissingOrEmptyDataStaysAnEmptyArray` | Missing Or Empty Data Stays An Empty Array |  |
+| 42 | `testCliErrorExposesStatusUsageFlagAndData` | Cli Error Exposes Status Usage Flag And Data |  |
+| 53 | `testCloudErrorsExposeParameterAndChildClass` | Cloud Errors Expose Parameter And Child Class |  |
 
 ### `tests/Unit/Data/MapperTest.php` (24)
 

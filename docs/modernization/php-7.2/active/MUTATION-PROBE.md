@@ -208,3 +208,33 @@ On 2026-11-14 all 54 lines of the table above were probed again (109 mutants, se
 | `core/xml/encode.php` | 661 | `>` to `>=` | `return "<$default_node$checksum_attr><!--unserializable--></$default_node>";` |
 | `data/orm/driver/session.php` | 81 | `false` to `true` | `\flat\core\config::get("data/orm/driver/session/handler",['default'=>false]),$param` |
 | `data/scalar.php` | 89 | `&&` to `||` | `is_array($value->data) &&` |
+
+### TS-06 outcome
+
+After a second round of tests (and a fix to the probe, which had mutated the text of interpolated `"..."` strings as if it were code), the 54 lines were probed once more with the services running: 107 mutants, **82 caught, 25 survive, and all 25 are equivalent** (no behavior a test could observe). TS-06 is closed. The reasons:
+
+| File | Line(s) | Why no test can tell |
+| --- | --- | --- |
+| `core/xml/encode.php` | 293, 506 | The `string` option of `_get_xsi_type()` is commented out; the function always answers `xs:string` |
+| `core/xml/encode.php` | 294 | The `DateTime` option only applies to the structure metadata, whose values are type names that `strtotime()` rejects |
+| `core/xml/encode.php` | 327 | The branch needs a hash algorithm whose name starts with a digit (or whose second character is one); PHP has none |
+| `core/xml/encode.php` | 515 | Defaults of a private method; every caller passes both values |
+| `core/xml/encode.php` | 649 | `htmlspecialchars()` with `ENT_SUBSTITUTE` never returns `false` or `null`; the code after it cannot run |
+| `core/controller/api.php` | 92 | The flag is set just before a `return`, so it is never read |
+| `asset.php` | 728 | `$filterByPosition` is assigned and never read |
+| `asset.php` | 887 | `register_output()` validates the position again with a strict comparison |
+| `asset.php` | 1084 (two) | The loop always stops at the asset class itself before running out of levels |
+| `asset.php` | 1290 | The nested list is checked with `is_array()` again before it is used |
+| `asset.php` | 1363, 1365 | `$resolved` is never set to `true`, so the test is always true |
+| `core/cli.php` | 436 | Only the array keys of the flag list are returned |
+| `core/config.php` | 177 | Reloading the reference file is guarded again inside `_load_config_ref()` |
+| `core/config.php` | 694 | Differs only if a file named `.php` exists in the config folder |
+| `core/util/deepcopy.php` | 37 | The variable is overwritten on the next statement |
+| `core/util/validate/value.php` | 49 | The `exception` option is accepted but never read |
+| `core/xml/dom.php` | 399 | The new document is empty at that point, so whitespace handling has nothing to act on |
+| `cli/error.php` | 54 | The parameter is typed `array`, so only `null` can fail the test, and it gives the same result |
+| `data/orm/driver/session.php` | 81 | `_get_handler()` returns `null` for both `false` and `true` |
+| `data/scalar.php` | 89 | Non-array data cannot hold a `value` key, so both conditions end the same way |
+
+Not done: the probe samples only 400 of the roughly 16,000 candidate mutants. Further seeds (also with `--services`) can be run at any time; each new survivor is triaged the same way.
+

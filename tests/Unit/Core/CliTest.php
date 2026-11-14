@@ -78,6 +78,13 @@ class CliTest extends TestCase
         $this->assertSame([['a'=>'val'],['long'=>'x']],cli::enum_optval());
         $this->assertSame(['flag'],cli::enum_flag());
     }
+    /** @dataProvider unusableResourceIndexes */
+    public function testUnusableResourceIndexFallsBackToTheFirstArgument($index)
+    {
+        cli::set_argv(['tool','task'],2,$index);
+        $this->assertSame('task',cli::get_resource());
+    }
+    public function unusableResourceIndexes() { return [[-5],['x'],[1.0],[null]]; }
     public function testEnumerationsMatchDocumentedExample()
     {
         cli::set_argv(['cli.php','some-command','some-arg','--some-flag','--foo','bar1','--foo=bar2','--','--another-option','anotherValue','-f=bar1','-f=bar2','-x','-y','-z','-invalid-flag','-invalid-optval=foobar']);

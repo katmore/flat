@@ -159,6 +159,26 @@ class ConfigTest extends TestCase
         config::get('bad/a');
     }
 
+    public function testDirectoriesAndUnreadableFilesAreNotLoadedAsConfig()
+    {
+        if (function_exists('posix_geteuid') && posix_geteuid() === 0) $this->markTestSkipped('root can read every file');
+        mkdir($this->directory . '/folder.php');
+        $locked = $this->values('locked', ['key' => 'secret']);
+        chmod($locked, 0000);
+        $this->ready();
+        $this->assertSame('fallback', config::get('folder/key', ['default' => 'fallback']));
+        $this->assertSame('fallback', config::get('locked/key', ['default' => 'fallback']));
+    }
+
+    public function testReferenceFilesAreReadOnlyOncePerNamespace()
+    {
+        $path = $this->file('refs.json', '{"host":"first"}');
+        $this->ready();
+        $this->assertSame('first', config::get_ref_value('refs', 'host'));
+        file_put_contents($path, '{"host":"second"}');
+        $this->assertSame('first', config::get_ref_value('refs', 'host'));
+    }
+
     public function testEnumeratesValuesWithReferences()
     {
         $this->file('refs.json', '{"host":"localhost"}');
