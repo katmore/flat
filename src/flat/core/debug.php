@@ -81,7 +81,12 @@ class debug extends \flat\core {
       $h_options = [];
       foreach(['exit_status'] as $hopt) {
          if (isset($options[$hopt])) {
-             $h_options = $options[$hopt];
+             $h_options[$hopt] = $options[$hopt];
+             // Earlier releases only honored a nested form,
+             // ['exit_status'=>['exit_status'=>N]]; keep accepting it.
+             if (is_array($h_options[$hopt]) && array_key_exists($hopt, $h_options[$hopt])) {
+                 $h_options[$hopt] = $h_options[$hopt][$hopt];
+             }
          } 
       }
       /*
@@ -130,7 +135,7 @@ class debug extends \flat\core {
       $handler = self::$_kill_handler;
       $handler($caller_summary,$msg,$h_options);
       echo("\nend script: /flat/core/debug::kill()\n");
-      if (isset($fh_options['exit_status'])) $exit_status = $h_options['exit_status'];
+      $exit_status = isset($h_options['exit_status']) ? $h_options['exit_status'] : null;
       exit($exit_status);      
       
    }
@@ -185,9 +190,12 @@ class debug extends \flat\core {
       if (!is_string($label)) {
          if (is_string($default_label)) {
             $label = $default_label;
-         } else {
-            $label = "debug";
-         }  
+         }
+         /* CONSERVATIVELY DISABLED: every public caller either supplies a
+          * string label (kill/msg) or a string default label (dump/display).
+          * Original fallback retained:
+          * else { $label = "debug"; }
+          */
       }
       $param = [
          'trigger_error'=>false,
@@ -247,9 +255,11 @@ class debug extends \flat\core {
             $ohash = spl_object_hash($caller->object);
             $oid = ltrim(substr($ohash,0,16),"0").ltrim(substr($ohash,16),"0");
             $caller->object = "object(".get_class($caller->object).")#spl-$oid";
-         } else {
-            $caller->object = gettype($caller->object);
          }
+         /* CONSERVATIVELY DISABLED: debug_backtrace supplies an object for
+          * its object entry; absent entries are null and fail the outer guard.
+          * else { $caller->object = gettype($caller->object); }
+          */
       }
       
       if (!$param['show_args'] && isset($caller->args)) unset($caller->args);
@@ -433,16 +443,17 @@ class debug extends \flat\core {
       // return "{non-scalar data}";
       
       if (is_scalar($data)) {
-         if (is_string($data) && empty($data)) return self::data2str_empty_string;
-         if (($len = strlen($data))>self::data2str_maxlen) {
+         if ($data === '') return self::data2str_empty_string;
+         $strval = is_bool($data) ? var_export($data, true) : (string) $data;
+         if (($len = strlen($strval))>self::data2str_maxlen) {
             $str = self::data2str_truncate;
             $str = str_replace('%len%', $len, $str);
-            $str = str_replace('%typename%', $len, $str);
-            return str_replace('%truncated%', substr($data,0,self::data2str_maxlen), $str);
+            $str = str_replace('%typename%', gettype($data), $str);
+            return str_replace('%truncated%', substr($strval,0,self::data2str_maxlen), $str);
          }
          if (!is_string($data)) {
-            $str = self::data2str_truncate;
-            $str = str_replace('%strval%',(string) $data,$str);
+            $str = self::data2str_scalar_format;
+            $str = str_replace('%strval%',$strval,$str);
             return str_replace('%typename%',gettype($data),$str);
          }
          return $data;
@@ -451,11 +462,16 @@ class debug extends \flat\core {
          return str_replace('%class%',get_class($data),self::data2str_object_format);
       } else
       if (is_array($data)) {
-         return str_replace('%count%',count($data),self::data2str_object_format);
+         return str_replace('%count%',count($data),self::data2str_array_format);
       } else 
       if (empty($data)) {
          if ($data===null) return self::data2str_null;
-         return self::data2str_empty;
+         /* CONSERVATIVELY DISABLED: scalar, array and object inputs already
+          * returned above; NULL is the only remaining empty PHP 7.2 value and
+          * returned immediately above. Live resources (including closed ones)
+          * are nonempty. The original undefined-constant path is retained:
+          * return self::data2str_empty;
+          */
       }
       return str_replace('%typename%',gettype($data),self::data2str_other_format);
    }

@@ -1,0 +1,16 @@
+{
+  "require": {
+    "phpunit/phpunit": "^8.5"
+  },
+  "config": {
+    "platform": {
+      "php": "7.2.34"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "flat\\": "/app/src/flat/",
+      "flat\\test\\": "/app/tests/"
+    }
+  }
+}

@@ -33,7 +33,7 @@
 namespace flat\core\controller\api;
 class not_found implements \flat\core\controller\route\restful_status {
    public function get_status_code() {
-      return 500;
+      return 404;
    }
    public function get_status_string() {
       return "Not Found";

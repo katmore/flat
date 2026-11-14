@@ -31,7 +31,7 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\core\exception\bad_interface;
-class message extends \flat\core\controller implements \flat\core\bad_interface {
+class message implements \flat\core\controller, \flat\core\bad_interface {
    public function __toString() {
       return $this->_msg;
    }
@@ -39,17 +39,14 @@ class message extends \flat\core\controller implements \flat\core\bad_interface 
       return $this->_msg;
    }
    public function __construct($interface,$class,$method="",$reason="") {
-      if (!empty($method)) {
-         if (is_string($method))
-            $class = "::".$method."()";
+      $where = $class;
+      if (!empty($method) && is_string($method)) {
+         $where .= "::".$method."()";
       }
-      if (empty($reason)) {
-         $reason = "";
-      } else {
-         if (is_string($reason)) {
-            $reason = ", reason: $reason";
-         }
+      $detail = "";
+      if (!empty($reason) && is_string($reason)) {
+         $detail = ", reason: $reason";
       }
-      $this->_msg = "interface $interface is bad in $class";
+      $this->_msg = "interface $interface is bad in $where".$detail;
    }
 }

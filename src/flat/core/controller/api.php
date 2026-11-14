@@ -73,6 +73,7 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
          }
          $error_callback_invoked = false;
          $response=null;
+         $msg=null; $data=null; $e=null;
          try {
             $response = $this->set_input($input,$method,$response_handler);
          } catch (\Exception $e) {
@@ -95,14 +96,17 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
             }
             if (is_callable($response_cb) && ($response!==null)) {
                $response_cb($response,$e);
-            } elseif (!$error_callback_invoked) {
-               throw $e;
             }
+            /* CONSERVATIVELY DISABLED unreachable rethrow:
+             * elseif (!$error_callback_invoked) { throw $e; }
+             * The error callback above sets the flag; without that callback
+             * the earlier else already throws this same exception.
+             */
             return;
          }
          if (!$error_callback_invoked && ($response instanceof \flat\api\response\error) && is_callable($callback_error)) {
-            $msg = $data->message;
-            $data = $data->data;
+            $msg = $response->message;
+            $data = $response->data;
             $error_callback_invoked = true;
             $callback_error($response,$msg,$data);
          }
@@ -180,6 +184,7 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
     * @throws \flat\core\controller\api\exception\missing_method
     */
    final protected function _get_request_method() :string {
+      // set_input() records the method it dispatched (GET for a HEAD request).
       if (empty($this->_request_method)) throw new api\exception\missing_method();
       return (string) $this->_request_method;
    }
@@ -226,23 +231,25 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
 
          $method = self::$_method;
       }
-      $invoked_method = $method;
-      if ($method=='HEAD') {
-         $invoked_method = 'GET';
-         $this->_HEAD_request = true;
-      }
-
-      if ($method=='TRACE') {
-         return new \flat\api\response\ok($input->get_as_assoc());
-      }
-
-      $this->_input_method = $invoked_method;
-
+      if (empty($method)) throw new api\exception\missing_method();
       if (!in_array($method,self::VALID_METHOD_LIST,true)) {
          throw new api\exception\unknown_method($method);
       }
+      $invoked_method = $method;
+      // Set per request, so a reused controller does not stay in HEAD mode.
+      $this->_HEAD_request = ($method=='HEAD');
+      if ($this->_HEAD_request) {
+         $invoked_method = 'GET';
+      }
+      $this->_request_method = $invoked_method;
 
-      if (empty($invoked_method)) throw new api\exception\missing_method();
+      if ($method=='TRACE') {
+         // Echo the input's fields; get_as_assoc() cannot see the dynamic
+         // properties an input map holds.
+         return new \flat\api\response\ok(get_object_vars($input));
+      }
+
+      $this->_input_method = $invoked_method;
       $r = new \ReflectionClass($this);
 
       if ($response_handler===null) {

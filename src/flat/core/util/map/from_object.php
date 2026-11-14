@@ -52,7 +52,7 @@ class from_object  extends \flat\core\util\map {
    public function __construct($object,$default_initial_value=NULL) {
       if (is_object($object) || is_array($object))
       foreach ($object as $key=>$val) {
-         $this->set_property_value($key);
+         $this->set_property_value($key,$val,array());
       }
    }
 }

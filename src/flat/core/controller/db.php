@@ -33,14 +33,20 @@
 namespace flat\core\controller;
 abstract class db {
    final public static function load_read(array $param=NULL) {
-      if (self instanceof \flat\db\op\read) {
+      // The original guard tested the literal constant `self`; test the called
+      // class instead (owner answer, known-defects Q2).
+      if (is_a(static::class, \flat\db\op\read::class, true)) {
          $q = array();
          if (!empty($param['key'])) {
             $q['key'] = $param['key'];
          }
          $read = new static($q);
-         $data = $read->op_read();
-         return $data;
+         // The legacy op_read() hook when a class defines it; otherwise the
+         // read() method that the \flat\db\op\read interface declares.
+         if (method_exists($read, 'op_read')) {
+            return $read->op_read();
+         }
+         return $read->read($q);
       }
       return NULL;
    }

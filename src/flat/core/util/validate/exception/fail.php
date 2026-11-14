@@ -36,7 +36,7 @@ class fail extends \flat\core\util\validate\exception {
       $msg = "value ";
       if (!empty($param['value'])) {
          if (is_scalar($param['value']))
-            $msg .= "'$value' ";
+            $msg .= "'".$param['value']."' ";
       }
       $msg .= "did not pass validation";
       

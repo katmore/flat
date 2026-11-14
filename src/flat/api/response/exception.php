@@ -77,7 +77,7 @@ class exception extends \flat\api\exception {
             $trace = debug_backtrace();
             if (!empty($trace[1]['class'])) {
                $r = new \ReflectionClass($trace[1]['class']);
-               $message .= " by ".$r->getClassName();
+               $message .= " by ".$r->getName();
             }
          }
          $response = new \flat\api\response\error($message);         

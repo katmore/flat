@@ -137,7 +137,10 @@ abstract class authorize {
       try {
          $response = $controller->executeWithApiResponse( $this->_get_end_point() );
       } catch (\Exception $e) {
-         throw new \Exception(print_r($e,true));
+         // Summarize instead of print_r()-ing the exception: its trace holds
+         // argument values that can exhaust memory (owner answer Q21). The
+         // original stays available as the previous exception.
+         throw new \Exception(get_class($e).': '.$e->getMessage(), (int) $e->getCode(), $e);
       }
        
       if (($response != null) && ($response->getMessages()->getResultCode() == "Ok") )

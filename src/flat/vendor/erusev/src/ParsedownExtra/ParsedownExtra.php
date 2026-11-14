@@ -23,10 +23,18 @@ class ParsedownExtra extends Parsedown
 
     function __construct()
     {
-        if (parent::version < '1.5.0')
-        {
-            throw new Exception('ParsedownExtra requires a later version of Parsedown');
-        }
+        /*
+         * CONSERVATIVELY DISABLED in the bundled framework loader:
+         * src/ParsedownExtra.php unconditionally requires the bundled Parsedown,
+         * whose version constant is '1.5.0'. This lexical parent::version cannot
+         * change through a subclass, so the comparison is always false here.
+         * Revisit when changing the bundled parser or its loading contract.
+         * Original standalone compatibility guard:
+         * if (parent::version < '1.5.0')
+         * {
+         *     throw new Exception('ParsedownExtra requires a later version of Parsedown');
+         * }
+         */
 
         $this->BlockTypes[':'] []= 'DefinitionList';
         $this->BlockTypes['*'] []= 'Abbreviation';

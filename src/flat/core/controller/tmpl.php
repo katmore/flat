@@ -192,7 +192,13 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
             //             throw new \Exception(print_r($data,true));
             //          }
             ob_start();
-            static::display($design, $data);
+            try {
+                static::display($design, $data);
+            } catch (\Throwable $e) {
+                // Close this buffer before the failure leaves format().
+                ob_end_clean();
+                throw $e;
+            }
             $ob = ob_get_clean();
         }
 
@@ -274,7 +280,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
          * skip all resolving if design is a display class
          */
         if (is_string($design) && (substr($design, 0, 1) == '\\')) {
-            if (class_exists($design) && is_a($design, tmpl\display::class, true)) {
+            if (class_exists($design) && is_a($design, \flat\tmpl\display::class, true)) {
                 $design = new $design($design, $check_only);
             }
         }
@@ -361,7 +367,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
          * skip remaining resolving logic if design is already full path to a php file
          */
         if (substr($design, 0, 1) == '\\') {
-            $design_file = str_replace('\\', DIRECTORY_SEPARATOR, $file);
+            $design_file = str_replace('\\', DIRECTORY_SEPARATOR, $design);
             if (is_file($design_file) && is_readable($design_file)) {
                 if (pathinfo($design_file, PATHINFO_EXTENSION) == 'php') {
                     $file = $design_file;
@@ -493,6 +499,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
                         $loader = function ($filename, $data) {
                             require ($filename);
                         };
+                        $level = ob_get_level();
                         ob_start();
                         $loader($file, $data);
                         if ($check_only) {
@@ -506,6 +513,9 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
                         echo md\convert::string_to_html($text);
                         return;
                     } catch (\Exception $e) {
+                        // A failing generated template prints nothing, and its
+                        // output buffer is closed (it used to be left open).
+                        if (ob_get_level() > $level) ob_end_clean();
                     }
                     return;
                 }

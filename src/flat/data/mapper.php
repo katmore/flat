@@ -71,11 +71,13 @@ trait mapper {
          ob_start();
          var_dump($this);
          return new \flat\data\dump(ob_get_clean());
-      } else
-      if ($type = 'human') {
+      } else {
+         // CONSERVATIVELY DISABLED redundant condition: if ($type = 'human') {
+         // Assigning the nonempty literal is always true. Keep the existing
+         // human dump fallback for every type other than 'var'.
          $dump=\flat\core\util\deepcopy::data($this);
          if (in_array('htmlencode',$flags)) {
-            $dump->htmlentities();
+            $dump = $dump->htmlentities();
          }
          //$dump->remove_non_visible();
          return new \flat\data\dump(print_r($dump,true));
@@ -257,7 +259,7 @@ trait mapper {
                 * test if int... if evaluates to same when
                 *    cast as int... assume an int (i think)
                 */
-               if ( (int) sprintf("%d",$value) == $value) {
+               if (is_numeric($value) && (int) sprintf("%d",$value) == $value) {
                   return new data\scalar((int) $value);
                }
                
@@ -265,7 +267,7 @@ trait mapper {
                 * test if float.. if evaluates to same when cast as float...
                 *    assume a float
                 */
-               if ( (float) sprintf("%f",$value) == $value) {
+               if (is_numeric($value) && (float) sprintf("%f",$value) == $value) {
                   return new data\scalar((float) $value);
                }
                
@@ -534,24 +536,24 @@ trait mapper {
     * 
     * @return null|string[]
     */
-   private static $_field=NULL;
+   private static $_field=array();
    final public static function field_list(\flat\data $instance=NULL) {
 
       if ($instance) {
-         
+         $class_name = get_class($instance);
       } else {
          $class = "flat\\data";
          if (substr( get_called_class(), 0, strlen($class) ) == $class) {
             return null;
          }
-         /*
-          * only enumerate once
-          */
-         if (is_array(self::$_field)) return self::$_field;
-         
-         $r = new \ReflectionClass(get_called_class());
-         
+         $class_name = get_called_class();
       }
+      /*
+       * only enumerate once per class (the cache is shared by every subclass,
+       * so it is keyed by class name)
+       */
+      if (isset(self::$_field[$class_name])) return self::$_field[$class_name];
+      $r = new \ReflectionClass($class_name);
       $prop = $r->getProperties(\ReflectionProperty::IS_PUBLIC);
       $field = array();
       foreach ($prop as $p) $field[] = $p->getName();
@@ -559,7 +561,7 @@ trait mapper {
       /*
        * save list for later
        */
-      self::$_field = $field;
+      self::$_field[$class_name] = $field;
       return $field;      
    }
    
@@ -722,11 +724,11 @@ trait mapper {
          /*
           * apply default map
           */
-         foreach($prop as $k=>&$v) if (!isset($map[$k]) && isset($default[$k]) ) $v=$default[$k];
+         foreach ($default as $k=>$v) if (!isset($map[$k])) $map[$k] = $v;
          /*
           * apply 'default_on_empty' flag
           */
-         if ($flags && $default!=NULL && in_array('default_on_empty',$flags))
+         if ($rule->flags && in_array('default_on_empty',$rule->flags))
          foreach($map as $k=>&$v) if (empty($v) && isset($default[$k]) ) $v=$default[$k];
       }
           
@@ -756,7 +758,10 @@ trait mapper {
       
       if ($this instanceof \flat\data\webview) {
          $this->utf8_fix();
-         $this->htmlentities();
+         // htmlentities() returns an encoded clone; apply its fields here.
+         foreach (get_object_vars($this->htmlentities()) as $field=>$value) {
+            $this->$field = $value;
+         }
       }
       
       /*

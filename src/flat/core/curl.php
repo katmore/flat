@@ -40,6 +40,10 @@ class curl {
             );
          }
       }
+      /* CONSERVATIVELY DISABLED: $callback is neither a parameter nor assigned
+       * in this method. Both callback conditions are always false; callbacks
+       * are also never invoked here. Retain the original scaffolding pending
+       * a separately defined callback API. This removes undefined-local notices.
       $success_callback=NULL;
       $always_callback=NULL;
       $fail_callback=NULL;
@@ -67,6 +71,7 @@ class curl {
          }
       }
       
+       */
       $page = new \flat\core\curl\response(
          $config,
          $flags

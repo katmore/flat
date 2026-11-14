@@ -35,7 +35,7 @@ namespace flat\core\ssh\exception\auth\failure;
 class pubkey extends \flat\core\ssh\exception\auth\failure {
    public function __construct($msgExtra="") {
       $msg = "pubkey auth failure";
-      if (!empty($msgExtra)) $msg = ": ".$msgExtra;
+      if (!empty($msgExtra)) $msg .= ": ".$msgExtra;
       parent::__construct($msg);
    }
 }

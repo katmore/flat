@@ -59,30 +59,33 @@ class request {
     * 
     * @param string $url
     * @param mixed $data (optional) request data
-    * @param string $encoding (optional) default to "urlencoded"
+    * @param string $encode (optional) default to "urlencoded"
     *    other acceptable values are "none" and "json"
     * @param string $content_type (optional) ignored unless $encode = "none".
     *    
     * @throws exception\bad_param if malformed url, or data encoding issue.
-    * @throws exception\missing_param if missing content_type if $data is non-empty value
-    *    and $encode = "none"
+    * @throws exception\bad_param if content_type is not a nonempty string
+    *    and $data is provided with $encode = "none"
     */
    public function __construct($url,$data=NULL,$encode="urlencoded",$content_type=NULL) {
       $this->url = self::parse_url($url);
       $this->url_string = $url;
-      if (!empty($data)) {
+      // NULL means no body; JSON and raw bodies may legitimately be falsy.
+      // Retain the existing empty-input behavior for form encoding.
+      if ($data !== NULL && ($encode == "json" || $encode == "none" || !empty($data))) {
          if ($encode=="none") {
-            if (!empty($content_type)) throw new exception\bad_param(
-               "content_type","must provide content when encode='none'"
-            );
             if (!is_string($content_type)) throw new exception\bad_param(
                "content_type","content_type must be string if provided"
             );
+            if ($content_type === '') throw new exception\bad_param(
+               "content_type","must provide content_type when encode='none'"
+            );
             $this->content_type = $content_type;
+            $this->data = $data;
          } else
          if ($encode=="json") {
-            $this->content_type = 'application\json';
-            if (!$this->data = json_encode($data)) throw new exception\bad_param(
+            $this->content_type = 'application/json';
+            if (false === ($this->data = json_encode($data))) throw new exception\bad_param(
                "data","json_encode failed"
             );
          } else

@@ -1,0 +1,44 @@
+#!/bin/sh
+# Runs the mutation probe (tests/tools/mutate.php) in the repository's PHP 7.2
+# container, on a throwaway COPY of the repository mounted at /app, so a mutant
+# can never be left behind in your working tree. Needs no service containers.
+# Slow by design: every mutant runs the unit suite once (about 6 seconds).
+#
+# Usage: docker/bin/mutate [--limit=N] [--seed=N] [--timeout=SECONDS] [--list]
+#                          [--services] [--at=FILE:LINE ...] [path...]
+#   --services  also start MongoDB and RabbitMQ and run their tests (slower)
+#   e.g. docker/bin/mutate --limit=200 src/flat/core > build/tests/mutate-core.md
+set -eu
+# The script lives in docker/bin/; work from the repository root.
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+cd "$repo_dir"
+# One work copy and one Compose project per run, so several runs (for example
+# with different --seed values) can go in parallel without sharing anything.
+run_id="$$"
+export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-flat-mutate-$run_id}"
+compose() { docker compose -f docker/docker-compose.yml "$@"; }
+case "${1:-}" in -h|--help) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit ;; esac
+# Take --services here; forward every other argument to the tool.
+services=false
+for arg do
+    shift
+    if [ "$arg" = --services ]; then services=true; continue; fi
+    set -- "$@" "$arg"
+done
+"$services" && set -- --with-services "$@"
+image_ref=$(compose config --images php)
+if ! docker image inspect "$image_ref" >/dev/null 2>&1; then
+    printf 'Test image missing: %s\nBuild it once with docker/bin/test --build.\n' "$image_ref" >&2
+    exit 1
+fi
+work="$repo_dir/build/tests/mutate-work-$run_id"
+cleanup() { rm -rf "$work"; compose down --volumes --remove-orphans >/dev/null 2>&1 || true; }
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+rm -rf "$work"; mkdir -p "$work"
+cp -R src tests phpunit.xml.dist composer.json "$work/"
+touch "$work/.mutation-copy"
+chmod -R a+rwX "$work"
+if "$services"; then compose up -d --wait --pull never mongo rabbitmq >&2; fi
+compose run --rm -T --no-deps --pull never -v "$work:/app" --entrypoint php php tests/tools/mutate.php "$@"

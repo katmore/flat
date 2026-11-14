@@ -13,8 +13,8 @@ namespace flat\db\mongo\ssl\cafile;
 abstract class file extends \flat\db\mongo\ssl\cafile {
    abstract protected function _get_cafile_path();
    final public function __construct() {
-      if ($this->ca = file_get_contents($this->__get_cafile_path())) {
-         $this->file = $this->__get_cafile_path();
+      if ($this->ca = file_get_contents($this->_get_cafile_path())) {
+         $this->file = $this->_get_cafile_path();
          return;
       }
    }

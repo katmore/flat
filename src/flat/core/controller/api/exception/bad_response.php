@@ -32,6 +32,8 @@
  */
 namespace flat\core\controller\api\exception;
 class bad_response extends \flat\core\controller\api\exception {
+   private $_api_class;
+   private $_method;
 	/**
 	 * @return string api class name that failed response enforcement
 	 */
@@ -49,6 +51,8 @@ class bad_response extends \flat\core\controller\api\exception {
 	 * @param string $method REST method that failed response enforcement (GET, POST, PUT, DELETE, etc.) 
 	 */		
    public function __construct($api_class,$method) {
+      $this->_api_class = $api_class;
+      $this->_method = $method;
       
       parent::__construct(
          "api definition $api_class ".

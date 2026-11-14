@@ -34,7 +34,7 @@ namespace flat\core\ssh\exception\auth;
 class not_ready extends \flat\core\ssh\exception\auth {
    public function __construct($msgExtra="") {
       $msg = "ssh2 authorization has not occured";
-      if (!empty($msgExtra)) $msg = ": ".$msgExtra;
+      if (!empty($msgExtra)) $msg .= ": ".$msgExtra;
       parent::__construct($msg);
    }
 }

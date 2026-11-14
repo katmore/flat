@@ -66,7 +66,7 @@ class response extends \flat\core\mappable {
     * @return string[]
     */
    public function get_header_strings() : array {
-      return array_values($this->_header_string) || [];
+      return array_values($this->_header_string ?: []);
    }
    
    /**
@@ -77,7 +77,7 @@ class response extends \flat\core\mappable {
     * @return \flat\api\response_header[]
     */
    public function get_headers() : array {
-      return $this->_header || [];
+      return $this->_header ?: [];
    }
    /**
     * Associate a header to the response.

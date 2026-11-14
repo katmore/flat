@@ -38,11 +38,17 @@ class unauthorized extends \flat\api\response {
       if (empty($message)) {
          $trace = debug_backtrace();
          if (isset($trace[1+$trace_offset]) && !empty($trace[1+$trace_offset]['class'])) {
-            try {
-               $this->message = "Request unauthorized by ".(new \ReflectionClass($trace[1+$trace_offset]['class']))->getShortName();
-            } catch (\Exception $e) {
-               $this->message = "Request unauthorized";
-            }
+            /*
+             * CONSERVATIVELY DISABLED native-caller fallback: debug_backtrace()
+             * reports an already loaded class. ReflectionClass/getShortName
+             * cannot throw an Exception for that native class name. Original:
+             * try {
+             * $this->message = "Request unauthorized by ".(new \ReflectionClass($trace[1+$trace_offset]['class']))->getShortName();
+             * } catch (\Exception $e) {
+             * $this->message = "Request unauthorized";
+             * }
+             */
+            $this->message = "Request unauthorized by ".(new \ReflectionClass($trace[1+$trace_offset]['class']))->getShortName();
          }
       } else {
          $this->message = $message;

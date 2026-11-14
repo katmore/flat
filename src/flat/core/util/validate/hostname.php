@@ -42,13 +42,13 @@
  * 
  */
 namespace flat\core\util\validate;
-class hostname extends \flat\core\util\validate\match\regexp implements \flat\core\util\validate\match\regex\definer {
+class hostname extends \flat\core\util\validate\match\regexp implements \flat\core\util\validate\match\regexp\definer {
    /*
     * valid hostname regex
     *    from http://stackoverflow.com/questions/106179/regular-expression-to-match-dns-hostname-or-ip-address
     */
    const hostname_regex='^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$';
    public function get_regexp() {
-      return self::hostname_regex;
+      return '/'.self::hostname_regex.'/';
    }
 }

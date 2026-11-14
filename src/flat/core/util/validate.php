@@ -81,6 +81,22 @@ abstract class validate {
       }
    }
    
+   /**
+    * validates a value
+    *
+    * @return mixed on success the value (or 'value_on_pass'); on failure the
+    *    result of 'fail_handler', or 'value_on_fail' (NULL by default)
+    * @param mixed $value value to validate
+    * @param array $option (optional) assoc array of options, also passed to
+    *    the validation rule:
+    *    callable $option['fail_handler'] invoked with the value on failure;
+    *       its result is returned
+    *    bool $option['exception_on_fail'] throw on failure (when no
+    *       fail_handler is given): the rule's own exception if it is
+    *       validate\exceptionable, otherwise validate\exception\fail
+    *    mixed $option['value_on_pass'] returned instead of the value on success
+    *    mixed $option['value_on_fail'] returned on failure
+    */
    final public static function validate($value,array $option=NULL) {
       $param = array(
          'fail_handler'=>NULL,
@@ -88,30 +104,25 @@ abstract class validate {
          'value_on_pass'=>NULL,
          'value_on_fail'=>NULL
       );
-      foreach ($option as $k=>$v) if (isset($param[$k])) $param[$k]=$v;
-      if (self::is_valid($value,$option)) {
-         if ($param['value_on_pass']===NULL) {
-            return $value;
-         } else {
-            return $param['value_on_pass'];
-         }
-      } else {
-         if (is_callable($param['fail_handler'])) {
-            $handler = $param['fail_handler'];
-            return $handler($value);
-         }
-         if ($param['value_on_fail']===NULL) {
-            return NULL;
-         } else 
-         if ($param['exception_on_fail']===true) {
-            if (self instanceof validate\exceptionable) {
-               self::throw_exception(array('value'=>$value));
-            } else {
-               throw new validate\exception\fail(array('value'=>$value,"rule"=>get_class(self)));
-            }
-         } 
+      // array_key_exists, not isset: every default above is NULL or false.
+      if ($option) foreach ($option as $k=>$v) if (array_key_exists($k,$param)) $param[$k]=$v;
+
+      if (static::is_valid($value,$option)) {
+         return $param['value_on_pass']===NULL ? $value : $param['value_on_pass'];
       }
+      if (is_callable($param['fail_handler'])) {
+         $handler = $param['fail_handler'];
+         return $handler($value);
+      }
+      if ($param['exception_on_fail']===true) {
+         if (is_a(static::class, validate\exceptionable::class, true)) {
+            static::throw_exception(array('value'=>$value));
+         }
+         throw new validate\exception\fail(array('value'=>$value,'rule'=>static::class));
+      }
+      return $param['value_on_fail'];
    }
+
    final public static function is_valid($value,array $option=NULL) {
       if (static::_validate($value,$option)===true) {
          return true;

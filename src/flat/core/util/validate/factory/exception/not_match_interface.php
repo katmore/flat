@@ -41,11 +41,12 @@
  * @copyright  Copyright (c) 2012-2014 Doug Bird. All Rights Reserved.
  * 
  */
-namespace flat\core\util\factory\exception;
-class not_match_interface extends \flat\core\util\factory\exception {
+namespace flat\core\util\validate\factory\exception;
+class not_match_interface extends \flat\core\util\validate\factory\exception {
 
    public function __construct($class) {
       parent::__construct("match rule '".get_class($class)."' in factory is not a match_interface");
    }
 
 }
+class_alias(not_match_interface::class, 'flat\\core\\util\\factory\\exception\\not_match_interface');

@@ -41,9 +41,11 @@ class native extends \flat\data\orm\driver\session\handler {
    public static function destroy(array $options=NULL) {
       self::_init_session($options);
       
-      session_destroy();
-      
+      // Replace the id (deleting the old session's data) before ending the
+      // session; regenerating after session_destroy() only raised a warning.
       session_regenerate_id(true);
+      $_SESSION = [];
+      session_destroy();
    }
    
    protected static function _start_session(array $options=NULL) {
@@ -64,10 +66,10 @@ class native extends \flat\data\orm\driver\session\handler {
    }
    
    final protected static function _check_key($key) {
-      if (empty($key)) throw exception\bad_param(
+      if (empty($key)) throw new exception\bad_param(
          "key cannot be empty"
       );
-      if (!is_scalar($key)) throw exception\bad_param(
+      if (!is_scalar($key)) throw new exception\bad_param(
          "key must be scalar value"
       );
       return $key;
@@ -78,13 +80,13 @@ class native extends \flat\data\orm\driver\session\handler {
       self::$_ormkey = $key;
    }
    
-   final protected function _get_ormkey(array $options=NULL) {
+   final protected static function _get_ormkey(array $options=NULL) {
       if (isset($options['ormkey'])) return self::_check_key(
          $options['ormkey']
       );
       
-      $key = \flat\core\config::get_or_default(
-         "flat/data/orm/driver/session/ormkey",
+      $key = \flat\core\config::get(
+         "data/orm/driver/session/ormkey",
          array(
             'default'=>self::$_ormkey
          )

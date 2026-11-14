@@ -33,14 +33,11 @@
 namespace flat\core\controller;
 class validate extends \flat\core\collection implements \flat\core\input\consumer {
    public function set_input(\flat\input $input) {
-      //$col = $this->__col;
-      $mbr = array();
-      foreach ( $this->_col->range() as $validate ) {
-         if (isset($input->{$validate->data})) {
-            
-         }
-      }
+      // RETIRED by owner decision (known-defects Q23): the validation body was
+      // never written; it inspected each field and then did nothing.
+      throw new \BadMethodCallException(self::RETIRED);
    }
+   const RETIRED = 'flat\\core\\controller\\validate is not implemented: it validates nothing';
    private $_col;
    public function __construct() {
       $param = new \flat\core\util\map(
@@ -66,6 +63,7 @@ class validate extends \flat\core\collection implements \flat\core\input\consume
          );
 
       $this->_col = $param->collection;
-      $this->set_input($param->input);
+      // Retired: constructing with valid arguments fails like set_input().
+      throw new \BadMethodCallException(self::RETIRED);
    }
 }

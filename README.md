@@ -12,6 +12,33 @@ Architecturally, it facilitates a broad swathe of design patterns using a client
  * Back-End Webservice: convienence classes to faciliate actual RESTful APIs
  * Command line scripts: convenience classes to faciliate creation of recurring (cron), deamons, and ad-hoc scripts
 
+## Tests
+
+There are two entry points with the same arguments:
+
+* `bin/test` runs the PHPUnit suite natively, on a machine with PHP 7.2 and the
+  Composer dev dependencies installed (`composer install`).
+* `docker/bin/test` needs only Docker. It runs `bin/test` inside the pinned
+  PHP 7.2.34 container and starts the MongoDB/RabbitMQ containers it needs.
+
+From the repository root, run `docker/bin/test`. It builds the pinned PHP 7.2.34 image,
+starts the required MongoDB/RabbitMQ containers, runs the tests, then removes the
+containers and their test data. Only Docker Engine and Docker Compose are needed.
+
+```sh
+docker/bin/test unit                  # no external service containers
+docker/bin/test services              # service-dependent tests
+docker/bin/test mongo                 # start only MongoDB
+docker/bin/test rabbitmq              # start only RabbitMQ
+docker/bin/test all --coverage        # full suite and coverage reports
+docker/bin/test all --offline         # cached images only; no build or pull
+```
+
+The default is `all`. Initial image preparation requires network access. Once
+the built PHP test image and selected service images are cached, `--offline` runs
+without builds or pulls. Reports are written under `build/tests/<mode>/`.
+See [Docker test instructions](docs/modernization/TESTING.md) for details.
+
 ## Installation
 **The Flat Framework** can be the basis of a **new project** or added to an **existing project**
 

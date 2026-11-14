@@ -57,19 +57,23 @@ class ssh {
       return $this->auth;
    }
    
-   private function disconnect_callback($reason, $message, $language) {
-      
-      $dc = new disconnect();
-      $dc->time = date("c");
-      $dc->reason = $reason;
-      $dc->message = $message;
-      $dc->language = $language;
-      
-      $this->connection = null;
-      $this->disconnect = $dc;
-      return true;
-   }
-   
+   /*
+    * CONSERVATIVELY DISABLED unused private callback. connect() registers its
+    * separate no-op closure and this method has no caller. Original:
+    * private function disconnect_callback($reason, $message, $language) {
+    *
+    * $dc = new disconnect();
+    * $dc->time = date("c");
+    * $dc->reason = $reason;
+    * $dc->message = $message;
+    * $dc->language = $language;
+    *
+    * $this->connection = null;
+    * $this->disconnect = $dc;
+    * return true;
+    * }
+    */
+
    /*
     * config:
     *    host,
@@ -117,7 +121,7 @@ class ssh {
          $auth->username = $config['username'];
          $auth->pubkey = $config['pubkey'];
          $auth->privkey = $config['privkey'];
-         $auth->passphrase = $config['passphrase'];
+         $auth->passphrase = $config['passphrase'] ?? null;
       } else {
          throw new exception\input_error(
             'config must have either password or pubkey'
@@ -156,6 +160,11 @@ class ssh {
       }
    }
 
+   /**
+    * Download a file with an idle timeout from default_socket_timeout.
+    * Every successful read restarts the timer. Callback arguments and normal
+    * return behavior are unchanged; a timeout leaves the bytes already read.
+    */
    public function sftp_get($remote,$local,$xfer_callback=null) {
       
       $this->sftp();
@@ -166,61 +175,40 @@ class ssh {
             "could not open $remote"
          );
       }
-      if (!$local_h = fopen($local, 'w')) {
-         throw new exception\sftp\local(
-            "could not open $local for write"
-         );
+      try {
+         if (!$local_h = fopen($local, 'w')) {
+            throw new exception\sftp\local("could not open $local for write");
+         }
+         try {
+            $last_read = microtime(true);
+            $timeout = (float) ini_get('default_socket_timeout');
+            $read_bytes = 0;
+            $filesize = filesize($sftp_path);
+            $cv = 0;
+            while (!feof($remote_h) && microtime(true) - $last_read < $timeout) {
+               $buffer = fread($remote_h, 2048);
+               if ($buffer === '' || $buffer === false) {
+                  if (is_callable($xfer_callback)) call_user_func($xfer_callback);
+                  break;
+               }
+               // Owner contract: every successful read restarts the idle timer.
+               $last_read = microtime(true);
+               fwrite($local_h, $buffer);
+               if (is_callable($xfer_callback)) call_user_func($xfer_callback);
+               $read_bytes += strlen($buffer);
+               if (($cv % 100) === 0) {
+                  $progress = $filesize > 0 ? round(min(100, 100 * $read_bytes / $filesize), 2) : 0;
+                  if (is_callable($xfer_callback)) call_user_func($xfer_callback);
+                  $cv = 0;
+               }
+               $cv++;
+            }
+         } finally {
+            fclose($local_h);
+         }
+      } finally {
+         fclose($remote_h);
       }
-      
-      $start = NULL;
-      $timeout = ini_get('default_socket_timeout');
-      $read_kbytes = 0;
-      $read_bytes = 0;
-      $filesize = filesize($sftp_path);
-      $filesize_kbytes = $filesize/1024;
-      
-      $cv = 0;
-      while(!safe_feof($remote_h, $start) && (microtime(true) - $start) < $timeout) {
-        $buffer = fread($remote_h, 2048);
-        if( (empty($buffer)) || (false === $buffer))  {
-           //XFER completed (read is shit)
-           if (is_callable($xfer_callback)) {
-              
-              call_user_func($xfer_callback);
-           }
-           break 1;
-        }
-        fwrite($local_h, $buffer);
-        
-        //XFER N bytes success
-        if (is_callable($xfer_callback)) {
-           
-           call_user_func($xfer_callback);
-        }
-        
-        $read_kbytes += 2048 / 1024;
-        $read_bytes +=2048; 
-        if (($cv % 100)==0) {
-           //Use $filesize as calculated earlier to get the progress percentage
-           $progress = round(min(100, 100 * $read_kbytes / $filesize_kbytes),2);
-           //XFER % done
-           if (is_callable($xfer_callback)) {
-              
-              call_user_func($xfer_callback);
-           }
-           //you'll need some way to send $progress to the browser.
-           //maybe save it to a file and then let an Ajax call check it?
-           //file_put_contents($statusfile,sprintf("%d",$read_kbytes));
-           $cv=0;
-        }
-        $cv++;
-        // if ($read_bytes>=$filesize+2048) {
-           // echo "\nloop is reading past of file, hope everything is ok\n";
-           // break 1;
-        // }
-      }
-      fclose($remote_h);
-      fclose($local_h);
    }
 
    public function connect() {
@@ -243,13 +231,13 @@ class ssh {
       }
    
       //if (is_a($this->auth,"\\sf\module\\ssh2\\data\\auth\\password")) {
-      if (!$this->auth instanceof auth\password) {
+      if ($this->auth instanceof auth\password) {
          if (!ssh2_auth_password($connection, $this->auth->username, $this->auth->password)) {
-            throw new \sf\module\ssh2\exception\auth\failure\password();
+            throw new exception\auth\failure\password();
          }
       } else
       //if (is_a($this->auth,"\\sf\module\\ssh2\\data\\auth\\pubkey")) {
-      if (!$this->auth instanceof auth\pubkey) {
+      if ($this->auth instanceof auth\pubkey) {
          /*
           * 
           * temporary files to give to ssh2 lib
@@ -260,6 +248,8 @@ class ssh {
           *    in addition to being called explicitly after ssh2 authentication is complete 
           *    
           */
+         // Any failure below removes the temporary key files before it propagates.
+         try {
          $this->pubkey_file = tempnam(sys_get_temp_dir(), "sfnpub");
          file_put_contents($this->pubkey_file, $this->auth->pubkey);
          
@@ -272,14 +262,14 @@ class ssh {
           */
          $passphrase = exec('< /dev/urandom tr -dc A-Za-z0-9 | head -c${1:-128};echo;');
          if (strlen($passphrase)!=128) {
-            throw new \sf\module\ssh2\exception\syserror("could not generate temp passphrase for plain private key");
+            throw new exception\syserror("could not generate temp passphrase for plain private key");
          }
 
          if (empty($this->auth->passphrase)) {
             //escapeshellarg($this->privkey_file)
-            $openssl_cmd = "/usr/bin/openssl rsa -in /dev/stdin -out ".escapeshellarg($this->privkey_file)." -passout pass:".escapeshellarg($passphrase)."";
+            $openssl_cmd = "/usr/bin/openssl rsa -in /dev/stdin -aes256 -out ".escapeshellarg($this->privkey_file)." -passout pass:".escapeshellarg($passphrase)."";
          } else {
-            $openssl_cmd = "/usr/bin/openssl rsa -in /dev/stdin -passin pass:".escapeshellarg($this->auth->passphrase)." -out ".escapeshellarg($this->privkey_file)." -passout pass:".escapeshellarg($passphrase)."";
+            $openssl_cmd = "/usr/bin/openssl rsa -in /dev/stdin -passin pass:".escapeshellarg($this->auth->passphrase)." -aes256 -out ".escapeshellarg($this->privkey_file)." -passout pass:".escapeshellarg($passphrase)."";
          }
          //$openssl_cmd .= " <<< '".$this->auth->privkey."\n'";
          //$out = shell_exec($openssl_cmd ." 2>&1");
@@ -289,10 +279,9 @@ class ssh {
             2 => array("pipe", "w") 
          );
          $process = proc_open($openssl_cmd, $descriptorspec, $pipes, null, null);
+         if (!is_resource($process)) throw new exception\syserror("could not use openssl");
          stream_set_blocking($pipes[2], 0);
-         
-         if (!is_resource($process)) throw new \sf\module\ssh2\exception\syserror("could not use openssl");
-         if ($err = stream_get_contents($pipes[2])) throw new \sf\module\ssh2\exception\syserror("could not encrypt plain private key with openssl: $err");
+         if ($err = stream_get_contents($pipes[2])) throw new exception\syserror("could not encrypt plain private key with openssl: $err");
          fwrite($pipes[0], $this->auth->privkey."\n");
          fclose($pipes[0]);
          $out = stream_get_contents($pipes[1]);
@@ -301,7 +290,7 @@ class ssh {
          if (!file_get_contents($this->privkey_file)) {
             $this->delete_keyfiles();
             
-            throw new \sf\module\ssh2\exception\syserror("could not encrypt plain private key with openssl: $out");
+            throw new exception\syserror("could not encrypt plain private key with openssl: $out");
          }
          
          /*
@@ -312,13 +301,16 @@ class ssh {
             $this->auth->fingerprint = $ssh2_fingerprint;
          } else {
             if ($this->auth->fingerprint != $ssh2_fingerprint) {
-               throw new \sf\module\ssh2\exception\syserror("fingerprint mismatch");
+               throw new exception\syserror("fingerprint mismatch");
             }
          }
          
          if (!ssh2_auth_pubkey_file ( $connection , $this->auth->username , $this->pubkey_file, $this->privkey_file, $passphrase )) {
+            throw new exception\auth\failure\pubkey();
+         }
+         } catch (\Throwable $e) {
             $this->delete_keyfiles();
-            throw new \sf\module\ssh2\exception\auth\failure\pubkey();       
+            throw $e;
          }
       }
       $this->delete_keyfiles();
@@ -328,7 +320,7 @@ class ssh {
    private function delete_keyfiles() {
       $filevars = array('pubkey_file','privkey_file','privkey_out');
       foreach ($filevars as $var) {
-         if (file_exists($this->$var)) {
+         if (isset($this->$var) && file_exists($this->$var)) {
             if (is_file($this->$var)) unlink($this->$var);
          }
       }
@@ -357,6 +349,13 @@ class ssh {
     *       (then it returns boolean false)  
     *    
     */
+   private function command_output($command) {
+      // Keep application-provided legacy command hooks working, and use the
+      // existing executor when a subclass does not supply that old helper.
+      if (method_exists($this,'exec_output')) return $this->exec_output($command);
+      return $this->exec($command);
+   }
+
    public function checkpid($pid,$ignore_missing=false) {
       
       /*
@@ -373,13 +372,13 @@ class ssh {
          );
       }
             
-      if (empty(trim($this->exec_output('kill -0 '.$pid.' ; echo $? 2>&1')))) {
+      if (empty(trim($this->command_output('kill -0 '.$pid.' ; echo $? 2>&1')))) {
          return true;
       }
       
       if ($ignore_missing) return false;
       
-      throw new exception\exec\pid\failure\not_running();
+      throw new exception\exec\pid\not_running();
       
    }
    
@@ -402,10 +401,10 @@ class ssh {
       }   
       
       
-      $pid = $this->exec_output($cmd.' > '.$logfile.' 2>&1 & echo $!');
+      $pid = $this->command_output($cmd.' > '.$logfile.' 2>&1 & echo $!');
       
       if (empty($pid)) {
-         throw new exception\exec\pid\failure\missing();
+         throw new exception\exec\pid\missing();
       }
       
       if (empty($min_runtime)) {
@@ -457,40 +456,27 @@ class ssh {
             "must be int 1 or greater"
          );
       }
-      /*
-       * check sig is sane
-       */
-      if (false ===($val['sig'] = filter_var(
-         $val['sig'], 
-         FILTER_VALIDATE_INT, 
-         array('options'=>array('min_range'=>1,'max_range'=>15))))
-      ) {         
-         throw new exception\input_error\bad_param(
-            "killcycle['.$i.']['sig']",
-            "must be int between 1 and 15"
-         );
+      foreach (['sig_1'=>&$sig_1,'sig_2'=>&$sig_2] as $name=>&$signal) {
+         if (false === ($signal = filter_var($signal,FILTER_VALIDATE_INT,
+               ['options'=>['min_range'=>1,'max_range'=>15]]))) {
+            throw new exception\input_error\bad_param($name,"must be int between 1 and 15");
+         }
       }
-      
-      /*
-       * check wait is sane
-       */
-      if (false ===($val['wait'] = filter_var(
-         $val['wait'], 
-         FILTER_VALIDATE_INT, 
-         array('options'=>array('min_range'=>$min_wait,'max_range'=>60))))
-      ) {         
-         throw new exception\inputError\badParam(
-            "killcycle['.$i.']['wait']",
-            "must be int between $min_wait and 60"
-         );
-      }     
+      unset($signal);
+      foreach (['wait_1'=>&$wait_1,'wait_2'=>&$wait_2] as $name=>&$wait) {
+         if (false === ($wait = filter_var($wait,FILTER_VALIDATE_INT,
+               ['options'=>['min_range'=>0,'max_range'=>60]]))) {
+            throw new exception\input_error\bad_param($name,"must be int between 0 and 60");
+         }
+      }
+      unset($wait);
       $start = time();
       
       /*
        * invoke a kill with sig $sig1
        */
-      if (!empty(trim($this->exec_output('kill -'.$sig_1.' '.$pid.' ; echo $? 2>&1')))) {
-         throw new exception\exec\pid\failure\kill($pid);
+      if (!empty(trim($this->command_output('kill -'.$sig_1.' '.$pid.' ; echo $? 2>&1')))) {
+         throw new exception\exec\pid\kill($pid);
       }
       
       
@@ -510,8 +496,8 @@ class ssh {
       /*
        * invoke a kill with sig $sig1
        */
-      if (!empty(trim($this->exec_output('kill -'.$sig_2.' '.$pid.' ; echo $? 2>&1')))) {
-         throw new exception\exec\pid\failure\kill($pid);
+      if (!empty(trim($this->command_output('kill -'.$sig_2.' '.$pid.' ; echo $? 2>&1')))) {
+         throw new exception\exec\pid\kill($pid);
       }
       
       for (;;) {
@@ -527,7 +513,7 @@ class ssh {
          if (($elapsed = (time()-$start))>=$wait_2) break 1;
       }
       
-      throw new exception\exec\pid\failure\cannot_kill(
+      throw new exception\exec\pid\cannot_kill(
          $pid,
          round($elapsed)
       );

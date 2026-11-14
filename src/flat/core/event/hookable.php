@@ -45,12 +45,12 @@ namespace flat\core\event;
 abstract class hookable extends \flat\core\event {
    protected function set_hookable_params($event_name,$event_to_hook,callable $handler,$data=NULL) {
       
-      $this->set_params($event_name, $handler,$event_data);
+      $this->set_params($event_name, $handler,$data);
       
    }
    public function __construct($event_name,$event_to_hook,callable $handler,$data=NULL) {
       
-      $this->set_params($event_name, $handler,$event_data);
+      $this->set_params($event_name, $handler,$data);
       
    }   
 }

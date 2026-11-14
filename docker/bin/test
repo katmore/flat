@@ -1,0 +1,107 @@
+#!/bin/sh
+# Runs bin/test inside the repository's PHP 7.2 container. This script only
+# handles Docker: it builds or checks the image, starts the MongoDB/RabbitMQ
+# containers a test mode needs, runs bin/test with the same arguments, and
+# removes the containers afterwards. All test logic lives in bin/test.
+set -eu
+# The script lives in docker/bin/; work from the repository root.
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+cd "$repo_dir"
+export FLAT_TEST_UID="$(id -u)" FLAT_TEST_GID="$(id -g)"
+# Root ignores file permissions, so tests of unreadable/unwritable paths cannot
+# fail as root (common in CI). Run PHP unprivileged; reports stay writable below.
+if [ "$FLAT_TEST_UID" = 0 ]; then export FLAT_TEST_UID=1000 FLAT_TEST_GID=1000; fi
+export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-flat-tests}"
+compose() {
+    if [ "${offline:-false}" != true ] && [ -n "${FLAT_TEST_CA_FILE:-}" ]; then
+        # Newer Compose builds through Bake, which refuses a secret read from a
+        # path outside the build context unless file-read entitlements are relaxed.
+        BUILDX_BAKE_ENTITLEMENTS_FS="${BUILDX_BAKE_ENTITLEMENTS_FS:-0}" \
+            docker compose -f docker/docker-compose.yml -f tests/docker/compose.ca.yaml "$@"
+    else
+        docker compose -f docker/docker-compose.yml "$@"
+    fi
+}
+usage() {
+    echo 'Usage: docker/bin/test [bin/test arguments] [--offline]'
+    echo '       docker/bin/test --build | --down'
+    echo 'Runs bin/test in the PHP 7.2 container and starts the services its test mode'
+    echo 'needs. Docker-only options:'
+    echo '  --offline:     use existing images only; never build or pull'
+    echo '  --build:       build the test image only'
+    echo '  --down:        remove this test stack (after an interrupted run)'
+    echo 'Examples: docker/bin/test unit --filter SshTest; docker/bin/test all --offline --coverage'
+    echo
+    echo 'bin/test arguments:'
+    bin/test --help | sed -n '1,/^  -h/p'
+}
+offline=false
+action=run
+test_mode=all
+inventory=false
+passthrough=true
+# Remove the Docker-only options; forward every other argument to bin/test.
+for arg do
+    shift
+    if "$passthrough"; then
+        case "$arg" in
+            --offline) offline=true; continue ;;
+            --build) action=build; continue ;;
+            --down) action=down; continue ;;
+            -h|--help) usage; exit ;;
+            --) passthrough=false ;;
+            all|unit|services|mongo|rabbitmq) test_mode=$arg ;;
+            inventory) inventory=true ;;
+        esac
+    fi
+    set -- "$@" "$arg"
+done
+if [ "$action" = down ]; then compose down --volumes --remove-orphans; exit; fi
+if [ "$action" = build ] && "$offline"; then
+    echo '--build and --offline cannot be combined' >&2; exit 2
+fi
+service_names=
+if ! "$inventory"; then
+    case "$test_mode" in
+        all|services) service_names='mongo rabbitmq' ;;
+        mongo) service_names=mongo ;;
+        rabbitmq) service_names=rabbitmq ;;
+    esac
+fi
+if "$offline"; then
+    # Names come only from the fixed test-mode values above. No host parser or
+    # private cache is required; Compose supplies the exact pinned image refs.
+    image_refs=$(compose config --images php $service_names)
+    for image_ref in $image_refs; do
+        if ! docker image inspect "$image_ref" >/dev/null 2>&1; then
+            printf 'Offline image missing: %s\nRun docker/bin/test all online once to prepare the images.\n' "$image_ref" >&2
+            exit 1
+        fi
+    done
+else
+    compose build php
+fi
+if [ "$action" = build ]; then exit; fi
+# bin/test writes reports and test lists under build/tests/. The container user
+# may differ from the host user (see the root case above).
+mkdir -p build/tests
+[ "$(id -u)" = "$FLAT_TEST_UID" ] || chmod -R a+rwX build/tests
+cleanup() {
+    test_status=$?
+    trap - EXIT INT TERM
+    compose down --volumes --remove-orphans || test_status=1
+    exit "$test_status"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+if [ -n "$service_names" ]; then
+    if "$offline"; then compose up -d --wait --pull never $service_names;
+    else compose up -d --wait $service_names; fi
+fi
+if "$inventory"; then
+    # No TTY, so only bin/test's Markdown reaches stdout.
+    compose run --rm -T --no-deps --pull never --entrypoint sh php bin/test "$@"
+else
+    compose run --rm --no-deps --pull never --entrypoint sh php bin/test "$@"
+fi

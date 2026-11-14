@@ -89,9 +89,11 @@ class regexp extends  \flat\core\util\validate {
          \flat\core\debug::dump($regexp,"preg match regexp");
          if (1==($result = preg_match($regexp, $value))) continue;
          
-         if ($result==0) return false;
+         if ($result===0) return false;
          
-         throw new regexp\exception\preg_error(preg_last_error(),$regexp);
+         // preg_match() returned false: a PCRE engine error (for example
+         // invalid UTF-8 input), not a mismatch. preg_error describes it.
+         throw new regexp\exception\preg_error();
       }
       return true;
    }

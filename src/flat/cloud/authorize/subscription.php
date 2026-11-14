@@ -31,7 +31,9 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\cloud\authorize;
-class subscription extends \flat\cloud\authorize
+use \flat\cloud\authorize as authorize;
+
+abstract class subscription extends \flat\cloud\authorize
    implements 
       \flat\cloud\ccgateway\subscription,
       \flat\cloud\ccgateway\transaction
@@ -57,30 +59,29 @@ class subscription extends \flat\cloud\authorize
        if (!isset($params['payment'])) {
           throw new \flat\cloud\authorize\missing_required_param('payment');
        }
-       if (isset($params['payment']['creditCard']) && isset($params['payment']['bankAccount'])) {
-          throw new \flat\cloud\authorize\bad_param(
-                'payment',
-                "only one payment type can be specified"
-          );
-       }
        $subscription = null;
+       if ($params['payment'] instanceof authorize\subscription\payment) {
+          $payment = $params['payment'];
+          $params['payment'] = [$payment::get_data_type() => $payment];
+       }
+       if (isset($params['payment']['creditCard']) && isset($params['payment']['bankAccount'])) {
+          throw new authorize\bad_param('payment', 'only one payment type can be specified');
+       }
        if (is_array($params['payment'])) {
           if (isset($params['payment']['accountType'])) {
              $params['payment']['bankAccount'] = new authorize\subscription\payment\bankAccount($params['payment']);
           } elseif (isset($params['payment']['cardNumber'])) {
              $params['payment']['creditCard'] = new authorize\subscription\payment\creditCard($params['payment']);
           }
-       } elseif ($params['payment'] instanceof authorize\subscription\payment) {
-          $params['payment'][$params['payment']->get_data_type()] = new $params['payment'];
        }
        foreach (['creditCard','bankAccount'] as $prop) {
           if (isset($params['payment'][$prop])) {
              if (!is_array($params['payment'][$prop]) && (!$params['payment'][$prop] instanceof authorize\subscription\payment)) {
-                throw new authorize\bad_params("payment.$prop","must be assoc array or ".'\flat\cloud\authorize\subscription\payment object');
+                throw new authorize\bad_param("payment.$prop","must be assoc array or ".'\flat\cloud\authorize\subscription\payment object');
              }
              $class_name = "\\flat\\cloud\\authorize\\subscription\payment\\$prop";
              if (is_array($params['payment'][$prop])) {
-                $payment = new $class_name($params['payment']['creditCard']);
+                $payment = new $class_name($params['payment'][$prop]);
              } else {
                 $payment = $params['payment'][$prop];
              }
@@ -109,7 +110,8 @@ class subscription extends \flat\cloud\authorize
      * @return \flat\cloud\authorize\subscription\transaction | \flat\cloud\authorize\subscription\transaction[] 
      */
     public function get_transaction(array $params) {
-       
+       // RETIRED by owner decision: never implemented (empty body returned null).
+       throw new \BadMethodCallException('authorize subscription get_transaction() is not implemented');
     }
     
     /**
@@ -191,7 +193,7 @@ class subscription extends \flat\cloud\authorize
        if (!isset($params['amount'])) {
           throw new missing_required_param("amount");
        }
-       if (empty($params['amount']) || !is_scalar($param['amount']) || is_bool($param['amount'])) {
+       if (empty($params['amount']) || !is_scalar($params['amount']) || is_bool($params['amount'])) {
           throw new bad_param("amount","must be non-empty non-bool scalar value");
        }
     
@@ -205,7 +207,7 @@ class subscription extends \flat\cloud\authorize
        /*
         * enforce ['payment']['schedule'] param is assoc array or subscription\schedule object
         */
-       if (!is_array($params['payment']['schedule'] && (!$params['payment']['schedule'] instanceof subscription\schedule))) {
+       if (!is_array($params['payment']['schedule']) && (!$params['payment']['schedule'] instanceof subscription\schedule)) {
           throw new bad_param("payment['schedule']","must be assoc array or \flat\cloud\authorize\subscription\schedule object");
        }
     
@@ -232,7 +234,7 @@ class subscription extends \flat\cloud\authorize
        */
        foreach($schedule_map as $k=>$v) {
           $prop = $k;
-          if (isset($subscription->$prop)) $subscription->$prop = $v;
+          if (property_exists($subscription,$prop)) $subscription->$prop = $v;
        }
     
        /*
@@ -240,7 +242,7 @@ class subscription extends \flat\cloud\authorize
         */
        foreach($interval as $k=>$v) {
           $prop = "interval".ucfirst($k); //camelCase the property name
-          if (isset($subscription->$prop)) $subscription->$prop = $v;
+          if (property_exists($subscription,$prop)) $subscription->$prop = $v;
        }
     
        /*
@@ -262,9 +264,9 @@ class subscription extends \flat\cloud\authorize
                       "if specified, must be assoc array or '$class_name' object"
                 );
              }
-             foreach($customer as $k=>$v) {
+             foreach($object as $k=>$v) {
                 $prop = $shortname.ucfirst($k); //camelCase the property name
-                if (isset($subscription->$prop)) $subscription->$prop = $v;
+                if (property_exists($subscription,$prop)) $subscription->$prop = $v;
              }
           }
        }
@@ -285,8 +287,8 @@ class subscription extends \flat\cloud\authorize
         * map some more inconsistently parameters to Subscription object
         */
        foreach(['name','amount'] as $prop) {
-          if (isset($param[$prop])) {
-             $v = $param[$prop];
+          if (isset($params[$prop])) {
+             $v = $params[$prop];
              $subscription->$prop = $v;
           }
        }
@@ -295,7 +297,7 @@ class subscription extends \flat\cloud\authorize
        if ($response->isError()) {
           throw new authorize\response_error($response->getMessageCode(), $response->getMessageText());
        }
-    
+       return $response->getSubscriptionId();
     }
    const arb_search_max_tics = 100000;
    const arb_search_result_ttl = 3600; //1 hour ttl
@@ -336,7 +338,7 @@ class subscription extends \flat\cloud\authorize
       *       'subscriptionActive' or 'subscriptionInactive'
       *    search types.
       */
-      if ($this->get_arb_info($params)=='active') {
+      if ($this->get_status($params)=='active') {
        $list->searchType = 'subscriptionActive';
        } else {
        $list->searchType = 'subscriptionInactive';
@@ -350,11 +352,12 @@ class subscription extends \flat\cloud\authorize
          $i=0;
          $s=0;
           for(;;) {
-             $response = $this->_get_ARB()->getSubscriptionList();
+             $response = $this->_get_ARB()->getSubscriptionList($list);
              if ($response->isError()) {
               throw new authorize\response_error($response->getMessageCode(), $response->getMessageText());
       }
-      if ($total = $response->xpath('/ARBGetSubscriptionListResponse/ARBGetSubscriptionListResult/totalNumInResultSet')) {
+      if (($totals = $response->xpath('/ARBGetSubscriptionListResponse/ARBGetSubscriptionListResult/totalNumInResultSet')) && isset($totals[0])) {
+      $total = (int)(string)$totals[0];
       
       } else {
       throw new authorize\unexpected_response("'totalNumInResultSet' field not found");
@@ -377,8 +380,10 @@ class subscription extends \flat\cloud\authorize
       if (count($subscriptionDetail)<1000) {
             break 1;
       }
+            // Request the next page (paging offset is a 1-based page number).
+            $list->paging->offset++;
             if ($s>$total) break 1;
-            if ($i>self::arb_search_max_tics) break 1;
+            if ($i>static::arb_search_max_tics) break 1;
          $i++;
       }
       if ($subscriptionData) return $subscriptionData;
@@ -472,13 +477,19 @@ class subscription extends \flat\cloud\authorize
    * @see \AuthorizeNetARB::getSubscriptionStatus()
    */
    public function is_updatable(array $params) {
-      $status = $this->get_arb_status($params);
+      $status = $this->get_status($params);
       if ($status == 'active' || $status == 'suspended') {
          return true;
       }
       return false;
    }
    
+   private static function _enforce_arb_params(array $params) {
+      if (!isset($params['subscriptionId'])) {
+         throw new missing_required_param('subscriptionId');
+      }
+   }
+
    private $_ARB;
     
    /**

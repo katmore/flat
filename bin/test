@@ -1,0 +1,86 @@
+#!/bin/sh
+# Runs flat's PHPUnit suite natively, on a machine with PHP 7.2 and PHPUnit
+# installed (e.g. after `composer install`). docker/bin/test runs this same
+# script inside the repository's PHP container and starts any services it needs.
+set -eu
+# The script lives in bin/; work from the repository root.
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$repo_dir"
+# Explicit inputs: the PHP binary, PHPUnit, and an optional bootstrap overriding
+# phpunit.xml.dist (the Docker image sets the last two for its own install).
+php_bin="${FLAT_TEST_PHP:-php}"
+phpunit="${FLAT_TEST_PHPUNIT:-vendor/bin/phpunit}"
+usage() {
+    echo 'Usage: bin/test [all|unit|services|mongo|rabbitmq] [--coverage] [PHPUnit arguments]'
+    echo '       bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md'
+    echo '  all (default): every test; MongoDB/RabbitMQ tests need those services reachable'
+    echo '  unit:          tests that need no external services'
+    echo '  services:      MongoDB- and RabbitMQ-dependent tests'
+    echo '  mongo:         MongoDB-dependent tests'
+    echo '  rabbitmq:      RabbitMQ-dependent tests'
+    echo '  inventory:     print a Markdown inventory of every test to stdout, from'
+    echo "                 PHPUnit's test list; KD IDs are added from a given defects file"
+    echo '  --coverage:    write reports under build/tests/<mode>/ (needs Xdebug)'
+    echo '  -h, --help:    show this usage'
+    echo 'Environment: FLAT_TEST_PHP (default php), FLAT_TEST_PHPUNIT (default'
+    echo '  vendor/bin/phpunit), FLAT_TEST_BOOTSTRAP (optional PHPUnit bootstrap),'
+    echo '  FLAT_TEST_MONGODB_URI and FLAT_TEST_RABBITMQ_HOST for service tests.'
+    echo 'To run everything in Docker instead, use docker/bin/test with the same arguments.'
+}
+test_mode=all
+coverage=false
+action=run
+defects_file=
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        all|unit|services|mongo|rabbitmq) test_mode=$1 ;;
+        inventory)
+            action=inventory
+            if [ "$#" -gt 1 ] && [ "${2#-}" = "$2" ]; then defects_file=$2; shift; fi ;;
+        --coverage) coverage=true ;;
+        -h|--help) usage; exit ;;
+        --) shift; break ;;
+        -*) break ;;
+        *) printf 'Unknown test type: %s\n' "$1" >&2; usage >&2; exit 2 ;;
+    esac
+    shift
+done
+if [ ! -f "$phpunit" ]; then
+    printf 'PHPUnit not found at %s. Run composer install, set FLAT_TEST_PHPUNIT,\nor use docker/bin/test.\n' "$phpunit" >&2
+    exit 2
+fi
+phpunit_cmd() {
+    if [ -n "${FLAT_TEST_BOOTSTRAP:-}" ]; then
+        "$php_bin" "$phpunit" --bootstrap "$FLAT_TEST_BOOTSTRAP" --testsuite unit "$@"
+    else
+        "$php_bin" "$phpunit" --testsuite unit "$@"
+    fi
+}
+if [ "$action" = inventory ]; then
+    if [ -n "$defects_file" ] && [ ! -f "$defects_file" ]; then
+        printf 'Defects file not found: %s\n' "$defects_file" >&2; exit 2
+    fi
+    # Only the Markdown goes to stdout.
+    list_dir=build/tests/inventory
+    mkdir -p "$list_dir"
+    phpunit_cmd --list-tests-xml "$list_dir/tests.xml" >/dev/null
+    if [ -n "$defects_file" ]; then
+        exec "$php_bin" tests/tools/inventory.php "$list_dir/tests.xml" "$defects_file"
+    fi
+    exec "$php_bin" tests/tools/inventory.php "$list_dir/tests.xml"
+fi
+case "$test_mode" in
+    unit) set -- --exclude-group services "$@" ;;
+    services) set -- --group services "$@" ;;
+    mongo) set -- --group mongo "$@" ;;
+    rabbitmq) set -- --group rabbitmq "$@" ;;
+esac
+if "$coverage"; then
+    report_dir="build/tests/$test_mode"
+    mkdir -p "$report_dir"
+    set -- --coverage-text="$report_dir/coverage.txt" \
+        --coverage-clover="$report_dir/coverage.xml" \
+        --coverage-php="$report_dir/coverage.php" \
+        --log-junit="$report_dir/junit.xml" "$@"
+fi
+phpunit_cmd "$@"
