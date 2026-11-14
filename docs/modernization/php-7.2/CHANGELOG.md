@@ -2476,3 +2476,12 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   blank line would not render as a table). Confirmed it fails when the blank
   line is put back.
 - No code change. Undo: revert this commit.
+
+## MOD-143 — Rule: Markdown must read well as plain text
+
+- Added to `AGENTS.md` (Documentation rules) and to the conventions in
+  `docs/modernization/README.md`: tables only for short, regular data.
+- Not yet applied to existing documents; the widest tables are
+  `active/KNOWN-DEFECTS.md`, `active/CONSUMER-IMPACT.md`, `active/MUTATION-PROBE.md`
+  and the generated `TEST-INVENTORY.md`. Converting them is proposed separately.
+

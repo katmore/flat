@@ -29,4 +29,5 @@ Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP
  * File names have at most three words, preferably two. The folder says what kind of document it is; the file name says what it is about.
  * Folder names are lowercase.
  * `TEST-INVENTORY.md` is generated, never edited by hand: `docker/bin/test inventory <phase>/active/KNOWN-DEFECTS.md > <phase>/TEST-INVENTORY.md`.
+ * Markdown is written to read well both rendered and as plain text: headings, short paragraphs and lists; tables only for short, regular data (a few short cells per row), never for sentences.
  * How to run the tests, for every phase: [TESTING.md](./TESTING.md).

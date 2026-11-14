@@ -44,6 +44,10 @@ repository broke this, and had to be replaced.)
 - Follow the naming and layout conventions in `docs/modernization/README.md`
   ("Conventions"): UPPERCASE file names of at most three words (preferably
   two), one folder per phase with `active/`, `notes/` and `history/`.
+- Markdown must read well both rendered and as plain text. Use headings,
+  short paragraphs and lists. A table is for short, regular data (a few
+  columns of a few words each); never put sentences in cells or let a row run
+  past a normal line width. If it would need HTML to look right, restructure it.
 - Never delete documents. A finished or replaced document moves to the phase's
   `history/` folder and starts with a banner saying what replaced it.
 - Generated files are never edited by hand. Regenerate the phase's
