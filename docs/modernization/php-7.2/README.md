@@ -4,16 +4,16 @@ The first modernization phase: flat as it stood in 2020, running on PHP 7.2,
 with a full test suite and its known bugs fixed. The project plan, branch
 model and the rules every phase follows are in [../README.md](../README.md).
 
-## Status (2026-11-13)
+## Status (2026-11-14)
 
-- **Tests:** 1,374 tests pass on PHP 7.2.34 with 100% class, method and line
+- **Tests:** 1,393 tests pass on PHP 7.2.34 with 100% class, method and line
   coverage. How to run them: [../TESTING.md](../TESTING.md).
-- **Known defects:** 75 tracked, 73 resolved (fixed, already fixed, or
-  confirmed as intended), 2 open: KD-72 and KD-74 wait for the owner's answers to Q25 and Q26.
+- **Known defects:** 76 tracked, 75 resolved (fixed, already fixed, or
+  confirmed as intended), 1 open: KD-76 waits for the owner's answer to Q27.
   Record: [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
 - **Test-strength tasks:** TS-01 to TS-05 done (first mutation-probe sample:
-  [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)); TS-06 open: 54 survivor
-  lines not yet pinned or shown equivalent.
+  [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)); TS-06 in progress: 31 survivor
+  lines still to pin or show equivalent.
 - **Not started:** functional tests against `flat-webapp`.
 - **Not done until** the owner declares the phase complete.
 
@@ -43,7 +43,7 @@ For a person or an agent picking this up:
 
 ## Next
 
-1. Answer Q25 and Q26, then TS-06: work through the remaining survivor lines and
+1. Answer Q27, then finish TS-06: work through the remaining survivor lines and
    run further probe seeds (also with `--services`).
 2. Write functional tests with `flat-webapp`.
 3. Owner decides the phase is complete; then it moves to `modernize-26`.

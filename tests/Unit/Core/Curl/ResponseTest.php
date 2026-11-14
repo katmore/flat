@@ -180,6 +180,14 @@ namespace flat\test\Unit\Core\Curl {
             $this->assertTrue(response::is_robots_allowed('https://example.com/page','agent'));
             $this->assertFalse(response::is_robots_allowed('https://example.com/page','other'));
         }
+        public function testNoCookieFileIsCreatedUnlessCookiesAreAccepted()
+        {
+            $pattern = sys_get_temp_dir().'/flat_curl_cookie_*';
+            $before = glob($pattern);
+            $response = new response($this->config(), []);
+            $this->assertSame($before, glob($pattern));
+            unset($response);
+        }
 
         public function testFalsyTextBodyInitializesDomOnDemand()
         {

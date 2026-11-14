@@ -121,6 +121,16 @@ class ConfigTest extends TestCase
         // Only the exact prefix counts.
         $this->assertSame('fallback', config::get('flatten/settings/a', ['default' => 'fallback']));
     }
+    public function testEachConfigFileIsIncludedOnlyOnce()
+    {
+        $GLOBALS['flat_config_includes'] = 0;
+        $this->file('counted.php', '<?php $GLOBALS["flat_config_includes"]++; return ["a"=>1,"b"=>2];');
+        $this->ready();
+        $this->assertSame(1, config::get('counted/a'));
+        $this->assertSame(2, config::get('counted/b'));
+        $this->assertSame(1, $GLOBALS['flat_config_includes']);
+        unset($GLOBALS['flat_config_includes']);
+    }
 
     public function testNonStringKeyThrows()
     {

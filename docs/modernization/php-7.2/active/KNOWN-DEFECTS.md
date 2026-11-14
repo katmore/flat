@@ -105,10 +105,11 @@ Its test carries `@group known-defect` until the fix lands, so
 | KD-69 | Data mapper | `field_list()` caches one list for every `flat\data` subclass, so later classes get the first class's fields (and `is_field()` answers wrongly) | `Data/MapperTest::testFieldListUsesTheInstanceAndCachesPerClass` | A | Cache per class | fixed (MOD-126) |
 | KD-70 | cURL config | The constructor's second loop re-assigns every text argument, so unset `request_method`, `user_agent`, `referrer` and `cache_dir` become `null` instead of their declared defaults (`GET`, `flat/curl`) | `Core/Curl/ConfigTest::testExplicitConfigurationAndNumericDefaults` | B | Q24 | fixed (MOD-136) |
 | KD-71 | UUID | `uuid::__invoke($version, $namespace, $name)` passed `$version=4, $namespace=null, $name=null` (assignments), so it always returned a random v4 UUID; its test asserted that | `Core/UuidTest::testInvokeGeneratesTheRequestedVersion` | A | Pass the arguments through | fixed (MOD-137) |
-| KD-72 | Random numbers | `$rand()` on an object built with bounds (`new rand(5, 10)`) ignores them and uses 0 to `getrandmax()`; `generate()` uses them | `Core/RandTest::testInvocationWithoutArgumentsCurrentlyIgnoresConstructedBounds` | B | Q25 | open |
+| KD-72 | Random numbers | `$rand()` on an object built with bounds (`new rand(5, 10)`) ignores them and uses 0 to `getrandmax()`; `generate()` uses them | `Core/RandTest::testInvocationWithoutArgumentsUsesTheConstructedBounds` | B | Q25 | fixed (MOD-140; `$rand()` without arguments now uses the constructed bounds) |
 | KD-73 | Config | A key starting with the `flat/` namespace removed its last five characters instead of the prefix (`flat/settings/a` became `flat/s`), so such keys never resolved; a test asserted that ("do not correct it here") | `Core/ConfigTest::testPathsAreNormalizedAndBaseNamesAreRemoved` | A | Remove the prefix from the front | fixed (MOD-139) |
-| KD-74 | IP lookup | `ipinfodb::location_ttl = 604800` is commented "1 day" but 604800 seconds is 7 days (a day is 86400) | `Cloud/IpInfoDbTest::testCachedRecordExpiresExactlyAtItsTimeToLive` (pins the boundary, not the length) | B | Q26 | open |
+| KD-74 | IP lookup | `ipinfodb::location_ttl = 604800` is commented "1 day" but 604800 seconds is 7 days (a day is 86400) | `Cloud/IpInfoDbTest::testCachedRecordExpiresExactlyAtItsTimeToLive` (pins the boundary, not the length) | B | Q26 | fixed (MOD-140; comment corrected, 7 days kept) |
 | KD-75 | Mongo driver | `getMongoDBClient()` guarded its default with `if (!$options===null)`, which parses as `(!$options)===null` and can never be true | `Db/Mongo/CrudTest::testClientOptionsChooseTheServer` | A | `if ($options===null)` (no behavior change: `isset()` on `null` already worked) | fixed (MOD-139) |
+| KD-76 | XML encoding | The XML encoder labels any string `strtotime()` can parse as `xs:DateTime`, including single letters such as `'a'` (a timezone abbreviation) | `Core/Xml/EncodeTest::testSingleLettersAreCurrentlyTypedAsDateTime` (`@group known-defect`) | B | Q27 | open |
 
 ## Test-strength tasks
 
@@ -123,7 +124,7 @@ strengthens assertions.
 | TS-03 | Input map | No test that `0`, `false` and `"0"` count as empty input | done (MOD-137) |
 | TS-04 | CSV | No test that `fields2csv([])` returns a newline | done (MOD-137) |
 | TS-05 | Whole suite | Run a broader mutation probe; the 14-mutation sample in MOD-111 found two gaps | first sample done (MOD-139; [MUTATION-PROBE.md](MUTATION-PROBE.md)) |
-| TS-06 | Whole suite | 54 survivor lines from the first probe sample are not yet pinned or shown equivalent (listed in [MUTATION-PROBE.md](MUTATION-PROBE.md)); then run further seeds and the services mode | open |
+| TS-06 | Whole suite | The 54 survivor lines from the first probe sample were re-probed on 2026-11-14 with the services running: some are now pinned or caught, **31 lines (41 mutants) still survive** and are listed in [MUTATION-PROBE.md](MUTATION-PROBE.md#ts-06-follow-up); each needs a test or an equivalence note; then run further seeds | open (in progress) |
 
 Reviewed and **not** treated as defects: `scalar` empty-input fallback (owner
 contract), Mongo affected-record policy, `app_error` summaries, `input\map`
@@ -241,7 +242,14 @@ agreed with every recommendation); questions 25 and 26 are open.
     when called without arguments (explicit arguments still win), so an object
     built with `new rand(5, 10)` behaves the same through `generate()` and
     `$rand()`.
+    **Answered: agreed** (owner, 2026-11-14). Fixed in MOD-140.
 26. **KD-74 IP location cache lifetime.** The constant is 604800 seconds (7 days)
     but its comment says "1 day". Which is intended? Recommend: keep 7 days (a
     week is a sensible lifetime for IP location data, and a change would send
     seven times as many lookups to the paid external API) and correct the comment.
+    **Answered: agreed** (owner, 2026-11-14). Comment corrected in MOD-140.
+27. **KD-76 XML `xs:DateTime` label.** The encoder marks a string as `xs:DateTime` whenever
+    `strtotime()` accepts it, so `'a'`, `'z'` or `'mon'` come out as dates. Should only
+    strings that look like ISO-8601 dates or times get that label? Recommend: yes
+    (anything else stays a string); this changes the type label consumers see in XML
+    for such strings.

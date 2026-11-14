@@ -40,6 +40,14 @@ class AuthorizeDataTest extends TestCase
         $schedule = new ScheduleFixture(['startDate'=>'2020-03-04','startDate_timeZone'=>'invalid/timezone']);
         $this->assertNull($schedule->startDate);
     }
+    public function testStartDateIsNormalizedToIsoFormat()
+    {
+        $this->assertSame('2020-03-04',(new ScheduleFixture(['startDate'=>'March 4, 2020']))->startDate);
+        $this->assertSame('2020-03-04',(new ScheduleFixture(['startDate'=>'2020-03-04']))->startDate);
+        $this->assertEmpty((new ScheduleFixture(['startDate'=>'']))->startDate);
+        $this->assertNotSame('1970-01-01',(new ScheduleFixture(['startDate'=>'']))->startDate);
+        $this->assertNull((new ScheduleFixture([]))->startDate);
+    }
     public function testValidTimezoneConversionUsesNativeDateTimeZone()
     {
         $schedule = new ScheduleFixture(['startDate'=>'2020-03-04','startDate_timeZone'=>'UTC']);

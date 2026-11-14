@@ -26,6 +26,20 @@ namespace flat\test\Unit\Data {
             $this->assertSame('value',TypedBase::typed_load(['value'=>'value'],'item')->value);
             $this->assertNull(TypedBase::typed_load(['type'=>'missing']));
         }
+    /** @dataProvider unusableExplicitTypes */
+    public function testUnusableExplicitTypesFallBackToTheDiscriminator($explicit)
+    {
+        $data = TypedBase::typed_load(['type'=>'item','value'=>7],$explicit);
+        $this->assertInstanceOf(TypedBase\item::class,$data);
+        $this->assertSame(7,$data->value);
+    }
+    public function unusableExplicitTypes() { return [[''],[null],[5],[['item']]]; }
+    public function testAnExplicitTypeWinsOverTheDiscriminator()
+    {
+        $data = TypedBase::typed_load(['type'=>'missing','value'=>'kept'],'item');
+        $this->assertInstanceOf(TypedBase\item::class,$data);
+        $this->assertSame('kept',$data->value);
+    }
         public function testMediaDefaultsAndExplicitMetadata()
         {
             $media = new \flat\data\datestamped\media;

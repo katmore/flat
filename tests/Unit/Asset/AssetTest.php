@@ -13,6 +13,12 @@ class UncheckedSystemAsset extends LocalAsset
 {
     public function get_system(int $flags = null) { return self::$root.'/'.$this->get_resource_uri(); }
 }
+class RealpathAsset extends asset implements \flat\asset\base, \flat\asset\system_base
+{
+    public static $root;
+    public function _get_base() { return 'https://example.com/static/'; }
+    public function _get_system_base() { return self::$root; }
+}
 class EmptyBaseAsset extends LocalAsset { public function _get_system_base() { return ''; } }
 class TransformAsset extends LocalAsset implements \flat\asset\resource\transform
 {
@@ -122,6 +128,19 @@ class AssetTest extends TestCase
         $this->assertNull((new asset('app.js'))->get_system());
         $this->assertSame('data:text/plain;base64,'.base64_encode('  var app = 1;  '), $this->output(function () use ($asset) { $asset->print_data_uri('text/plain'); }));
         $this->assertStringContainsString(';base64,', $this->output(function () use ($asset) { $asset->print_data_uri(); }));
+    }
+    public function testAbsoluteSystemPathsAreCanonicalized()
+    {
+        mkdir($this->root.'/sub');
+        RealpathAsset::$root = $this->root.'/sub/..';
+        $asset = new RealpathAsset('app.js');
+        $this->assertSame($this->root.'/sub/../app.js', $asset->get_system());
+        $this->assertSame(realpath($this->root).'/app.js', $asset->get_system(asset::SYSTEM_PATH_ABSOLUTE));
+    }
+    public function testAHtmlCallbackAloneIsRegisteredAsOutput()
+    {
+        asset::register_html_special(function () { echo 'from callback;'; });
+        $this->assertSame('from callback;', $this->output(function () { asset::print_registered_assets(); }));
     }
     /** @dataProvider invalidSystemPaths */
     public function testFilesystemPathFailures($kind, $flags, $message)

@@ -120,6 +120,14 @@ class CrudTest extends TestCase
         $this->expectException(\MongoDB\Driver\Exception\Exception::class);
         $client->selectDatabase($this->database)->command(['ping'=>1]);
     }
+    public function testClientOptionsAreKeptWhenSelectingAClient()
+    {
+        $uri = $this->driver->get_uri();
+        $plain = $this->driver->get_client($uri);
+        $tuned = $this->driver->get_client($uri,['client_options'=>['connect'=>false,'serverSelectionTimeoutMS'=>77]]);
+        $this->assertNotSame($plain,$tuned);
+        $this->assertSame($tuned,$this->driver->get_client($uri,['client_options'=>['connect'=>false,'serverSelectionTimeoutMS'=>77]]));
+    }
     public function testExpiredCachedPingUsesTheRealDatabaseAndKeepsTheClient()
     {
         $client = $this->driver->get_client();

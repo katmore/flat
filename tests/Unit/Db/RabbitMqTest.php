@@ -130,6 +130,16 @@ class RabbitMqTest extends TestCase
         $this->expectException(rabbitmq\exception\bad_param::class);
         $this->driver->publish([]);
     }
+    public function testConnectionCacheKeyDependsOnTheConnectionParameters()
+    {
+        $hash = new \ReflectionMethod(\flat\db\driver\rabbitmq::class,'_param_to_hash'); $hash->setAccessible(true);
+        $this->assertSame(md5(''),$hash->invoke(null,null));
+        $this->assertSame(md5(''),$hash->invoke(null,[]));
+        $first = $hash->invoke(null,['host'=>'first.example']);
+        $this->assertNotSame(md5(''),$first);
+        $this->assertNotSame($first,$hash->invoke(null,['host'=>'second.example']));
+        $this->assertSame($first,$hash->invoke(null,['host'=>'first.example']));
+    }
     /**
      * @group services
      * @group rabbitmq

@@ -2435,3 +2435,21 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - Verified: `docker/bin/test all --coverage` passes 1,374 tests; 100% classes
   (331/331), methods (1,062/1,062), lines (8,050/8,050). One `known-defect` test
   remains (KD-72, awaiting Q25).
+
+## MOD-140 — Owner answers Q25/Q26; TS-06 first round
+
+- KD-72 (fix, owner agreed Q25): `rand::__invoke()` called with no arguments now
+  uses the bounds given to the constructor, like `generate()`; explicit
+  arguments still win. Consumer impact row added.
+- KD-74 (comment only, owner agreed Q26): `ipinfodb::location_ttl` stays 604800
+  seconds; the comment now says 7 days.
+- KD-76 (new, question 27): the XML encoder labels strings such as `'a'` as
+  `xs:DateTime`. Not changed; pinned by a `known-defect` test.
+- TS-06: tests added for CLI resource index and error data, config prefix and
+  `.php` filtering, debug, cURL response and exception, typed loader (unusable
+  explicit types), schedule start dates (empty), HTML/XML encoding, asset
+  realpath, the RabbitMQ connection cache key and Mongo client options. Re-probing
+  the 54 lines with services leaves 31 lines (41 mutants) open; see
+  [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md#ts-06-follow-up).
+- Files changed: `src/flat/core/rand.php`, `src/flat/cloud/ipinfodb.php`, tests.
+- Undo: revert this commit.- Verified: `docker/bin/test all --coverage` passes 1,393 tests; 100% methods (1,062/1,062) and lines (8,051/8,051). The suite has one `known-defect` test left (KD-76).

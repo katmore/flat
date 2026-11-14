@@ -198,6 +198,11 @@ class LegacyErrorMessagesTest extends TestCase
             $this->assertSame('xpath error',(new \flat\core\curl\exception\xpath_error(null))->getMessage());
         } finally { libxml_clear_errors(); libxml_use_internal_errors($previous); }
     }
+    public function testXpathErrorMessageNamesTheQueryOnceWhateverTheDetails()
+    {
+        $this->assertSame(1,substr_count((new \flat\core\curl\exception\xpath_error('//bad','explicit'))->getMessage(),'//bad'));
+        $this->assertSame(1,substr_count((new \flat\core\curl\exception\xpath_error('//bad','failed on //bad'))->getMessage(),'//bad'));
+    }
     public function testScalarTypeErrorUsesItsSuppliedTypeWithoutAnUndefinedLocal()
     {
         foreach (['array','object',12] as $type) {

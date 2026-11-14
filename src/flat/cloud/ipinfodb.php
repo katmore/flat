@@ -53,7 +53,7 @@ abstract class ipinfodb {
    /**
     * number of seconds IP data that exists in Mongo is considered usable
     */
-   const location_ttl = 604800; //1 day = 604800 seconds
+   const location_ttl = 604800; //7 days = 604800 seconds (owner answer, known-defects Q26)
    
    private $_result;
    /**

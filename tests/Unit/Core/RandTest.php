@@ -97,21 +97,17 @@ class RandTest extends TestCase
             $this->assertLessThanOrEqual(10, $invoked);
         }
     }
-    /** @group known-defect */
-    public function testInvocationWithoutArgumentsCurrentlyIgnoresConstructedBounds()
+    public function testInvocationWithoutArgumentsUsesTheConstructedBounds()
     {
         $rand = new rand(5, 10);
-        for ($i = 0; $i < 50; $i++) {
-            $this->assertGreaterThanOrEqual(5, $rand->generate());
-            $this->assertLessThanOrEqual(10, $rand->generate());
+        for ($i = 0; $i < 60; $i++) {
+            $this->assertGreaterThanOrEqual(5, $rand());
+            $this->assertLessThanOrEqual(10, $rand());
         }
-        // Invoked without arguments, the object falls back to 0..getrandmax().
-        $outside = 0;
-        for ($i = 0; $i < 100; $i++) {
-            $value = $rand();
-            $this->assertGreaterThanOrEqual(0, $value); $this->assertLessThanOrEqual(getrandmax(), $value);
-            if ($value > 10) $outside++;
-        }
-        $this->assertGreaterThan(0, $outside);
+        // Explicit arguments win over the constructed bounds.
+        for ($i = 0; $i < 60; $i++) { $value = $rand(20, 30); $this->assertGreaterThanOrEqual(20, $value); $this->assertLessThanOrEqual(30, $value); }
+        // A maximum alone keeps the default minimum of 0.
+        for ($i = 0; $i < 60; $i++) $this->assertLessThanOrEqual(3, $rand(0, 3));
+        $this->assertSame(7, (new rand(7, 7))());
     }
 }

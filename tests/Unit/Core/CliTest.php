@@ -62,6 +62,22 @@ class CliTest extends TestCase
         cli::set_argv(['tool', '-p', '--flag']); $this->assertSame('', cli::get_option('port', 'p'));
         cli::set_argv(['tool', '--port-other=wrong']); $this->assertNull(cli::get_option('port'));
     }
+    public function testShortAliasTakesTheArgumentAfterItsOwnOptionOnly()
+    {
+        cli::set_argv(['tool','task','-a','first','-o','second']);
+        $this->assertSame('second',cli::get_option('out','o'));
+        // A following option is not a value, even when its second character is not a dash.
+        cli::set_argv(['tool','task','-o','-x']);
+        $this->assertSame('',cli::get_option('out','o'));
+    }
+    public function testResourceIndexZeroIsAllowedAndShortOptionValuesAreEnumerated()
+    {
+        cli::set_argv(['tool','task'],2,0);
+        $this->assertSame('tool',cli::get_resource());
+        cli::set_argv(['tool','task','-a','val','--long=x','--flag']);
+        $this->assertSame([['a'=>'val'],['long'=>'x']],cli::enum_optval());
+        $this->assertSame(['flag'],cli::enum_flag());
+    }
     public function testEnumerationsMatchDocumentedExample()
     {
         cli::set_argv(['cli.php','some-command','some-arg','--some-flag','--foo','bar1','--foo=bar2','--','--another-option','anotherValue','-f=bar1','-f=bar2','-x','-y','-z','-invalid-flag','-invalid-optval=foobar']);

@@ -81,6 +81,21 @@ class EncodeTest extends TestCase
         $this->assertSame('extxs:Mixed[3]',$root->getAttribute('extxs:ArrayType'));
         $this->assertSame('array',$root->getElementsByTagNameNS(encode::xmlns,'data')->item(0)->getAttribute('fx:php-type'));
     }
+    public function testDateAndBinaryLookingStringsGetTheirSchemaTypes()
+    {
+        $xml = encode::serialize(['when'=>'2020-01-01 10:00:00','h'=>'deadbeef','plain'=>'zzz zzz']);
+        $this->assertStringContainsString('xsi:type="xs:DateTime">2020-01-01 10:00:00<',$xml);
+        $this->assertStringContainsString('xsi:type="xs:hexBinary">deadbeef<',$xml);
+        $this->assertStringContainsString('xsi:type="xs:string">zzz zzz<',$xml);
+    }
+    /** @group known-defect */
+    public function testSingleLettersAreCurrentlyTypedAsDateTime()
+    {
+        // strtotime() reads a lone letter as a military time-zone, so it counts as a date.
+        $xml = encode::serialize(['a','b']);
+        $this->assertSame(2,substr_count($xml,'xsi:type="xs:DateTime"'));
+        $this->assertStringContainsString('fx:php-type="string"',$xml);
+    }
     public function testArrayTypeDetectionInspectsTheFirstTenKeys()
     {
         $detect = new \ReflectionMethod(encode::class,'_get_xsi_type'); $detect->setAccessible(true);

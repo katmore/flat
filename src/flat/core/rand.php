@@ -118,8 +118,13 @@ class rand implements \flat\core\generator {
       self::_check_params($min,$max);
       return self::_get($min, $max);
    }   
-   public function __invoke( $min=0, $max=NULL) {
-      return self::get($min,$max);
+   /**
+    * Without arguments, uses the bounds this object was built with (owner
+    * answer, known-defects Q25); explicit arguments win.
+    */
+   public function __invoke( $min=NULL, $max=NULL) {
+      if ($min === NULL && $max === NULL) return $this->generate();
+      return self::get($min === NULL ? 0 : $min,$max);
    }
    /**
     * generates a random integer as prepared in constructor

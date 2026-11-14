@@ -40,6 +40,15 @@ class EncodeTest extends TestCase
         $this->assertStringContainsString('<section data-item-hashmap>', $custom);
         $this->assertStringContainsString('<article data-item', $custom);
     }
+    public function testNestedItemsAreIndentedPerLevelAndIntegerKeysAreNotShown()
+    {
+        $html = encode::serialize(['a'=>['b'=>1], 5=>2]);
+        $this->assertSame(1,preg_match('/^ {3}<li data-item data-key="a">/m',$html));
+        $this->assertSame(1,preg_match('/^ {6}<li data-item data-key="b">/m',$html));
+        $this->assertStringContainsString('<span data-item-key>a</span>',$html);
+        $this->assertStringContainsString('<li data-item data-key="5"><span data-item-value>',$html);
+        $this->assertStringNotContainsString('<span data-item-key>5</span>',$html);
+    }
     public function testResourcesUseDumpAndUnknownType()
     {
         $resource = fopen('php://memory', 'w+');

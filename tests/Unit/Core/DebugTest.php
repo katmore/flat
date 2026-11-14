@@ -59,6 +59,11 @@ class DebugTest extends TestCase
         $this->assertStringContainsString('exit status:</strong> 7',$out);
         $this->assertSame('',$err);
     }
+    public function testDisplayIsNotSuppressedByDefault()
+    {
+        list($status,$out,$err) = $this->subprocess('echo json_encode(\\flat\\core\\debug::is_suppress_active());');
+        $this->assertSame(0,$status,$err); $this->assertSame('false',$out);
+    }
     public function testKillHonorsAPlainExitStatus()
     {
         list($status,$out,$err) = $this->subprocess('\\flat\\core\\debug::kill("plain", ["exit_status"=>9]);');

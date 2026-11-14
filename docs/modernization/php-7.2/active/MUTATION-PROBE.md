@@ -12,7 +12,7 @@ is a record, so it is edited by hand when a follow-up closes an item.
   partly false alarms. Re-running every mutant on the 21 affected lines with the services running
   (`docker/bin/mutate --services`) caught 24 of 34.
 - The 98 distinct source lines that had a survivor were each read in context and sorted:
-  **30 now pinned by tests, 14 equivalent, 54 not yet addressed** (TS-06 in [KNOWN-DEFECTS.md](KNOWN-DEFECTS.md)).
+  **30 now pinned by tests, 14 equivalent, 54 not yet addressed at the time; 31 lines still open after the follow-up below** (TS-06 in [KNOWN-DEFECTS.md](KNOWN-DEFECTS.md)).
 - After the new tests, re-running the same lines caught every mutant except the equivalent ones.
 
 ## What the probe found
@@ -160,3 +160,51 @@ and option plumbing. Each needs a look at what the line is for before choosing b
 docker/bin/mutate --limit=100 --seed=1 > build/tests/mutate-seed1.md        # unit suite
 docker/bin/mutate --services --at=src/flat/db/driver/mongo.php:350 src/flat/db   # one line, with services
 ```
+
+## TS-06 follow-up
+
+On 2026-11-14 all 54 lines of the table above were probed again (109 mutants, services running, seed 1) after the round of new tests: **68 killed, 41 still survive** on the lines below. One caution: an earlier spot check of `cli.php` used a path that matched no file, so its lines were not actually re-probed then; this run covers them. Triage so far: `core/xml/encode.php` 293 and 294 set the options `string` and `DateTime` to `true`, which is already their default (equivalent); `core/config.php` 694 (an already loaded file returns early) can only be observed if a file named `.php` exists in the config folder (equivalent in practice). The rest are open.
+
+| File | Line | Mutation | Source line |
+| --- | --- | --- | --- |
+| `asset.php` | 728 | `false` to `true` | `$filterByPosition = false;` |
+| `asset.php` | 855 | `&&` to `||` | `count($asset_dependency) === 1 && $asset_dependency = [` |
+| `asset.php` | 855 | `===` to `!==` | `count($asset_dependency) === 1 && $asset_dependency = [` |
+| `asset.php` | 855 | `1` to `0` | `count($asset_dependency) === 1 && $asset_dependency = [` |
+| `asset.php` | 887 | `true` to `false` | `if (in_array($html_position_type, self::VALID_POSITIONS, true)) {` |
+| `asset.php` | 1084 | `++` to `--` | `for ($i = 0; $i < $level_count; $i++) {` |
+| `asset.php` | 1084 | `<` to `<=` | `for ($i = 0; $i < $level_count; $i++) {` |
+| `asset.php` | 1290 | `&&` to `||` | `if (isset($depends_asset['depends']) && is_array($depends_asset['depends'])) {` |
+| `asset.php` | 1355 | `&&` to `||` | `if (!isset($param['hash']) && (!isset($param['hash_handle_prefix']) \|\| !is_string($param['hash_handle_prefix']` |
+| `asset.php` | 1355 | `||` to `&&` | `if (!isset($param['hash']) && (!isset($param['hash_handle_prefix']) \|\| !is_string($param['hash_handle_prefix']` |
+| `asset.php` | 1355 | `!` to `(removed)` | `if (!isset($param['hash']) && (!isset($param['hash_handle_prefix']) \|\| !is_string($param['hash_handle_prefix']` |
+| `asset.php` | 1355 | `!` to `(removed)` | `if (!isset($param['hash']) && (!isset($param['hash_handle_prefix']) \|\| !is_string($param['hash_handle_prefix']` |
+| `asset.php` | 1363 | `false` to `true` | `$resolved = false;` |
+| `asset.php` | 1365 | `||` to `&&` | `if ($resource !== null \|\| !$resolved) {` |
+| `asset.php` | 1365 | `!==` to `===` | `if ($resource !== null \|\| !$resolved) {` |
+| `asset.php` | 1365 | `!` to `(removed)` | `if ($resource !== null \|\| !$resolved) {` |
+| `cli/error.php` | 54 | `&&` to `||` | `if (!empty($data) && is_array($data)) {` |
+| `core/cli.php` | 153 | `1` to `0` | `if (!is_int($resource_idx) \|\| ($resource_idx<0)) $resource_idx=1;` |
+| `core/cli.php` | 153 | `||` to `&&` | `if (!is_int($resource_idx) \|\| ($resource_idx<0)) $resource_idx=1;` |
+| `core/cli.php` | 436 | `true` to `false` | `$flag['-'] = true;` |
+| `core/config.php` | 177 | `true` to `false` | `self::$ref_searched[$basename][$ns]=true;` |
+| `core/config.php` | 639 | `&&` to `||` | `if (is_file($filename) && is_readable($filename) && (pathinfo($filename,\PATHINFO_EXTENSION)=='php')) {` |
+| `core/config.php` | 694 | `true` to `false` | `if (in_array($file,self::$loaded)) return true;` |
+| `core/controller/api.php` | 92 | `true` to `false` | `$error_callback_invoked = true;` |
+| `core/controller/asset/deprecated_methods_trait.php` | 29 | `&&` to `||` | `if (is_array($param) && !empty($param['flag']) && is_array($param['flag'])) {` |
+| `core/controller/asset/deprecated_methods_trait.php` | 29 | `&&` to `||` | `if (is_array($param) && !empty($param['flag']) && is_array($param['flag'])) {` |
+| `core/controller/tmpl.php` | 396 | `&&` to `||` | `if (is_file($file) && is_readable($file)) {` |
+| `core/util/deepcopy.php` | 37 | `false` to `true` | `$objects_to_stdClass = false;` |
+| `core/util/validate/value.php` | 49 | `false` to `true` | `'exception'=>false` |
+| `core/xml/dom.php` | 399 | `false` to `true` | `$doc->preserveWhiteSpace = false;` |
+| `core/xml/encode.php` | 293 | `true` to `false` | `'string'=>true,` |
+| `core/xml/encode.php` | 294 | `true` to `false` | `'DateTime'=>true,` |
+| `core/xml/encode.php` | 327 | `0` to `1` | `if (is_numeric(substr($attr,0,1))) $attr="hash_".$attr;` |
+| `core/xml/encode.php` | 327 | `1` to `0` | `if (is_numeric(substr($attr,0,1))) $attr="hash_".$attr;` |
+| `core/xml/encode.php` | 506 | `true` to `false` | `$last_type = self::_get_xsi_type($v,['string'=>true]);` |
+| `core/xml/encode.php` | 515 | `1` to `0` | `private static function _data_to_xml($data, $default_node, $indent_level=1, $indent_size=3, $dump_ok=true,$che` |
+| `core/xml/encode.php` | 515 | `true` to `false` | `private static function _data_to_xml($data, $default_node, $indent_level=1, $indent_size=3, $dump_ok=true,$che` |
+| `core/xml/encode.php` | 649 | `false` to `true` | `if ($xml !== null && $xml !== false) return $xml;` |
+| `core/xml/encode.php` | 661 | `>` to `>=` | `return "<$default_node$checksum_attr><!--unserializable--></$default_node>";` |
+| `data/orm/driver/session.php` | 81 | `false` to `true` | `\flat\core\config::get("data/orm/driver/session/handler",['default'=>false]),$param` |
+| `data/scalar.php` | 89 | `&&` to `||` | `is_array($value->data) &&` |
