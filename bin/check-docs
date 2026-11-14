@@ -5,6 +5,7 @@
  *
  *  - relative links `[text](path)` must point to an existing file or folder;
  *  - `#anchor` parts must match a heading in the target (GitHub anchor rules);
+ *  - table rows must stay under 100 characters (longer text belongs in a list);
  *  - a table must not be split by a blank line (the rows after it would render as
  *    one paragraph);
  *  - paths written in backticks that start at the repository root
@@ -76,11 +77,15 @@ $problems = [];
 $linkCount = $pathCount = 0;
 foreach ($files as $file) {
     $rows = file("$root/$file", FILE_IGNORE_NEW_LINES);
+    $isRecordFile = basename($file) === 'CHANGELOG.md' || strpos("/$file", '/history/') !== false;
     $fence = false;
     foreach ($rows as $n => $row) {
         if (preg_match('/^\s*(```|~~~)/', $row)) { $fence = !$fence; continue; }
         if (!$fence && $n >= 2 && $row !== '' && $row[0] === '|' && $rows[$n - 1] === '' && substr($rows[$n - 2], 0, 1) === '|') {
             $problems[] = $file . ': table split by a blank line before line ' . ($n + 1);
+        }
+        if (!$fence && $row !== '' && $row[0] === '|' && strlen($row) > 100 && !$isRecordFile) {
+            $problems[] = $file . ': table row longer than 100 characters at line ' . ($n + 1);
         }
     }
     $dir = dirname("$root/$file");

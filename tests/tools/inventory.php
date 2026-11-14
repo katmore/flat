@@ -81,8 +81,7 @@ foreach ($document->getElementsByTagName('testCaseClass') as $class) {
             elseif (isset($defectIds[$short])) $notes[] = '**known defect ' . implode(', ', $defectIds[$short]) . '**';
             else $notes[] = '**known defect (no KD entry found)**';
         }
-        $words = preg_replace('/(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/', ' ', substr($name, 4));
-        $rows[] = "| {$info['line']} | `$name` | $words | " . implode('; ', $notes) . ' |';
+        $rows[] = "- `$name` (line {$info['line']})" . ($notes ? ': ' . implode('; ', $notes) : '');
     }
     $files[$relative] = $rows;
 }
@@ -98,11 +97,10 @@ echo "- $methodCount test methods in " . count($files) . " files, running $caseC
 echo "- $providerCount methods use a data provider (one case per data set).\n";
 echo "- $defectCount methods still assert defective behavior (`@group known-defect`)"
     . ($defectsFile ? "; KD IDs are from `" . $defectsFile . "`" : '') . ".\n";
-echo "- \"Reads as\" splits the method name into words; the name is the test's claim.\n";
+echo "- Each entry is a test method with its line in the file; the method name is the test's claim.\n";
 echo "- Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.\n\n";
 echo "## Files\n";
 foreach ($files as $relative => $rows) {
     echo "\n### `$relative` (" . count($rows) . ")\n\n";
-    echo "| Line | Method | Reads as | Notes |\n| --- | --- | --- | --- |\n";
     echo implode("\n", $rows), "\n";
 }

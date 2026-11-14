@@ -101,15 +101,13 @@ on services in Compose, so unit mode needs only the PHP image.
 
 ## What runs where
 
-| Component | Runtime |
-| --- | --- |
-| PHP/PHPUnit | PHP 7.2.34 container, pinned official base digest |
-| MongoDB integration | Separate pinned MongoDB 4.0 Compose service |
-| RabbitMQ integration | Separate pinned RabbitMQ 3.8.34 Compose service |
-| PDO | Native SQLite inside the PHP container; no MySQL service is currently used |
-| SSH/SFTP unit cases | Explicit transport/clock double with native local streams; no SFTP server is claimed |
-| Native HTTP/session/process fixtures | Test-owned child PHP processes inside the PHP container |
-| Mongo outage fixture | Test-owned TCP proxy child inside PHP, forwarding real bytes to MongoDB |
+- PHP/PHPUnit: PHP 7.2.34 container, pinned official base digest
+- MongoDB integration: Separate pinned MongoDB 4.0 Compose service
+- RabbitMQ integration: Separate pinned RabbitMQ 3.8.34 Compose service
+- PDO: Native SQLite inside the PHP container; no MySQL service is currently used
+- SSH/SFTP unit cases: Explicit transport/clock double with native local streams; no SFTP server is claimed
+- Native HTTP/session/process fixtures: Test-owned child PHP processes inside the PHP container
+- Mongo outage fixture: Test-owned TCP proxy child inside PHP, forwarding real bytes to MongoDB
 
 `unit` means no external service container dependencies. Some unit fixtures use
 local subprocesses/loopback sockets within PHP's container. Native Mongo/Rabbit

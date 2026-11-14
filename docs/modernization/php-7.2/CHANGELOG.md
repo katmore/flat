@@ -2503,3 +2503,19 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   KNOWN-DEFECTS.md. `MUTATION-PROBE.md`, `README.md` contents and the other
   tables are not converted yet.
 - Old-to-new: no paths changed. Undo: revert this commit.
+
+## MOD-145 — Remaining wide tables become lists; check-docs limits table width
+
+- `active/MUTATION-PROBE.md` (file/line tables), the phase `README.md` contents
+  table and the "What runs where" table in `TESTING.md` are now lists. The
+  generated `TEST-INVENTORY.md` is now a list per file
+  (``- `testName` (line N): notes``); `tests/tools/inventory.php` was changed to
+  emit it and the "Reads as" column (the method name split into words) was
+  dropped. Headings that other documents link to (`#ts-06-follow-up`,
+  `#ts-06-outcome`) are unchanged.
+- Short tables of numbers (coverage counts in `notes/` and `history/`) and the
+  old-to-new path map in this change log stay as tables.
+- `history/PENDING-QUESTIONS.md` keeps its wide table: history is kept as written.
+- `bin/check-docs` now also reports a table row longer than 100 characters
+  (except in change logs and `history/`).
+- Undo: revert this commit.
