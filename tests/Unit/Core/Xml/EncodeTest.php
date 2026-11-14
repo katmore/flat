@@ -89,13 +89,38 @@ class EncodeTest extends TestCase
         $this->assertStringContainsString('xsi:type="xs:hexBinary">deadbeef<',$xml);
         $this->assertStringContainsString('xsi:type="xs:string">zzz zzz<',$xml);
     }
-    /** @group known-defect */
-    public function testSingleLettersAreCurrentlyTypedAsDateTime()
+    /** @dataProvider isoDates */
+    public function testIsoDatesAndTimesAreTypedAsDateTime($text)
     {
-        // strtotime() reads a lone letter as a military time-zone, so it counts as a date.
-        $xml = encode::serialize(['a','b']);
-        $this->assertSame(2,substr_count($xml,'xsi:type="xs:DateTime"'));
-        $this->assertStringContainsString('fx:php-type="string"',$xml);
+        $this->assertStringContainsString('xsi:type="xs:DateTime"',encode::serialize(['when'=>$text]));
+    }
+    public function isoDates()
+    {
+        return [['2020-01-01'],['2020-01-01 10:00'],['2020-01-01T10:00:00'],['2020-01-01T10:00:00.250Z'],['2020-01-01T10:00:00+02:00'],['2020-01-01 10:00:00-0500']];
+    }
+    /** @dataProvider notIsoDates */
+    public function testOtherTextIsAStringEvenWhenStrtotimeParsesIt($text)
+    {
+        $xml = encode::serialize(['v'=>$text]);
+        $this->assertStringNotContainsString('xs:DateTime',$xml);
+        $this->assertStringContainsString('xsi:type="xs:string">'.$text.'<',$xml);
+    }
+    public function notIsoDates()
+    {
+        return [['k'],['z'],['mon'],['tomorrow'],['next monday'],['12 January 2020'],['1/2/2020'],['2020-13-45'],['2020-01-01 junk']];
+    }
+    public function testSingleLettersInAListAreStrings()
+    {
+        $xml = encode::serialize(['g','h']);
+        $this->assertStringNotContainsString('xs:DateTime',$xml);
+        $this->assertStringContainsString('xs:string[2]',$xml);
+    }
+    /** @group known-defect */
+    public function testLettersAThroughFAreCurrentlyTypedAsHexBinary()
+    {
+        // ctype_xdigit() accepts any length, but xs:hexBinary needs an even number of digits.
+        $xml = encode::serialize(['a','face']);
+        $this->assertStringContainsString('xs:hexBinary[2]',$xml);
     }
     public function testArrayTypeDetectionInspectsTheFirstTenKeys()
     {

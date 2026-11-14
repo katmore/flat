@@ -2519,3 +2519,16 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - `bin/check-docs` now also reports a table row longer than 100 characters
   (except in change logs and `history/`).
 - Undo: revert this commit.
+
+## MOD-146 — XML date labels (KD-76, owner agreed Q27); KD-77 recorded
+
+- KD-76 (fix): the XML encoder labeled any string `strtotime()` accepts as
+  `xs:DateTime`, so `'a'`, `'mon'` or `'tomorrow'` came out as dates. Now only
+  ISO-8601 style dates and times get that label. Consumer impact entry added.
+  Tests: ISO forms (data provider), non-ISO text, single letters in a list.
+- KD-77 (new, question 28): with the date label gone, `'a'` shows its next label:
+  `xs:hexBinary` for any string of hex digits, whatever the length. Not changed;
+  pinned by a `known-defect` test.
+- Files changed: `src/flat/core/xml/encode.php` and its test.
+
+- Verified: `docker/bin/test all --coverage` passes 1,421 tests; 100% methods (1,062/1,062) and lines (8,052/8,052). One `known-defect` test remains (KD-77). The RabbitMQ container exited at startup once and passed on retry (known flake, undiagnosed).

@@ -423,7 +423,10 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
              }
              
              if ($param['DateTime'] ) {
-                if (false !== ($ts = strtotime($data))) {
+                // Only ISO-8601 style dates and times (owner answer, known-defects Q27);
+                // strtotime() alone also accepts words and single letters (time zones).
+                if (preg_match('/^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}(?::?\d{2})?)?)?$/',$data)
+                   && false !== ($ts = strtotime($data))) {
                    if (!empty($ts)) {
                         return "xs:DateTime";
                    }

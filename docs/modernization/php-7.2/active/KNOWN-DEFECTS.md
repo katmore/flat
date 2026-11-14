@@ -710,9 +710,18 @@ A key starting with the `flat/` namespace removed its last five characters inste
 
 The XML encoder labels any string `strtotime()` can parse as `xs:DateTime`, including single letters such as `'a'` (a timezone abbreviation)
 
-- Test: `Core/Xml/EncodeTest::testSingleLettersAreCurrentlyTypedAsDateTime` (`@group known-defect`)
+- Test: `Core/Xml/EncodeTest::testIsoDatesAndTimesAreTypedAsDateTime`, `testOtherTextIsAStringEvenWhenStrtotimeParsesIt`
 - Category: B
 - Proposed fix: Q27
+- Status: fixed (MOD-146; only ISO-8601 style dates and times are typed `xs:DateTime`)
+
+### KD-77 — XML encoding
+
+Any string of hex digits is typed `xs:hexBinary` by `ctype_xdigit()`, including odd lengths such as `'a'` or `'abc'`; `xs:hexBinary` needs an even number of digits. Found when KD-76 stopped hiding it (`'a'` used to be called a date).
+
+- Test: `Core/Xml/EncodeTest::testLettersAThroughFAreCurrentlyTypedAsHexBinary` (`@group known-defect`)
+- Category: B
+- Proposed fix: Q28
 - Status: open
 
 ## Test-strength tasks
@@ -884,3 +893,10 @@ agreed with every recommendation); questions 25 and 26 are open.
     strings that look like ISO-8601 dates or times get that label? Recommend: yes
     (anything else stays a string); this changes the type label consumers see in XML
     for such strings.
+    **Answered: agreed** (owner, 2026-11-14). Fixed in MOD-146.
+28. **KD-77 XML `xs:hexBinary` label.** Strings made only of hex digits get
+    `xs:hexBinary` whatever their length, so `'a'`, `'abc'` and `'123'`-like text
+    (numbers are typed earlier) are labeled binary. Should only an even number of
+    hex digits count? Recommend: yes (a valid `xs:hexBinary` has whole bytes), with the
+    same consumer-visible effect as KD-76: some strings change from `xs:hexBinary` to
+    `xs:string`.

@@ -484,6 +484,12 @@ Every known-defect fix changes behavior a consumer might have relied on.
 - After: Returns the requested version (v3/v5 are deterministic); `$uuid()` is still a random v4
 - Search consumer code for: UUID objects used as callables: `$u(` with arguments
 
+### MOD-146 (KD-76) — XML date labels
+
+- Before: Any string `strtotime()` could parse was labeled `xs:DateTime`: words (`tomorrow`, `mon`), single letters (`z`), `1/2/2020`, `12 January 2020`
+- After: Only ISO-8601 style dates and times (`2020-01-01`, `2020-01-01 10:00`, `2020-01-01T10:00:00Z`, with fractions and offsets) are `xs:DateTime`; other text is `xs:string` (or its other detected type)
+- Search consumer code for: readers of XML from `flat\core\xml\encode` that look at `xsi:type="xs:DateTime"`, or that parse non-ISO dates from it
+
 ### MOD-140 (KD-72) — Random numbers
 
 - Before: `$rand()` on an object built with bounds (`new rand(5, 10)`) ignored them and returned 0 to `getrandmax()`
