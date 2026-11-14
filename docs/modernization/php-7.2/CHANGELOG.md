@@ -2543,3 +2543,12 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - Files changed: `src/flat/core/xml/encode.php` and its test.
 
 - Verified: `docker/bin/test all --coverage` passes 1,427 tests; 100% methods (1,062/1,062) and lines (8,052/8,052). No `known-defect` tests remain.
+
+## MOD-148 — Plan for flat-webapp functional tests
+
+- New `active/WEBAPP-TESTS.md`: what flat-webapp contains, what the functional
+  tests would cover in flat, the proposed approach (built-in PHP server in the
+  test container, application pinned at commit `7186607`, test-only fixtures)
+  and a first test list. Questions 29 to 31 added to KNOWN-DEFECTS.md.
+- Documentation only; no code changed.
+

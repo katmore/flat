@@ -901,3 +901,15 @@ agreed with every recommendation); questions 25 and 26 are open.
     same consumer-visible effect as KD-76: some strings change from `xs:hexBinary` to
     `xs:string`.
     **Answered: agreed** (owner, 2026-11-14). Fixed in MOD-147.
+29. **Functional tests: where they live.** Plan: [WEBAPP-TESTS.md](WEBAPP-TESTS.md).
+    Recommend: in this repository in a new Functional folder under the tests folder as a separate
+    `functional` suite, with the flat-webapp application fetched at a pinned
+    commit at image build time, never copied into the repository.
+30. **Functional tests: network at build time.** The pinned application and its
+    Composer packages must be downloaded once when the image is built. Recommend:
+    accept that (the base images are fetched the same way); the unit suite
+    stays offline.
+31. **Functional tests: baseline.** `master`, `devel` and `modernize-26` of
+    flat-webapp are the same commit today (`7186607`). Recommend: pin that commit
+    and revisit only if the branches diverge.
+

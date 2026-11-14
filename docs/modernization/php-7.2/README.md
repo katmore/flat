@@ -14,7 +14,8 @@ model and the rules every phase follows are in [../README.md](../README.md).
 - **Test-strength tasks:** TS-01 to TS-05 done (first mutation-probe sample:
   [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)); TS-06 done (the 54 survivor
   lines are pinned or shown equivalent).
-- **Not started:** functional tests against `flat-webapp`.
+- **Functional tests against `flat-webapp`:** plan drafted, waiting for the owner's
+  review (questions 29 to 31): [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md).
 - **Not done until** the owner declares the phase complete.
 
 ## Resume here
@@ -44,7 +45,7 @@ For a person or an agent picking this up:
 ## Next
 
 1. Optionally run further probe seeds (also with `--services`).
-2. Write functional tests with `flat-webapp`.
+2. Review [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md) (questions 29 to 31), then write the functional tests.
 3. Owner decides the phase is complete; then it moves to `modernize-26`.
 
 ## Contents
@@ -56,6 +57,7 @@ For a person or an agent picking this up:
 
 - [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): Every known defect (KD) and test-strength task (TS), with category, fix and status; open owner questions at the bottom. Read it when: choosing what to fix; answering questions.
 - [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md): Record of the mutation probe: what it found, what is pinned by tests, what is equivalent, and what remains (TS-06). Read it when: before running the probe again; when extending tests.
+- [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md): Plan for functional tests that run the flat-webapp application over HTTP. Read it when: reviewing or starting that work.
 - [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md): Behavior changes that applications using flat may notice, and what to search their code for. Read it when: before releasing; when checking a consumer application.
 - [TEST-INVENTORY.md](TEST-INVENTORY.md): All tests by file, with data-provider, service-group and known-defect markers. Generated from PHPUnit by `docker/bin/test inventory`; do not edit by hand. Read it when: reviewing what the suite claims.
 
