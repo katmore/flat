@@ -23,7 +23,7 @@ Its test carries `@group known-defect` until the fix lands, so
 1. Change the source.
 2. Rewrite the test to assert the correct behavior, drop "Currently"/"Still"
    from its name and remove `@group known-defect`.
-3. Add a row to [CONSUMER-IMPACT.md](CONSUMER-IMPACT.md): every fix is a silent change for
+3. Add an entry to [CONSUMER-IMPACT.md](CONSUMER-IMPACT.md): every fix is a silent change for
    consumers that might have depended on, or worked around, the old behavior.
 4. Mark the entry here as fixed, with its change-log ID.
 5. Regenerate [../TEST-INVENTORY.md](../TEST-INVENTORY.md) with `docker/bin/test inventory`
@@ -31,84 +31,689 @@ Its test carries `@group known-defect` until the fix lands, so
 
 ## Inventory
 
-| ID | Area | Defect | Test | Cat. | Proposed fix | Status |
-| --- | --- | --- | --- | --- | --- | --- |
-| KD-01 | PDO statement | Executing without a callback references an undefined data class (`Error`) | `Db/Pdo/StatementTest::testExecutedRowsWithoutACallbackStillReferenceUndefinedDataClass` | A | Map rows like the bare-record path does | fixed (MOD-133) |
-| KD-02 | PDO statement | `execute` gates on SELECT `rowCount`, so SQLite reports `not_found` despite returning rows | `StatementTest::testExecuteCurrentlyReportsNotFoundForSqliteSelectRowCount` | A | Fetch rows instead, as MOD-033 did for `prepare_map` | fixed (MOD-133) |
-| KD-03 | PDO statement | Every explicit `fetch` option (true/class/callback/false) throws `bad_option` | `StatementTest::testEveryExplicitFetchOptionCurrentlyThrows` | B | Q1 | fixed (MOD-133) |
-| KD-04 | Mongo CA file | A failed certificate write returns `null` after a warning | `Db/Mongo/CaFileTest::testFailedFileWriteCurrentlyReturnsNull` | A | Throw an existing system/IO error | fixed (MOD-133) |
-| KD-05 | DB controller | `load_read` tests the literal constant `self`, warns and returns `null` | `Db/LegacyControllerTest::testStaticReadCurrentlyWarnsAboutItsLiteralSelfAndReturnsNull` | B | Q2 | fixed (MOD-133) |
-| KD-06 | API response | Unknown error with a class caller calls the nonexistent `ReflectionMethod::getClassName` | `Api/ResponseTest::testUnknownErrorWithClassCallerCurrentlyCallsMissingReflectionMethod` | A | Use the declaring class name | fixed (MOD-124) |
-| KD-07 | API controller | `requestMethod()` reads a never-assigned field and always throws | `Api/ControllerTest::testUnassignedRequestMethodGetterCurrentlyThrows` | B | Q3 | fixed (MOD-127) |
-| KD-08 | API controller | `set_input` without a method raises `unknown_method` instead of `missing_method` | `Api/ControllerTest::testMissingMethodCurrentlyRaisesUnknownMethod` | A | Raise `missing_method` (verify against source first) | fixed (MOD-127) |
-| KD-09 | API status | Code-class formatting indexes strings instead of class metadata (8 warnings, placeholders left in output) | `Api/StatusTest::testCurrentFormattingUsesStringOffsetsInsteadOfClassMetadata` | A | Read the class type/description metadata | fixed (MOD-127) |
-| KD-10 | API status | `not_found` status reports code 500 | `Core/LegacyErrorMessagesTest::testLegacyNotFoundStatusCurrentlyReportsServerErrorCode` | A | Return 404 | fixed (MOD-124) |
-| KD-11 | Asset | Error message says "could resolve" | `LegacyErrorMessagesTest::testErrorsRetainOperationContext` (row `not_resolvable`) | A | "could not resolve" | fixed (MOD-124) |
-| KD-12 | Asset | New inline JS source raises `TypeError` looking for a file path | `Asset/AssetTest::testNewInlineSourceCurrentlyCannotResolveAFilePath` | A | Print the inline source | fixed (MOD-130) |
-| KD-13 | Asset | Multiple HTML items create a self-dependency (cyclic queue) | `AssetTest::testMultipleHtmlItemsCurrentlyCreateAnAccidentalSelfDependency` | B | Q4 | fixed (MOD-130) |
-| KD-14 | Asset | Unknown resource types and the style-source tag produce no output | `AssetTest::testUnimplementedResourceAndTagCasesCurrentlyProduceNoOutput` | C | Q5 | fixed (MOD-130) |
-| KD-15 | Shutdown | Integer weight `0` joins the default queue; out-of-range weights (±51) are silently accepted | `Core/ShutdownTest::testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue` | A | `0` is a weight (docs: -50 to 50); out of range throws `bad_priority` | fixed (MOD-129) |
-| KD-16 | Shutdown | Explicit invocation followed by PHP shutdown runs callbacks twice (`_clear()` was commented out by the original author) | `ShutdownTest::testRepeatedInvocationCurrentlyRepeatsCallbacks` | B | Q6 | fixed (MOD-112) |
-| KD-17 | Events | `hookable` drops event data and reads an undefined local | `Core/LegacyListenerTest::testHookableCurrentlyDropsEventDataAndReportsItsUndefinedLocal` | A | Pass the supplied event data to the handler | fixed (MOD-126) |
-| KD-18 | Events | `stub::get_listeners` reads an undeclared property | `LegacyListenerTest::testStubCurrentlyReadsASeparateUndeclaredListenerProperty` | A | Return the listeners `add_listener` stored | fixed (MOD-126) |
-| KD-19 | Yasumi wrapper | Valid date/year fields stay unset; the provider cache is not attached; providers reject the wrapper's raw timestamp | `Vendor/YasumiDateQueryTest::testValidDateAndExplicitYearCurrentlyLeaveTheirBackingFieldsUnset`, `::testProviderCacheCurrentlyDoesNotAttachItsHitToTheNextInstance`, `::testRealProviderRejectsTheWrappersRawTimestamp` | B | Q7 | fixed (MOD-134) |
-| KD-20 | Validation factory | The default constraint rejects the pair its own helper builds | `Core/Util/ValidationFactoryTest::testDefaultConstraintCurrentlyRejectsThePairBuiltByItsHelper` | B | Q8 | fixed (MOD-134) |
-| KD-21 | Validation | `value_on_pass`, `value_on_fail`, `exception_on_fail` and `fail_handler` are documented but ignored | `Core/Util/ValidationTest::testNullDefaultOptionsCurrentlyCannotBeOverridden` | B | Q9 | fixed (MOD-134) |
-| KD-22 | Validation | A PCRE engine error returns `false` instead of the existing `preg_error` | `ValidationTest::testPcreExecutionErrorCurrentlyReturnsFalse` | B | Q10 | fixed (MOD-134) |
-| KD-23 | Image | Constructor with both bounds leaves the image unchanged | `Core/Util/Image/ImageTest::testBothConstructorBoundsCurrentlyLeaveTheImageUnchanged` | B | Q11 | fixed (MOD-134) |
-| KD-24 | HTML form | `serialize` builds the form and returns `null` | `Core/Html/FormTest::testSerializeCurrentlyDiscardsItsConstructedForm` | A | Return the built form | fixed (MOD-126) |
-| KD-25 | Collection | Data validator and filter run twice per added member | `Core/CollectionTest::testCurrentCallbacksRunTwicePerAddedMember` | A | Run each once | fixed (MOD-126) |
-| KD-26 | Map from object | Non-objects give an empty map; objects fail with `ArgumentCountError` | `Core/LegacyMappingTest::testNonObjectInputCurrentlyProducesAnEmptyMap`, `::testObjectMappingCurrentlyOmitsRequiredValueArgument` | A | Pass the missing value argument | fixed (MOD-126) |
-| KD-27 | CLI | Missing `$argv` throws an unqualified `flat\core\RuntimeException` (`Error`) | `Core/CliTest::testMissingArgvPreservesCurrentExceptionNamespaceFailure` | A | Throw `\RuntimeException` | fixed (MOD-124) |
-| KD-28 | Core mapper | Private-access options fail on the `setAcessible` typo | `Core/MapperTest::testKnownPrivateAccessReflectionTypo` | B | Q12 | fixed (MOD-113) |
-| KD-29 | Debug | `data2str` uses the object template for arrays and leaves placeholders for small scalars | `Core/DebugTest::testDataDescriptionsCharacterizeCurrentFormatting` | A | Use the matching template and fill it | fixed (MOD-132) |
-| KD-30 | Debug | `kill` options overwrite the options array and read an undefined `fh_options` | (`../history/TESTING-FOLLOWUPS.md`; not yet asserted) | A | Keep the options array; define the handle options | fixed (MOD-132) |
-| KD-31 | cURL response | Missing curl info throws a nonexistent exception class (`Error`) | `Core/Curl/ResponseTest::testCurrentMissingInfoExceptionClassFailure` | A | Declare/use the exception | fixed (MOD-124) |
-| KD-32 | cURL config | Selecting the Chrome user agent is overwritten by the raw selector (`0`) | `Core/Curl/ConfigTest::testCurrentChromeSelectionIsOverwrittenByRawSelector` | A | Keep the selected user-agent string | fixed (MOD-132) |
-| KD-33 | Legacy ORM | The static `get_data` facade discards its result | `Data/Orm/LegacyOrmTest::testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult` | A | Return the stored data | fixed (MOD-133) |
-| KD-34 | Legacy ORM | A nonempty constructor array cannot act as a driver | `LegacyOrmTest::testNonemptyConstructorArrayStillCannotActAsADriver` | B | Q13 | fixed (MOD-133) |
-| KD-35 | ORM session driver | `destroy` regenerates the id after ending the session (warning) | `Data/Orm/SessionDriverTest::testDestroyCurrentlyAttemptsRegenerationAfterEndingTheSession` | A | Regenerate before destroying, or not at all | fixed (MOD-133) |
-| KD-36 | Data mapper | `webview` discards its HTML-encoded clone | `Data/MapperTest::testWebviewCurrentlyDiscardsTheHtmlEncodedClone` | A | Return the encoded clone | fixed (MOD-126) |
-| KD-37 | Data mapper | `field_list($instance)` fails before creating its reflection | `Data/MapperTest::testFieldListWithInstanceCurrentlyFailsBeforeCreatingReflection` | A | Create the reflection for the instance | fixed (MOD-126) |
-| KD-38 | Validation failure | The message argument is ignored | `Data/ErrorDetailsTest::testValidationFailureCollectsOnlyStringFieldsAndCurrentlyIgnoresMessage` | A | Store and return the message | fixed (MOD-126) |
-| KD-39 | Payments | Transaction adapter's `isset` guard drops SDK fields initialized to `null`, including `amount` | `Cloud/AuthorizeTransactionTest::testAdapterRetainsMappedInitializedFieldsAndCurrentNullFieldLimitation` | A | Map every declared SDK field | fixed (MOD-135) |
-| KD-40 | Payments | Subscription `create` drops `billTo` (same `isset` rule) | `Cloud/AuthorizeSubscriptionTest::testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn` | A | Map declared SDK fields | fixed (MOD-135) |
-| KD-41 | Payments | Subscription `create` returns `null`; its docblock promises the subscription id | same test | B | Q14 | fixed (MOD-135) |
-| KD-42 | Payments | Subscription search pagination offset never advances | (`../history/PENDING-QUESTIONS.md` row 8) | A | Advance the offset per page | fixed (MOD-135) |
-| KD-43 | Payments | Scalar `response_error` ignores its second argument | `Cloud/AuthorizeTest::testResponseWithoutMessagesAndLegacyScalarErrors` | B | Q15 | fixed (MOD-135) |
-| KD-44 | Payments | Transaction validation accepts any return except explicit `false` | `AuthorizeTransactionTest::testExplicitFalseValidationIsRejectedAndOtherReturnTypesCurrentlyPass` | A | Accept only `true` | fixed (MOD-135) |
-| KD-45 | Payments | Customer convenience operations (void, refund, authonly, authcapture, captureonly, get_transaction) return `null` | `Cloud/AuthorizeCustomerTest::testUnimplementedConvenienceOperationsCurrentlyReturnNull` | C | Q16 | fixed (MOD-114) |
-| KD-46 | IP lookup | Static `load` does nothing | `Cloud/IpInfoDbTest::testStaticLoadCurrentlyDoesNothing` | C | Q16 | fixed (MOD-114) |
-| KD-47 | Exceptions | `bad_interface` message drops the class when a method is given and ignores the reason | `Core/BadInterfaceTest::testMessageFormattingRetainsCurrentMethodAndReasonBehavior` | A | Include class, method and reason | fixed (MOD-124) |
-| KD-48 | Exceptions | SSH `auth\not_ready` and `auth\failure\pubkey` replace their prefix with the detail (`": detail"`) | `LegacyErrorMessagesTest::testErrorsRetainOperationContext` (2 rows) | A | Keep the prefix like the sibling classes | fixed (MOD-124) |
-| KD-49 | Exceptions | `duplicate_key` with an array index raises "Array to string conversion" | `LegacyErrorMessagesTest::testEmptyNonScalarDuplicateIndexUsesItsEmptyDescription` | A | Describe non-scalar indexes like non-scalar values | fixed (MOD-124) |
-| KD-50 | Phone | `+1 800 555 1234` stores the whole number as its extension; `ext 42`/`x89` extraction fails | `Data/PhoneTest::testCurrentCountryOneAndTextExtensionExtractionFailures` | A | Strip country code 1; extract extensions | fixed (MOD-131) |
-| KD-51 | Phone | International numbers get no country code for most prefixes (comparisons are assignments) | `PhoneTest::testCurrentInternationalClassificationLeavesComparisonAssignmentsUnset` | A | Fix the comparisons (no new country table) | fixed (MOD-131) |
-| KD-52 | UUID | `uuid::get(2)` without a namespace returns a v4 UUID | (`../history/TESTING-FOLLOWUPS.md`) | A | Throw `invalid_version` | fixed (MOD-129) |
-| KD-53 | Templates | Absolute file resolution converts a null `$file`; failure paths leave output buffers open | (`../history/TESTING-FOLLOWUPS.md`) | A | Resolve the design path; close buffers on failure | fixed (MOD-132) |
-| KD-54 | Templates | `tmpl/display` declares a class extending an interface; loading it aborts PHP | (`../history/TESTING-FOLLOWUPS.md`) | A | Implement the interface | already fixed (MOD-040; verified in MOD-132) |
-| KD-55 | Random strings | Invoking an instance ignores its configured character pool | (`../history/TESTING-FOLLOWUPS.md`) | B | Q17 | fixed (MOD-129) |
-| KD-56 | Random numbers | `rand::get(1, 0)`: a zero maximum means "default", so inverted bounds pass | (`../history/TESTING-FOLLOWUPS.md`) | B | Q18 | confirmed, no change (MOD-129) |
-| KD-57 | Views | The `view_resolved` event payload uses an undefined `$resolved` | (follow-ups; source checked 2026-11) | A | Use the matched route | fixed (MOD-127) |
-| KD-58 | API controller | A `HEAD` request sets a flag that is never cleared, so a reused controller keeps treating later requests as `HEAD` | (follow-ups; source checked 2026-11) | A | Reset the flag per request | fixed (MOD-127) |
-| KD-59 | API controller | `TRACE` echoes input via `get_as_assoc()`, which cannot see the input map's dynamic properties | (follow-ups; source checked 2026-11) | A | Echo the actual input fields | fixed (MOD-127) |
-| KD-60 | ORM | `delete()` silently does nothing if the object was read first (`_read_done` guard) | `Orm/LifecycleTest::testDeleteAndTheCurrentReadDoneGuard` | B | Q19 | fixed (MOD-133) |
-| KD-61 | ORM | `crud_error` stores its details in the operation field | (follow-ups; not yet verified) | A | Store operation and details separately | fixed (MOD-133) |
-| KD-62 | Mongo | `load_client()` without options loops over `null` (warning) | (follow-ups; source checked 2026-11) | A | Treat missing options as `[]` | fixed (MOD-133) |
-| KD-63 | S3 | Multipart threshold is 10 GiB though the comment says 10 MB; a single S3 upload cannot exceed 5 GB, so 5 GB to 10 GiB files would fail | (follow-ups; source checked 2026-11) | B | Q20 | fixed (MOD-135) |
-| KD-64 | S3 | Large (multipart) uploads do not pass on the file's MIME type | (follow-ups; not yet verified) | A | Pass the content type to the multipart upload | fixed (MOD-135) |
-| KD-65 | Data mapper | `dump` HTML-encoding ignores its encoded clone (same pattern as KD-36) | (follow-ups; not yet verified) | A | Use the encoded clone | fixed (MOD-126) |
-| KD-66 | Exceptions | Exception wrapping `print_r`s traces including arguments and can exhaust memory on large objects | (follow-ups; not yet verified) | B | Q21 | fixed (MOD-135) |
-| KD-67 | SSH | Temporary key files are not cleaned up when connection setup fails part-way; key encryption uses no explicit cipher | (follow-ups; not yet verified) | B | Q22 | fixed (MOD-135) |
-| KD-68 | Validation controller | The validation body is unfinished; it inspects fields and then does nothing | (follow-ups; not yet verified) | C | Q23 | fixed (MOD-134) |
-| KD-69 | Data mapper | `field_list()` caches one list for every `flat\data` subclass, so later classes get the first class's fields (and `is_field()` answers wrongly) | `Data/MapperTest::testFieldListUsesTheInstanceAndCachesPerClass` | A | Cache per class | fixed (MOD-126) |
-| KD-70 | cURL config | The constructor's second loop re-assigns every text argument, so unset `request_method`, `user_agent`, `referrer` and `cache_dir` become `null` instead of their declared defaults (`GET`, `flat/curl`) | `Core/Curl/ConfigTest::testExplicitConfigurationAndNumericDefaults` | B | Q24 | fixed (MOD-136) |
-| KD-71 | UUID | `uuid::__invoke($version, $namespace, $name)` passed `$version=4, $namespace=null, $name=null` (assignments), so it always returned a random v4 UUID; its test asserted that | `Core/UuidTest::testInvokeGeneratesTheRequestedVersion` | A | Pass the arguments through | fixed (MOD-137) |
-| KD-72 | Random numbers | `$rand()` on an object built with bounds (`new rand(5, 10)`) ignores them and uses 0 to `getrandmax()`; `generate()` uses them | `Core/RandTest::testInvocationWithoutArgumentsUsesTheConstructedBounds` | B | Q25 | fixed (MOD-140; `$rand()` without arguments now uses the constructed bounds) |
-| KD-73 | Config | A key starting with the `flat/` namespace removed its last five characters instead of the prefix (`flat/settings/a` became `flat/s`), so such keys never resolved; a test asserted that ("do not correct it here") | `Core/ConfigTest::testPathsAreNormalizedAndBaseNamesAreRemoved` | A | Remove the prefix from the front | fixed (MOD-139) |
-| KD-74 | IP lookup | `ipinfodb::location_ttl = 604800` is commented "1 day" but 604800 seconds is 7 days (a day is 86400) | `Cloud/IpInfoDbTest::testCachedRecordExpiresExactlyAtItsTimeToLive` (pins the boundary, not the length) | B | Q26 | fixed (MOD-140; comment corrected, 7 days kept) |
-| KD-75 | Mongo driver | `getMongoDBClient()` guarded its default with `if (!$options===null)`, which parses as `(!$options)===null` and can never be true | `Db/Mongo/CrudTest::testClientOptionsChooseTheServer` | A | `if ($options===null)` (no behavior change: `isset()` on `null` already worked) | fixed (MOD-139) |
-| KD-76 | XML encoding | The XML encoder labels any string `strtotime()` can parse as `xs:DateTime`, including single letters such as `'a'` (a timezone abbreviation) | `Core/Xml/EncodeTest::testSingleLettersAreCurrentlyTypedAsDateTime` (`@group known-defect`) | B | Q27 | open |
+### KD-01 — PDO statement
+
+Executing without a callback references an undefined data class (`Error`)
+
+- Test: `Db/Pdo/StatementTest::testExecutedRowsWithoutACallbackStillReferenceUndefinedDataClass`
+- Category: A
+- Proposed fix: Map rows like the bare-record path does
+- Status: fixed (MOD-133)
+
+### KD-02 — PDO statement
+
+`execute` gates on SELECT `rowCount`, so SQLite reports `not_found` despite returning rows
+
+- Test: `StatementTest::testExecuteCurrentlyReportsNotFoundForSqliteSelectRowCount`
+- Category: A
+- Proposed fix: Fetch rows instead, as MOD-033 did for `prepare_map`
+- Status: fixed (MOD-133)
+
+### KD-03 — PDO statement
+
+Every explicit `fetch` option (true/class/callback/false) throws `bad_option`
+
+- Test: `StatementTest::testEveryExplicitFetchOptionCurrentlyThrows`
+- Category: B
+- Proposed fix: Q1
+- Status: fixed (MOD-133)
+
+### KD-04 — Mongo CA file
+
+A failed certificate write returns `null` after a warning
+
+- Test: `Db/Mongo/CaFileTest::testFailedFileWriteCurrentlyReturnsNull`
+- Category: A
+- Proposed fix: Throw an existing system/IO error
+- Status: fixed (MOD-133)
+
+### KD-05 — DB controller
+
+`load_read` tests the literal constant `self`, warns and returns `null`
+
+- Test: `Db/LegacyControllerTest::testStaticReadCurrentlyWarnsAboutItsLiteralSelfAndReturnsNull`
+- Category: B
+- Proposed fix: Q2
+- Status: fixed (MOD-133)
+
+### KD-06 — API response
+
+Unknown error with a class caller calls the nonexistent `ReflectionMethod::getClassName`
+
+- Test: `Api/ResponseTest::testUnknownErrorWithClassCallerCurrentlyCallsMissingReflectionMethod`
+- Category: A
+- Proposed fix: Use the declaring class name
+- Status: fixed (MOD-124)
+
+### KD-07 — API controller
+
+`requestMethod()` reads a never-assigned field and always throws
+
+- Test: `Api/ControllerTest::testUnassignedRequestMethodGetterCurrentlyThrows`
+- Category: B
+- Proposed fix: Q3
+- Status: fixed (MOD-127)
+
+### KD-08 — API controller
+
+`set_input` without a method raises `unknown_method` instead of `missing_method`
+
+- Test: `Api/ControllerTest::testMissingMethodCurrentlyRaisesUnknownMethod`
+- Category: A
+- Proposed fix: Raise `missing_method` (verify against source first)
+- Status: fixed (MOD-127)
+
+### KD-09 — API status
+
+Code-class formatting indexes strings instead of class metadata (8 warnings, placeholders left in output)
+
+- Test: `Api/StatusTest::testCurrentFormattingUsesStringOffsetsInsteadOfClassMetadata`
+- Category: A
+- Proposed fix: Read the class type/description metadata
+- Status: fixed (MOD-127)
+
+### KD-10 — API status
+
+`not_found` status reports code 500
+
+- Test: `Core/LegacyErrorMessagesTest::testLegacyNotFoundStatusCurrentlyReportsServerErrorCode`
+- Category: A
+- Proposed fix: Return 404
+- Status: fixed (MOD-124)
+
+### KD-11 — Asset
+
+Error message says "could resolve"
+
+- Test: `LegacyErrorMessagesTest::testErrorsRetainOperationContext` (row `not_resolvable`)
+- Category: A
+- Proposed fix: "could not resolve"
+- Status: fixed (MOD-124)
+
+### KD-12 — Asset
+
+New inline JS source raises `TypeError` looking for a file path
+
+- Test: `Asset/AssetTest::testNewInlineSourceCurrentlyCannotResolveAFilePath`
+- Category: A
+- Proposed fix: Print the inline source
+- Status: fixed (MOD-130)
+
+### KD-13 — Asset
+
+Multiple HTML items create a self-dependency (cyclic queue)
+
+- Test: `AssetTest::testMultipleHtmlItemsCurrentlyCreateAnAccidentalSelfDependency`
+- Category: B
+- Proposed fix: Q4
+- Status: fixed (MOD-130)
+
+### KD-14 — Asset
+
+Unknown resource types and the style-source tag produce no output
+
+- Test: `AssetTest::testUnimplementedResourceAndTagCasesCurrentlyProduceNoOutput`
+- Category: C
+- Proposed fix: Q5
+- Status: fixed (MOD-130)
+
+### KD-15 — Shutdown
+
+Integer weight `0` joins the default queue; out-of-range weights (±51) are silently accepted
+
+- Test: `Core/ShutdownTest::testZeroAndOutOfRangeWeightsCurrentlyJoinTheDefaultQueue`
+- Category: A
+- Proposed fix: `0` is a weight (docs: -50 to 50); out of range throws `bad_priority`
+- Status: fixed (MOD-129)
+
+### KD-16 — Shutdown
+
+Explicit invocation followed by PHP shutdown runs callbacks twice (`_clear()` was commented out by the original author)
+
+- Test: `ShutdownTest::testRepeatedInvocationCurrentlyRepeatsCallbacks`
+- Category: B
+- Proposed fix: Q6
+- Status: fixed (MOD-112)
+
+### KD-17 — Events
+
+`hookable` drops event data and reads an undefined local
+
+- Test: `Core/LegacyListenerTest::testHookableCurrentlyDropsEventDataAndReportsItsUndefinedLocal`
+- Category: A
+- Proposed fix: Pass the supplied event data to the handler
+- Status: fixed (MOD-126)
+
+### KD-18 — Events
+
+`stub::get_listeners` reads an undeclared property
+
+- Test: `LegacyListenerTest::testStubCurrentlyReadsASeparateUndeclaredListenerProperty`
+- Category: A
+- Proposed fix: Return the listeners `add_listener` stored
+- Status: fixed (MOD-126)
+
+### KD-19 — Yasumi wrapper
+
+Valid date/year fields stay unset; the provider cache is not attached; providers reject the wrapper's raw timestamp
+
+- Test: `Vendor/YasumiDateQueryTest::testValidDateAndExplicitYearCurrentlyLeaveTheirBackingFieldsUnset`, `::testProviderCacheCurrentlyDoesNotAttachItsHitToTheNextInstance`, `::testRealProviderRejectsTheWrappersRawTimestamp`
+- Category: B
+- Proposed fix: Q7
+- Status: fixed (MOD-134)
+
+### KD-20 — Validation factory
+
+The default constraint rejects the pair its own helper builds
+
+- Test: `Core/Util/ValidationFactoryTest::testDefaultConstraintCurrentlyRejectsThePairBuiltByItsHelper`
+- Category: B
+- Proposed fix: Q8
+- Status: fixed (MOD-134)
+
+### KD-21 — Validation
+
+`value_on_pass`, `value_on_fail`, `exception_on_fail` and `fail_handler` are documented but ignored
+
+- Test: `Core/Util/ValidationTest::testNullDefaultOptionsCurrentlyCannotBeOverridden`
+- Category: B
+- Proposed fix: Q9
+- Status: fixed (MOD-134)
+
+### KD-22 — Validation
+
+A PCRE engine error returns `false` instead of the existing `preg_error`
+
+- Test: `ValidationTest::testPcreExecutionErrorCurrentlyReturnsFalse`
+- Category: B
+- Proposed fix: Q10
+- Status: fixed (MOD-134)
+
+### KD-23 — Image
+
+Constructor with both bounds leaves the image unchanged
+
+- Test: `Core/Util/Image/ImageTest::testBothConstructorBoundsCurrentlyLeaveTheImageUnchanged`
+- Category: B
+- Proposed fix: Q11
+- Status: fixed (MOD-134)
+
+### KD-24 — HTML form
+
+`serialize` builds the form and returns `null`
+
+- Test: `Core/Html/FormTest::testSerializeCurrentlyDiscardsItsConstructedForm`
+- Category: A
+- Proposed fix: Return the built form
+- Status: fixed (MOD-126)
+
+### KD-25 — Collection
+
+Data validator and filter run twice per added member
+
+- Test: `Core/CollectionTest::testCurrentCallbacksRunTwicePerAddedMember`
+- Category: A
+- Proposed fix: Run each once
+- Status: fixed (MOD-126)
+
+### KD-26 — Map from object
+
+Non-objects give an empty map; objects fail with `ArgumentCountError`
+
+- Test: `Core/LegacyMappingTest::testNonObjectInputCurrentlyProducesAnEmptyMap`, `::testObjectMappingCurrentlyOmitsRequiredValueArgument`
+- Category: A
+- Proposed fix: Pass the missing value argument
+- Status: fixed (MOD-126)
+
+### KD-27 — CLI
+
+Missing `$argv` throws an unqualified `flat\core\RuntimeException` (`Error`)
+
+- Test: `Core/CliTest::testMissingArgvPreservesCurrentExceptionNamespaceFailure`
+- Category: A
+- Proposed fix: Throw `\RuntimeException`
+- Status: fixed (MOD-124)
+
+### KD-28 — Core mapper
+
+Private-access options fail on the `setAcessible` typo
+
+- Test: `Core/MapperTest::testKnownPrivateAccessReflectionTypo`
+- Category: B
+- Proposed fix: Q12
+- Status: fixed (MOD-113)
+
+### KD-29 — Debug
+
+`data2str` uses the object template for arrays and leaves placeholders for small scalars
+
+- Test: `Core/DebugTest::testDataDescriptionsCharacterizeCurrentFormatting`
+- Category: A
+- Proposed fix: Use the matching template and fill it
+- Status: fixed (MOD-132)
+
+### KD-30 — Debug
+
+`kill` options overwrite the options array and read an undefined `fh_options`
+
+- Test: (`../history/TESTING-FOLLOWUPS.md`; not yet asserted)
+- Category: A
+- Proposed fix: Keep the options array; define the handle options
+- Status: fixed (MOD-132)
+
+### KD-31 — cURL response
+
+Missing curl info throws a nonexistent exception class (`Error`)
+
+- Test: `Core/Curl/ResponseTest::testCurrentMissingInfoExceptionClassFailure`
+- Category: A
+- Proposed fix: Declare/use the exception
+- Status: fixed (MOD-124)
+
+### KD-32 — cURL config
+
+Selecting the Chrome user agent is overwritten by the raw selector (`0`)
+
+- Test: `Core/Curl/ConfigTest::testCurrentChromeSelectionIsOverwrittenByRawSelector`
+- Category: A
+- Proposed fix: Keep the selected user-agent string
+- Status: fixed (MOD-132)
+
+### KD-33 — Legacy ORM
+
+The static `get_data` facade discards its result
+
+- Test: `Data/Orm/LegacyOrmTest::testDefaultFacadeUsesRealNativeSessionsWhileRetainingItsVoidGetResult`
+- Category: A
+- Proposed fix: Return the stored data
+- Status: fixed (MOD-133)
+
+### KD-34 — Legacy ORM
+
+A nonempty constructor array cannot act as a driver
+
+- Test: `LegacyOrmTest::testNonemptyConstructorArrayStillCannotActAsADriver`
+- Category: B
+- Proposed fix: Q13
+- Status: fixed (MOD-133)
+
+### KD-35 — ORM session driver
+
+`destroy` regenerates the id after ending the session (warning)
+
+- Test: `Data/Orm/SessionDriverTest::testDestroyCurrentlyAttemptsRegenerationAfterEndingTheSession`
+- Category: A
+- Proposed fix: Regenerate before destroying, or not at all
+- Status: fixed (MOD-133)
+
+### KD-36 — Data mapper
+
+`webview` discards its HTML-encoded clone
+
+- Test: `Data/MapperTest::testWebviewCurrentlyDiscardsTheHtmlEncodedClone`
+- Category: A
+- Proposed fix: Return the encoded clone
+- Status: fixed (MOD-126)
+
+### KD-37 — Data mapper
+
+`field_list($instance)` fails before creating its reflection
+
+- Test: `Data/MapperTest::testFieldListWithInstanceCurrentlyFailsBeforeCreatingReflection`
+- Category: A
+- Proposed fix: Create the reflection for the instance
+- Status: fixed (MOD-126)
+
+### KD-38 — Validation failure
+
+The message argument is ignored
+
+- Test: `Data/ErrorDetailsTest::testValidationFailureCollectsOnlyStringFieldsAndCurrentlyIgnoresMessage`
+- Category: A
+- Proposed fix: Store and return the message
+- Status: fixed (MOD-126)
+
+### KD-39 — Payments
+
+Transaction adapter's `isset` guard drops SDK fields initialized to `null`, including `amount`
+
+- Test: `Cloud/AuthorizeTransactionTest::testAdapterRetainsMappedInitializedFieldsAndCurrentNullFieldLimitation`
+- Category: A
+- Proposed fix: Map every declared SDK field
+- Status: fixed (MOD-135)
+
+### KD-40 — Payments
+
+Subscription `create` drops `billTo` (same `isset` rule)
+
+- Test: `Cloud/AuthorizeSubscriptionTest::testCreateMapsItsAmountAndOptionalOrderWithoutGuessingAnIdentifierReturn`
+- Category: A
+- Proposed fix: Map declared SDK fields
+- Status: fixed (MOD-135)
+
+### KD-41 — Payments
+
+Subscription `create` returns `null`; its docblock promises the subscription id
+
+- Test: same test
+- Category: B
+- Proposed fix: Q14
+- Status: fixed (MOD-135)
+
+### KD-42 — Payments
+
+Subscription search pagination offset never advances
+
+- Test: (`../history/PENDING-QUESTIONS.md` row 8)
+- Category: A
+- Proposed fix: Advance the offset per page
+- Status: fixed (MOD-135)
+
+### KD-43 — Payments
+
+Scalar `response_error` ignores its second argument
+
+- Test: `Cloud/AuthorizeTest::testResponseWithoutMessagesAndLegacyScalarErrors`
+- Category: B
+- Proposed fix: Q15
+- Status: fixed (MOD-135)
+
+### KD-44 — Payments
+
+Transaction validation accepts any return except explicit `false`
+
+- Test: `AuthorizeTransactionTest::testExplicitFalseValidationIsRejectedAndOtherReturnTypesCurrentlyPass`
+- Category: A
+- Proposed fix: Accept only `true`
+- Status: fixed (MOD-135)
+
+### KD-45 — Payments
+
+Customer convenience operations (void, refund, authonly, authcapture, captureonly, get_transaction) return `null`
+
+- Test: `Cloud/AuthorizeCustomerTest::testUnimplementedConvenienceOperationsCurrentlyReturnNull`
+- Category: C
+- Proposed fix: Q16
+- Status: fixed (MOD-114)
+
+### KD-46 — IP lookup
+
+Static `load` does nothing
+
+- Test: `Cloud/IpInfoDbTest::testStaticLoadCurrentlyDoesNothing`
+- Category: C
+- Proposed fix: Q16
+- Status: fixed (MOD-114)
+
+### KD-47 — Exceptions
+
+`bad_interface` message drops the class when a method is given and ignores the reason
+
+- Test: `Core/BadInterfaceTest::testMessageFormattingRetainsCurrentMethodAndReasonBehavior`
+- Category: A
+- Proposed fix: Include class, method and reason
+- Status: fixed (MOD-124)
+
+### KD-48 — Exceptions
+
+SSH `auth\not_ready` and `auth\failure\pubkey` replace their prefix with the detail (`": detail"`)
+
+- Test: `LegacyErrorMessagesTest::testErrorsRetainOperationContext` (2 rows)
+- Category: A
+- Proposed fix: Keep the prefix like the sibling classes
+- Status: fixed (MOD-124)
+
+### KD-49 — Exceptions
+
+`duplicate_key` with an array index raises "Array to string conversion"
+
+- Test: `LegacyErrorMessagesTest::testEmptyNonScalarDuplicateIndexUsesItsEmptyDescription`
+- Category: A
+- Proposed fix: Describe non-scalar indexes like non-scalar values
+- Status: fixed (MOD-124)
+
+### KD-50 — Phone
+
+`+1 800 555 1234` stores the whole number as its extension; `ext 42`/`x89` extraction fails
+
+- Test: `Data/PhoneTest::testCurrentCountryOneAndTextExtensionExtractionFailures`
+- Category: A
+- Proposed fix: Strip country code 1; extract extensions
+- Status: fixed (MOD-131)
+
+### KD-51 — Phone
+
+International numbers get no country code for most prefixes (comparisons are assignments)
+
+- Test: `PhoneTest::testCurrentInternationalClassificationLeavesComparisonAssignmentsUnset`
+- Category: A
+- Proposed fix: Fix the comparisons (no new country table)
+- Status: fixed (MOD-131)
+
+### KD-52 — UUID
+
+`uuid::get(2)` without a namespace returns a v4 UUID
+
+- Test: (`../history/TESTING-FOLLOWUPS.md`)
+- Category: A
+- Proposed fix: Throw `invalid_version`
+- Status: fixed (MOD-129)
+
+### KD-53 — Templates
+
+Absolute file resolution converts a null `$file`; failure paths leave output buffers open
+
+- Test: (`../history/TESTING-FOLLOWUPS.md`)
+- Category: A
+- Proposed fix: Resolve the design path; close buffers on failure
+- Status: fixed (MOD-132)
+
+### KD-54 — Templates
+
+`tmpl/display` declares a class extending an interface; loading it aborts PHP
+
+- Test: (`../history/TESTING-FOLLOWUPS.md`)
+- Category: A
+- Proposed fix: Implement the interface
+- Status: already fixed (MOD-040; verified in MOD-132)
+
+### KD-55 — Random strings
+
+Invoking an instance ignores its configured character pool
+
+- Test: (`../history/TESTING-FOLLOWUPS.md`)
+- Category: B
+- Proposed fix: Q17
+- Status: fixed (MOD-129)
+
+### KD-56 — Random numbers
+
+`rand::get(1, 0)`: a zero maximum means "default", so inverted bounds pass
+
+- Test: (`../history/TESTING-FOLLOWUPS.md`)
+- Category: B
+- Proposed fix: Q18
+- Status: confirmed, no change (MOD-129)
+
+### KD-57 — Views
+
+The `view_resolved` event payload uses an undefined `$resolved`
+
+- Test: (follow-ups; source checked 2026-11)
+- Category: A
+- Proposed fix: Use the matched route
+- Status: fixed (MOD-127)
+
+### KD-58 — API controller
+
+A `HEAD` request sets a flag that is never cleared, so a reused controller keeps treating later requests as `HEAD`
+
+- Test: (follow-ups; source checked 2026-11)
+- Category: A
+- Proposed fix: Reset the flag per request
+- Status: fixed (MOD-127)
+
+### KD-59 — API controller
+
+`TRACE` echoes input via `get_as_assoc()`, which cannot see the input map's dynamic properties
+
+- Test: (follow-ups; source checked 2026-11)
+- Category: A
+- Proposed fix: Echo the actual input fields
+- Status: fixed (MOD-127)
+
+### KD-60 — ORM
+
+`delete()` silently does nothing if the object was read first (`_read_done` guard)
+
+- Test: `Orm/LifecycleTest::testDeleteAndTheCurrentReadDoneGuard`
+- Category: B
+- Proposed fix: Q19
+- Status: fixed (MOD-133)
+
+### KD-61 — ORM
+
+`crud_error` stores its details in the operation field
+
+- Test: (follow-ups; not yet verified)
+- Category: A
+- Proposed fix: Store operation and details separately
+- Status: fixed (MOD-133)
+
+### KD-62 — Mongo
+
+`load_client()` without options loops over `null` (warning)
+
+- Test: (follow-ups; source checked 2026-11)
+- Category: A
+- Proposed fix: Treat missing options as `[]`
+- Status: fixed (MOD-133)
+
+### KD-63 — S3
+
+Multipart threshold is 10 GiB though the comment says 10 MB; a single S3 upload cannot exceed 5 GB, so 5 GB to 10 GiB files would fail
+
+- Test: (follow-ups; source checked 2026-11)
+- Category: B
+- Proposed fix: Q20
+- Status: fixed (MOD-135)
+
+### KD-64 — S3
+
+Large (multipart) uploads do not pass on the file's MIME type
+
+- Test: (follow-ups; not yet verified)
+- Category: A
+- Proposed fix: Pass the content type to the multipart upload
+- Status: fixed (MOD-135)
+
+### KD-65 — Data mapper
+
+`dump` HTML-encoding ignores its encoded clone (same pattern as KD-36)
+
+- Test: (follow-ups; not yet verified)
+- Category: A
+- Proposed fix: Use the encoded clone
+- Status: fixed (MOD-126)
+
+### KD-66 — Exceptions
+
+Exception wrapping `print_r`s traces including arguments and can exhaust memory on large objects
+
+- Test: (follow-ups; not yet verified)
+- Category: B
+- Proposed fix: Q21
+- Status: fixed (MOD-135)
+
+### KD-67 — SSH
+
+Temporary key files are not cleaned up when connection setup fails part-way; key encryption uses no explicit cipher
+
+- Test: (follow-ups; not yet verified)
+- Category: B
+- Proposed fix: Q22
+- Status: fixed (MOD-135)
+
+### KD-68 — Validation controller
+
+The validation body is unfinished; it inspects fields and then does nothing
+
+- Test: (follow-ups; not yet verified)
+- Category: C
+- Proposed fix: Q23
+- Status: fixed (MOD-134)
+
+### KD-69 — Data mapper
+
+`field_list()` caches one list for every `flat\data` subclass, so later classes get the first class's fields (and `is_field()` answers wrongly)
+
+- Test: `Data/MapperTest::testFieldListUsesTheInstanceAndCachesPerClass`
+- Category: A
+- Proposed fix: Cache per class
+- Status: fixed (MOD-126)
+
+### KD-70 — cURL config
+
+The constructor's second loop re-assigns every text argument, so unset `request_method`, `user_agent`, `referrer` and `cache_dir` become `null` instead of their declared defaults (`GET`, `flat/curl`)
+
+- Test: `Core/Curl/ConfigTest::testExplicitConfigurationAndNumericDefaults`
+- Category: B
+- Proposed fix: Q24
+- Status: fixed (MOD-136)
+
+### KD-71 — UUID
+
+`uuid::__invoke($version, $namespace, $name)` passed `$version=4, $namespace=null, $name=null` (assignments), so it always returned a random v4 UUID; its test asserted that
+
+- Test: `Core/UuidTest::testInvokeGeneratesTheRequestedVersion`
+- Category: A
+- Proposed fix: Pass the arguments through
+- Status: fixed (MOD-137)
+
+### KD-72 — Random numbers
+
+`$rand()` on an object built with bounds (`new rand(5, 10)`) ignores them and uses 0 to `getrandmax()`; `generate()` uses them
+
+- Test: `Core/RandTest::testInvocationWithoutArgumentsUsesTheConstructedBounds`
+- Category: B
+- Proposed fix: Q25
+- Status: fixed (MOD-140; `$rand()` without arguments now uses the constructed bounds)
+
+### KD-73 — Config
+
+A key starting with the `flat/` namespace removed its last five characters instead of the prefix (`flat/settings/a` became `flat/s`), so such keys never resolved; a test asserted that ("do not correct it here")
+
+- Test: `Core/ConfigTest::testPathsAreNormalizedAndBaseNamesAreRemoved`
+- Category: A
+- Proposed fix: Remove the prefix from the front
+- Status: fixed (MOD-139)
+
+### KD-74 — IP lookup
+
+`ipinfodb::location_ttl = 604800` is commented "1 day" but 604800 seconds is 7 days (a day is 86400)
+
+- Test: `Cloud/IpInfoDbTest::testCachedRecordExpiresExactlyAtItsTimeToLive` (pins the boundary, not the length)
+- Category: B
+- Proposed fix: Q26
+- Status: fixed (MOD-140; comment corrected, 7 days kept)
+
+### KD-75 — Mongo driver
+
+`getMongoDBClient()` guarded its default with `if (!$options===null)`, which parses as `(!$options)===null` and can never be true
+
+- Test: `Db/Mongo/CrudTest::testClientOptionsChooseTheServer`
+- Category: A
+- Proposed fix: `if ($options===null)` (no behavior change: `isset()` on `null` already worked)
+- Status: fixed (MOD-139)
+
+### KD-76 — XML encoding
+
+The XML encoder labels any string `strtotime()` can parse as `xs:DateTime`, including single letters such as `'a'` (a timezone abbreviation)
+
+- Test: `Core/Xml/EncodeTest::testSingleLettersAreCurrentlyTypedAsDateTime` (`@group known-defect`)
+- Category: B
+- Proposed fix: Q27
+- Status: open
 
 ## Test-strength tasks
 
@@ -116,14 +721,41 @@ Gaps in what existing tests prove, carried over from
 `../history/TESTING-FOLLOWUPS.md`. No behavior change; each adds or
 strengthens assertions.
 
-| ID | Area | Gap | Status |
-| --- | --- | --- | --- |
-| TS-01 | UUID | `testGenerateUsesConstructorState` only checks a default v4; add configured v3/v5 state | done (MOD-137) |
-| TS-02 | Random numbers | No test of invocation without arguments after constructing with custom bounds | done (MOD-137; found KD-72) |
-| TS-03 | Input map | No test that `0`, `false` and `"0"` count as empty input | done (MOD-137) |
-| TS-04 | CSV | No test that `fields2csv([])` returns a newline | done (MOD-137) |
-| TS-05 | Whole suite | Run a broader mutation probe; the 14-mutation sample in MOD-111 found two gaps | first sample done (MOD-139; [MUTATION-PROBE.md](MUTATION-PROBE.md)) |
-| TS-06 | Whole suite | The 54 survivor lines from the first probe sample are all closed: pinned by tests or shown equivalent (reasons in [MUTATION-PROBE.md](MUTATION-PROBE.md#ts-06-outcome)); further seeds can be run any time | done (MOD-141) |
+### TS-01 — UUID
+
+`testGenerateUsesConstructorState` only checks a default v4; add configured v3/v5 state
+
+- Status: done (MOD-137)
+
+### TS-02 — Random numbers
+
+No test of invocation without arguments after constructing with custom bounds
+
+- Status: done (MOD-137; found KD-72)
+
+### TS-03 — Input map
+
+No test that `0`, `false` and `"0"` count as empty input
+
+- Status: done (MOD-137)
+
+### TS-04 — CSV
+
+No test that `fields2csv([])` returns a newline
+
+- Status: done (MOD-137)
+
+### TS-05 — Whole suite
+
+Run a broader mutation probe; the 14-mutation sample in MOD-111 found two gaps
+
+- Status: first sample done (MOD-139; [MUTATION-PROBE.md](MUTATION-PROBE.md))
+
+### TS-06 — Whole suite
+
+The 54 survivor lines from the first probe sample are all closed: pinned by tests or shown equivalent (reasons in [MUTATION-PROBE.md](MUTATION-PROBE.md#ts-06-outcome)); further seeds can be run any time
+
+- Status: done (MOD-141)
 
 Reviewed and **not** treated as defects: `scalar` empty-input fallback (owner
 contract), Mongo affected-record policy, `app_error` summaries, `input\map`

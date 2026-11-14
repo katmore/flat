@@ -2485,3 +2485,21 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   `active/KNOWN-DEFECTS.md`, `active/CONSUMER-IMPACT.md`, `active/MUTATION-PROBE.md`
   and the generated `TEST-INVENTORY.md`. Converting them is proposed separately.
 
+
+## MOD-144 — KNOWN-DEFECTS.md and CONSUMER-IMPACT.md: tables become entries
+
+- Applies the MOD-143 rule to the two widest documents. Every table row is now
+  an entry: a `###` heading (`KD-01 — PDO statement`, `MOD-026 — Collection
+  iteration keys`), the description as a paragraph, and the other fields as a
+  short list (`Test`, `Category`, `Proposed fix`, `Status`; `Before`, `After`,
+  `Search consumer code for`, `Verified`). Wording is unchanged except that the
+  column label `Cat.` is now `Category`. The `\|` escapes needed inside table
+  cells were removed.
+- Same for the test-strength list (TS-01 to TS-06) in KNOWN-DEFECTS.md.
+- `tests/tools/inventory.php` read KD IDs from the table rows; it now reads them
+  from the `### KD-nn` entries. The regenerated `TEST-INVENTORY.md` is identical
+  to the previous one.
+- "Add a row" became "add an entry" in `AGENTS.md`, the phase `README.md` and
+  KNOWN-DEFECTS.md. `MUTATION-PROBE.md`, `README.md` contents and the other
+  tables are not converted yet.
+- Old-to-new: no paths changed. Undo: revert this commit.

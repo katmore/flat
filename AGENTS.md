@@ -53,7 +53,7 @@ repository broke this, and had to be replaced.)
 - Generated files are never edited by hand. Regenerate the phase's
   `TEST-INVENTORY.md` whenever tests change, writing to a temporary file first
   so a failed run cannot empty it (see the phase `README.md` for the command).
-- Every behavior change, bug fixes included, gets a row in the phase's
+- Every behavior change, bug fixes included, gets an entry in the phase's
   `active/CONSUMER-IMPACT.md`: what consumers saw before, what they see now,
   and what to search for in their code.
 - Change-log entries are never rewritten. A correction, rename or move gets a
@@ -71,7 +71,7 @@ repository broke this, and had to be replaced.)
   (unfinished stub) items wait for the maintainer's answer to their question.
 - Each fix follows "How each fix lands" in that file: fix the source, rewrite
   the test to assert the correct behavior, remove `@group known-defect`, add
-  the consumer-impact row, mark the entry fixed, add a change-log entry and
+  the consumer-impact entry, mark the entry fixed, add a change-log entry and
   regenerate the test inventory.
 - Fix all of a phase's known defects before its PHP version step, so bug fixes
   and runtime upgrades never mix.

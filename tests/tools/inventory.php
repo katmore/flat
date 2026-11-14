@@ -25,12 +25,16 @@ if (!@$document->load($listFile)) {
     exit(1);
 }
 
-// Known-defect IDs by test method name, from rows like "| KD-07 | ... ::testName ...".
+// Known-defect IDs by test method name, from entries like "### KD-07 - Area" whose
+// lines name the test as "Class::testName".
 $defectIds = [];
+$currentId = null;
 foreach ($defectsFile ? file($defectsFile, FILE_IGNORE_NEW_LINES) : [] as $row) {
-    if (!preg_match('/^\| (KD-\d+) \|/', $row, $id)) continue;
+    if (preg_match('/^### (KD-\d+)\b/', $row, $id)) { $currentId = $id[1]; continue; }
+    if (substr($row, 0, 1) === '#') { $currentId = null; continue; }
+    if ($currentId === null) continue;
     preg_match_all('/::test(\w+)/', $row, $names);
-    foreach ($names[1] as $name) $defectIds[$name][] = $id[1];
+    foreach ($names[1] as $name) $defectIds[$name][] = $currentId;
 }
 
 $files = [];

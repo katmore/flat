@@ -31,7 +31,7 @@ For a person or an agent picking this up:
    tests that still assert defective behavior.
 4. For each fix, follow "How each fix lands" in
    [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): fix the source, rewrite
-   the test, remove its `@group known-defect`, add a row to
+   the test, remove its `@group known-defect`, add an entry to
    [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md), mark the entry
    fixed, and add an entry to [CHANGELOG.md](CHANGELOG.md).
 5. Before touching an area, read its file in [notes/](notes/) for how it is
