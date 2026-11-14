@@ -83,7 +83,7 @@ These are also in the known-defects list (questions 29 to 31), each with a
 recommendation.
 
 - Where do the tests live? Recommend: in this repository under
-  `tests/Functional/`, with the application fetched at a pinned commit at
+  a new Functional folder under the tests folder, with the application fetched at a pinned commit at
   image build time, not copied in.
 - Is it acceptable that the image build needs the network once to fetch
   the pinned application and its Composer packages? Recommend: yes, the same
