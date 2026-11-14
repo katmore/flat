@@ -2532,3 +2532,14 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - Files changed: `src/flat/core/xml/encode.php` and its test.
 
 - Verified: `docker/bin/test all --coverage` passes 1,421 tests; 100% methods (1,062/1,062) and lines (8,052/8,052). One `known-defect` test remains (KD-77). The RabbitMQ container exited at startup once and passed on retry (known flake, undiagnosed).
+
+## MOD-147 — XML hexBinary labels (KD-77, owner agreed Q28)
+
+- KD-77 (fix): the XML encoder labeled any string of hex digits `xs:hexBinary`;
+  now only an even number of digits qualifies (whole bytes). Consumer impact
+  entry added. The known-defect test became a data-provider test (even lengths
+  stay `xs:hexBinary`; `a`, `abc`, `cafe0` are strings); it fails without the fix.
+- This closes the last known defect of the php-7.2 phase.
+- Files changed: `src/flat/core/xml/encode.php` and its test.
+
+- Verified: `docker/bin/test all --coverage` passes 1,427 tests; 100% methods (1,062/1,062) and lines (8,052/8,052). No `known-defect` tests remain.

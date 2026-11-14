@@ -115,12 +115,14 @@ class EncodeTest extends TestCase
         $this->assertStringNotContainsString('xs:DateTime',$xml);
         $this->assertStringContainsString('xs:string[2]',$xml);
     }
-    /** @group known-defect */
-    public function testLettersAThroughFAreCurrentlyTypedAsHexBinary()
+    /** @dataProvider hexText */
+    public function testOnlyWholeBytesOfHexDigitsAreTypedAsHexBinary($text,$type)
     {
-        // ctype_xdigit() accepts any length, but xs:hexBinary needs an even number of digits.
-        $xml = encode::serialize(['a','face']);
-        $this->assertStringContainsString('xs:hexBinary[2]',$xml);
+        $this->assertStringContainsString('xsi:type="'.$type.'">'.$text.'<',encode::serialize(['v'=>$text]));
+    }
+    public function hexText()
+    {
+        return [['deadbeef','xs:hexBinary'],['ABCDEF','xs:hexBinary'],['face','xs:hexBinary'],['ab','xs:hexBinary'],['a','xs:string'],['abc','xs:string'],['cafe0','xs:string']];
     }
     public function testArrayTypeDetectionInspectsTheFirstTenKeys()
     {

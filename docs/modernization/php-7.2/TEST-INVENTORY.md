@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 777 test methods in 92 files, running 1421 test cases.
-- 123 methods use a data provider (one case per data set).
-- 1 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+- 777 test methods in 92 files, running 1427 test cases.
+- 124 methods use a data provider (one case per data set).
+- 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -767,15 +767,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testIsoDatesAndTimesAreTypedAsDateTime` (line 93): 6 data-provider cases
 - `testOtherTextIsAStringEvenWhenStrtotimeParsesIt` (line 102): 9 data-provider cases
 - `testSingleLettersInAListAreStrings` (line 112)
-- `testLettersAThroughFAreCurrentlyTypedAsHexBinary` (line 119): **known defect KD-77**
-- `testArrayTypeDetectionInspectsTheFirstTenKeys` (line 125)
-- `testDumpEnabledEmptyAndNumericStringObjectKeys` (line 134)
-- `testResourceFallbackWithAndWithoutDumpPreservesWarnings` (line 141)
-- `testLegacyIndexAndScalarTypeDecoding` (line 159)
-- `testInstanceAndCompatibilityAlias` (line 165)
-- `testRoundTripsValuesWithExplicitMetadata` (line 173): 18 data-provider cases
-- `testAssocDecodingConvertsObjectsWithoutChangingScalarTypes` (line 189)
-- `testLegacyXmlWithoutNewMetadataCanStillBeRead` (line 195)
+- `testOnlyWholeBytesOfHexDigitsAreTypedAsHexBinary` (line 119): 7 data-provider cases
+- `testArrayTypeDetectionInspectsTheFirstTenKeys` (line 127)
+- `testDumpEnabledEmptyAndNumericStringObjectKeys` (line 136)
+- `testResourceFallbackWithAndWithoutDumpPreservesWarnings` (line 143)
+- `testLegacyIndexAndScalarTypeDecoding` (line 161)
+- `testInstanceAndCompatibilityAlias` (line 167)
+- `testRoundTripsValuesWithExplicitMetadata` (line 175): 18 data-provider cases
+- `testAssocDecodingConvertsObjectsWithoutChangingScalarTypes` (line 191)
+- `testLegacyXmlWithoutNewMetadataCanStillBeRead` (line 197)
 
 ### `tests/Unit/Data/ErrorDetailsTest.php` (6)
 

@@ -719,10 +719,10 @@ The XML encoder labels any string `strtotime()` can parse as `xs:DateTime`, incl
 
 Any string of hex digits is typed `xs:hexBinary` by `ctype_xdigit()`, including odd lengths such as `'a'` or `'abc'`; `xs:hexBinary` needs an even number of digits. Found when KD-76 stopped hiding it (`'a'` used to be called a date).
 
-- Test: `Core/Xml/EncodeTest::testLettersAThroughFAreCurrentlyTypedAsHexBinary` (`@group known-defect`)
+- Test: `Core/Xml/EncodeTest::testOnlyWholeBytesOfHexDigitsAreTypedAsHexBinary`
 - Category: B
 - Proposed fix: Q28
-- Status: open
+- Status: fixed (MOD-147; only an even number of hex digits is typed `xs:hexBinary`)
 
 ## Test-strength tasks
 
@@ -900,3 +900,4 @@ agreed with every recommendation); questions 25 and 26 are open.
     hex digits count? Recommend: yes (a valid `xs:hexBinary` has whole bytes), with the
     same consumer-visible effect as KD-76: some strings change from `xs:hexBinary` to
     `xs:string`.
+    **Answered: agreed** (owner, 2026-11-14). Fixed in MOD-147.

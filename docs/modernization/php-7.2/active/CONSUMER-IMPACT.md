@@ -484,6 +484,12 @@ Every known-defect fix changes behavior a consumer might have relied on.
 - After: Returns the requested version (v3/v5 are deterministic); `$uuid()` is still a random v4
 - Search consumer code for: UUID objects used as callables: `$u(` with arguments
 
+### MOD-147 (KD-77) — XML hexBinary labels
+
+- Before: Any string of hex digits was labeled `xs:hexBinary`, including odd lengths such as `a`, `abc` or `cafe0`
+- After: Only an even number of hex digits (`ab`, `deadbeef`) is `xs:hexBinary`; odd-length strings are `xs:string`
+- Search consumer code for: readers of XML from `flat\core\xml\encode` that look at `xsi:type="xs:hexBinary"`, or that decode such values as bytes
+
 ### MOD-146 (KD-76) — XML date labels
 
 - Before: Any string `strtotime()` could parse was labeled `xs:DateTime`: words (`tomorrow`, `mon`), single letters (`z`), `1/2/2020`, `12 January 2020`

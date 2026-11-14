@@ -438,7 +438,8 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
                 // }
              // }
              if ($param['hexBinary'] ) {
-                if (ctype_xdigit($data)) return "xs:hexBinary";
+                // whole bytes only: xs:hexBinary has an even number of digits (owner answer, known-defects Q28)
+                if (ctype_xdigit($data) && strlen($data)%2===0) return "xs:hexBinary";
              }
              // if ($analyze['base64Binary']) {
                 // if (base64_decode($data)) return "base64Binary";
