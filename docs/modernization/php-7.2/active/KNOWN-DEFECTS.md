@@ -905,11 +905,15 @@ agreed with every recommendation); questions 25 and 26 are open.
     Recommend: in this repository in a new Functional folder under the tests folder as a separate
     `functional` suite, with the flat-webapp application fetched at a pinned
     commit at image build time, never copied into the repository.
+    **Answered: agreed** (owner, 2026-11-15).
 30. **Functional tests: network at build time.** The pinned application and its
     Composer packages must be downloaded once when the image is built. Recommend:
     accept that (the base images are fetched the same way); the unit suite
     stays offline.
-31. **Functional tests: baseline.** `master`, `devel` and `modernize-26` of
-    flat-webapp are the same commit today (`7186607`). Recommend: pin that commit
+    **Answered: agreed** (owner, 2026-11-15).
+31. **Functional tests: which flat-webapp version to test against.** The
+    sample application is a separate repository (`katmore/flat-webapp`); the tests
+    run it on top of this flat checkout, so they need one fixed version of it.
+    Its `master`, `devel` and `modernize-26` branches are the same commit today (`7186607`). Recommend: pin that commit
     and revisit only if the branches diverge.
 

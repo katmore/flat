@@ -2552,3 +2552,11 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   and a first test list. Questions 29 to 31 added to KNOWN-DEFECTS.md.
 - Documentation only; no code changed.
 
+
+## MOD-149 — Owner answers Q29 and Q30; Q31 reworded
+
+- Q29 (tests live in this repository, application fetched at a pinned commit)
+  and Q30 (network once at image build) agreed 2026-11-15.
+- Q31 and the plan reworded after the owner asked what it meant: it is about
+  which version of the separate `katmore/flat-webapp` repository the tests run.
+- Documentation only.

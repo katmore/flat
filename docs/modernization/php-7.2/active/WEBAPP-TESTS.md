@@ -89,7 +89,7 @@ recommendation.
   the pinned application and its Composer packages? Recommend: yes, the same
   way the PHP and service images are already fetched; the unit suite
   stays offline.
-- Which branch of the application is the baseline? Recommend: the pinned
+- Which version of the flat-webapp repository do the tests run against? Recommend: the pinned
   commit above, since all three branches are identical today.
 
 Out of scope until the owner agrees: changes to flat-webapp itself, and any
