@@ -2569,3 +2569,15 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   refused with HTTP 403; it stays until the owner deletes it.
 - Documented in `docs/modernization/README.md` and the WEBAPP-TESTS plan.
 
+## MOD-151 — flat-webapp reviewed; test plan follows its php-7.2 branch
+
+- New `active/WEBAPP-REVIEW.md`: read-through and trial run of flat-webapp.
+  As shipped its views fail ("no resolution for resource") and its API only
+  answers 403, because of a half-finished rename from "SpyDash" to "App";
+  other defects are listed there. Nothing in either repository was changed
+  for the trial.
+- Q31 answered by the owner: test against the `php-7.2` branch of
+  flat-webapp, not a pinned commit, for now. Q32 (repair flat-webapp on that
+  branch) and Q33 (licence headers) added, with recommendations.
+- `active/WEBAPP-TESTS.md` updated to match. Documentation only.
+

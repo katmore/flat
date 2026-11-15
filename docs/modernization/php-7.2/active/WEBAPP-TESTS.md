@@ -1,6 +1,9 @@
 # Functional tests with flat-webapp (plan)
 
-Status: plan agreed except question 31. Nothing is built yet.
+Status: plan agreed; the application needs repair first (question 32). Nothing is built yet.
+
+Read [WEBAPP-REVIEW.md](WEBAPP-REVIEW.md) first: the application as shipped does not
+run (its views fail, its API only answers 403).
 
 Branches of flat-webapp (2026-11-15): a `php-7.2` branch was created from its
 `master` (commit `7186607`), following the flat pattern. Phase work happens on
@@ -51,8 +54,9 @@ all point at commit `7186607`). It requires PHP 7.1.1 or newer and
 1. Run the application in the existing Docker test container with PHP's
    built-in web server (`php -S`), which supports `PATH_INFO` for
    `web/api.php/Resource`. Tests send real HTTP requests to it.
-2. Get the application at a pinned commit (`7186607`), so the tests are
-   reproducible and a fresh checkout plus Docker is enough. Install its
+2. Get the application from the `php-7.2` branch of flat-webapp (owner's
+   answer to question 31; a branch for now, not a commit, because the application
+   is still being repaired). A fresh checkout plus Docker must still be enough. Install its
    dependencies with Composer inside the container, pointing `katmore/flat`
    at the checkout under test (a Composer `path` repository), so the tests
    always exercise the working tree.
@@ -89,14 +93,14 @@ These are also in the known-defects list (questions 29 to 31), each with a
 recommendation.
 
 - Where do the tests live? Recommend: in this repository under
-  a new Functional folder under the tests folder, with the application fetched at a pinned commit at
+  a new Functional folder under the tests folder, with the application fetched from its `php-7.2` branch at
   image build time, not copied in.
 - Is it acceptable that the image build needs the network once to fetch
   the pinned application and its Composer packages? Recommend: yes, the same
   way the PHP and service images are already fetched; the unit suite
   stays offline.
-- Which version of the flat-webapp repository do the tests run against? Recommend: the pinned
-  commit above, since all three branches are identical today.
+- Which version of the flat-webapp repository do the tests run against?
+  Answered: its `php-7.2` branch (a branch, not a commit, while it is repaired).
 
-Out of scope until the owner agrees: changes to flat-webapp itself, and any
-PHP version change.
+Out of scope until the owner agrees: changes to flat-webapp itself (question 32
+asks for that), and any PHP version change.

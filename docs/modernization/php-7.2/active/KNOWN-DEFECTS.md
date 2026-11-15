@@ -913,7 +913,19 @@ agreed with every recommendation); questions 25 and 26 are open.
     **Answered: agreed** (owner, 2026-11-15).
 31. **Functional tests: which flat-webapp version to test against.** The
     sample application is a separate repository (`katmore/flat-webapp`); the tests
-    run it on top of this flat checkout, so they need one fixed version of it.
-    Its `master`, `devel` and `modernize-26` branches are the same commit today (`7186607`). Recommend: pin that commit
-    and revisit only if the branches diverge.
+    run it on top of this flat checkout, so they need a fixed version of it.
+    **Answered** (owner, 2026-11-15): pin to the branch `php-7.2` of flat-webapp,
+    not to a commit, for now: the application is half finished (see
+    [WEBAPP-REVIEW.md](WEBAPP-REVIEW.md)), so it will change on that branch.
+32. **Repair flat-webapp on its `php-7.2` branch?** As shipped its views fail and
+    its API only answers 403, because of a half-finished rename from "SpyDash"
+    ([WEBAPP-REVIEW.md](WEBAPP-REVIEW.md)). Recommend: yes, on its `php-7.2`
+    branch only. Make the smallest changes that make it work (namespaces in the
+    routing config and route classes, the template imports, the `Asset` class,
+    the script file name, bower dependencies), one commit per concern, each
+    recorded in this phase's change log, with a test that proves it.
+33. **Licence headers in flat-webapp.** `NotFoundTmpl.php` and `NotFound.php` say
+    "NO LICENSE GRANTED" while the project is MIT/GPL. Recommend: replace the header
+    with the project's standard one. It is your licensing decision, so this waits
+    for your answer.
 
