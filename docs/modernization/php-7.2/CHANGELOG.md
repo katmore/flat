@@ -2560,3 +2560,12 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - Q31 and the plan reworded after the owner asked what it meant: it is about
   which version of the separate `katmore/flat-webapp` repository the tests run.
 - Documentation only.
+
+## MOD-150 — flat-webapp gets a php-7.2 branch
+
+- Created `php-7.2` in `katmore/flat-webapp` from `master` (commit `7186607`).
+  Same model as flat: phase branches, merged to `modernize-26` when finished.
+- Deleting `devel` (identical to `master`, so nothing is lost) was attempted but
+  refused with HTTP 403; it stays until the owner deletes it.
+- Documented in `docs/modernization/README.md` and the WEBAPP-TESTS plan.
+

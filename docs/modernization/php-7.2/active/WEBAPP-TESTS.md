@@ -1,6 +1,12 @@
 # Functional tests with flat-webapp (plan)
 
-Status: draft for the owner's review. Nothing is built yet.
+Status: plan agreed except question 31. Nothing is built yet.
+
+Branches of flat-webapp (2026-11-15): a `php-7.2` branch was created from its
+`master` (commit `7186607`), following the flat pattern. Phase work happens on
+it and is merged to `modernize-26` when the phase is finished. The `devel`
+branch is to be deleted by the owner (this session was refused permission to
+delete branches).
 
 The unit suite tests flat's classes one at a time. These tests answer a
 different question: does a real application built on flat still behave when it
