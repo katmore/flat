@@ -4,18 +4,20 @@ The first modernization phase: flat as it stood in 2020, running on PHP 7.2,
 with a full test suite and its known bugs fixed. The project plan, branch
 model and the rules every phase follows are in [../README.md](../README.md).
 
-## Status (2026-11-14)
+## Status (2026-11-15)
 
 - **Tests:** 1,427 tests pass on PHP 7.2.34 with 100% class, method and line
   coverage. How to run them: [../TESTING.md](../TESTING.md).
-- **Known defects:** 77 tracked, all resolved (fixed, already fixed, or
-  confirmed as intended); none open.
+- **Known defects:** 79 tracked, 77 resolved (fixed, already fixed, or
+  confirmed as intended), 2 open: KD-78 and KD-79 wait for the owner's answers to Q34 and Q35.
   Record: [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
 - **Test-strength tasks:** TS-01 to TS-05 done (first mutation-probe sample:
   [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)); TS-06 done (the 54 survivor
   lines are pinned or shown equivalent).
-- **Functional tests against `flat-webapp`:** plan drafted, reviewed against the real
-  application, which needs repair first (questions 32 and 33): [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md).
+- **flat-webapp:** repaired on its `php-7.2` branch and runnable with Docker
+  (the `serve` script in that repository's docker folder); functional tests are on hold until the
+  owner has run it: [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md),
+  [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md).
 - **Not done until** the owner declares the phase complete.
 
 ## Resume here

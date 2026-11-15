@@ -724,6 +724,24 @@ Any string of hex digits is typed `xs:hexBinary` by `ctype_xdigit()`, including 
 - Proposed fix: Q28
 - Status: fixed (MOD-147; only an even number of hex digits is typed `xs:hexBinary`)
 
+### KD-78 — Template design root
+
+`get_design_root_dir()` falls back to `app/Resources/design/tmpl` but the design lookup adds its own `tmpl` prefix, so the fallback resolves to `.../design/tmpl/tmpl/...` and finds nothing (found while running flat-webapp, which configures `design/root_dir` instead)
+
+- Test: `Core/Template/ControllerTest::testDesignRootUsesConfigurationOrItsDocumentedFallback` (pins the fallback path)
+- Category: B
+- Proposed fix: Q34
+- Status: open
+
+### KD-79 — API method handling
+
+An API resource that implements only `GET` answers `POST`, `PUT` and `DELETE` with an empty HTTP 200 (seen through flat-webapp); flat has a `method_not_allowed` response that is not used for this
+
+- Test: (none yet; seen over HTTP)
+- Category: B
+- Proposed fix: Q35
+- Status: open
+
 ## Test-strength tasks
 
 Gaps in what existing tests prove, carried over from
@@ -928,4 +946,14 @@ agreed with every recommendation); questions 25 and 26 are open.
     "NO LICENSE GRANTED" while the project is MIT/GPL. Recommend: replace the header
     with the project's standard one. It is your licensing decision, so this waits
     for your answer.
+34. **KD-78 template design root fallback.** Should the fallback root be the
+    folder that contains `tmpl` (`app/Resources/design`), so that the prefix lookup
+    finds `app/Resources/design/tmpl/...`? Recommend: yes; today the fallback can
+    never resolve a template, so applications must configure `design/root_dir`
+    (those that do are unaffected).
+35. **KD-79 unsupported API methods.** Should a resource that does not implement
+    the requested method answer with the existing `method_not_allowed` response
+    (HTTP 405) instead of an empty 200? Recommend: yes, but it changes what API
+    clients see, so confirm the intent first; first check how flat\core\controller\api
+    treats `HEAD`, `OPTIONS` and unknown methods, and add a unit test.
 

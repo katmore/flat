@@ -77,3 +77,47 @@ The application has to be repaired before it can be a test subject: with the
 namespaces fixed, views and the API need a real resource to exercise. See
 [WEBAPP-TESTS.md](WEBAPP-TESTS.md) and questions 32 and 33 in
 [KNOWN-DEFECTS.md](KNOWN-DEFECTS.md).
+
+## Repairs made (2026-11-15)
+
+The owner asked to make flat-webapp work with flat first, and to put
+functional tests on hold until the owner has run it. All changes are on the
+`php-7.2` branch of `katmore/flat-webapp`, in separate commits:
+
+- Finished the rename: routing config, route classes, templates and entry-point
+  comments now use `AppRoute` and `AppWeb`. Removed the MiceSpy name, its
+  navigation links and the Croppie dependency from the view; the script
+  file name is `AppWeb.js`.
+- `design.php` now sets `root_dir` (the key flat reads) to the folder that
+  contains `tmpl`; `ComponentsUrl` points at `web/components`; `AppWeb\Asset`
+  imports `config` and uses the right constant; `.bowerrc` puts Bower packages
+  in `web/components`.
+- The not-found page used two flat classes that do not exist; it now uses
+  `AppWeb\ViewMetaEvent` and a new `AppWeb\ErrorEvent`.
+- Added an example API resource, `Hello`, because the API had none.
+- Added Docker tooling: the `serve` script in the docker folder installs dependencies with
+  Composer and Bower in containers and serves the application with Apache and
+  PHP 7.2 at `http://localhost:8080`. `composer.json` now requires flat from its
+  `php-7.2` branch and pins the platform PHP version. Details are in that
+  repository's README.
+
+Checked from a fresh clone: home view 200, unknown view 404, `Hello` 200,
+unknown API resource 403, Bootstrap and the application's CSS served, and
+`--flat` (a local flat checkout) works.
+
+Not repaired, because they are not on the path a visitor takes: the "branded"
+error templates still name nonexistent `\flat\app\...` classes; the "NO LICENSE
+GRANTED" headers (question 33); CRLF line endings; the `error_get_last()` null
+reads that matter from PHP 7.4.
+
+## Findings about flat itself
+
+- `\flat\core\controller\tmpl::get_design_root_dir()` falls back to the
+  folder `app/Resources/design/tmpl`, but the design lookup then adds its own
+  `tmpl` prefix, giving `.../design/tmpl/tmpl/...`. Without configuration no
+  template can be found. flat-webapp works around it by setting
+  `design/root_dir`. Recorded as KD-78 (question 34).
+- An API resource that implements only `GET` answers `POST`, `PUT` and
+  `DELETE` with an empty `200`, not a method-not-allowed response. Recorded as
+  KD-79 (question 35).
+

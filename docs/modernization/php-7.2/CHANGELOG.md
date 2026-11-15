@@ -2581,3 +2581,16 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   branch) and Q33 (licence headers) added, with recommendations.
 - `active/WEBAPP-TESTS.md` updated to match. Documentation only.
 
+## MOD-152 — flat-webapp repaired and runnable with Docker; KD-78 and KD-79 found
+
+- Owner decision: make flat-webapp work with flat first; functional tests wait
+  until the owner has run it on their own machine.
+- Changes are in the `php-7.2` branch of `katmore/flat-webapp` (listed in
+  [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md)): finished rename, config
+  and template fixes, example API resource, `docker/bin/serve`, composer.json
+  pointing at flat's `php-7.2` branch.
+- Found in flat while doing it: KD-78 (template design root fallback can never
+  resolve) and KD-79 (an unsupported API method answers an empty 200). Both
+  are category B with questions 34 and 35. Neither is changed yet.
+- No change to flat's source or tests in this entry.
+

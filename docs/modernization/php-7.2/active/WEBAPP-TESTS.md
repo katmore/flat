@@ -1,6 +1,8 @@
 # Functional tests with flat-webapp (plan)
 
-Status: plan agreed; the application needs repair first (question 32). Nothing is built yet.
+Status: on hold (owner, 2026-11-15): first make flat-webapp work with flat and run it
+on the owner's desktop. The repairs and Docker tooling are done (see
+[WEBAPP-REVIEW.md](WEBAPP-REVIEW.md)); no functional tests are written yet.
 
 Read [WEBAPP-REVIEW.md](WEBAPP-REVIEW.md) first: the application as shipped does not
 run (its views fail, its API only answers 403).
