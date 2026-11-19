@@ -2664,3 +2664,20 @@ The earlier PHP built-in default, with no `php.ini`, was
 `E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED`. Integer values differ between PHP
 versions, so levels are written as constants. Documentation only; MOD-158 is
 unchanged.
+
+## MOD-160 — flat-webapp: errors go to the log stream, never to the page
+
+- In the `php-7.2` branch of `katmore/flat-webapp` (owner's request): error
+  details (message, paths, stack trace) are never printed on a page in any mode.
+  Visitors get a generic message; the details go to the server log. The API
+  handlers log one JSON line per error with `error_log()`; PHP logs HTML-side errors.
+- `docker/bin/serve` now stays in the foreground and streams the server log live
+  (requests and PHP errors); a banner says Ctrl-C stops it and removes the container.
+  `--detach` keeps the background behavior. `docker/zz-errors.ini` sets
+  `display_errors = Off` and `log_errors = On` in both PHP modes, which now differ
+  only in `error_reporting` (`E_ALL` vs `E_ALL & ~E_DEPRECATED & ~E_STRICT`).
+- Also fixed: undefined-index notices in `ErrorTrait` (backtrace frames of
+  internal functions have no file/line) and Apache's missing `ServerName` warning.
+- Checked from a clean copy: pages answer with generic text only; the live log
+  shows the PHP fatal, the PHP warning and the API's JSON lines; Ctrl-C stops
+  the container. No change to flat's source or tests.
