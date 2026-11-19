@@ -2638,3 +2638,15 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   a warning: details on gives 500 with the details, details off gives 500 with
   only the generic text; normal pages and 404 unchanged.
 - No change to flat's source or tests.
+
+## MOD-158 — flat-webapp: PHP settings come from php.ini; development and production modes
+
+- In the `php-7.2` branch of `katmore/flat-webapp` (at the owner's request): both
+  entry points no longer set `display_errors` or `error_reporting` (the API still
+  did after the views stopped), and their stale constants and comments are gone.
+- The Docker image now copies PHP's `php.ini-development` (default) or
+  `php.ini-production` into place; `docker/bin/serve --production` selects it.
+  Checked both modes from a clean copy: development shows error details
+  (`error_reporting` 32767), production shows only the generic text
+  (`display_errors` off, 22527); normal pages, 404 and 403 unchanged.
+- No change to flat's source or tests.
