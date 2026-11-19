@@ -2623,3 +2623,9 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   unknown API resource 403.
 - No change to flat's source or tests.
 
+## MOD-156 — flat-webapp honors error_reporting()
+
+- Done in the `php-7.2` branch of `katmore/flat-webapp` at the owner's request
+  (details in [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md)). No change to
+  flat's source or tests.
+

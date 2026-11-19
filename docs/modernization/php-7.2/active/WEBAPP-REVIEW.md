@@ -153,3 +153,14 @@ and stack trace, because `HtmlErrorTrait::_error_check()` does not look at
 `display_errors` (the API's `JsonErrorTrait` does). The error handlers are in
 flat-webapp (`ErrorTrait`), not in flat. Not changed; left to the owner.
 
+## Error level (2026-11-19)
+
+Measured first (`display_errors` 0, two error levels): the HTML side honored
+`error_reporting()` for ordinary warnings but treated an `@`-silenced warning
+as a failure (HTTP 500); the API side ignored the level entirely (masked and
+silenced warnings both gave 500). Fixed in flat-webapp: the API error handler
+and a new handler in `ViewController` ignore errors outside the level and
+`@`-silenced ones, and `error_clear_last()` runs after they are installed.
+After the change: in-level warning 500, masked warning 200, `@`-silenced warning
+200, exceptions still 500, normal pages and 404/403 unchanged.
+
