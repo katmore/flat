@@ -2614,3 +2614,12 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   resource 403, stylesheet served.
 - No change to flat's source or tests. Documentation only in this repository.
 
+## MOD-155 — flat-webapp clean-up: leftovers, licence headers, LF endings
+
+- Done in the `php-7.2` branch of `katmore/flat-webapp` (list in
+  [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md)). Question 33 answered:
+  the mismatched headers are removed.
+- Fresh-clone check: home view 200, unknown view 404, `example` API 200,
+  unknown API resource 403.
+- No change to flat's source or tests.
+

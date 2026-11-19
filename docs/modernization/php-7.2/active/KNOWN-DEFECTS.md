@@ -946,6 +946,7 @@ agreed with every recommendation); questions 25 and 26 are open.
     "NO LICENSE GRANTED" while the project is MIT/GPL. Recommend: replace the header
     with the project's standard one. It is your licensing decision, so this waits
     for your answer.
+    **Answered** (owner, 2026-11-19): remove them. Done in flat-webapp (MOD-155).
 34. **KD-78 template design root fallback.** Should the fallback root be the
     folder that contains `tmpl` (`app/Resources/design`), so that the prefix lookup
     finds `app/Resources/design/tmpl/...`? Recommend: yes; today the fallback can

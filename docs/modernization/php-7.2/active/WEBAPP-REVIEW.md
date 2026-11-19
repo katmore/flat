@@ -133,3 +133,23 @@ nothing fills `web/components/` now. The unused `AppWeb\WidgetTmpl` class was
 left in place. From this point flat-webapp is written by the owner, with
 snippets from Claude on request; changes to flat are made by Claude.
 
+## More clean-up (2026-11-19)
+
+At the owner's request, on flat-webapp's `php-7.2` branch, in separate commits:
+
+- Removed unused leftovers: the `error/branded` templates, `web/asset/img`,
+  `bin/` (private-fork scripts), `src/`, `app/data/`, the `Api/Dependency`
+  placeholder note (its idea is in the README) and the duplicate `Hello` API
+  resource (`example` stays; the README and `serve` use it).
+- Removed the "NO LICENSE GRANTED" headers (question 33).
+- Converted 31 files from CRLF to LF and added `.gitattributes`; nothing else
+  changed in them (checked with a whitespace-insensitive diff).
+- Fixed `example.php`: a comment nested inside its doc comment ended it early
+  and caused a parse error (HTTP 500). Found by re-running from a fresh clone.
+
+Checked: with `DISPLAY_ERRORS = 0` the API hides error details ("Unable to
+process this request"), but the HTML view still prints the message, file paths
+and stack trace, because `HtmlErrorTrait::_error_check()` does not look at
+`display_errors` (the API's `JsonErrorTrait` does). The error handlers are in
+flat-webapp (`ErrorTrait`), not in flat. Not changed; left to the owner.
+
