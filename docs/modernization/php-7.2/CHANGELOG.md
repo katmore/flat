@@ -2650,3 +2650,17 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   (`error_reporting` 32767), production shows only the generic text
   (`display_errors` off, 22527); normal pages, 404 and 403 unchanged.
 - No change to flat's source or tests.
+
+## MOD-159 — Correction to MOD-158: error levels as constants
+
+MOD-158 gave two `error_reporting` values as integers (32767 and 22527), copied
+from what PHP printed. They are, in PHP's own constants:
+
+- development (`php.ini-development`): `E_ALL` (was written as 32767);
+- production (`php.ini-production`): `E_ALL & ~E_DEPRECATED & ~E_STRICT` (was
+  written as 22527).
+
+The earlier PHP built-in default, with no `php.ini`, was
+`E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED`. Integer values differ between PHP
+versions, so levels are written as constants. Documentation only; MOD-158 is
+unchanged.
