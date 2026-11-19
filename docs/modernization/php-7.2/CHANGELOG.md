@@ -2606,3 +2606,11 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   a consumer of flat, so the dependency would run backwards).
 - Documentation only. No file was moved or renamed.
 
+## MOD-154 — flat-webapp stripped to plain HTML; Bower removed
+
+- Done in the `php-7.2` branch of `katmore/flat-webapp` at the owner's request
+  (details in [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md)). Checked from a
+  fresh clone: home view 200, unknown view 404, `Hello` 200, unknown API
+  resource 403, stylesheet served.
+- No change to flat's source or tests. Documentation only in this repository.
+

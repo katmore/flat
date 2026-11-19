@@ -121,3 +121,15 @@ reads that matter from PHP 7.4.
   `DELETE` with an empty `200`, not a method-not-allowed response. Recorded as
   KD-79 (question 35).
 
+## Stripped down (2026-11-19)
+
+At the owner's request flat-webapp on its `php-7.2` branch is now plain HTML
+and CSS: no JavaScript, no Bootstrap, no jQuery, and no Bower (deprecated).
+The layout template is a small HTML5 page; the script, alert-set and
+loading-overlay widgets, both JavaScript files, `bower.json`, `.bowerrc`, the
+Bower step and service in the Docker tooling and the Bower instructions are
+gone. `AppWeb\ComponentsUrl` and its config stay (the owner wants them), but
+nothing fills `web/components/` now. The unused `AppWeb\WidgetTmpl` class was
+left in place. From this point flat-webapp is written by the owner, with
+snippets from Claude on request; changes to flat are made by Claude.
+
