@@ -2629,3 +2629,12 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   (details in [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md)). No change to
   flat's source or tests.
 
+
+## MOD-157 — flat-webapp: HTML error details follow display_errors
+
+- In the `php-7.2` branch of `katmore/flat-webapp`: `HtmlErrorTrait` printed
+  the error details when `display_errors` was off and the generic message when
+  it was on. Swapped back. Checked with a view that throws and one that raises
+  a warning: details on gives 500 with the details, details off gives 500 with
+  only the generic text; normal pages and 404 unchanged.
+- No change to flat's source or tests.
