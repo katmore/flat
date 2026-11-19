@@ -919,17 +919,17 @@ agreed with every recommendation); questions 25 and 26 are open.
     same consumer-visible effect as KD-76: some strings change from `xs:hexBinary` to
     `xs:string`.
     **Answered: agreed** (owner, 2026-11-14). Fixed in MOD-147.
-29. **Functional tests: where they live.** Plan: [WEBAPP-TESTS.md](WEBAPP-TESTS.md).
-    Recommend: in this repository in a new Functional folder under the tests folder as a separate
-    `functional` suite, with the flat-webapp application fetched at a pinned
+29. **Integration tests: where they live.** Plan: [WEBAPP-TESTS.md](WEBAPP-TESTS.md).
+    Recommend: in this repository in a new Integration folder under the tests folder as a separate
+    `integration` suite, with the flat-webapp application fetched at a pinned
     commit at image build time, never copied into the repository.
     **Answered: agreed** (owner, 2026-11-15).
-30. **Functional tests: network at build time.** The pinned application and its
+30. **Integration tests: network at build time.** The pinned application and its
     Composer packages must be downloaded once when the image is built. Recommend:
     accept that (the base images are fetched the same way); the unit suite
     stays offline.
     **Answered: agreed** (owner, 2026-11-15).
-31. **Functional tests: which flat-webapp version to test against.** The
+31. **Integration tests: which flat-webapp version to test against.** The
     sample application is a separate repository (`katmore/flat-webapp`); the tests
     run it on top of this flat checkout, so they need a fixed version of it.
     **Answered** (owner, 2026-11-15): pin to the branch `php-7.2` of flat-webapp,

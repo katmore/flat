@@ -2,7 +2,7 @@
 
 A read-through of `katmore/flat-webapp` (commit `7186607`, the tip of its
 `master`, `modernize-26` and the new `php-7.2` branch) and a trial run, done
-before building any functional tests on it. The owner suspected it was only
+before building any integration tests on it. The owner suspected it was only
 ever half finished. It was.
 
 ## How it was run
@@ -71,7 +71,7 @@ and only partly renamed to `App...`.
   fallback all execute under PHP 7.2.34 with this checkout of flat.
 - The error page machinery runs and produces a readable failure.
 
-## Consequence for the functional tests
+## Consequence for the integration tests
 
 The application has to be repaired before it can be a test subject: with the
 namespaces fixed, views and the API need a real resource to exercise. See
@@ -81,7 +81,7 @@ namespaces fixed, views and the API need a real resource to exercise. See
 ## Repairs made (2026-11-15)
 
 The owner asked to make flat-webapp work with flat first, and to put
-functional tests on hold until the owner has run it. All changes are on the
+integration tests on hold until the owner has run it. All changes are on the
 `php-7.2` branch of `katmore/flat-webapp`, in separate commits:
 
 - Finished the rename: routing config, route classes, templates and entry-point

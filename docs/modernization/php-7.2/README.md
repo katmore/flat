@@ -15,7 +15,7 @@ model and the rules every phase follows are in [../README.md](../README.md).
   [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)); TS-06 done (the 54 survivor
   lines are pinned or shown equivalent).
 - **flat-webapp:** repaired on its `php-7.2` branch and runnable with Docker
-  (the `serve` script in that repository's docker folder); functional tests are on hold until the
+  (the `serve` script in that repository's docker folder); integration tests are on hold until the
   owner has run it: [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md),
   [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md).
 - **Not done until** the owner declares the phase complete.
@@ -47,7 +47,9 @@ For a person or an agent picking this up:
 ## Next
 
 1. Optionally run further probe seeds (also with `--services`).
-2. Review [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md) (questions 32 and 33), then write the functional tests.
+2. Answer Q34 and Q35 (the last two known defects), and Q33 for flat-webapp.
+   Integration tests against flat-webapp wait for the owner's instructions
+   ([active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md)).
 3. Owner decides the phase is complete; then it moves to `modernize-26`.
 
 ## Contents
@@ -60,7 +62,7 @@ For a person or an agent picking this up:
 - [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): Every known defect (KD) and test-strength task (TS), with category, fix and status; open owner questions at the bottom. Read it when: choosing what to fix; answering questions.
 - [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md): Record of the mutation probe: what it found, what is pinned by tests, what is equivalent, and what remains (TS-06). Read it when: before running the probe again; when extending tests.
 - [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md): What a trial run and read-through of flat-webapp found (it does not run as shipped). Read it when: before touching flat-webapp.
-- [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md): Plan for functional tests that run the flat-webapp application over HTTP. Read it when: reviewing or starting that work.
+- [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md): Plan for integration tests that run the flat-webapp application over HTTP. Read it when: reviewing or starting that work.
 - [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md): Behavior changes that applications using flat may notice, and what to search their code for. Read it when: before releasing; when checking a consumer application.
 - [TEST-INVENTORY.md](TEST-INVENTORY.md): All tests by file, with data-provider, service-group and known-defect markers. Generated from PHPUnit by `docker/bin/test inventory`; do not edit by hand. Read it when: reviewing what the suite claims.
 

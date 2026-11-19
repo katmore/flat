@@ -1,17 +1,14 @@
-# Functional tests with flat-webapp (plan)
+# Integration tests with flat-webapp (on hold)
 
-Status: on hold (owner, 2026-11-15): first make flat-webapp work with flat and run it
-on the owner's desktop. The repairs and Docker tooling are done (see
-[WEBAPP-REVIEW.md](WEBAPP-REVIEW.md)); no functional tests are written yet.
+Status: on hold (owner, 2026-11-15 and 2026-11-19). These are integration
+tests: they run flat inside a real application and web server. The owner is
+cautious about adding tests that depend on flat-webapp, because flat-webapp is
+a consumer of flat and the dependency runs the wrong way round. No such tests
+are to be written until the owner asks; the owner will first use flat with
+flat-webapp and then say what the tests should cover. Everything below is a
+starting point for that conversation, not an agreed plan.
 
-Read [WEBAPP-REVIEW.md](WEBAPP-REVIEW.md) first: the application as shipped does not
-run (its views fail, its API only answers 403).
-
-Branches of flat-webapp (2026-11-15): a `php-7.2` branch was created from its
-`master` (commit `7186607`), following the flat pattern. Phase work happens on
-it and is merged to `modernize-26` when the phase is finished. The `devel`
-branch is to be deleted by the owner (this session was refused permission to
-delete branches).
+The repairs and Docker tooling are done (see [WEBAPP-REVIEW.md](WEBAPP-REVIEW.md)).
 
 The unit suite tests flat's classes one at a time. These tests answer a
 different question: does a real application built on flat still behave when it
@@ -65,8 +62,8 @@ all point at commit `7186607`). It requires PHP 7.1.1 or newer and
 3. Add small test-only fixtures in this repository (a few API resources
    and view templates), overlaid on the application, because the shipped
    application has no API resources.
-4. Keep the tests in their own PHPUnit suite (`functional`) and add a
-   `docker/bin/test functional` mode. They stay separate from the unit
+4. Keep the tests in their own PHPUnit suite (`integration`) and add a
+   `docker/bin/test integration` mode. They stay separate from the unit
    suite, which must keep working with no network.
 5. Record the same way as the unit work: findings in the known-defect list,
    behavior changes in the consumer-impact document, inventory generated.
@@ -95,7 +92,7 @@ These are also in the known-defects list (questions 29 to 31), each with a
 recommendation.
 
 - Where do the tests live? Recommend: in this repository under
-  a new Functional folder under the tests folder, with the application fetched from its `php-7.2` branch at
+  a new Integration folder under the tests folder, with the application fetched from its `php-7.2` branch at
   image build time, not copied in.
 - Is it acceptable that the image build needs the network once to fetch
   the pinned application and its Composer packages? Recommend: yes, the same

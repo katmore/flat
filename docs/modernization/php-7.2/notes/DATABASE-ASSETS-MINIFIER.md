@@ -12,7 +12,7 @@ Tests cover binding and aliases, execute controls, SQL files and invalid paths,
 record arrays/classes/clones/generic objects, callbacks, empty results, caching,
 forced connections, connection-provider interfaces, invalid DSNs, and builder
 criteria/joins/order/limits/invalid options. This is not MySQL, Mongo, RabbitMQ,
-or flat-webapp functional coverage.
+or flat-webapp integration coverage.
 
 A real SQLite regression demonstrated that prepare_map discarded valid SELECT
 rows because PDOStatement::rowCount() returned zero. Fetching now determines

@@ -2594,3 +2594,15 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   are category B with questions 34 and 35. Neither is changed yet.
 - No change to flat's source or tests in this entry.
 
+## MOD-153 — "Functional" tests renamed "integration" tests; on hold
+
+- The planned flat-webapp tests run flat inside a real application and web
+  server, which is integration testing, so the live documents now call them
+  integration tests (suite `integration`, mode `docker/bin/test integration`).
+  Earlier entries keep the old word. Existing MongoDB and RabbitMQ tests stay in
+  the unit suite under their `services` groups.
+- Owner decision: no tests that depend on flat-webapp are to be added until the
+  owner has used flat with it and says what they should cover (flat-webapp is
+  a consumer of flat, so the dependency would run backwards).
+- Documentation only. No file was moved or renamed.
+
