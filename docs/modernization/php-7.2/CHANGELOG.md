@@ -2704,3 +2704,21 @@ unchanged.
 - Checked from a clean copy: `--production` is rejected (usage, status 2); development
   behavior unchanged (generic pages, errors in the live log, `E_ALL`, display off).
 - No change to flat's source or tests.
+
+## MOD-163 — flat-webapp: only fatal errors end a request
+
+- In the `php-7.2` branch of `katmore/flat-webapp` (owner's request): every
+  error type used to fail the request (the API handler turned all errors into a 500
+  and exited; the HTML check did the same with `error_get_last()`), which is not how
+  PHP behaves. New `AppWeb\ErrorType` defines the fatal types (`E_ERROR`, `E_PARSE`,
+  `E_CORE_ERROR`, `E_COMPILE_ERROR`, `E_USER_ERROR`, `E_RECOVERABLE_ERROR`); the
+  error traits and `ViewController` use it. Warnings, notices and deprecations
+  are left to PHP: logged, and the page or API response completes normally.
+  Uncaught exceptions and fatals still end with the generic 500.
+- Apache now logs everything PHP logs (`LogLevel warn php7:debug`): PHP reports
+  deprecations at a level Apache hid by default, so they never reached the log.
+- Checked on both the HTML and API sides: warning, notice, deprecation and
+  `@`-silenced error give 200 and the full response, with the message in the live
+  log; user fatal, undefined function and uncaught exception give 500 and the
+  generic text, with the details in the log.
+- No change to flat's source or tests.
