@@ -4,7 +4,7 @@ The first modernization phase: flat as it stood in 2020, running on PHP 7.2,
 with a full test suite and its known bugs fixed. The project plan, branch
 model and the rules every phase follows are in [../README.md](../README.md).
 
-## Status (2026-11-15)
+## Status: complete (owner, 2026-11-20)
 
 - **Tests:** 1,428 tests pass on PHP 7.2.34 with 100% class, method and line
   coverage. How to run them: [../TESTING.md](../TESTING.md).
@@ -18,7 +18,8 @@ model and the rules every phase follows are in [../README.md](../README.md).
   (the `serve` script in that repository's docker folder); integration tests are on hold until the
   owner has run it: [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md),
   [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md).
-- **Not done until** the owner declares the phase complete.
+- **Phase complete.** The owner declared it complete on 2026-11-20 and it is merged to
+  `modernize-26`. This branch, `php-7.2`, is kept permanently as the record of the phase.
 
 ## Resume here
 
@@ -46,10 +47,11 @@ For a person or an agent picking this up:
 
 ## Next
 
-1. Optionally run further probe seeds (also with `--services`).
-2. Integration tests against flat-webapp wait for the owner's instructions
+1. This phase is closed. Do not change this branch except to fix documentation.
+2. The next phase (php-7.3) starts only on the owner's explicit go-ahead. Rules for every
+   phase are in [../README.md](../README.md).
+3. Integration tests against flat-webapp wait for the owner's instructions
    ([active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md)).
-3. Owner decides the phase is complete; then it moves to `modernize-26`.
 
 ## Contents
 

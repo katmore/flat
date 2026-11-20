@@ -2751,3 +2751,17 @@ unchanged.
 
 
 - Verified (MOD-164 and MOD-165): `docker/bin/test all --coverage` passes 1,428 tests; 100% methods (1,062/1,062) and lines (8,057/8,057). No known defects remain open.
+
+## MOD-166 — Phase php-7.2 complete; merged to modernize-26
+
+- The owner declared the php-7.2 phase complete on 2026-11-20: 79 known defects
+  resolved, 1,428 tests passing with 100% class, method and line coverage on PHP
+  7.2.34, test-strength tasks TS-01 to TS-06 done.
+- `modernize-26` (was `ba9f93d`, an ancestor of this branch) is fast-forwarded to the
+  head of `php-7.2`, so the two point at the same commit. `master` is not touched.
+- The `php-7.2` branch is kept permanently on GitHub (owner's instruction); it is
+  not deleted or renamed by the merge.
+- flat-webapp: its `php-7.2` branch exists and is kept too; merging it to its
+  `modernize-26` is not part of this entry.
+- Documentation only; no source or test change.
+

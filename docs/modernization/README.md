@@ -14,7 +14,8 @@ Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP
 The sample application `katmore/flat-webapp` follows the same pattern: a **php-7.2** branch (created from its `master`, commit `7186607`), later phases in their own branches, and each finished phase merged to its **modernize-26** branch. Its `devel` branch is being retired. Integration tests against it: [php-7.2/active/WEBAPP-TESTS.md](./php-7.2/active/WEBAPP-TESTS.md).
 
 ### Progress
- * php-7.2: in progress. Status and how to resume: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
+ * php-7.2: complete (2026-11-20) and merged to `modernize-26`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
+ * php-7.3: not started; begins only on the maintainer's explicit go-ahead
 
 ### Rules for every phase
  * Advance one PHP minor version at a time and skip none: 7.2, 7.3, 7.4, 8.0, 8.1, and onward.
