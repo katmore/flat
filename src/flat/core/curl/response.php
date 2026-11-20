@@ -68,7 +68,6 @@ class response {
          }
          throw new exception\xpath_error($xquery,implode(", ",$details));
       }
-      //error_reporting($old_reporting);
       if ($demand_result && count($result)<1) {
          throw new exception\no_xpath_results($xquery,"url: ".$this->request->url_string);
       }

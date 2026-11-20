@@ -19,9 +19,11 @@ $listFile = $argv[1];
 $defectsFile = isset($argv[2]) ? $argv[2] : null;
 $root = dirname(__DIR__, 2);
 
+libxml_use_internal_errors(true); // libxml collects its errors instead of printing warnings; they are reported below
 $document = new DOMDocument();
-if (!@$document->load($listFile)) {
-    fwrite(STDERR, "cannot read PHPUnit test list: $listFile\n");
+if (!$document->load($listFile)) {
+    $reasons = array_map(function ($error) { return trim($error->message); }, libxml_get_errors());
+    fwrite(STDERR, "cannot read PHPUnit test list: $listFile" . ($reasons ? ' (' . implode('; ', $reasons) . ')' : '') . "\n");
     exit(1);
 }
 

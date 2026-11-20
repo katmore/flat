@@ -489,9 +489,7 @@ class asset extends core\controller\asset implements core\app
         }
 
         if ($flags & self::SYSTEM_PATH_ABSOLUTE) {
-            $error_reporting = error_reporting(error_reporting() & ~E_NOTICE & ~E_WARNING);
             !empty($realpath = realpath($system_path)) && $system_path = $realpath;
-            error_reporting($error_reporting);
         }
 
         return $system_path;
