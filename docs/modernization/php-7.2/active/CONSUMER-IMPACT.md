@@ -529,9 +529,22 @@ Every known-defect fix changes behavior a consumer might have relied on.
 
 ## Suggested consumer check
 
-When the consumer source is available, search it for the terms in the silent
-change table. For each hit, decide whether the consumer used the old result as
-is, compensated for it, or never reached it. Record the outcome here, per entry.
+Run the script against the application's source. It looks for every "Search consumer code
+for" term in this document and lists the files and lines that contain one (no source code,
+unless `--show-code` is given):
+
+    bin/consumer-check /path/to/application > consumer-report.md
+
+Options: `--summary` (counts per entry only), `--show-code`, and `--loose` (also search the
+last name of namespaced terms, with more false alarms). It runs natively on PHP 7.2 or newer;
+without PHP, run it in Docker: `docker run --rm -v /path/to/flat:/flat -v /path/to/application:/app
+php:7.2-cli php /flat/bin/consumer-check /app`. `vendor` folders are skipped, so flat itself is
+not scanned.
+
+For each entry that has hits, read its Before and After lines above and decide whether the
+application used the old result, compensated for it, or never reached it. Record the outcome
+per entry in "Consumers checked so far" below. A few entries have no searchable term, or only
+generic ones; the script lists them at the end for review by hand.
 
 ## Consumers checked so far
 

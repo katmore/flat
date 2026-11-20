@@ -1,0 +1,131 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Consumer check: scans an application's source for the search terms of
+ * docs/modernization/php-7.2/active/CONSUMER-IMPACT.md and reports where the
+ * behavior changes of the release may affect it.
+ *
+ *   bin/consumer-check [--show-code] [--loose] [--summary] [--impact=FILE] <folder>...
+ *
+ * Every entry of the impact document ends with "Search consumer code for:" and
+ * a list of `terms` in backticks. This script looks for each term, as written,
+ * in the PHP-like files under the folders (php, phtml, inc, tpl; `vendor`,
+ * `node_modules` and `.git` are skipped, so flat itself is not scanned), and
+ * prints a Markdown report: for each entry that has a hit, the file and line
+ * of the hit. Code is not printed unless --show-code is given, so the report
+ * can be shared without exposing the source.
+ *
+ *   --show-code  also print the matching source line
+ *   --loose      also search the last name of namespaced terms (a class called
+ *                `\flat\data\webview` is also searched as `webview`); finds more,
+ *                with more false alarms
+ *   --summary    only the counts per entry
+ *   --impact=F   use another impact document
+ *
+ * A hit means "look at this place", not "this is broken": read the entry's
+ * Before and After lines for what to decide. Entries without a searchable term,
+ * and terms too generic to search, are listed at the end for review by hand.
+ * Runs natively on PHP 7.2 or newer.
+ */
+$options = ['show-code' => false, 'loose' => false, 'summary' => false, 'impact' => null];
+$folders = [];
+foreach (array_slice($argv, 1) as $arg) {
+    if ($arg === '--show-code') $options['show-code'] = true;
+    elseif ($arg === '--loose') $options['loose'] = true;
+    elseif ($arg === '--summary') $options['summary'] = true;
+    elseif (strpos($arg, '--impact=') === 0) $options['impact'] = substr($arg, 9);
+    elseif ($arg === '-h' || $arg === '--help') { echo "Usage: bin/consumer-check [--show-code] [--loose] [--summary] [--impact=FILE] <folder>...\nScans source for the search terms of CONSUMER-IMPACT.md; see the header of this script.\n"; exit(0); }
+    elseif ($arg !== '' && $arg[0] === '-') { fwrite(STDERR, "unknown option: $arg\n"); exit(2); }
+    else $folders[] = $arg;
+}
+if (!$folders) { fwrite(STDERR, "usage: bin/consumer-check [--show-code] [--loose] [--summary] [--impact=FILE] <folder>...\n"); exit(2); }
+$impactFile = $options['impact'] ?: dirname(__DIR__) . '/docs/modernization/php-7.2/active/CONSUMER-IMPACT.md';
+if (!is_file($impactFile)) { fwrite(STDERR, "impact document not found: $impactFile\n"); exit(2); }
+
+/** Words that match everywhere; searching for them would only produce noise. */
+$generic = ['true', 'false', 'null', 'flat', 'foreach', 'key', 'range', 'dump', 'print_tag', 'format', 'trigger', 'static', 'const'];
+
+// 1. Entries and their search terms.
+$entries = [];
+foreach (preg_split('/\n(?=### )/', file_get_contents($impactFile)) as $block) {
+    if (!preg_match('/^### (.+)$/m', $block, $title)) continue;
+    $terms = [];
+    if (preg_match('/^- Search consumer code for: (.*)$/m', $block, $line)) {
+        preg_match_all('/`([^`]+)`/', $line[1], $found);
+        $terms = $found[1];
+    }
+    $entries[] = ['title' => trim($title[1]), 'terms' => $terms];
+}
+
+// 2. Files to scan.
+$files = [];
+foreach ($folders as $folder) {
+    if (!is_dir($folder)) { fwrite(STDERR, "not a folder: $folder\n"); exit(2); }
+    $it = new RecursiveIteratorIterator(new RecursiveCallbackFilterIterator(
+        new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS),
+        function (SplFileInfo $f) { return !($f->isDir() && in_array($f->getFilename(), ['vendor', 'node_modules', '.git'], true)); }
+    ));
+    foreach ($it as $f) {
+        if ($f->isFile() && in_array(strtolower($f->getExtension()), ['php', 'phtml', 'inc', 'tpl'], true)) $files[] = $f->getPathname();
+    }
+}
+sort($files);
+$corpus = [];
+foreach ($files as $f) $corpus[$f] = file($f, FILE_IGNORE_NEW_LINES);
+
+// 3. Search.
+$hitsByEntry = []; $noTerms = []; $skipped = [];
+foreach ($entries as $e) {
+    if (!$e['terms']) { $noTerms[] = $e['title']; continue; }
+    $searched = 0;
+    foreach ($e['terms'] as $raw) {
+        $needle = rtrim(trim($raw), '(');
+        $variants = [$needle];
+        if (strpos($needle, '\\') !== false) $variants[] = ltrim($needle, '\\');
+        if ($options['loose'] && strpos($needle, '\\') !== false) {
+            $parts = explode('\\', trim($needle, '\\'));
+            $tail = end($parts);
+            if (strlen($tail) >= 6) $variants[] = $tail;
+        }
+        if (strlen($needle) < 4 || in_array(strtolower($needle), $generic, true)) { $skipped[$e['title']][] = $raw; continue; }
+        $searched++;
+        foreach ($corpus as $file => $lines) {
+            foreach ($lines as $i => $text) {
+                foreach (array_unique($variants) as $v) {
+                    if (strpos($text, $v) !== false) { $hitsByEntry[$e['title']][$raw][$file . ':' . ($i + 1)] = [$file, $i + 1, trim($text)]; break; }
+                }
+            }
+        }
+    }
+}
+
+// 4. Report.
+$total = 0; foreach ($hitsByEntry as $t) foreach ($t as $h) $total += count($h);
+echo "# Consumer check\n\n";
+printf("- Scanned %d files under: %s\n", count($files), implode(', ', $folders));
+printf("- Impact document: %s (%d entries)\n", $impactFile, count($entries));
+printf("- Entries with at least one hit: %d (%d hits in all)\n\n", count($hitsByEntry), $total);
+echo "A hit means \"look at this place\", not \"this is broken\": read the entry's Before and After lines in the impact document.\n";
+if ($hitsByEntry) echo "\n## Hits\n";
+foreach ($hitsByEntry as $title => $byTerm) {
+    $count = 0; foreach ($byTerm as $h) $count += count($h);
+    echo "\n### $title ($count)\n\n";
+    if ($options['summary']) continue;
+    foreach ($byTerm as $term => $hits) {
+        $hits = array_values($hits);
+        echo "- `$term`:\n";
+        foreach (array_slice($hits, 0, 25) as $h) {
+            echo "  - {$h[0]}:{$h[1]}" . ($options['show-code'] ? '  `' . str_replace('`', "'", substr($h[2], 0, 120)) . '`' : '') . "\n";
+        }
+        if (count($hits) > 25) echo '  - ... and ' . (count($hits) - 25) . " more\n";
+    }
+}
+if ($skipped) {
+    echo "\n## Terms too generic to search (review by hand)\n\n";
+    foreach ($skipped as $title => $terms) echo "- $title: `" . implode('`, `', $terms) . "`\n";
+}
+if ($noTerms) {
+    echo "\n## Entries with no searchable term (review by hand)\n\n";
+    foreach ($noTerms as $title) echo "- $title\n";
+}
+exit(0);

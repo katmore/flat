@@ -2898,3 +2898,18 @@ unchanged.
   owner's closed-source application.
 - No change to flat's source or tests.
 
+## MOD-177 — `bin/consumer-check`, a script for the consumer check
+
+- The owner asked to run the consumer check against the closed-source application. Claude
+  has no access to that source (no machine attached; none of the owner's repositories is
+  identifiable as it), so the check is made runnable by the owner: new `bin/consumer-check`
+  (PHP, native, run with a folder) searches every "Search consumer code for" term of
+  `active/CONSUMER-IMPACT.md` and prints a Markdown report of files and lines (code only with
+  `--show-code`), plus the entries and terms that need review by hand.
+- Tested on a fixture with planted terms (6 entries found), a clean folder (0 hits), nested
+  `vendor` skipping, and on flat-webapp (4 entries: the same ones found by hand in MOD-176).
+  Fixed while testing: duplicate lines when a term matches in two spellings.
+- The "Suggested consumer check" section of `active/CONSUMER-IMPACT.md` now explains how to
+  run it. The check itself is still pending until the owner runs it and shares the report.
+- No change to flat's source or tests.
+
