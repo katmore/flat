@@ -54,13 +54,14 @@ wide tables); never delete a document.
 ## 2. State at handoff
 
 - **flat:** `master` is at `b628c0c` and is the owner's. `php-7.2` holds the content of the
-  point release `v1.72.1` (commit `ac6a6cf`; the owner creates the tag and the Release, so check
-  whether it exists). `php-7.3` is the work branch, created by the owner and merged with `php-7.2`
+  point releases `v1.72.1` (commit `ac6a6cf`) and `v1.72.2` (the tip of `php-7.2`; an unsupported
+  API method answers 500, MOD-186). The owner creates the tags and Releases, so check whether
+  they exist. `php-7.3` is the work branch, created by the owner and merged with `php-7.2`
   at the start of the phase; it has no PHP 7.3 change yet, so the environment still says PHP 7.2.
   The old `modernize-26` branch was retired on 2026-11-20 and no longer exists. Release `v1.72.0` is published (tag `619adcb`).
 - **Tests:** 1,428 unit tests pass on PHP 7.2.34 with 100% class, method and line coverage
   (1,062 methods; the line count is in the coverage report), PHPUnit 8.5. The inventory is generated; see the phase README.
-- **Numbering (decision D3):** keep counting across phases: next MOD-185, KD-80, Q36 (the first change-log entry of this phase should record the retirement of `modernize-26` and the branch-model update of `docs/modernization/README.md`, 2026-11-20).
+- **Numbering (decision D3):** keep counting across phases: next MOD-187, KD-80, Q37 (the first change-log entry of this phase should record the retirement of `modernize-26` and the branch-model update of `docs/modernization/README.md`, 2026-11-20).
 - **Known defects:** 79 tracked, all resolved.
 - **Test environment (all in the repository):** `docker/Dockerfile` (PHP 7.2 base image pinned
   by digest; xdebug, ImageMagick and imagick, the MongoDB extension 1.16.2 with libmongoc, and
