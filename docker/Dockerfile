@@ -38,8 +38,8 @@ RUN --mount=type=secret,id=proxy_ca \
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/mongodb/mongo-php-driver/tar.gz/1e0329d45437a9b303e5fd59143f879a720c81ae -o /tmp/mongodb.tar.gz; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/mongodb/mongo-c-driver/tar.gz/6afb83ef8dd8a1627bdc879e74bfa88bdd120a4b -o /tmp/mongoc.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/mongodb/mongo-php-driver/tar.gz/9d6c1ba3e761b5743ec758fe0d1904f2df86ef3e -o /tmp/mongodb.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/mongodb/mongo-c-driver/tar.gz/9063a5c2c78bfb6d3344f654ad59567f62f62ddd -o /tmp/mongoc.tar.gz; \
     mkdir /tmp/mongodb; tar -xzf /tmp/mongodb.tar.gz -C /tmp/mongodb --strip-components=1; \
     mkdir -p /tmp/mongodb/src/libmongoc; tar -xzf /tmp/mongoc.tar.gz -C /tmp/mongodb/src/libmongoc --strip-components=1; \
     cd /tmp/mongodb; phpize; ./configure --with-mongodb-ssl=no; make -j2; make install; \
