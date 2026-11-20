@@ -36,9 +36,8 @@ do not "fix", copy or extend it.
 The framework is being modernized one PHP version at a time. Read
 `docs/modernization/README.md` (plan and phase rules), then the current phase's
 `README.md` for status and how to resume work. The php-7.2 phase is complete
-(`docs/modernization/php-7.2/README.md`); the next phase, php-7.3, has not started
-and begins only on the maintainer's explicit go-ahead. If you are asked to work on
-it, read `docs/modernization/php-7.3/HANDOFF.md` first.
+(`docs/modernization/php-7.2/README.md`); the php-7.3 phase has started (maintainer's
+go-ahead, 2026-11-20). Its work plan is `docs/modernization/php-7.3/HANDOFF.md`: read it first.
 
 ## Reproducibility
 
@@ -55,7 +54,7 @@ repository broke this, and had to be replaced.)
   private container names to executable tooling; accept generic explicit inputs.
 - Run PHP, Composer, unit tests and their external services through Docker.
   Do not depend on host PHP or an agent-private virtual environment.
-- `bin/test` holds the test logic and runs natively where PHP 7.2 and PHPUnit are
+- `bin/test` holds the test logic and runs natively where PHP 7.3 and PHPUnit are
   installed; `docker/bin/test` runs that same script in the repository's
   container and only manages Docker. Agents run tests with `docker/bin/test`.
 - Placement: `bin/` holds scripts that run natively on the host given the tools.
@@ -66,7 +65,7 @@ repository broke this, and had to be replaced.)
 - Do not archive agent-private harnesses, vendor trees, or scratch environments
   inside the repository, even as ignored files. Discard obsolete scratch setup.
 - Keep test dependencies separate from the framework's application dependencies.
-- Preserve PHP 7.2.34 until the maintainer explicitly approves a version step.
+- Keep the pinned PHP version (7.3 on this branch) until the maintainer explicitly approves a version step.
   Do not merge, publish, or change release branches on your own.
 - Keep code changes, test findings, compatibility decisions, and deferred work
   documented in the current phase folder under `docs/modernization/`. Ask the maintainer about unknown method/class purposes;

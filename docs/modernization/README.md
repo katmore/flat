@@ -24,8 +24,8 @@ The major version follows semantic versioning. It stays at 1 while the public AP
 - When the maintainer declares the whole project complete, the phase branches may be deleted: each finished phase's Release tag is the permanent record, so make sure every phase has its Release first. Only the maintainer decides this.
 
 ### Progress
- * php-7.2: complete (2026-11-20), released as `v1.72.0` and `v1.72.1`, and merged to `master`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
- * php-7.3: not started; begins only on the maintainer's explicit go-ahead. The agent handoff, with the state, steps, decisions to confirm and traps, is [php-7.3/HANDOFF.md](./php-7.3/HANDOFF.md)
+ * php-7.2: complete (2026-11-20), released as `v1.72.0`, `v1.72.1` and `v1.72.2`, and merged to `master`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
+ * php-7.3: started (2026-11-20, on the maintainer's go-ahead), on the `php-7.3` branch. The work plan, with the state, steps, decisions and traps, is [php-7.3/HANDOFF.md](./php-7.3/HANDOFF.md)
 
 ### Rules for every phase
  * Advance one PHP minor version at a time and skip none: 7.2, 7.3, 7.4, 8.0, 8.1, and onward.

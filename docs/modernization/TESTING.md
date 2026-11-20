@@ -2,7 +2,7 @@
 
 Two entry points take the same arguments. `bin/test` holds all test logic (modes,
 PHPUnit arguments, coverage reports, the inventory) and runs natively where PHP
-7.2 and PHPUnit are installed. `docker/bin/test` only handles Docker: it builds or
+7.3 and PHPUnit are installed. `docker/bin/test` only handles Docker: it builds or
 checks the image, starts the services a mode needs, runs `bin/test` inside the PHP
 container with the same arguments, and removes the containers afterwards. The
 rest of this page uses `docker/bin/test`, the supported way to run the suite.
@@ -89,7 +89,7 @@ docker/bin/test all --offline --coverage
 
 Offline mode checks that the selected local image refs exist, skips builds,
 and passes explicit no-pull flags. A missing image produces a clear error; it is not downloaded automatically. Cached base images or Composer
-archives alone are not sufficient: the built flat-tests-php72 image must exist.
+archives alone are not sufficient: the built flat-tests-php73 image must exist.
 Rebuild that image online after changing Dockerfile/test dependency inputs.
 The optional build CA input is not used by offline execution.
 
@@ -101,7 +101,7 @@ on services in Compose, so unit mode needs only the PHP image.
 
 ## What runs where
 
-- PHP/PHPUnit: PHP 7.2.34 container, pinned official base digest
+- PHP/PHPUnit: PHP 7.3 container (exact patch set in `docker/Dockerfile`), pinned official base digest
 - MongoDB integration: Separate pinned MongoDB 4.0 Compose service
 - RabbitMQ integration: Separate pinned RabbitMQ 3.8.34 Compose service
 - PDO: Native SQLite inside the PHP container; no MySQL service is currently used
@@ -131,7 +131,7 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
 - `docker/docker-compose.yml`: PHP plus health-checked MongoDB/RabbitMQ services.
 - `tests/docker/tools/composer.json` and its checked-in lock: PHPUnit and framework
   test autoload paths inside the container.
-- `tests/docker/runtime/composer.json` and its checked-in lock: PHP-7.2-compatible
+- `tests/docker/runtime/composer.json` and its checked-in lock: PHP-7.3-compatible
   SDK dependencies used by the suite, separate from application dependencies.
 - `tests/docker/bootstrap.php`: container-local test bootstrap.
 - `tests/docker/compose.ca.yaml`: optional build CA trust input.
@@ -141,10 +141,10 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
   the Markdown test inventory (`bin/test inventory`).
 
 The Composer-only archive-fetch stage uses the official Composer image and the
-locked PHP-7.2 platform constraints; it does not execute framework/tests. The
-actual PHP runtime is pinned and validated as 7.2.34, with required extensions
+locked PHP-7.3 platform constraints; it does not execute framework/tests. The
+actual PHP runtime is pinned and validated as PHP 7.3 (the exact patch is set in `docker/Dockerfile`), with required extensions
 built/verified there. ext-sockets is ignored only by the archive-fetch stage and
-is actually compiled/enabled in the PHP 7.2 test runtime. GitHub archives use
+is actually compiled/enabled in the PHP 7.3 test runtime. GitHub archives use
 codeload URLs with the same locked source commits. Application composer.json and
 its dependency policy are unchanged by this isolated test setup.
 
