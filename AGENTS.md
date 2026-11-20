@@ -4,8 +4,10 @@
 
 The framework is being modernized one PHP version at a time. Read
 `docs/modernization/README.md` (plan and phase rules), then the current phase's
-`README.md` (currently `docs/modernization/php-7.2/README.md`) for status and
-how to resume work.
+`README.md` for status and how to resume work. The php-7.2 phase is complete
+(`docs/modernization/php-7.2/README.md`); the next phase, php-7.3, has not started
+and begins only on the maintainer's explicit go-ahead. If you are asked to work on
+it, read `docs/modernization/php-7.3/HANDOFF.md` first.
 
 ## Reproducibility
 
@@ -88,6 +90,7 @@ repository broke this, and had to be replaced.)
 - Commit often, in coherent logical groups, each with its related
   documentation updates, after running the relevant checks. Do not let a large
   undocumented working tree build up.
-- Commit and push to the current phase branch (now `php-7.2`). Leave
+- Commit and push to the current phase branch (`php-7.2` is closed; `php-7.3` once the
+  maintainer approves that phase). Leave
   `modernize-26` and `master` to the maintainer, and follow the maintainer's
   explicit branch and push instructions.

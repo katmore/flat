@@ -165,6 +165,10 @@ Editing:
   change one, show it failing without the fix.
 - Match the existing style: dense tests, behavior asserted not implementation, a
   `@group known-defect` tag only while a test still asserts defective behavior.
+- The suite uses PHPUnit 8.5, which runs on PHP 7.3 too: keep it. Some assertion names
+  differ in PHPUnit 9 (`assertRegExp` is the PHPUnit 8 name; 9 calls it
+  `assertMatchesRegularExpression`), so moving PHPUnit is a separate decision, not part of
+  this step.
 
 GitHub and the session:
 - This session's git access cannot push tags, delete branches, or read Dependabot alerts
@@ -179,7 +183,25 @@ GitHub and the session:
 - Change-log entries are never rewritten; a correction is a new entry, and a moved file needs
   an old-to-new path map in it.
 
-## 7. Definition of done for the phase
+## 7. Known leftovers that are not part of this phase
+
+Do not fix these as part of the PHP step; raise them with the owner if they matter.
+
+- A `405 Method Not Allowed` response has no `Allow` header listing the supported methods
+  (noted in `docs/modernization/php-7.2/RELEASE-NOTES.md`, "Known limits").
+- Seven classes cannot be loaded in either version, so they are untested and unusable:
+  `flat\cloud\authorize\AuthorizeNetCIM`, `flat\core\util\validate\collection`, and the six
+  MongoDB SSL file classes under `flat\db\driver\mongo\ssl\`. The list is in
+  `docs/modernization/php-7.2/notes/API-COMPARISON.md`.
+- Six other empty (0-byte) files that are not exceptions were deliberately left
+  (`src/flat/cloud/disqus.php` and five under `src/flat/cloud/pci/`), per MOD-125 in the
+  php-7.2 change log.
+- Further mutation-probe seeds (also with `--services`) can still be run; the first sample is
+  closed (`active/MUTATION-PROBE.md` of php-7.2).
+- The consumer check against the owner's closed-source application, and integration tests
+  with flat-webapp, are open and belong to the owner's timing (section 2).
+
+## 8. Definition of done for the phase
 
 - The whole suite passes on the new PHP, with 100% class, method and line coverage, the
   inventory regenerated, and nothing weakened (a diff of the tests shows no loosened
