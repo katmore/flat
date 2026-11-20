@@ -2831,3 +2831,20 @@ unchanged.
 - MOD-170 said the release notes mention the S3 multipart change; the edit had not applied
   (the bullet it looked for was worded differently). The line is now in `RELEASE-NOTES.md`.
   Documentation only.
+
+## MOD-172 — Release number changed from v2.72.0 to v1.72.0
+
+- Owner decision: the API comparison (MOD-170) found no incompatible API change, so by
+  semantic versioning the release stays in major version 1. The php-7.2 release is
+  `v1.72.0` and the scheme is `v1.<PHP major><PHP minor>.0` (`v1.73.0`, `v1.74.0`,
+  `v1.80.0`, ...). This supersedes the `v2.72.0` of MOD-167 and the entries after it
+  (kept as written). The unreleased `v2.72.0` was never tagged or published.
+- Consequence, now stated in `RELEASE-NOTES.md`: Composer's `^1.0` picks the release up on
+  the next update. To stay on the old code require `1.5.*`; to pin the PHP 7.2 line
+  require `1.72.*`. The behavior changes in `active/CONSUMER-IMPACT.md` were not checked
+  against the owner's closed-source application (not available); that check is still open.
+- Live documents updated: `docs/modernization/README.md` ("Releases"),
+  `docs/modernization/php-7.2/README.md`, `RELEASE-NOTES.md`, `notes/API-COMPARISON.md`.
+- Old to new path map: `docs/modernization/php-7.2/notes/API-V2.72.0.json` to
+  `docs/modernization/php-7.2/notes/API-V1.72.0.json` (contents unchanged).
+- Documentation only.

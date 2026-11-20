@@ -1,13 +1,13 @@
-# flat v2.72.0
+# flat v1.72.0
 
 The first release of the flat modernization: flat as it stood in 2020, running on
 PHP 7.2, with a full test suite and its known bugs fixed. The version number is
-`2.<PHP major><PHP minor>.0`, so this is `v2.72.0` for PHP 7.2; the next phases
-will be `v2.73.0`, `v2.74.0`, `v2.80.0`, and so on.
+`1.<PHP major><PHP minor>.0`, so this is `v1.72.0` for PHP 7.2; the next phases
+will be `v1.73.0`, `v1.74.0`, `v1.80.0`, and so on.
 
-## Upgrading from 1.x: a drop-in replacement
+## Upgrading from v1.5.5: a drop-in replacement
 
-v2.72.0 is meant to be a drop-in replacement for `v1.5.5`, and the public API is the same.
+v1.72.0 is meant to be a drop-in replacement for `v1.5.5`, and the public API is the same.
 Every class, method, property and constant of the two versions was compared with PHP's
 Reflection (parameter types, defaults, return types and constant values included): nothing
 that worked in `v1.5.5` was removed, and no parameter or return type changed. The only
@@ -23,8 +23,9 @@ skim the list below, and if you want detail, every change is listed with what yo
 before, what you see now, and what to search your own code for in
 `docs/modernization/php-7.2/active/CONSUMER-IMPACT.md`.
 
-- Composer's `^1.0` will not pick this release up on its own. To use it, require
-  `2.72.*`, run your tests, and you are done.
+- Composer's `^1.0` will pick this release up on the next `composer update`. That is
+  intended: it is a drop-in replacement. To stay on the old version for now, require
+  `1.5.*`; to pin the PHP 7.2 line, require `1.72.*`. Either way, run your tests.
 - Nothing here is meant for PHP 8 yet.
 
 ## The changes most likely to affect you

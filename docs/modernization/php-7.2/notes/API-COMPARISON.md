@@ -1,7 +1,7 @@
-# API comparison: v1.5.5 and v2.72.0
+# API comparison: v1.5.5 and v1.72.0
 
 What the public API of flat looked like in `v1.5.5` and in the php-7.2 code released as
-`v2.72.0`, compared by PHP's Reflection, and what differs. Written to back the statement
+`v1.72.0`, compared by PHP's Reflection, and what differs. Written to back the statement
 in the release notes that the release is a drop-in replacement. Generated parts are the
 two JSON files and the "Differences" section; the verdicts are written by hand.
 
@@ -12,9 +12,9 @@ was loaded in PHP 7.2.34 with the project's real dependencies, one class per pro
 described with Reflection: kind, abstract and final, parent, interfaces, and everything it
 declares that is not private: constants (value), properties (default, static), and methods
 (visibility, static, abstract, final, every parameter with its type, default, by-reference
-and variadic flags, and the return type). 611 files in `v1.5.5` and 620 in `v2.72.0`.
+and variadic flags, and the return type). 611 files in `v1.5.5` and 620 in `v1.72.0`.
 
-- `API-V1.5.5.json` and `API-V2.72.0.json` in this folder are the two dumps.
+- `API-V1.5.5.json` and `API-V1.72.0.json` in this folder are the two dumps.
 - To reproduce: `php tests/tools/apidump.php dump <src-root> --autoload=<composer autoload.php> > api.json`
   for each version (run in the PHP 7.2 test container), then
   `php tests/tools/apidump.php compare old.json new.json`.
