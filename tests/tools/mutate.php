@@ -123,13 +123,13 @@ function render(array $tokens, $index, $replacement) {
 }
 
 /** Runs the unit suite; returns the process exit status (124 = timed out). */
-function run_suite($timeout, $withServices = false) {
+function run_suite($timeout, $withServices = false, $logFile = null) {
     $phpunit = getenv('FLAT_TEST_PHPUNIT') ?: 'vendor/bin/phpunit';
     $bootstrap = getenv('FLAT_TEST_BOOTSTRAP');
     $command = 'timeout -k 5 ' . (int) $timeout . ' ' . escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($phpunit)
         . ($bootstrap ? ' --bootstrap ' . escapeshellarg($bootstrap) : '')
         . ' --testsuite unit' . ($withServices ? '' : ' --exclude-group services')
-        . ' --stop-on-failure --stop-on-error --no-coverage >/dev/null 2>&1';
+        . ' --stop-on-failure --stop-on-error --no-coverage >' . ($logFile ? escapeshellarg($logFile) : '/dev/null') . ' 2>&1';
     exec($command, $unused, $status);
     return $status;
 }
@@ -159,10 +159,15 @@ if ($listOnly) {
 }
 
 fwrite(STDERR, "baseline run...\n");
-if (run_suite($timeout * 4, $withServices) !== 0) {
-    fwrite(STDERR, "The unmutated suite does not pass; fix that before probing.\n");
+// The output of mutant runs is discarded on purpose (a failing run is the signal); the unmutated run's is kept.
+$baselineLog = tempnam(sys_get_temp_dir(), 'mutate-baseline');
+if (run_suite($timeout * 4, $withServices, $baselineLog) !== 0) {
+    fwrite(STDERR, "The unmutated suite does not pass; fix that before probing. Last lines of its output:\n");
+    fwrite(STDERR, implode("\n", array_slice(file($baselineLog, FILE_IGNORE_NEW_LINES) ?: [], -40)) . "\n");
+    unlink($baselineLog);
     exit(1);
 }
+unlink($baselineLog);
 mt_srand($seed);
 shuffle($all);
 $total = count($all);

@@ -2940,3 +2940,72 @@ unchanged.
   branch, where GitHub reads the lock file, so alert 1 should close on the next scan.
 - The tag `v1.72.0` is unchanged (`619adcb`) and is an ancestor of all three branches.
 - Documentation only.
+
+## MOD-180 — Error hiding removed from flat's source (prime directive 2)
+
+- The owner's new prime directive: never hide an error from PHP. A tokenizer scan of flat's own
+  source found two live spots, both original code (not third-party), and one dead comment:
+  `src/flat/asset.php` (commit `7873bf2`, 2019-11-08) lowered `error_reporting` around
+  `realpath()`; `src/flat/core/session.php` (commit `c35e910`, 2017-12-18) called
+  `@session_start()` in a 100-attempt retry loop; `src/flat/core/curl/response.php` held a
+  commented-out `error_reporting(...)` from 2017-10-05. The mask and the `@` are removed, the dead
+  comment is deleted. Nothing else in flat's own source hides errors.
+- Behavior: a failed session start now reports PHP's warning on each attempt; the asset path
+  can now show a warning where `open_basedir` forbids the path. Two consumer-impact entries added.
+- The session failure test now installs an error handler and asserts the warnings (the pattern
+  many existing tests use): it checks the message, the missing path and one message set per
+  attempt.
+- Verified: `docker/bin/test all --coverage` passes 1,428 tests, 100% methods (1,062/1,062) and
+  lines (8,055/8,055; two fewer lines than before, the masking code).
+
+## MOD-181 — Error hiding removed from tests and tools
+
+- `tests/Unit/Core/Util/ValidationTest.php` and `tests/Support/mongo-fault-proxy.php` (the
+  earlier agent's work, committed 2026-11-06) and `tests/tools/inventory.php` (Claude, 2026-11-13)
+  used `@`. Now: the validation test asserts the one expected "Compilation failed" warning; the
+  fault proxy runs its stream reads and writes through a helper that writes any notice to its
+  stderr and treats the connection as closed; the inventory tool uses libxml's internal error
+  collection and prints the reasons when a file cannot be read.
+- `tests/tools/apidump.php` sent a loading class's stderr to `/dev/null`; it now keeps the first
+  line of what the class said (and any stray output) as a `reason` for an unloadable class.
+  `tests/tools/mutate.php` kept discarding the output of the unmutated baseline run; it now keeps
+  it and prints the last 40 lines when the baseline fails (the output of mutant runs is still
+  discarded on purpose: a failing mutant run is the signal).
+- A fresh scan of the whole repository finds no `@`, no `error_reporting` change and no display
+  setting in code or tools.
+
+## MOD-182 — Prime directives in AGENTS.md; release notes for v1.72.1
+
+- The two prime directives (never touch `master`; never hide an error from PHP) are added to
+  `AGENTS.md` on this branch too. Release notes for `v1.72.1` are in
+  `RELEASE-NOTES-V1.72.1.md`; the owner creates the tag and the Release.
+- Documentation only.
+
+
+## MOD-183 — Two approved exceptions to prime directive 2 restored
+
+- The maintainer reviewed the two places MOD-180 had cleaned and decided to keep both, as
+  approved exceptions to prime directive 2 (2026-11-20). `src/flat/asset.php` has the 2019
+  `error_reporting` mask around `realpath()` again, exactly as written. `src/flat/core/session.php`
+  masks notices and warnings the same way around the `session_start()` retry loop (this replaces
+  the 2017 `@`; `error_reporting` is restored right after the loop). Both carry a comment block
+  that says so.
+- Result: library behavior is again identical to v1.72.0 (no new warnings anywhere). The two
+  MOD-180 consumer-impact entries are superseded by two MOD-183 entries saying the change was
+  taken back. MOD-180 stays as written.
+- `AGENTS.md` gains an "Approved exceptions" list; nothing may be added to it except by the
+  maintainer.
+- The session failure test now checks that PHP raises the failures, that none passes the mask,
+  and that `error_reporting` is restored.
+
+## MOD-184 — Session start exception withdrawn; plain `session_start()`
+
+- The maintainer decided the session masking was old code copied without review and removed it
+  entirely (2026-11-20). `src/flat/core/session.php` calls `$newstart = session_start();` inside the
+  same retry loop, with no `@` and no `error_reporting` change. The approved-exception comment and
+  the `AGENTS.md` entry for it are gone. This is the MOD-180 behavior again, and it supersedes
+  the session part of MOD-183.
+- A failed start reports PHP's warning on each attempt. The return value and the
+  `no_session_var` exception are unchanged. The session failure test is back to the MOD-180
+  version, which asserts the warnings.
+- Only one approved exception remains: the asset `realpath()` mask.

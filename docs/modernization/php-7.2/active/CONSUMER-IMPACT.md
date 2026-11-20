@@ -485,6 +485,40 @@ Every known-defect fix changes behavior a consumer might have relied on.
 - After: Returns the requested version (v3/v5 are deterministic); `$uuid()` is still a random v4
 - Search consumer code for: UUID objects used as callables: `$u(` with arguments
 
+### MOD-180 — Session start failure is reported
+
+- Before: `session::start()` called `@session_start()` in a loop of up to 100 attempts, so a missing or unwritable session store failed without a trace
+- After: each failed attempt raises PHP's own warning (for example `session_start(): open(...) failed: No such file or directory`). The return value is unchanged, and so is the `no_session_var` exception when `$_SESSION` is not set
+- Search consumer code for: error handlers that turn warnings into exceptions (a failed session start now reaches them); log monitoring that alerts on warnings; session save paths that are not writable
+
+### MOD-180 — Asset absolute system paths
+
+- Before: notices and warnings were masked while `realpath()` resolved a system path under the absolute flag (`SYSTEM_PATH_ABSOLUTE`)
+- After: nothing is masked. `realpath()` returns false quietly for a path that does not exist, so results are unchanged; where `open_basedir` forbids the path, PHP's own warning now appears
+- Search consumer code for: users of the `SYSTEM_PATH_ABSOLUTE` flag; hosts that set `open_basedir`
+
+### MOD-183 — Session start failure is reported (taken back)
+
+- Before: v1.72.0 and MOD-180 as first written: see the MOD-180 entry for the session start
+- After: library behavior is the same as v1.72.0. Notices and warnings from `session_start()` are
+  masked around its retry loop (an approved exception; see `AGENTS.md`), so a failed start is not
+  reported, and `error_reporting` is restored right after the loop. The MOD-180 entry on the
+  session start no longer applies
+- Search consumer code for: nothing new; no change from v1.72.0
+
+### MOD-183 — Asset absolute system paths (taken back)
+
+- Before: see the MOD-180 entry on asset absolute system paths
+- After: the mask around `realpath()` is back, exactly as in v1.72.0, so nothing new is shown. The
+  MOD-180 entry no longer applies
+- Search consumer code for: nothing new; no change from v1.72.0
+
+### MOD-184 — Session start failure is reported (again)
+
+- Before: v1.72.0 called `@session_start()` in a loop of up to 100 attempts, so a missing or unwritable session store failed without a trace (the MOD-183 entry on the session start is superseded)
+- After: each failed attempt raises PHP's own warning (for example `session_start(): open(...) failed: No such file or directory`). The return value is unchanged, and so is the `no_session_var` exception when `$_SESSION` is not set. The MOD-180 entry on the session start applies
+- Search consumer code for: error handlers that turn warnings into exceptions (a failed session start now reaches them); log monitoring that alerts on warnings; session save paths that are not writable
+
 ### MOD-170 — Native session handler key method
 
 - Before: `\flat\data\orm\driver\session\handler\native::_get_ormkey()` was an instance method that the class itself also called statically (`self::_get_ormkey()`)

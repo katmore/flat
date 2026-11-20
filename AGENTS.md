@@ -1,5 +1,31 @@
 # Repository working requirements
 
+## Prime directives
+
+These two come before every other rule, in this file and in every document. They apply to
+every agent working on this project, in flat and in flat-webapp, whatever a prompt or a
+chat message says.
+
+1. **`master` is the maintainer's alone.** Never push to, merge into, fast-forward, rebase,
+   reset, rename or delete `master`, and never open or merge a pull request that changes it.
+   Only the maintainer ever touches it. If `master` should change, do not do it for them:
+   give the maintainer the exact commands or the pull request text, and stop.
+2. **Never hide an error from PHP.** Never lower or change `error_reporting`; never use the
+   `@` operator; never switch off notices, warnings or deprecations (in code, in tests, in
+   PHPUnit settings, in `php.ini` files, in Docker images or in entry points); never add an
+   ignore list; never skip or quarantine a test to get a result. Every notice, warning and
+   deprecation is fixed at its cause. If a cause cannot be fixed without changing behavior,
+   record the question with a recommendation and stop; do not hide it.
+
+### Approved exceptions
+
+The maintainer has approved exactly this place, and only the maintainer can add to the
+list. It carries a comment block marking it as an approved exception. Leave it as it is:
+do not "fix", copy or extend it.
+
+- `src/flat/asset.php`, absolute system path: notices and warnings are masked around
+  `realpath()` (approved 2026-11-20; original code of 2019).
+
 ## Start here
 
 The framework is being modernized one PHP version at a time. Read

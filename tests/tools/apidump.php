@@ -99,12 +99,18 @@ if ($mode === 'dump') {
     sort($classes);
     $result = [];
     foreach ($classes as $class) {
-        $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(__FILE__) . ' one ' . escapeshellarg($root) . ' ' . escapeshellarg($class) . ($extra ? ' ' . escapeshellarg($extra) : '') . ' 2>/dev/null';
+        $errorFile = tempnam(sys_get_temp_dir(), 'apidump');
+        $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(__FILE__) . ' one ' . escapeshellarg($root) . ' ' . escapeshellarg($class) . ($extra ? ' ' . escapeshellarg($extra) : '') . ' 2>' . escapeshellarg($errorFile);
         $json = shell_exec($cmd);
         $data = json_decode((string) $json, true);
-        if (!is_array($data)) $result[$class] = ['unloadable' => true];
+        if (!is_array($data)) {
+            // keep what the class said when it failed to load, so the report can show why
+            $said = array_filter(array_map('trim', array_merge(file($errorFile, FILE_IGNORE_NEW_LINES) ?: [], explode("\n", (string) $json))));
+            $result[$class] = ['unloadable' => true, 'reason' => $said ? substr(reset($said), 0, 300) : 'no output'];
+        }
         elseif (isset($data['missing'])) $result[$class] = ['nodeclaration' => true];
         else $result[$class] = $data;
+        unlink($errorFile);
     }
     echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), "\n";
     exit(0);

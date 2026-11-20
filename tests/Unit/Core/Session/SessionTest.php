@@ -187,9 +187,17 @@ namespace flat\test\Unit\Core\Session {
         public function testFailedStorageRetriesAndReturnsNoId()
         {
             ini_set('session.save_path', $this->directory.'/missing');
-            $this->assertSame('', session::start([]));
+            $warnings = [];
+            set_error_handler(function ($level,$message) use (&$warnings) { $warnings[] = $message; return true; });
+            try { $id = session::start([]); } finally { restore_error_handler(); }
+            $this->assertSame('', $id);
             $this->assertSame(PHP_SESSION_NONE, session_status());
             $this->assertTrue(isset($_SESSION));
+            // The failure is reported, not hidden: each of the 100 attempts says why it failed.
+            $this->assertNotEmpty($warnings);
+            $this->assertStringContainsString('session_start(): open(', $warnings[0]);
+            $this->assertStringContainsString('/missing/sess_', $warnings[0]);
+            $this->assertSame(0, count($warnings) % 100);
         }
     }
 }

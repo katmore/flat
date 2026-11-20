@@ -199,7 +199,7 @@ class session {
             session_id($session_id);
          }
          for($i=0;$i<100;$i++) {
-            $newstart = @session_start();
+            $newstart = session_start();
             if ($newstart) {
                break 1;
             }

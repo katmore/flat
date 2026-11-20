@@ -707,10 +707,10 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testInvalidRegexSyntaxProducesItsDescriptiveException` (line 89)
 - `testPcreExecutionErrorRaisesPregError` (line 103)
 - `testPcreExceptionExplainsNativeEngineErrors` (line 113): 5 data-provider cases
-- `testInvalidPatternExceptionIncludesPatternAndNativeCodeName` (line 136)
-- `testHostnameDefinerSuppliesAValidPatternWithoutChangingItsRawConstant` (line 144): 8 data-provider cases
-- `testSupportedFilterIdsConstructSuccessfully` (line 155)
-- `testInvalidFilterUsesItsConcreteException` (line 161)
+- `testInvalidPatternExceptionIncludesPatternAndNativeCodeName` (line 142)
+- `testHostnameDefinerSuppliesAValidPatternWithoutChangingItsRawConstant` (line 150): 8 data-provider cases
+- `testSupportedFilterIdsConstructSuccessfully` (line 161)
+- `testInvalidFilterUsesItsConcreteException` (line 167)
 
 ### `tests/Unit/Core/Util/ValueTest.php` (4)
 

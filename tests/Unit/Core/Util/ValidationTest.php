@@ -115,7 +115,13 @@ class ValidationTest extends TestCase
         $jit = ini_get('pcre.jit'); $backtrack = ini_get('pcre.backtrack_limit'); $recursion = ini_get('pcre.recursion_limit');
         try {
             ini_set('pcre.jit','0');
-            if ($kind === 'compile') { @preg_match('/[/', ''); }
+            if ($kind === 'compile') {
+                $warnings = [];
+                set_error_handler(function ($level,$message) use (&$warnings) { $warnings[] = $message; return true; });
+                try { preg_match('/[/', ''); } finally { restore_error_handler(); }
+                $this->assertCount(1,$warnings);
+                $this->assertStringContainsString('preg_match(): Compilation failed',$warnings[0]);
+            }
             elseif ($kind === 'backtrack') { ini_set('pcre.backtrack_limit','1'); preg_match('/^(a+)+$/',str_repeat('a',32).'b'); }
             elseif ($kind === 'recursion') { ini_set('pcre.recursion_limit','1'); preg_match('/(a|b)+/','ab'); }
             elseif ($kind === 'offset') { preg_match('/./u','é',$matches,0,1); }
