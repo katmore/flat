@@ -2859,3 +2859,17 @@ unchanged.
   version.
 - Documentation only.
 
+
+## MOD-174 — flat-webapp requires the published flat v1.72.0
+
+- Release `v1.72.0` of flat was published by the owner (tag at `619adcb`). In the
+  `php-7.2` branch of `katmore/flat-webapp`, `composer.json` now requires
+  `katmore/flat` as `1.72.*` instead of `dev-php-7.2`, and the explicit GitHub
+  repository entry is removed (the release is on Packagist; both forms were tried
+  and both resolved to v1.72.0). Its README says so.
+- Checked from a clean clone with `docker/bin/serve`: Composer installs `v1.72.0`
+  at `619adcb`; home view 200, unknown view 404, `example` API 200, unknown resource
+  403, `POST` to the GET-only `example` 405.
+- Not done: merging flat-webapp's `php-7.2` into its `modernize-26` (open question for
+  the owner); flat-webapp has no release yet.
+- No change to flat's source or tests.
