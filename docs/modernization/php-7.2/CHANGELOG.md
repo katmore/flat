@@ -2885,3 +2885,16 @@ unchanged.
   does not change the phase rules. Claude did not touch `master`.
 - Documentation only.
 
+## MOD-176 — flat-webapp merged to modernize-26; consumer check of flat-webapp
+
+- Owner confirmed `devel` is deleted in `katmore/flat-webapp` and asked for flat-webapp to
+  be brought up to date urgently. Its `modernize-26` was fast-forwarded to its `php-7.2`
+  (`202644b`, 31 commits); its `master` is untouched (`7186607`).
+- Consumer check of flat-webapp against flat `v1.72.0` (reading its code, and 19 identical
+  HTTP requests on `v1.5.5` and `v1.72.0`): 12 identical, 7 differ in one intended way
+  (MOD-165, 405 for an unsupported method). Written up in `active/WEBAPP-REVIEW.md`; a
+  "Consumers checked so far" section was added to `active/CONSUMER-IMPACT.md`.
+- Not done: flat-webapp's release (the owner is creating it); the check against the
+  owner's closed-source application.
+- No change to flat's source or tests.
+

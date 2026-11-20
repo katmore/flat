@@ -532,3 +532,12 @@ Every known-defect fix changes behavior a consumer might have relied on.
 When the consumer source is available, search it for the terms in the silent
 change table. For each hit, decide whether the consumer used the old result as
 is, compensated for it, or never reached it. Record the outcome here, per entry.
+
+## Consumers checked so far
+
+- **flat-webapp** (`katmore/flat-webapp`, `php-7.2` branch), checked 2026-11-20 against
+  `v1.72.0` by reading its code and by sending the same 19 HTTP requests to it on `v1.5.5`
+  and `v1.72.0`: only MOD-165 (an unsupported API method now answers 405 instead of an empty
+  200) affects it. Details in `WEBAPP-REVIEW.md`.
+- **The owner's closed-source application**: not checked yet (the source is not available).
+

@@ -164,3 +164,42 @@ and a new handler in `ViewController` ignore errors outside the level and
 After the change: in-level warning 500, masked warning 200, `@`-silenced warning
 200, exceptions still 500, normal pages and 404/403 unchanged.
 
+## Consumer check of flat-webapp against flat v1.72.0 (2026-11-20)
+
+flat-webapp is itself a consumer of flat, so the consumer-impact checklist
+(`CONSUMER-IMPACT.md`) was run against it on its `php-7.2` branch (commit `202644b`).
+Your closed-source application is a different check and is still pending.
+
+By reading the code: the search terms of all 77 entries that have them were searched in
+`app/` and `web/` (most hits were false positives: `true`, `null`, `flat`, `var_dump(`,
+`DEBUG_BACKTRACE`), and the 29 flat classes flat-webapp uses were matched to entries.
+The areas it touches and the result:
+
+- Unsupported API methods (MOD-165): affected, intended; its response handler now receives
+  the 405 and writes it.
+- Template design root (MOD-164): not affected; `app/config/flat/design.php` sets
+  `design/root_dir` itself, to the same folder the new fallback uses.
+- Config keys beginning with `flat/` (MOD-139): not affected; its keys begin with `App/` or `app/`.
+- API request method, missing method, HEAD flag, TRACE, status formatting, `not_found`
+  status: not used (no subclass calls those; no `unknown_method` catch).
+- Assets: it only builds URLs with `AssetUrl::asset()`; none of the asset printing or
+  `register_html*` changes apply. Views resolved through `view_resolved`: no listeners.
+- Legacy events, data field lists, map from object, HTML encoding of data, shutdown
+  callbacks, collections, mapper, payment, Mongo, PDO: not used.
+
+By running it: the same 19 HTTP requests (views, unknown view, API GET, POST, PUT,
+DELETE, HEAD, OPTIONS, PATCH, TRACE, method override, JSON bodies, static file) were
+sent to the app served on flat `v1.5.5` and on `v1.72.0` (status, headers except date and
+server, and body compared).
+
+- 12 requests are identical, including every view (200 and 404), API GET and HEAD, the 403
+  for an unknown resource, PATCH (500 in both) and TRACE (405 in both; Apache answers it).
+- 7 differ, all one behavior: a method the GET-only `example` resource does not implement
+  (POST, PUT, DELETE, OPTIONS, `?POST=1` override, a POST with a JSON body, a POST with
+  malformed JSON) answered an empty `200` on `v1.5.5` and answers `405 Method Not Allowed`
+  with `{"message":"no interface found matching the resolved request method"}` on
+  `v1.72.0`. That is MOD-165 (KD-79).
+
+Conclusion: for flat-webapp, `v1.72.0` is a drop-in replacement, with the single
+intended difference above.
+
