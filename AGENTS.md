@@ -121,6 +121,6 @@ repository broke this, and had to be replaced.)
 - Commit often, in coherent logical groups, each with its related
   documentation updates, after running the relevant checks. Do not let a large
   undocumented working tree build up.
-- Commit and push to the current phase branch (`php-7.3`; `php-7.2` is closed). Leave
-  `modernize-26` to the maintainer, never touch `master` (prime directive 1), and follow
-  the maintainer's explicit branch and push instructions.
+- Commit and push to the current phase branch (`php-7.3`; `php-7.2` is closed). Never
+  touch `master` (prime directive 1), and follow the maintainer's explicit branch and push
+  instructions. There is no `modernize-26` branch any more (retired 2026-11-20).

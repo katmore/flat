@@ -5,13 +5,12 @@
 Development on the flat framework largely halted in 2020. There are various issues including bugs that need to be addressed including updating the PHP version used. This is a bit of an undertaking.
 
 This modernization is taking place in multiple deliberate steps to avoid consumer disruption.
-The branch **modernize-26** contains the latest release phase of the modernized flat.
 
 The phases are going to correspond with the major versions of PHP starting at PHP 7.2 up to present released version.
-Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP version flat was using when development stalled in 2020). Once the phases are caught up to the latest stable release of PHP, **modernize-26** branch will be merged with the **master** branch and the modernization project will be considered complete. (Update, 2026-11-20: after publishing `v1.72.0` the maintainer merged `modernize-26` into `master` early, by pull request, so `master` carries the latest released phase; the project itself is still in progress.)
+Each phase has its own branch, i.e. **php-7.2** for php-7.2 (the last PHP version flat was using when development stalled in 2020). **master** carries the latest completed phase; the maintainer merges a phase into it when the phase is done. (History: a separate integration branch, **modernize-26**, was used until 2026-11-20 and was then retired and deleted by the maintainer, because it only duplicated `master` plus the phase branch. Old documents that mention it describe how things were at the time and stay as written.)
 
 ### flat-webapp branches
-The sample application `katmore/flat-webapp` follows the same pattern: a **php-7.2** branch (created from its `master`, commit `7186607`), later phases in their own branches, and each finished phase merged to its **modernize-26** branch. Its `devel` branch is being retired. Integration tests against it: [php-7.2/active/WEBAPP-TESTS.md](./php-7.2/active/WEBAPP-TESTS.md).
+The sample application `katmore/flat-webapp` follows the same pattern: a **php-7.2** branch (created from its `master`, commit `7186607`), later phases in their own branches, and each finished phase merged to its `master` by the maintainer. Its `devel` branch is being retired. Integration tests against it: [php-7.2/active/WEBAPP-TESTS.md](./php-7.2/active/WEBAPP-TESTS.md).
 
 ### Releases
 Each finished phase is published as a GitHub Release whose tag is `v1.<PHP major><PHP minor>.0`: `v1.72.0` for PHP 7.2, then `v1.73.0`, `v1.74.0`, `v1.80.0`, and so on. The release notes for a phase are in its folder, for example [php-7.2/RELEASE-NOTES.md](./php-7.2/RELEASE-NOTES.md). Publishing a release needs the maintainer's explicit go-ahead.
@@ -19,10 +18,13 @@ Each finished phase is published as a GitHub Release whose tag is `v1.<PHP major
 The major version follows semantic versioning. It stays at 1 while the public API is compatible (the bug fixes of the modernization are not API changes). It goes to 2, for example `v2.73.0` for PHP 7.3, only when a phase makes a change that breaks existing callers, and only on the maintainer's decision. The minor number keeps naming the PHP version.
 
 ### Branches during and after the project
-While the modernization runs, every phase keeps its own branch (`php-7.2`, `php-7.3`, ...) as described above, merged to `modernize-26` when the phase is complete. Do not delete a phase branch before the project is finished. When the maintainer declares the whole project complete, the phase branches may be deleted: each finished phase's Release tag is the permanent record, so make sure every phase has its Release first. Only the maintainer decides this.
+- **`master`:** the latest completed phase. Only the maintainer changes it, and only that way: an agent may change it only on the maintainer's explicit one-time instruction (prime directive 1 in `AGENTS.md`).
+- **`php-7.N`:** the work branch of one phase. When the phase is complete the maintainer merges it to `master` and tags the release; the branch is kept permanently as the record of the phase. Agents commit and push to the current phase branch only.
+- **Tags and Releases:** `v1.<PHP major><PHP minor>.0`, plus patch releases (`v1.72.1`). Consumers pin these, not branches.
+- When the maintainer declares the whole project complete, the phase branches may be deleted: each finished phase's Release tag is the permanent record, so make sure every phase has its Release first. Only the maintainer decides this.
 
 ### Progress
- * php-7.2: complete (2026-11-20) and merged to `modernize-26`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
+ * php-7.2: complete (2026-11-20), released as `v1.72.0` and `v1.72.1`, and merged to `master`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
  * php-7.3: not started; begins only on the maintainer's explicit go-ahead. The agent handoff, with the state, steps, decisions to confirm and traps, is [php-7.3/HANDOFF.md](./php-7.3/HANDOFF.md)
 
 ### Rules for every phase

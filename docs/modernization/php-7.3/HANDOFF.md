@@ -57,10 +57,10 @@ wide tables); never delete a document.
   point release `v1.72.1` (commit `ac6a6cf`; the owner creates the tag and the Release, so check
   whether it exists). `php-7.3` is the work branch, created by the owner and merged with `php-7.2`
   at the start of the phase; it has no PHP 7.3 change yet, so the environment still says PHP 7.2.
-  `modernize-26` is the owner's. Release `v1.72.0` is published (tag `619adcb`).
+  The old `modernize-26` branch was retired on 2026-11-20 and no longer exists. Release `v1.72.0` is published (tag `619adcb`).
 - **Tests:** 1,428 unit tests pass on PHP 7.2.34 with 100% class, method and line coverage
   (1,062 methods; the line count is in the coverage report), PHPUnit 8.5. The inventory is generated; see the phase README.
-- **Numbering (decision D3):** keep counting across phases: next MOD-185, KD-80, Q36.
+- **Numbering (decision D3):** keep counting across phases: next MOD-185, KD-80, Q36 (the first change-log entry of this phase should record the retirement of `modernize-26` and the branch-model update of `docs/modernization/README.md`, 2026-11-20).
 - **Known defects:** 79 tracked, all resolved.
 - **Test environment (all in the repository):** `docker/Dockerfile` (PHP 7.2 base image pinned
   by digest; xdebug, ImageMagick and imagick, the MongoDB extension 1.16.2 with libmongoc, and
@@ -71,7 +71,7 @@ wide tables); never delete a document.
   later). Re-run `composer audit --locked` on both locks at the end of your phase and update the
   note in your phase folder: a newer PHP may allow newer packages.
 - **flat-webapp (`katmore/flat-webapp`):** also has a `php-7.3` branch (created by the owner;
-  at `202644b`, the same as its `php-7.2` and `modernize-26`). It requires flat `1.72.*` and
+  at `202644b`, the same as its `php-7.2`). It requires flat `1.72.*` and
   its Docker setup is development-only. See section 4. The owner writes its application code.
 - **Still open for the owner, not for you:** the consumer check against the closed-source
   application (the source is on drives the owner reaches in mid-January; the tool is
@@ -161,8 +161,8 @@ same.** Rules for it:
 
 ## 4. flat-webapp in this phase
 
-`katmore/flat-webapp` gets its own `php-7.3` branch (decision D5; the owner created it from its
-`modernize-26`). The owner writes the application; agents give snippets when asked. The tooling
+`katmore/flat-webapp` gets its own `php-7.3` branch (decision D5; the owner created it from the
+same commit as its `php-7.2`). The owner writes the application; agents give snippets when asked. The tooling
 around it, unless the owner says otherwise, follows flat: the web image base `php:7.3-apache`
 pinned by digest, `config.platform` in its `composer.json`, and its `php` requirement `7.3.*`.
 While flat has no `v1.73.0` release, it requires flat from flat's `php-7.3` branch (a `git`
@@ -240,8 +240,8 @@ GitHub and the session:
 - This session's git access cannot push tags, delete branches, or read Dependabot alerts
   (HTTP 403). Do not try to work around it; give the owner the exact commands instead. Pushing
   branches works.
-- `master` is never touched (prime directive 1). `modernize-26` is the owner's too: do not push
-  to it unless the owner explicitly says so.
+- `master` is never touched (prime directive 1). The `modernize-26` branch no longer exists
+  (retired 2026-11-20); do not recreate it.
 - Commit in coherent groups with their documentation, run `bin/check-docs`, and push to `php-7.3`
   regularly. Commit messages end with the attribution lines the system instructions give.
 - Change-log entries are never rewritten; a correction is a new entry, and a moved file needs an
