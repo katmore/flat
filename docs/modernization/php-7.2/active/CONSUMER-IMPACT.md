@@ -513,6 +513,12 @@ Every known-defect fix changes behavior a consumer might have relied on.
   MOD-180 entry no longer applies
 - Search consumer code for: nothing new; no change from v1.72.0
 
+### MOD-184 — Session start failure is reported (again)
+
+- Before: v1.72.0 called `@session_start()` in a loop of up to 100 attempts, so a missing or unwritable session store failed without a trace (the MOD-183 entry on the session start is superseded)
+- After: each failed attempt raises PHP's own warning (for example `session_start(): open(...) failed: No such file or directory`). The return value is unchanged, and so is the `no_session_var` exception when `$_SESSION` is not set. The MOD-180 entry on the session start applies
+- Search consumer code for: error handlers that turn warnings into exceptions (a failed session start now reaches them); log monitoring that alerts on warnings; session save paths that are not writable
+
 ### MOD-170 — Native session handler key method
 
 - Before: `\flat\data\orm\driver\session\handler\native::_get_ormkey()` was an instance method that the class itself also called statically (`self::_get_ormkey()`)

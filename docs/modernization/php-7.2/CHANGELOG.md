@@ -2997,3 +2997,15 @@ unchanged.
   maintainer.
 - The session failure test now checks that PHP raises the failures, that none passes the mask,
   and that `error_reporting` is restored.
+
+## MOD-184 — Session start exception withdrawn; plain `session_start()`
+
+- The maintainer decided the session masking was old code copied without review and removed it
+  entirely (2026-11-20). `src/flat/core/session.php` calls `$newstart = session_start();` inside the
+  same retry loop, with no `@` and no `error_reporting` change. The approved-exception comment and
+  the `AGENTS.md` entry for it are gone. This is the MOD-180 behavior again, and it supersedes
+  the session part of MOD-183.
+- A failed start reports PHP's warning on each attempt. The return value and the
+  `no_session_var` exception are unchanged. The session failure test is back to the MOD-180
+  version, which asserts the warnings.
+- Only one approved exception remains: the asset `realpath()` mask.

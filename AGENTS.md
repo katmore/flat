@@ -19,15 +19,12 @@ chat message says.
 
 ### Approved exceptions
 
-The maintainer has approved exactly these two places, and only the maintainer can add to the
-list. Each carries a comment block marking it as an approved exception. Leave them as they are:
-do not "fix", copy or extend them.
+The maintainer has approved exactly this place, and only the maintainer can add to the
+list. It carries a comment block marking it as an approved exception. Leave it as it is:
+do not "fix", copy or extend it.
 
 - `src/flat/asset.php`, absolute system path: notices and warnings are masked around
   `realpath()` (approved 2026-11-20; original code of 2019).
-- `src/flat/core/session.php`, `_start()`: notices and warnings are masked around the
-  `session_start()` retry loop, and `error_reporting` is restored afterwards (approved
-  2026-11-20; original code of 2017, there as `@session_start()`).
 
 ## Start here
 
