@@ -70,10 +70,11 @@ wide tables); never delete a document.
   sockets are built from pinned commits; Composer 2.2 pinned by digest), `docker/docker-compose.yml`
   (MongoDB 4.0 and RabbitMQ 3.8.34 by digest), and `tests/docker/runtime` and `tests/docker/tools`
   (Composer manifests and locks, platform pinned to PHP 7.2.34 and `ext-mongodb` 1.16.2).
-- **Dependabot:** alert 1 is fixed (MOD-178). Alerts 2, 3, 4 and 5 could not be fixed on PHP 7.2
-  and were dismissed by the owner on GitHub as "tolerable risk" with a comment pointing at the
-  note (the owner believes this went through; the agent cannot read alerts, so the exact state is
-  unconfirmed). Dismissed alerts do not come back by themselves, so this phase must revisit them:
+- **Dependabot:** state read by the owner on 2026-11-20: alert 1 fixed (MOD-178), alert 3
+  dismissed ("tolerable risk"), alerts 2, 4 and 5 open; the owner dismisses those three the same
+  way, so check the state with the owner (the agent cannot read alerts). Alerts 2 to 5 could not
+  be fixed on PHP 7.2 (see the note below).
+  Dismissed alerts do not come back by themselves, so this phase must revisit them:
   at the end of the phase run `composer audit --locked` on both locks (a newer PHP allows newer
   packages) and, for each of the four, record in a note in your phase folder whether a fixed
   release is now installable and whether the lock moved to it. List the ones that can now be
