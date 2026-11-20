@@ -16,7 +16,7 @@
  * code under `src/flat/vendor/` and generated folders are skipped.
  *
  * Usage: bin/check-docs        (exit status 1 when any problem is found)
- * Runs on PHP 7.2 or newer; docker/bin/check-docs runs it in the test container.
+ * Runs on PHP 7.3 or newer; docker/bin/check-docs runs it in the test container.
  */
 $root = dirname(__DIR__);
 if (in_array('-h', $argv, true) || in_array('--help', $argv, true)) {

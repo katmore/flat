@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs the mutation probe (tests/tools/mutate.php) in the repository's PHP 7.2
+# Runs the mutation probe (tests/tools/mutate.php) in the repository's PHP 7.3
 # container, on a throwaway COPY of the repository mounted at /app, so a mutant
 # can never be left behind in your working tree. Needs no service containers.
 # Slow by design: every mutant runs the unit suite once (about 6 seconds).

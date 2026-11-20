@@ -25,7 +25,7 @@
  * A hit means "look at this place", not "this is broken": read the entry's
  * Before and After lines for what to decide. Entries without a searchable term,
  * and terms too generic to search, are listed at the end for review by hand.
- * Runs natively on PHP 7.2 or newer.
+ * Runs natively on PHP 7.3 or newer.
  */
 $options = ['show-code' => false, 'loose' => false, 'summary' => false, 'impact' => null];
 $folders = [];

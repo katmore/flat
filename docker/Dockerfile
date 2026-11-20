@@ -10,8 +10,8 @@ RUN --mount=type=secret,id=proxy_ca \
     composer install --working-dir=tools --no-interaction --no-progress --prefer-dist --no-plugins --no-scripts && \
     composer install --working-dir=runtime --ignore-platform-req=ext-sockets --no-interaction --no-progress --prefer-dist --no-plugins --no-scripts
 
-FROM php:7.2-cli@sha256:42ffbc0798e4449bbd1e14fc4dcb87774aa1ad1900a09ef6a965bc0880aa2161
-# The exact PHP 7.2.34 runtime used by the compatibility suite. No apt repositories
+FROM php:7.3-cli@sha256:bd6f2dc7a4e4537e927355c94a74c3022911aa504278f5f0fd94016c90dfaecc
+# The exact PHP 7.3.33 runtime used by the compatibility suite. No apt repositories
 # or private prebuilt images are needed. Optional session CA trust is mounted,
 # never copied into an image layer.
 RUN --mount=type=secret,id=proxy_ca \
@@ -48,6 +48,6 @@ RUN docker-php-ext-install sockets
 COPY --from=dependencies /opt/flat-test /opt/flat-test
 COPY tests/docker/bootstrap.php /opt/flat-test/bootstrap.php
 RUN chmod -R a+rX /opt/flat-test
-RUN php -r 'if (PHP_VERSION !== "7.2.34") { throw new RuntimeException("Unexpected PHP version"); } foreach (["curl","dom","imagick","mongodb","pdo_sqlite","sockets","xdebug"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: ".$extension); } } require "/opt/flat-test/tools/vendor/autoload.php"; require "/opt/flat-test/runtime/vendor/autoload.php"; echo "Verified PHP ".PHP_VERSION." and locked test dependencies\n";'
+RUN php -r 'if (PHP_VERSION !== "7.3.33") { throw new RuntimeException("Unexpected PHP version"); } foreach (["curl","dom","imagick","mongodb","pdo_sqlite","sockets","xdebug"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: ".$extension); } } require "/opt/flat-test/tools/vendor/autoload.php"; require "/opt/flat-test/runtime/vendor/autoload.php"; echo "Verified PHP ".PHP_VERSION." and locked test dependencies\n";'
 WORKDIR /app
 ENTRYPOINT ["php", "/opt/flat-test/tools/vendor/bin/phpunit", "--bootstrap", "/opt/flat-test/bootstrap.php"]

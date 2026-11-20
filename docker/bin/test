@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs bin/test inside the repository's PHP 7.2 container. This script only
+# Runs bin/test inside the repository's PHP 7.3 container. This script only
 # handles Docker: it builds or checks the image, starts the MongoDB/RabbitMQ
 # containers a test mode needs, runs bin/test with the same arguments, and
 # removes the containers afterwards. All test logic lives in bin/test.
@@ -25,7 +25,7 @@ compose() {
 usage() {
     echo 'Usage: docker/bin/test [bin/test arguments] [--offline]'
     echo '       docker/bin/test --build | --down'
-    echo 'Runs bin/test in the PHP 7.2 container and starts the services its test mode'
+    echo 'Runs bin/test in the PHP 7.3 container and starts the services its test mode'
     echo 'needs. Docker-only options:'
     echo '  --offline:     use existing images only; never build or pull'
     echo '  --build:       build the test image only'

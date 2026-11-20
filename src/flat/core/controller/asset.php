@@ -2,7 +2,7 @@
 /*
  * \flat\core\controller\asset definition 
  *
- * PHP version >=7.2
+ * PHP version >=7.3
  * 
  * This file is part of the "The Flat Framework".
  * 

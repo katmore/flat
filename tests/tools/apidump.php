@@ -14,7 +14,7 @@
  * because a class whose parent is missing is a fatal error that cannot be caught.
  * --autoload=FILE is a Composer autoloader for the third-party packages flat uses.
  *
- * `compare` writes a Markdown report of every difference. Needs PHP 7.2 or newer.
+ * `compare` writes a Markdown report of every difference. Needs PHP 7.3 or newer.
  */
 if (PHP_SAPI !== 'cli') exit(1);
 $argv = $_SERVER['argv'];

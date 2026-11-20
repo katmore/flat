@@ -25,7 +25,7 @@
  * --limit, a seeded random sample is run (same seed, same sample).
  * Needs FLAT_TEST_PHPUNIT (default vendor/bin/phpunit) and optionally
  * FLAT_TEST_BOOTSTRAP, like bin/test. Writes a Markdown report to stdout and
- * progress to stderr. PHP 7.2 compatible.
+ * progress to stderr. PHP 7.3 compatible.
  */
 $root = getcwd();
 if (!is_file("$root/.mutation-copy")) {

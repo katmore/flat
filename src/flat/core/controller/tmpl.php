@@ -3,7 +3,7 @@
 /*
  * This file is part of the The Flat Framework
  *
- * PHP version >=7.2
+ * PHP version >=7.3
  * 
  * Copyright (c) 2012-2020 Doug Bird - <retran@gmail.com>. All Rights Reserved.
  * This software is distributed under the terms of the MIT license or the GNU General Public License v3.0.
