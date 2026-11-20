@@ -2765,3 +2765,18 @@ unchanged.
   `modernize-26` is not part of this entry.
 - Documentation only; no source or test change.
 
+
+## MOD-167 — Release scheme and notes for v2.72.0
+
+- Owner decision: finished phases are published as GitHub Releases, not kept as
+  long-lived branches. The php-7.2 release is `v2.72.0`; the scheme is
+  `v2.<PHP major><PHP minor>.0` (`v2.73.0` for 7.3, `v2.80.0` for 8.0). It is
+  written into `docs/modernization/README.md` ("Releases").
+- New `RELEASE-NOTES.md` in this folder: what the release is, how to upgrade from
+  1.x (`^1.0` will not pick it up; require `2.72.*`), the changes most likely to
+  affect consumers, and known limits. Written to be pasted into the Release page.
+- Not done by Claude: creating the tag and publishing the Release (needs the
+  owner's go-ahead; this session's git access refuses tag pushes with HTTP 403).
+  Whether the `php-7.2` branch is kept or deleted after the Release, and the branch
+  model for later phases, are still open questions for the owner.
+- Documentation only; no source or test change.
