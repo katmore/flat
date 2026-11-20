@@ -8,7 +8,7 @@ This modernization is taking place in multiple deliberate steps to avoid consume
 The branch **modernize-26** contains the latest release phase of the modernized flat.
 
 The phases are going to correspond with the major versions of PHP starting at PHP 7.2 up to present released version.
-Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP version flat was using when development stalled in 2020). Once the phases are caught up to the latest stable release of PHP, **modernize-26** branch will be merged with the **master** branch and the modernization project will be considered complete.
+Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP version flat was using when development stalled in 2020). Once the phases are caught up to the latest stable release of PHP, **modernize-26** branch will be merged with the **master** branch and the modernization project will be considered complete. (Update, 2026-11-20: after publishing `v1.72.0` the maintainer merged `modernize-26` into `master` early, by pull request, so `master` carries the latest released phase; the project itself is still in progress.)
 
 ### flat-webapp branches
 The sample application `katmore/flat-webapp` follows the same pattern: a **php-7.2** branch (created from its `master`, commit `7186607`), later phases in their own branches, and each finished phase merged to its **modernize-26** branch. Its `devel` branch is being retired. Integration tests against it: [php-7.2/active/WEBAPP-TESTS.md](./php-7.2/active/WEBAPP-TESTS.md).

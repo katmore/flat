@@ -2873,3 +2873,15 @@ unchanged.
 - Not done: merging flat-webapp's `php-7.2` into its `modernize-26` (open question for
   the owner); flat-webapp has no release yet.
 - No change to flat's source or tests.
+
+## MOD-175 — Owner merged modernize-26 into master
+
+- After publishing `v1.72.0` the owner merged `modernize-26` into `master` in
+  `katmore/flat` (pull request 3, merge commit `9dfec32`, which contains the release
+  commit `619adcb`). `master` therefore carries the released PHP 7.2 phase and is
+  one documentation commit behind `modernize-26` (MOD-174). `katmore/flat-webapp`'s
+  `master` and `modernize-26` are unchanged (`7186607`).
+- Recorded in `docs/modernization/README.md`. The project is still in progress; this
+  does not change the phase rules. Claude did not touch `master`.
+- Documentation only.
+
