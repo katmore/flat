@@ -2681,3 +2681,14 @@ unchanged.
 - Checked from a clean copy: pages answer with generic text only; the live log
   shows the PHP fatal, the PHP warning and the API's JSON lines; Ctrl-C stops
   the container. No change to flat's source or tests.
+
+## MOD-161 — flat-webapp: serve no longer depends on the home view
+
+- In the `php-7.2` branch of `katmore/flat-webapp` (owner's request): the Docker
+  health check (a request for `/view.php/home`) and the `--wait` are removed, so a
+  broken page no longer makes `docker/bin/serve` report "unhealthy" and stop.
+  The server starts; errors show up in the live log when a page is loaded.
+  `--detach` prints how to watch the log. Checked with a deliberately broken home
+  view: foreground and detached both start, the broken page answers 500, and the
+  log shows the PHP fatal.
+- No change to flat's source or tests.
