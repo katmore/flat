@@ -2780,3 +2780,14 @@ unchanged.
   Whether the `php-7.2` branch is kept or deleted after the Release, and the branch
   model for later phases, are still open questions for the owner.
 - Documentation only; no source or test change.
+
+## MOD-168 — Phase branches stay until the project ends
+
+- Owner decision: keep the phase branches (including `php-7.2`) while the
+  modernization runs, following the plan in `docs/modernization/README.md`; they
+  may be deleted after the whole project is complete, with each phase's Release
+  tag as the permanent record. This answers the open questions of MOD-167 about
+  the `php-7.2` branch and the branch model: nothing changes. Recorded in the
+  modernization README ("Branches during and after the project").
+- Documentation only.
+

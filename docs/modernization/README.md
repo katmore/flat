@@ -16,6 +16,9 @@ The sample application `katmore/flat-webapp` follows the same pattern: a **php-7
 ### Releases
 Each finished phase is published as a GitHub Release whose tag is `v2.<PHP major><PHP minor>.0`: `v2.72.0` for PHP 7.2, then `v2.73.0`, `v2.74.0`, `v2.80.0`, and so on. The release notes for a phase are in its folder, for example [php-7.2/RELEASE-NOTES.md](./php-7.2/RELEASE-NOTES.md). Publishing a release needs the maintainer's explicit go-ahead.
 
+### Branches during and after the project
+While the modernization runs, every phase keeps its own branch (`php-7.2`, `php-7.3`, ...) as described above, merged to `modernize-26` when the phase is complete. Do not delete a phase branch before the project is finished. When the maintainer declares the whole project complete, the phase branches may be deleted: each finished phase's Release tag is the permanent record, so make sure every phase has its Release first. Only the maintainer decides this.
+
 ### Progress
  * php-7.2: complete (2026-11-20) and merged to `modernize-26`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
  * php-7.3: not started; begins only on the maintainer's explicit go-ahead
