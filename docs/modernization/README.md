@@ -16,6 +16,8 @@ The sample application `katmore/flat-webapp` follows the same pattern: a **php-7
 ### Releases
 Each finished phase is published as a GitHub Release whose tag is `v1.<PHP major><PHP minor>.0`: `v1.72.0` for PHP 7.2, then `v1.73.0`, `v1.74.0`, `v1.80.0`, and so on. The release notes for a phase are in its folder, for example [php-7.2/RELEASE-NOTES.md](./php-7.2/RELEASE-NOTES.md). Publishing a release needs the maintainer's explicit go-ahead.
 
+The major version follows semantic versioning. It stays at 1 while the public API is compatible (the bug fixes of the modernization are not API changes). It goes to 2, for example `v2.73.0` for PHP 7.3, only when a phase makes a change that breaks existing callers, and only on the maintainer's decision. The minor number keeps naming the PHP version.
+
 ### Branches during and after the project
 While the modernization runs, every phase keeps its own branch (`php-7.2`, `php-7.3`, ...) as described above, merged to `modernize-26` when the phase is complete. Do not delete a phase branch before the project is finished. When the maintainer declares the whole project complete, the phase branches may be deleted: each finished phase's Release tag is the permanent record, so make sure every phase has its Release first. Only the maintainer decides this.
 

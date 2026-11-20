@@ -2848,3 +2848,14 @@ unchanged.
 - Old to new path map: `docs/modernization/php-7.2/notes/API-V2.72.0.json` to
   `docs/modernization/php-7.2/notes/API-V1.72.0.json` (contents unchanged).
 - Documentation only.
+
+## MOD-173 — Versioning policy: major 2 is reserved for breaking changes
+
+- Owner clarification: `v1.72.0` marks the last PHP 7.2 state, and a 2.x release will
+  be made if a later phase breaks existing callers. Recorded in
+  `docs/modernization/README.md` ("Releases"): the major version follows semantic
+  versioning, stays at 1 while the API is compatible, and moves to 2 (for example
+  `v2.73.0`) only on the maintainer's decision; the minor number keeps naming the PHP
+  version.
+- Documentation only.
+
