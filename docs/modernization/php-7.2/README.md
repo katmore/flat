@@ -20,6 +20,8 @@ model and the rules every phase follows are in [../README.md](../README.md).
   [active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md).
 - **Phase complete.** The owner declared it complete on 2026-11-20 and it is merged to
   `modernize-26`. This branch, `php-7.2`, is kept permanently as the record of the phase.
+- **Point release v1.72.1 (2026-11-20):** error hiding removed from the library, the tests and
+  the tools (MOD-180 to MOD-182); release notes in [RELEASE-NOTES-V1.72.1.md](RELEASE-NOTES-V1.72.1.md).
 
 ## Resume here
 
@@ -56,6 +58,7 @@ For a person or an agent picking this up:
 ## Contents
 
 - [README.md](README.md): This page: status, how to resume, contents. Read it when: always first.
+- [RELEASE-NOTES-V1.72.1.md](RELEASE-NOTES-V1.72.1.md): The notes for the patch release `v1.72.1` (error hiding removed). Read it when: publishing or reading about that release.
 - [RELEASE-NOTES.md](RELEASE-NOTES.md): The notes for release `v1.72.0`: what it is, what to check before upgrading from 1.x. Read it when: publishing or reading about the release.
 - [CHANGELOG.md](CHANGELOG.md): Every change in this phase (MOD-001 onward): what, why, behavior effect, verification, undo. Read it when: before changing code; to trace or revert a change.
 

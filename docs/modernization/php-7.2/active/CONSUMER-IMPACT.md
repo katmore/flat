@@ -485,6 +485,18 @@ Every known-defect fix changes behavior a consumer might have relied on.
 - After: Returns the requested version (v3/v5 are deterministic); `$uuid()` is still a random v4
 - Search consumer code for: UUID objects used as callables: `$u(` with arguments
 
+### MOD-180 — Session start failure is reported
+
+- Before: `session::start()` called `@session_start()` in a loop of up to 100 attempts, so a missing or unwritable session store failed without a trace
+- After: each failed attempt raises PHP's own warning (for example `session_start(): open(...) failed: No such file or directory`). The return value is unchanged, and so is the `no_session_var` exception when `$_SESSION` is not set
+- Search consumer code for: error handlers that turn warnings into exceptions (a failed session start now reaches them); log monitoring that alerts on warnings; session save paths that are not writable
+
+### MOD-180 — Asset absolute system paths
+
+- Before: notices and warnings were masked while `realpath()` resolved a system path under the absolute flag (`SYSTEM_PATH_ABSOLUTE`)
+- After: nothing is masked. `realpath()` returns false quietly for a path that does not exist, so results are unchanged; where `open_basedir` forbids the path, PHP's own warning now appears
+- Search consumer code for: users of the `SYSTEM_PATH_ABSOLUTE` flag; hosts that set `open_basedir`
+
 ### MOD-170 — Native session handler key method
 
 - Before: `\flat\data\orm\driver\session\handler\native::_get_ormkey()` was an instance method that the class itself also called statically (`self::_get_ormkey()`)

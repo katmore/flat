@@ -2940,3 +2940,44 @@ unchanged.
   branch, where GitHub reads the lock file, so alert 1 should close on the next scan.
 - The tag `v1.72.0` is unchanged (`619adcb`) and is an ancestor of all three branches.
 - Documentation only.
+
+## MOD-180 — Error hiding removed from flat's source (prime directive 2)
+
+- The owner's new prime directive: never hide an error from PHP. A tokenizer scan of flat's own
+  source found two live spots, both original code (not third-party), and one dead comment:
+  `src/flat/asset.php` (commit `7873bf2`, 2019-11-08) lowered `error_reporting` around
+  `realpath()`; `src/flat/core/session.php` (commit `c35e910`, 2017-12-18) called
+  `@session_start()` in a 100-attempt retry loop; `src/flat/core/curl/response.php` held a
+  commented-out `error_reporting(...)` from 2017-10-05. The mask and the `@` are removed, the dead
+  comment is deleted. Nothing else in flat's own source hides errors.
+- Behavior: a failed session start now reports PHP's warning on each attempt; the asset path
+  can now show a warning where `open_basedir` forbids the path. Two consumer-impact entries added.
+- The session failure test now installs an error handler and asserts the warnings (the pattern
+  many existing tests use): it checks the message, the missing path and one message set per
+  attempt.
+- Verified: `docker/bin/test all --coverage` passes 1,428 tests, 100% methods (1,062/1,062) and
+  lines (8,055/8,055; two fewer lines than before, the masking code).
+
+## MOD-181 — Error hiding removed from tests and tools
+
+- `tests/Unit/Core/Util/ValidationTest.php` and `tests/Support/mongo-fault-proxy.php` (the
+  earlier agent's work, committed 2026-11-06) and `tests/tools/inventory.php` (Claude, 2026-11-13)
+  used `@`. Now: the validation test asserts the one expected "Compilation failed" warning; the
+  fault proxy runs its stream reads and writes through a helper that writes any notice to its
+  stderr and treats the connection as closed; the inventory tool uses libxml's internal error
+  collection and prints the reasons when a file cannot be read.
+- `tests/tools/apidump.php` sent a loading class's stderr to `/dev/null`; it now keeps the first
+  line of what the class said (and any stray output) as a `reason` for an unloadable class.
+  `tests/tools/mutate.php` kept discarding the output of the unmutated baseline run; it now keeps
+  it and prints the last 40 lines when the baseline fails (the output of mutant runs is still
+  discarded on purpose: a failing mutant run is the signal).
+- A fresh scan of the whole repository finds no `@`, no `error_reporting` change and no display
+  setting in code or tools.
+
+## MOD-182 — Prime directives in AGENTS.md; release notes for v1.72.1
+
+- The two prime directives (never touch `master`; never hide an error from PHP) are added to
+  `AGENTS.md` on this branch too. Release notes for `v1.72.1` are in
+  `RELEASE-NOTES-V1.72.1.md`; the owner creates the tag and the Release.
+- Documentation only.
+
