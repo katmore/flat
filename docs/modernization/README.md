@@ -23,7 +23,7 @@ While the modernization runs, every phase keeps its own branch (`php-7.2`, `php-
 
 ### Progress
  * php-7.2: complete (2026-11-20) and merged to `modernize-26`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
- * php-7.3: not started; begins only on the maintainer's explicit go-ahead
+ * php-7.3: not started; begins only on the maintainer's explicit go-ahead. The agent handoff, with the state, steps, decisions to confirm and traps, is [php-7.3/HANDOFF.md](./php-7.3/HANDOFF.md)
 
 ### Rules for every phase
  * Advance one PHP minor version at a time and skip none: 7.2, 7.3, 7.4, 8.0, 8.1, and onward.
