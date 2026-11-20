@@ -2913,3 +2913,20 @@ unchanged.
   run it. The check itself is still pending until the owner runs it and shares the report.
 - No change to flat's source or tests.
 
+## MOD-178 — Test environment: MongoDB extension 1.16.2 and library 1.16.1; Dependabot alerts
+
+- Dependabot reported 5 alerts, all in `tests/docker/runtime/composer.lock`. Composer's audit
+  confirmed them. The MongoDB library in that lock was limited by the extension version
+  (`ext-mongodb: 1.5.5` in `config.platform`), so the update needed both: `docker/Dockerfile`
+  now builds the MongoDB extension from `mongo-php-driver` commit `9d6c1ba` (tag 1.16.2,
+  the newest that supports PHP 7.2) with `mongo-c-driver` commit `9063a5c`; the platform
+  entry in `tests/docker/runtime/composer.json` is `1.16.2`; the lock moves
+  `mongodb/mongodb` 1.4.3 to 1.16.1 (plus `jean85/pretty-package-versions`,
+  `symfony/polyfill-php73`, `symfony/polyfill-php81`).
+- Verified: image rebuilt (extension reports 1.16.2), `docker/bin/test all --coverage` passes
+  1,428 tests, 100% methods (1,062/1,062) and lines (8,057/8,057). This also makes the tests run on
+  the library version that PHP 7.2 consumers actually get (1.16.1), not the old 1.4.3.
+- One alert is fixed by this (mongodb/mongodb below 1.9.2). Four remain because their fixes need
+  PHP 8.1 or newer; they are listed, with whether flat is exposed, in `notes/DEPENDENCY-ALERTS.md`.
+- Undo: revert this commit and rebuild the image.
+
