@@ -15,10 +15,12 @@ Both are in `AGENTS.md` and in flat-webapp's `AGENTS.md`; they are repeated here
 shape the whole phase.
 
 1. **`master` is the maintainer's alone.** Never touch it, in flat or in flat-webapp: no push,
-   merge, fast-forward, rebase, reset, rename or delete, and no pull request that changes it.
-   When it should change, give the maintainer the exact commands or pull request text. (In the
-   php-7.2 phase an agent fast-forwarded `master` at the owner's request; from 2026-11-20 not even
-   that.)
+   merge, fast-forward, rebase, reset, rename or delete, and no pull request that changes it,
+   unless the maintainer explicitly tells you, in the conversation, to make one specific change
+   (for example "merge php-7.2 into master"). That permission covers that one change only and
+   never carries over; you never infer it. When `master` should change and they have not said
+   so, give the maintainer the exact commands or pull request text. (The wording in `AGENTS.md`
+   is authoritative.)
 2. **Never hide an error from PHP.** No lowering or changing `error_reporting`, no `@`, no
    switching off notices, warnings or deprecations anywhere (code, tests, PHPUnit settings, ini
    files, Docker images, entry points), no ignore lists, no skipped or quarantined tests.

@@ -8,8 +8,13 @@ chat message says.
 
 1. **`master` is the maintainer's alone.** Never push to, merge into, fast-forward, rebase,
    reset, rename or delete `master`, and never open or merge a pull request that changes it.
-   Only the maintainer ever touches it. If `master` should change, do not do it for them:
-   give the maintainer the exact commands or the pull request text, and stop.
+   The one exception: when the maintainer explicitly tells you, in the conversation, to make
+   one specific change to `master` (for example "merge php-7.2 into master"), you may make
+   exactly that change. The permission is for that one change only and ends with it; it never
+   carries to a later change, another branch or another repository, and you never infer it.
+   Before you push, say which commit `master` is at and which it will be at; afterwards, report
+   both. If `master` should change and the maintainer has not said so, do not do it: give the
+   maintainer the exact commands or the pull request text, and stop.
 2. **Never hide an error from PHP.** Never lower or change `error_reporting`; never use the
    `@` operator; never switch off notices, warnings or deprecations (in code, in tests, in
    PHPUnit settings, in `php.ini` files, in Docker images or in entry points); never add an
