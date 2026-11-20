@@ -42,10 +42,13 @@ before, what you see now, and what to search your own code for in
   empty 200 in applications whose handler writes the response).
 - Templates: without `design/root_dir` configured, the fallback design folder is
   now `app/Resources/design` (it never resolved before).
+- AWS S3: files of 100 MB or more are uploaded in parts (`multipart_min_size` is
+  now 100 MB; it was 10 GiB, which S3 rejects), and the content type is kept.
 - Others: shutdown callbacks at the same priority all run; Mongo eager
   connections are pinged and retried; PDO `prepare_map` works on drivers other
-  than MySQL; config keys that begin with `flat/` resolve; `alert::trigger()` now throws `BadMethodCallException` straight away (it used to always end in an `Error`); `rand` objects honor
-  their bounds when invoked without arguments.
+  than MySQL; config keys that begin with `flat/` resolve; `alert::trigger()` now
+  throws `BadMethodCallException` straight away (it used to always end in an
+  `Error`); `rand` objects honor their bounds when invoked without arguments.
 
 ## What else is in it
 

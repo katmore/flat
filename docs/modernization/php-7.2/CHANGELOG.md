@@ -2825,3 +2825,9 @@ unchanged.
 - Not compared: behavior, private members, classes that cannot be loaded.
 - No change to flat's source or tests.
 
+
+## MOD-171 — Correction to MOD-170: S3 line in the release notes
+
+- MOD-170 said the release notes mention the S3 multipart change; the edit had not applied
+  (the bullet it looked for was worded differently). The line is now in `RELEASE-NOTES.md`.
+  Documentation only.
