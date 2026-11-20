@@ -53,9 +53,9 @@ wide tables); never delete a document.
 
 ## 2. State at handoff
 
-- **flat:** `master` is at `ac6a6cf` (`v1.72.1`) when this was written and is the owner's. `php-7.2` holds the content of the
-  point releases `v1.72.1` (commit `ac6a6cf`) and `v1.72.2` (the tip of `php-7.2`; an unsupported
-  API method answers 500, MOD-186). The owner creates the tags and Releases, so check whether
+- **flat:** `master` is at `c257625` (`v1.72.2`) when this was written and is the owner's. `php-7.2` holds the content of the
+  point releases `v1.72.1` (commit `ac6a6cf`) and `v1.72.2` (commit `c257625`, the tip of
+  `php-7.2`; an unsupported API method answers 500, MOD-186). The owner creates the tags and Releases, so check whether
   they exist. `php-7.3` is the work branch, created by the owner and merged with `php-7.2`
   at the start of the phase; it has no PHP 7.3 change yet, so the environment still says PHP 7.2.
   The old `modernize-26` branch was retired on 2026-11-20 and no longer exists. Release `v1.72.0` is published (tag `619adcb`).
@@ -202,7 +202,7 @@ until the owner asks. Its review and the consumer check are in
 - **`master`:** the owner's alone (prime directive 1).
 
 Anything not listed is not decided: record the question with a recommendation (next question
-number Q36) and wait.
+number Q37) and wait.
 
 ## 6. Tools you will want that already exist
 
@@ -262,8 +262,8 @@ GitHub and the session:
 
 Do not fix these as part of the PHP step; raise them with the owner if they matter.
 
-- A `405 Method Not Allowed` response has no `Allow` header listing the supported methods (noted
-  in `docs/modernization/php-7.2/RELEASE-NOTES.md`, "Known limits").
+- A correct 405 with an `Allow` header for an unsupported API method is deferred to v2.X
+  (`docs/modernization/DEFERRED-V2.md`); in v1.X it answers 500.
 - Seven classes cannot be loaded in either version, so they are untested and unusable:
   `flat\cloud\authorize\AuthorizeNetCIM`, `flat\core\util\validate\collection`, and the six
   MongoDB SSL file classes under `flat\db\driver\mongo\ssl\`. The list is in
