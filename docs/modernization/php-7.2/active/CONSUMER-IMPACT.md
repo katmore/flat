@@ -525,6 +525,12 @@ Every known-defect fix changes behavior a consumer might have relied on.
 - After: It is `final protected static`. Calls through `$this->_get_ormkey()` still work (PHP allows it); it cannot be overridden either way (`final`). Found by the API comparison in `notes/API-COMPARISON.md`; the original change was made while restoring the legacy session driver (MOD-092, MOD-100) and was not recorded here
 - Search consumer code for: subclasses of the native session handler calling `_get_ormkey(`
 
+### MOD-186 (Q36) — Unsupported API methods answer 500, not 405
+
+- Before: in `v1.72.0`, a request method the resource does not implement (for example `POST` to a resource that only implements `GET`) produced the `no_interface` response with status `405 Method Not Allowed` (MOD-165); in `v1.5.5` it produced an empty `200`
+- After: the same response has status `500 Internal Server Error` with the same message ("no interface found matching the resolved request method"). The change is only the status code. Code that returns `\flat\api\response\method_not_allowed` itself still answers 405. This is a change from `v1.72.0` for consumers who already updated
+- Search consumer code for: `no_interface`, handlers or clients that check for status `405` after calling an API resource, monitoring or retry rules that treat `500` differently, resources that implement only some methods
+
 ### MOD-165 (KD-79) — Unsupported API methods
 
 - Before: A request method the resource does not implement (for example `POST` to a resource that only implements `GET`) made `set_input()` return a `no_interface` (405) response without calling the response handler. Applications whose handler writes the HTTP response, such as flat-webapp, sent an empty `200`

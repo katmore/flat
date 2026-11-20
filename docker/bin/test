@@ -79,7 +79,8 @@ if "$offline"; then
         fi
     done
 else
-    compose build php
+    # Build progress goes to stderr: the inventory action prints only its Markdown to stdout.
+    compose build php >&2
 fi
 if [ "$action" = build ]; then exit; fi
 # bin/test writes reports and test lists under build/tests/. The container user

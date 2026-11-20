@@ -22,6 +22,8 @@ model and the rules every phase follows are in [../README.md](../README.md).
   `modernize-26`. This branch, `php-7.2`, is kept permanently as the record of the phase.
 - **Point release v1.72.1 (2026-11-20):** error hiding removed from the tests and tools, one approved exception marked in the library
   the tools (MOD-180 to MOD-184); release notes in [RELEASE-NOTES-V1.72.1.md](RELEASE-NOTES-V1.72.1.md).
+- **Point release v1.72.2 (2026-11-20):** an unsupported API method answers 500 instead of 405 (MOD-186), and
+  two test tooling fixes (MOD-185); release notes in [RELEASE-NOTES-V1.72.2.md](RELEASE-NOTES-V1.72.2.md).
 
 ## Resume here
 
@@ -59,6 +61,7 @@ For a person or an agent picking this up:
 
 - [README.md](README.md): This page: status, how to resume, contents. Read it when: always first.
 - [RELEASE-NOTES-V1.72.1.md](RELEASE-NOTES-V1.72.1.md): The notes for the patch release `v1.72.1` (test and tool cleanup; one approved exception marked). Read it when: publishing or reading about that release.
+- [RELEASE-NOTES-V1.72.2.md](RELEASE-NOTES-V1.72.2.md): The notes for the patch release `v1.72.2` (unsupported API method answers 500). Read it when: publishing or reading about that release.
 - [RELEASE-NOTES.md](RELEASE-NOTES.md): The notes for release `v1.72.0`: what it is, what to check before upgrading from 1.x. Read it when: publishing or reading about the release.
 - [CHANGELOG.md](CHANGELOG.md): Every change in this phase (MOD-001 onward): what, why, behavior effect, verification, undo. Read it when: before changing code; to trace or revert a change.
 

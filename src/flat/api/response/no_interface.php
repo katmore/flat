@@ -32,9 +32,17 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\api\response;
+/**
+ * The response of \flat\core\controller\api when the resource has no interface for the request
+ * method (for example `POST` to a resource that only implements `GET`).
+ *
+ * Its status is 500 Internal Server Error. (v1.72.0 answered 405 Method Not Allowed; the
+ * maintainer changed it in v1.72.2 because a 405 must carry an `Allow` header, and flat does
+ * not send headers itself.) To answer a 405 on purpose, return \flat\api\response\method_not_allowed.
+ */
 class no_interface extends \flat\api\response {
    public function __construct() {
       $this->message = 'no interface found matching the resolved request method';
-      $this->_set_status(new \flat\api\status\method_not_allowed);
+      $this->_set_status(new \flat\api\status\server_error);
    }
 }
