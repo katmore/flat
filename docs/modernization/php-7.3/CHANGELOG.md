@@ -72,3 +72,13 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   deprecation notice the SDK emits for every PHP below 8.1. That is a break of prime directive 2
   that the v1.72.1 audit missed. It cannot be fixed at its cause in this phase, so it is
   recorded with a recommendation as Q38 and left as it is until the owner decides.
+
+## MOD-191 — Modernization (no behavior change): `array_key_first()` in the Mongo `load` options
+
+- Kind: modernization, no behavior change. Record: [notes/MODERNIZATIONS.md](notes/MODERNIZATIONS.md) (M1).
+- `src/flat/db/driver/mongo/crud.php`, option `start`: `array_keys($opt['start'])[0]` is now
+  `array_key_first($opt['start'])` (PHP 7.3). The line before checks that the option is an array
+  with exactly one element, so the key is the same.
+- Verified: the tests pass unchanged (1,429 tests, 100% coverage), and the API comparison shows
+  no difference ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
+- Undo: put `array_keys($opt['start'])[0]` back.

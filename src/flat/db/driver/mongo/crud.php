@@ -557,7 +557,7 @@ class crud extends \flat\db\driver\mongo
          ) {
             throw new exception\bad_param("start","must be single element assoc array");
          }
-         $field = array_keys($opt['start'])[0];
+         $field = array_key_first($opt['start']);
          if (is_int($field)) {
             throw new exception\bad_param("start","must be single element assoc array with non-numeric key");
          }
