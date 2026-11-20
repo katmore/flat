@@ -13,6 +13,9 @@ Each phase will have it's own branch, i.e. **php-7.2** for php-7.2 (the last PHP
 ### flat-webapp branches
 The sample application `katmore/flat-webapp` follows the same pattern: a **php-7.2** branch (created from its `master`, commit `7186607`), later phases in their own branches, and each finished phase merged to its **modernize-26** branch. Its `devel` branch is being retired. Integration tests against it: [php-7.2/active/WEBAPP-TESTS.md](./php-7.2/active/WEBAPP-TESTS.md).
 
+### Releases
+Each finished phase is published as a GitHub Release whose tag is `v2.<PHP major><PHP minor>.0`: `v2.72.0` for PHP 7.2, then `v2.73.0`, `v2.74.0`, `v2.80.0`, and so on. The release notes for a phase are in its folder, for example [php-7.2/RELEASE-NOTES.md](./php-7.2/RELEASE-NOTES.md). Publishing a release needs the maintainer's explicit go-ahead.
+
 ### Progress
  * php-7.2: complete (2026-11-20) and merged to `modernize-26`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
  * php-7.3: not started; begins only on the maintainer's explicit go-ahead

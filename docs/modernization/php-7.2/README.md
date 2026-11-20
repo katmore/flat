@@ -56,6 +56,7 @@ For a person or an agent picking this up:
 ## Contents
 
 - [README.md](README.md): This page: status, how to resume, contents. Read it when: always first.
+- [RELEASE-NOTES.md](RELEASE-NOTES.md): The notes for release `v2.72.0`: what it is, what to check before upgrading from 1.x. Read it when: publishing or reading about the release.
 - [CHANGELOG.md](CHANGELOG.md): Every change in this phase (MOD-001 onward): what, why, behavior effect, verification, undo. Read it when: before changing code; to trace or revert a change.
 
 [active/](active/): Work in progress; edited while the phase is open
