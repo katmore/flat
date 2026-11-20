@@ -46,13 +46,13 @@ class ControllerTest extends TestCase
         api::set_method('GET'); $this->assertSame(42, $api->set_input($input)->value);
         api::set_accept_mtype('application/json'); $this->assertSame('application/json', api::get_accept_mtype());
     }
-    public function testUnsupportedMethodAnswersMethodNotAllowedThroughTheResponseHandler()
+    public function testUnsupportedMethodAnswersServerErrorThroughTheResponseHandler()
     {
         $api = new GetApi; $input = new \flat\input\map(['value'=>42]);
         $seen = [];
         $response = $api->set_input($input,'POST',function ($response,$method) use (&$seen) { $seen[] = [$response,$method]; });
         $this->assertInstanceOf(response\no_interface::class,$response);
-        $this->assertSame(405,$response->get_status()->get_code());
+        $this->assertSame(500,$response->get_status()->get_code());
         $this->assertCount(1,$seen); // the handler is told, as it is for every other response
         $this->assertSame($response,$seen[0][0]);
         $this->assertSame('POST',$seen[0][1]);

@@ -3009,3 +3009,32 @@ unchanged.
   `no_session_var` exception are unchanged. The session failure test is back to the MOD-180
   version, which asserts the warnings.
 - Only one approved exception remains: the asset `realpath()` mask.
+
+## MOD-185 — Test tooling: result cache and inventory output
+
+- PHPUnit's result cache was written to the checkout (`.phpunit.result.cache`), which the test
+  container user cannot write when the checkout belongs to another user (for example root in a
+  sandbox): every run printed a `file_put_contents ... Permission denied` warning. I had not
+  noticed it in earlier full-run logs; it was found while running a filtered test. Cause fixed:
+  `phpunit.xml.dist` now sets `cacheResultFile="build/tests/.phpunit.result.cache"` (an ignored
+  folder that the container user can write), and `bin/test` creates the folder first.
+- `docker/bin/test` printed Docker build progress to stdout, which corrupted
+  `docker/bin/test inventory` (its Markdown goes to stdout, so the progress ended up in the
+  generated `TEST-INVENTORY.md` when the image was rebuilt). Build progress now goes to stderr.
+- No library change. Verified: `docker/bin/test all --coverage` passes 1,428 tests, 100% classes
+  (331/331), methods (1,062/1,062) and lines (8,057/8,057), with no warning.
+
+## MOD-186 — An unsupported API method answers 500 (owner decision Q36)
+
+- `\flat\api\response\no_interface`, which `\flat\core\controller\api::set_input()` returns when
+  the resource has no interface for the request method, now has status 500 Internal Server Error
+  (it was 405 since MOD-165). The message is unchanged ("no interface found matching the
+  resolved request method"). The explicit `\flat\api\response\method_not_allowed` response still
+  answers 405 for code that returns it on purpose.
+- Why: a 405 should carry an `Allow` header (the "Not done" item of MOD-165), and flat sends no
+  headers itself. The owner chose 500 over making consumers add header handling (recorded as
+  Q36). It is less RESTful and a client error is reported as a server error; the owner accepted
+  this. Considered and not done: an `allow` response header class with the supported methods.
+- Tests: `ControllerTest` and `ResponseTest` assert 500. Documented in the class docblock.
+- Verified: `docker/bin/test all --coverage`, 1,428 tests, 100% (see MOD-185).
+- Regenerated `TEST-INVENTORY.md` (one test renamed).

@@ -47,7 +47,7 @@ class ResponseTest extends TestCase
         $this->assertSame('scalar',(new response\map($status,'scalar'))->data);
         $moved = new response\moved_permanently('/next');
         $this->assertSame('/next',$moved->location); $this->assertSame(301,$moved->get_status()->get_code());
-        $this->assertSame(405,(new response\no_interface)->get_status()->get_code());
+        $this->assertSame(500,(new response\no_interface)->get_status()->get_code());
     }
     /** @dataProvider errorResponses */
     public function testErrorMessagesDataAndStatusCodes($class,$code)

@@ -17,7 +17,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 ### `tests/Unit/Api/ControllerTest.php` (16)
 
 - `testMethodDispatchHeadTraceAndNoInterface` (line 35)
-- `testUnsupportedMethodAnswersMethodNotAllowedThroughTheResponseHandler` (line 49)
+- `testUnsupportedMethodAnswersServerErrorThroughTheResponseHandler` (line 49)
 - `testAnyInterfaceFallsBackToSpecificMethodOrUsesItsOwnResponse` (line 69)
 - `testResponseHandlerCanObserveOrReplaceResponses` (line 81)
 - `testConstructorMapsInputsAndInvokesSuccessAndAlwaysCallbacks` (line 90): 4 data-provider cases

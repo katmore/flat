@@ -960,3 +960,11 @@ agreed with every recommendation); questions 25 and 26 are open.
     **Answered** (owner, 2026-11-20): an empty 200 is unacceptable; answer an error status, and 405
     is agreed. Fixed in MOD-165: the existing `405` response (`no_interface`) is now given to the
     response handler like every other response, so flat-webapp's handler writes the status and body.
+36. **Status of an unsupported API method: 405 or 500?** (follows Q35.) A 405 should carry an
+    `Allow` header listing the supported methods, but flat sends no HTTP headers itself (the
+    consumer's response handler writes them), so a 405 from flat is incomplete. Options: keep the
+    405 without `Allow`; carry `Allow` on the response and let handlers opt in to sending it; or
+    answer 500. Recommended: carry `Allow` on the response (no consumer change, additive).
+    **Answered** (owner, 2026-11-20): answer 500, so that no consumer has to adapt to anything
+    new; it is less RESTful, and the owner accepts that. Done in MOD-186 (supersedes the status
+    part of MOD-165).

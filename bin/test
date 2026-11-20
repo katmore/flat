@@ -83,4 +83,7 @@ if "$coverage"; then
         --coverage-php="$report_dir/coverage.php" \
         --log-junit="$report_dir/junit.xml" "$@"
 fi
+# PHPUnit's result cache (see phpunit.xml.dist) lives under build/tests/, which is ignored by Git
+# and writable for the container user (docker/bin/test); the folder must exist.
+mkdir -p build/tests
 phpunit_cmd "$@"
