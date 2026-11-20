@@ -82,3 +82,22 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: the tests pass unchanged (1,429 tests, 100% coverage), and the API comparison shows
   no difference ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
 - Undo: put `array_keys($opt['start'])[0]` back.
+
+## MOD-192 — Verification record (no change to code)
+
+- Kind: verification. Recorded 2026-11-20 on PHP 7.3.33.
+- `php -l` with all errors reported, on every PHP file under `src`, `tests`, `bin` and `docker`:
+  no warning or deprecation (a positive control, the old JShrink file, shows the `continue`
+  warning). Static searches for `compact()`, case-insensitive `define()`, `mb_ereg*` aliases,
+  `fgetss` and heredoc markers in `src` found nothing to change.
+- API comparison with `v1.72.0`: no difference ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
+- Mutation sample: 40 mutants, 80% caught ([active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)).
+- Consumer check on flat-webapp and its run on 7.3 ([notes/CONSUMER-CHECK.md](notes/CONSUMER-CHECK.md)).
+- Dependency audit of both locks: no change, no alert fixable on 7.3
+  ([notes/DEPENDENCY-ALERTS.md](notes/DEPENDENCY-ALERTS.md)).
+- Prime directive 2 search repeated: the only `error_reporting` change is the approved mask in
+  `src/flat/asset.php`; no `@`; the one `--ignore-platform-req=ext-sockets` in the Dockerfile is the
+  documented archive-fetch stage (ext-sockets is built in the runtime image, see TESTING.md).
+  Two findings recorded as questions, nothing hidden or changed: Q38 and Q39.
+- flat-webapp moved to PHP 7.3.33 on its `php-7.3` branch (separate repository; commit message
+  "Move to PHP 7.3").

@@ -11,7 +11,7 @@ None so far.
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough.
+Each has a recommendation; "agree" is enough. Questions 37 to 39 are all open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -48,4 +48,16 @@ Each has a recommendation; "agree" is enough.
     - (c) Remove the suppression and let the tests fail until PHP 8.1. Not recommended: a red
       suite for three phases hides real failures.
     Recommend (a). Only the owner can add to the exceptions list.
+    **Open.**
+
+39. **`ConfigTest` skips a test when run as root (prime directive 2).**
+    `tests/Unit/Core/ConfigTest.php` (line 164),
+    `testDirectoriesAndUnreadableFilesAreNotLoadedAsConfig`, calls `markTestSkipped()` when
+    the process is root, because root can read every file. The harness never runs PHP as root
+    (`docker/bin/test` uses user 1000) and the full run reports no skipped test, so nothing is
+    hidden today. But "never skip a test" has no exception for this, and a run as root would
+    pass quietly without running the check. Not changed.
+    Recommend: replace the skip with an assertion that fails when the process is root
+    (the check cannot work there), so a wrong environment is red, not silently green.
+    This is a test-only change; it needs your word because it touches a rule.
     **Open.**

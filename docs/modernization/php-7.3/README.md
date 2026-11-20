@@ -12,13 +12,23 @@ project plan, branch model and the rules every phase follows are in
 - **Tests:** 1,429 tests pass on PHP 7.3.33 (the 1,428 of php-7.2 plus the version test), with
   100% class, method and line coverage (331 classes, 1,062 methods, 8,047 lines).
   How to run them: [../TESTING.md](../TESTING.md).
-- **Runtime fixes so far:** one, in the vendored JShrink minifier (MOD-190).
-- **Open owner questions:** Q37 and Q38, in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
-  Q38 (two tests switch off the AWS SDK's PHP deprecation notice) must be answered before the
-  phase can be declared complete.
-- **Not done yet:** the 7.2-to-7.3 migration-guide scan beyond what the tests reach, the
-  modernizations (HANDOFF section 3a), the API comparison, the mutation sample, the consumer
-  check, the dependency audit, the flat-webapp move to 7.3, the release notes.
+- **Runtime fixes:** one, in the vendored JShrink minifier (MOD-190). A `php -l` scan of every
+  PHP file (it reports compile-time warnings) finds nothing else, and searches for the other
+  7.3 changes found nothing.
+- **Modernizations:** one so far, `array_key_first()` (MOD-191, [notes/MODERNIZATIONS.md](notes/MODERNIZATIONS.md)).
+- **API comparison with v1.72.0:** no difference ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
+- **Mutation sample:** 80% caught, 8 survivors not triaged ([active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)).
+- **Dependency audit:** the four alerts are all still open and cannot be fixed on 7.3; every fixed
+  release needs PHP 8.1 ([notes/DEPENDENCY-ALERTS.md](notes/DEPENDENCY-ALERTS.md)).
+- **flat-webapp:** moved to PHP 7.3.33 on its `php-7.3` branch, against flat's `php-7.3` branch;
+  it runs and the log is clean ([notes/CONSUMER-CHECK.md](notes/CONSUMER-CHECK.md)).
+- **Prime directive 2 search (end of phase):** the only `error_reporting` change is the approved
+  mask in `src/flat/asset.php`; there is no `@` and no ignore list in the code. Two findings are
+  open questions: Q38 (two tests switch off the AWS SDK's deprecation notice) and Q39 (a test
+  skips itself when run as root). See [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+- **Open owner questions:** Q37, Q38 and Q39. Q38 and Q39 must be answered before the phase can
+  be declared complete.
+- **Not done yet:** release notes for `v1.73.0` (draft them once the questions are answered).
 
 ## Resume here
 
@@ -42,10 +52,15 @@ project plan, branch model and the rules every phase follows are in
 [active/](active/): Work in progress
 
 - [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): Defects found in this phase and the open owner questions. Read it when: answering questions; before a fix.
+- [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md): The php-7.3 mutation sample and its untriaged survivors. Read it when: extending tests.
 - [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md): Behavior changes of this phase that applications may notice (none so far). Read it when: before releasing.
 
 [notes/](notes/): Lasting reference
 
 - [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md): The exact PHP, tool and image versions the suite runs on. Read it when: rebuilding or checking the test environment.
+- [notes/API-COMPARISON.md](notes/API-COMPARISON.md): The public API against `v1.72.0` (no difference); the dump is `notes/API-V1.73.0.json`. Read it when: checking the "drop-in replacement" claim.
+- [notes/MODERNIZATIONS.md](notes/MODERNIZATIONS.md): What was rewritten with a 7.3 feature, and what was looked at and left. Read it when: showing the PHP version progression.
+- [notes/DEPENDENCY-ALERTS.md](notes/DEPENDENCY-ALERTS.md): The end-of-phase audit of both locks and the four dismissed alerts. Read it when: looking at GitHub's security alerts.
+- [notes/CONSUMER-CHECK.md](notes/CONSUMER-CHECK.md): The consumer check against flat-webapp on 7.3. Read it when: checking an application against the impact list.
 
 [history/](history/): Finished or replaced; empty so far
