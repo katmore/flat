@@ -728,19 +728,19 @@ Any string of hex digits is typed `xs:hexBinary` by `ctype_xdigit()`, including 
 
 `get_design_root_dir()` falls back to `app/Resources/design/tmpl` but the design lookup adds its own `tmpl` prefix, so the fallback resolves to `.../design/tmpl/tmpl/...` and finds nothing (found while running flat-webapp, which configures `design/root_dir` instead)
 
-- Test: `Core/Template/ControllerTest::testDesignRootUsesConfigurationOrItsDocumentedFallback` (pins the fallback path)
+- Test: `Core/Template/ControllerTest::testDesignRootUsesConfigurationOrItsDocumentedFallback` (now asserts the corrected fallback and that a missing design is looked up under `.../design/tmpl/`)
 - Category: B
 - Proposed fix: Q34
-- Status: open
+- Status: fixed (MOD-164; the fallback is the folder that contains `tmpl`)
 
 ### KD-79 — API method handling
 
 An API resource that implements only `GET` answers `POST`, `PUT` and `DELETE` with an empty HTTP 200 (seen through flat-webapp); flat has a `method_not_allowed` response that is not used for this
 
-- Test: (none yet; seen over HTTP)
+- Test: `Api/ControllerTest::testUnsupportedMethodAnswersMethodNotAllowedThroughTheResponseHandler`
 - Category: B
 - Proposed fix: Q35
-- Status: open
+- Status: fixed (MOD-165; the `405` response now goes through the response handler, so the client sees an error status and message)
 
 ## Test-strength tasks
 
@@ -957,4 +957,6 @@ agreed with every recommendation); questions 25 and 26 are open.
     (HTTP 405) instead of an empty 200? Recommend: yes, but it changes what API
     clients see, so confirm the intent first; first check how flat\core\controller\api
     treats `HEAD`, `OPTIONS` and unknown methods, and add a unit test.
-
+    **Answered** (owner, 2026-11-20): an empty 200 is unacceptable; answer an error status, and 405
+    is agreed. Fixed in MOD-165: the existing `405` response (`no_interface`) is now given to the
+    response handler like every other response, so flat-webapp's handler writes the status and body.

@@ -2722,3 +2722,32 @@ unchanged.
   log; user fatal, undefined function and uncaught exception give 500 and the
   generic text, with the details in the log.
 - No change to flat's source or tests.
+
+## MOD-164 — Template design root fallback (KD-78, owner agreed Q34)
+
+- `\flat\core\controller\tmpl::get_design_root_dir()` fell back to
+  `app/Resources/design/tmpl`, but the design lookup adds its own `tmpl` prefix,
+  so the fallback could never resolve a template. It is now
+  `app/Resources/design`. Consumer impact entry added.
+- Test: the existing fallback test asserts the corrected path and that a missing
+  design is looked up under `.../design/tmpl/` (not `.../tmpl/tmpl/`); it fails
+  without the fix. Source: `src/flat/core/controller/tmpl.php`.
+
+## MOD-165 — Unsupported API methods answer 405 (KD-79, owner decision Q35)
+
+- A method the resource does not implement made `\flat\core\controller\api::set_input()`
+  return its `no_interface` (405) response without calling the response handler,
+  which is what writes the HTTP status and body in applications such as
+  flat-webapp; they sent an empty 200. The response now goes through the handler
+  like every other response (and the handler may replace it). Consumer impact
+  entry added.
+- Test: `testUnsupportedMethodAnswersMethodNotAllowedThroughTheResponseHandler`
+  (handler called, 405, replacement honored, static handler, supported method
+  unaffected); fails without the fix. Source: `src/flat/core/controller/api.php`.
+- Checked end to end through flat-webapp (`--flat` with this checkout): `GET` 200;
+  `POST`, `PUT`, `DELETE` 405 with the JSON message; unknown resource still 403.
+- Not done: a 405 response should carry an `Allow` header listing the supported
+  methods; flat does not do that for any response today.
+
+
+- Verified (MOD-164 and MOD-165): `docker/bin/test all --coverage` passes 1,428 tests; 100% methods (1,062/1,062) and lines (8,057/8,057). No known defects remain open.

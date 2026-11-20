@@ -484,6 +484,18 @@ Every known-defect fix changes behavior a consumer might have relied on.
 - After: Returns the requested version (v3/v5 are deterministic); `$uuid()` is still a random v4
 - Search consumer code for: UUID objects used as callables: `$u(` with arguments
 
+### MOD-165 (KD-79) — Unsupported API methods
+
+- Before: A request method the resource does not implement (for example `POST` to a resource that only implements `GET`) made `set_input()` return a `no_interface` (405) response without calling the response handler. Applications whose handler writes the HTTP response, such as flat-webapp, sent an empty `200`
+- After: The response handler receives that `405` response like any other (and may replace it), so the client gets `405 Method Not Allowed` and the message "no interface found matching the resolved request method"
+- Search consumer code for: `set_response_handler(`, handlers passed to `set_input(`, and API resources that implement only some methods (clients that sent the others and accepted an empty 200)
+
+### MOD-164 (KD-78) — Template design root fallback
+
+- Before: Without `design/root_dir` configured, templates were looked up under `app/Resources/design/tmpl/tmpl/...`, so none could be found
+- After: The fallback is `app/Resources/design`, and the lookup adds `tmpl`, giving `app/Resources/design/tmpl/...`. Applications that configure `design/root_dir` are unaffected
+- Search consumer code for: `design/root_dir`, templates rendered through `\flat\core\controller\tmpl` with no design configuration
+
 ### MOD-147 (KD-77) — XML hexBinary labels
 
 - Before: Any string of hex digits was labeled `xs:hexBinary`, including odd lengths such as `a`, `abc` or `cafe0`

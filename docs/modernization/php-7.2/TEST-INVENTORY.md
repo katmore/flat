@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 777 test methods in 92 files, running 1427 test cases.
+- 778 test methods in 92 files, running 1428 test cases.
 - 124 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -14,23 +14,24 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ## Files
 
-### `tests/Unit/Api/ControllerTest.php` (15)
+### `tests/Unit/Api/ControllerTest.php` (16)
 
 - `testMethodDispatchHeadTraceAndNoInterface` (line 35)
-- `testAnyInterfaceFallsBackToSpecificMethodOrUsesItsOwnResponse` (line 49)
-- `testResponseHandlerCanObserveOrReplaceResponses` (line 61)
-- `testConstructorMapsInputsAndInvokesSuccessAndAlwaysCallbacks` (line 70): 4 data-provider cases
-- `testStringMethodConstructorAndDirectCallback` (line 79)
-- `testResponseExceptionsFromHandlerReachConstructorErrorAndAlwaysCallbacks` (line 86)
-- `testReturnedErrorResponseSuppliesItsOwnMetadata` (line 96)
-- `testNonErrorFailureStatusUsesNullOptionalErrorMetadata` (line 103)
-- `testOrdinaryHandledExceptionReturnsWithoutAnAlwaysResponse` (line 110)
-- `testUnhandledConstructorExceptionPropagates` (line 116)
-- `testInvalidResponseIsRejected` (line 121)
-- `testRequestMethodGetterReturnsTheDispatchedMethod` (line 127)
-- `testInvalidFallbackMethodIsRejected` (line 135)
-- `testUnknownMethodIsRejected` (line 139)
-- `testMissingMethodRaisesMissingMethod` (line 144)
+- `testUnsupportedMethodAnswersMethodNotAllowedThroughTheResponseHandler` (line 49)
+- `testAnyInterfaceFallsBackToSpecificMethodOrUsesItsOwnResponse` (line 69)
+- `testResponseHandlerCanObserveOrReplaceResponses` (line 81)
+- `testConstructorMapsInputsAndInvokesSuccessAndAlwaysCallbacks` (line 90): 4 data-provider cases
+- `testStringMethodConstructorAndDirectCallback` (line 99)
+- `testResponseExceptionsFromHandlerReachConstructorErrorAndAlwaysCallbacks` (line 106)
+- `testReturnedErrorResponseSuppliesItsOwnMetadata` (line 116)
+- `testNonErrorFailureStatusUsesNullOptionalErrorMetadata` (line 123)
+- `testOrdinaryHandledExceptionReturnsWithoutAnAlwaysResponse` (line 130)
+- `testUnhandledConstructorExceptionPropagates` (line 136)
+- `testInvalidResponseIsRejected` (line 141)
+- `testRequestMethodGetterReturnsTheDispatchedMethod` (line 147)
+- `testInvalidFallbackMethodIsRejected` (line 155)
+- `testUnknownMethodIsRejected` (line 159)
+- `testMissingMethodRaisesMissingMethod` (line 164)
 
 ### `tests/Unit/Api/ResponseTest.php` (15)
 
@@ -611,20 +612,20 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testFailingTemplatesCloseTheirOutputBuffers` (line 90)
 - `testDesignRootUsesConfigurationOrItsDocumentedFallback` (line 102)
-- `testMarkdownReadFailureIsCaughtByTemplateResolver` (line 119)
-- `testAbsolutePhpFileAndDisplayClass` (line 124)
-- `testFileReadFailuresReportLibraryExceptions` (line 132): 4 data-provider cases
-- `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` (line 146)
-- `testUnusablePhpDesignsFallBackToHtml` (line 162)
-- `testCheckingADesignNeverPrintsIt` (line 174)
-- `testMarkdownAndGeneratedMarkdownFiles` (line 182)
-- `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` (line 198)
-- `testInvalidDesignsAreRejected` (line 212): 4 data-provider cases
-- `testDesignBasesPrefixesAndSeparators` (line 218)
-- `testFormattingFlagsReplacementsAndOutput` (line 226)
-- `testLoggerWritesDesignKindAndNormalizedName` (line 235)
-- `testConstructorAndPreparedInterfacesControlDisplayTiming` (line 246)
-- `testDefaultDisplayCallbackDelegatesToTemplateRendering` (line 265)
+- `testMarkdownReadFailureIsCaughtByTemplateResolver` (line 127)
+- `testAbsolutePhpFileAndDisplayClass` (line 132)
+- `testFileReadFailuresReportLibraryExceptions` (line 140): 4 data-provider cases
+- `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` (line 154)
+- `testUnusablePhpDesignsFallBackToHtml` (line 170)
+- `testCheckingADesignNeverPrintsIt` (line 182)
+- `testMarkdownAndGeneratedMarkdownFiles` (line 190)
+- `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` (line 206)
+- `testInvalidDesignsAreRejected` (line 220): 4 data-provider cases
+- `testDesignBasesPrefixesAndSeparators` (line 226)
+- `testFormattingFlagsReplacementsAndOutput` (line 234)
+- `testLoggerWritesDesignKindAndNormalizedName` (line 243)
+- `testConstructorAndPreparedInterfacesControlDisplayTiming` (line 254)
+- `testDefaultDisplayCallbackDelegatesToTemplateRendering` (line 273)
 
 ### `tests/Unit/Core/Template/ValidateControllerTest.php` (3)
 

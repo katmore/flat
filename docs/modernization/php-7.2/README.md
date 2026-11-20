@@ -6,10 +6,10 @@ model and the rules every phase follows are in [../README.md](../README.md).
 
 ## Status (2026-11-15)
 
-- **Tests:** 1,427 tests pass on PHP 7.2.34 with 100% class, method and line
+- **Tests:** 1,428 tests pass on PHP 7.2.34 with 100% class, method and line
   coverage. How to run them: [../TESTING.md](../TESTING.md).
-- **Known defects:** 79 tracked, 77 resolved (fixed, already fixed, or
-  confirmed as intended), 2 open: KD-78 and KD-79 wait for the owner's answers to Q34 and Q35.
+- **Known defects:** 79 tracked, all resolved (fixed, already fixed, or
+  confirmed as intended); none open.
   Record: [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
 - **Test-strength tasks:** TS-01 to TS-05 done (first mutation-probe sample:
   [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)); TS-06 done (the 54 survivor
@@ -47,8 +47,7 @@ For a person or an agent picking this up:
 ## Next
 
 1. Optionally run further probe seeds (also with `--services`).
-2. Answer Q34 and Q35 (the last two known defects), and Q33 for flat-webapp.
-   Integration tests against flat-webapp wait for the owner's instructions
+2. Integration tests against flat-webapp wait for the owner's instructions
    ([active/WEBAPP-TESTS.md](active/WEBAPP-TESTS.md)).
 3. Owner decides the phase is complete; then it moves to `modernize-26`.
 
