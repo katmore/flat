@@ -116,7 +116,8 @@ the `php-7.2` branch and the `v1.72.0` tag.
      extension 1.16.2 does; xdebug and imagick need a look);
    - the `platform` pins in both `tests/docker/*/composer.json` to the exact 7.3 patch, then
      re-lock under that platform;
-   - the root `composer.json` `php` requirement becomes `7.3.*` (decision D1);
+   - the root `composer.json` `php` requirement becomes `>=7.3.0` (decision D1, revised 2026-11-20: a
+     lower bound, not `7.3.*`; the exact patch is pinned in the test platform only);
    - the Dockerfile's version check (it throws if the PHP version is not the expected one) and
      one unit test that fails when the suite is not running on 7.3. **No runtime version guard in
      the library itself:** Composer enforces the constraint at install time;
@@ -175,7 +176,7 @@ same.** Rules for it:
 `katmore/flat-webapp` gets its own `php-7.3` branch (decision D5; the owner created it from the
 same commit as its `php-7.2`). The owner writes the application; agents give snippets when asked. The tooling
 around it, unless the owner says otherwise, follows flat: the web image base `php:7.3-apache`
-pinned by digest, `config.platform` in its `composer.json`, and its `php` requirement `7.3.*`.
+pinned by digest, `config.platform` in its `composer.json`, and its `php` requirement stays an open lower bound (it is `>=7.1.1` today; leave it).
 While flat has no `v1.73.0` release, it requires flat from flat's `php-7.3` branch (a `git`
 repository entry and `dev-php-7.3`, as the php-7.2 work did before `v1.72.0`); after the release
 it requires `1.73.*`. Do this only after flat's environment is on 7.3.
@@ -188,10 +189,14 @@ until the owner asks. Its review and the consumer check are in
 
 ## 5. Decisions the owner made (2026-11-20)
 
-- **D1:** the project's `php` requirement is `7.3.*` on this branch, with the exact patch pinned
-  in the test platform. The version stays in major 1: Composer skips a release whose `php`
-  requirement does not match and installs the newest one that does, so PHP 7.2 hosts keep
-  `v1.72.x` and nothing breaks. Release number: **`v1.73.0`**. No runtime guard in the library.
+- **D1 (revised 2026-11-20):** the project's `php` requirement is the lower bound `>=7.3.0` on
+  this branch; the exact patch is pinned only in the test platform. It is not `7.3.*`: consumers
+  and hosts on PHP 7.4 or later must stay able to install flat. The version stays in major 1:
+  Composer skips a release whose `php` requirement does not match and installs the newest one
+  that does, so PHP 7.2 hosts keep `v1.72.x` (it requires `>=7.2.1`) and nothing breaks. Release
+  number: **`v1.73.0`**. No runtime guard in the library. Known consequence: until a later phase
+  is released, a host on 7.4 or later gets `v1.73.x`, which is tested on 7.3 only.
+  (The first version of D1 said `7.3.*`; the owner changed it the same day.)
 - **D2:** PHP 7.3 only; no 7.2 and 7.3 matrix ("force PHP 7.3 absolutely").
 - **D3:** keep counting MOD, KD and Q numbers across phases.
 - **D4:** modernize with 7.3 where appropriate, provided the public API, return values and
