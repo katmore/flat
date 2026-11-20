@@ -201,11 +201,12 @@ class uuid implements \flat\core\generator {
         }
          
       } else {
-         if (empty($p['version']) || $p['version']==4 || empty($p['namespace'])) {
-            $uuid = uuid::get_v4();
-         } else {
+         // Only versions 3, 4 and 5 exist. Without a namespace and name, every
+         // valid version falls back to a random (version 4) UUID.
+         if (!empty($p['version']) && !in_array((int) $p['version'],[3,4,5],true)) {
             throw new uuid\exception\invalid_version();
          }
+         $uuid = uuid::get_v4();
       }
       return $uuid;
   }
@@ -221,7 +222,7 @@ class uuid implements \flat\core\generator {
    * @see \flat\core\uuid::get()
    */
   public function __invoke($version=4,$namespace=null,$name=null) {
-     return self::get($version=4,$namespace=null,$name=null);
+     return self::get($version,$namespace,$name);
   }
   
   private $_version;

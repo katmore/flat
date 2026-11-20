@@ -420,7 +420,7 @@ class config extends \flat\core {
        */
       $topns = self::NS_TOP_LEVEL.'/';
       if (substr($path,0,strlen($topns))==$topns) {
-         $path = substr($path,0,strlen($topns)*-1);
+         $path = substr($path,strlen($topns));
       }
       
       return $path;

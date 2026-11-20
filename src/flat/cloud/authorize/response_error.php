@@ -87,8 +87,9 @@ class response_error extends exception {
             $this->_message_text = $this->_response->getMessages()->getMessage()[0]->getText();
          }  
       } else {
-         $this->_message_text = $msg;
+         // Scalar form: (code, text); without a text the code doubles as it.
          $this->_message_code = $msg;
+         $this->_message_text = ($msg_code !== null) ? $msg_code : $msg;
       }
       if (!empty($this->_message_code) && is_scalar($this->_message_code) && !is_bool($this->_message_code)) {
          $exmsg_suffix .= " '{$this->_message_code}'";

@@ -397,8 +397,14 @@ class minifier
          throw new \RuntimeException('Unclosed multiline comment at position: ' . ($this->index - 2));
 
       // if we're here c is part of the comment and therefore tossed
-      if(isset($this->c))
-         unset($this->c);
+      /* CONSERVATIVELY DISABLED redundant native-buffer cleanup:
+       * The first getChar() above consumes and unsets c. Subsequent getChar()
+       * and getNext() calls never assign c, and public minify() constructs this
+       * concrete base class. Revisit if changing that tokenizer/factory contract.
+       * Original:
+       * if(isset($this->c))
+       *    unset($this->c);
+       */
 
       return $char;
    }

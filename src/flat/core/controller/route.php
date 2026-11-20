@@ -397,12 +397,12 @@ class route implements \flat\core\controller, \flat\core\collectable {
       if ($this->_special_nodes_idx===null) {
          $this->_special_nodes_idx = crc32(implode(static::SPECIAL_NODES));
       }
-      if (!isset(static::$_special_nodes_map[$this->_special_nodes_idx])) {
-         static::$_special_nodes_map[$this->_special_nodes_idx] = [];
+      if (!isset(self::$_special_nodes_map[$this->_special_nodes_idx])) {
+         self::$_special_nodes_map[$this->_special_nodes_idx] = [];
          $i=0;
          foreach(static::SPECIAL_NODES as $node) {
             $valueIdx = crc32($node);
-            static::$_special_nodes_map[$this->_special_nodes_idx][$node] = $valueIdx;
+            self::$_special_nodes_map[$this->_special_nodes_idx][$node] = $valueIdx;
             if (!isset(self::$_special_nodes_value[$valueIdx])) {
                self::$_special_nodes_value[$valueIdx] = "_$node";
             }

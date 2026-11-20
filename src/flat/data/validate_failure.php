@@ -22,6 +22,8 @@ class validate_failure extends \flat\core\exception {
       $this->_field[]=$field;
    }
    public function __construct($field,$message=null) {
+      $this->_message = $message;
+      parent::__construct(is_scalar($message) ? (string) $message : "");
       $this->_field = [];
       if (!empty($field)) {
          if (is_string($field)) {

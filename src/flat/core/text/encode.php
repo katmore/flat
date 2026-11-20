@@ -96,11 +96,21 @@ class encode implements \flat\core\serializer {
               return " ".$data;
            } else {
               $text = json_encode($data);
-              if ($text===NULL) {
-                 return " (unprintable value)";
-              } else {
-                 return " ".str_replace("'","",str_replace('"',"",$text));
-              }
+              /*
+               * CONSERVATIVELY DISABLED (unreachable code, kept visible in
+               * place): on PHP >= 7.2 json_encode() returns false, never
+               * null, when encoding fails, so the null check below could
+               * never select the "unprintable value" branch. On failure
+               * $text is false and the return below yields a single space,
+               * which is the behavior the tests characterize.
+               *
+               * if ($text===NULL) {
+               *    return " (unprintable value)";
+               * } else {
+               *    return " ".str_replace("'","",str_replace('"',"",$text));
+               * }
+               */
+              return " ".str_replace("'","",str_replace('"',"",$text));
            }
         }
 

@@ -458,7 +458,10 @@ class asset extends core\controller\asset implements core\app
             if (self::SYSTEM_PATH_EXISTS) {
                 throw new exception\app_error('cannot determine system path: asset::_get_system_base() must not return an empty value');
             }
-            return null;
+            /* CONSERVATIVELY DISABLED: SYSTEM_PATH_EXISTS is the nonzero
+             * constant 256, so the condition above always throws.
+             * Original unreachable statement: return null;
+             */
         }
 
         $resource = $this->get_resource();
@@ -474,11 +477,11 @@ class asset extends core\controller\asset implements core\app
                 throw new exception\app_error("read permission is denied for system path: $system_path (resource: '$resource')");
             }
 
-            if ($flags & self::SYSTEM_PATH_FILE) {
+            if (($flags & self::SYSTEM_PATH_FILE) === self::SYSTEM_PATH_FILE) {
                 if (!is_file($system_path)) {
                     throw new exception\app_error("system path is not a file: $system_path (resource: '$resource')");
                 }
-            } else if ($flags & self::SYSTEM_PATH_DIR) {
+            } else if (($flags & self::SYSTEM_PATH_DIR) === self::SYSTEM_PATH_DIR) {
                 if (!is_dir($system_path)) {
                     throw new exception\app_error("system path is not a directory: $system_path (resource: '$resource')");
                 }
@@ -564,6 +567,11 @@ class asset extends core\controller\asset implements core\app
 
     public function print_contents(int $resource_type = null): void
     {
+        // Inline JavaScript source has no file; print it before looking one up.
+        if ($this->explicit_type === self::RESOURCE_JS_SOURCE) {
+            $this->print_script_source_tag();
+            return;
+        }
         if (null === ($system_path = $this->get_system())) return;
 
         if (!in_array($resource_type, self::VALID_RESOURCES, true)) {
@@ -571,9 +579,7 @@ class asset extends core\controller\asset implements core\app
         }
 
         switch ($resource_type) {
-            case self::RESOURCE_JS_SOURCE:
-                $this->print_script_source_tag();
-                return;
+            // Inline JavaScript source is handled above; a file asset has none.
             case self::RESOURCE_JS:
                 $this->print_contents_script_tag();
                 return;
@@ -581,6 +587,7 @@ class asset extends core\controller\asset implements core\app
                 $this->print_contents_style_tag();
                 return;
         }
+        throw new exception\app_error("cannot print contents: unsupported resource type for '" . $this->get_resource() . "'");
     }
 
     /**
@@ -620,6 +627,9 @@ class asset extends core\controller\asset implements core\app
                 $this->print_css_link_tag();
                 return;
         }
+        // A tag type was requested (or implied by the resource type) that has no
+        // implementation; assets without any tag form still print nothing above.
+        throw new exception\app_error("cannot print tag: unsupported tag type $tag_type for '" . $this->get_resource() . "'");
     }
 
     /**
@@ -696,13 +706,15 @@ class asset extends core\controller\asset implements core\app
 
             if ($asset instanceof asset) {
                 $resource_type = $asset->get_resource_type();
-                if (isset(self::$register_position[$asset_hash])) {
-                    $position = self::$register_position[$asset_hash];
-                } else if (isset(self::IMPLICIT_RESOURCE_POSITION[$resource_type])) {
-                    $position = self::IMPLICIT_RESOURCE_POSITION[$resource_type];
-                } else {
-                    $position = self::CATCHALL_RESOURCE_POSITION;
-                }
+                $position = self::$register_position[$asset_hash];
+                /* CONSERVATIVELY DISABLED missing-position fallback. Both
+                 * private registration writers store a validated integer
+                 * position together with each asset; no public path unsets it.
+                 * Original unreachable alternatives:
+                 * else if (isset(self::IMPLICIT_RESOURCE_POSITION[$resource_type])) {
+                 *     $position = self::IMPLICIT_RESOURCE_POSITION[$resource_type];
+                 * } else { $position = self::CATCHALL_RESOURCE_POSITION; }
+                 */
             } elseif (is_callable($asset)) {
                 $resource_type = self::$register_callback_resource[$asset_hash];
                 $position = self::CATCHALL_CALLBACK_POSITION;
@@ -1323,6 +1335,9 @@ class asset extends core\controller\asset implements core\app
 
         if (isset($param['resolved'])) {
             $asset = $param['resolved'];
+            // Not a dependency: left in $param, register() would make the
+            // asset depend on itself.
+            unset($param['resolved']);
         } else {
 
             $asset = $resource = null;
@@ -1356,18 +1371,24 @@ class asset extends core\controller\asset implements core\app
             if (isset($param['hash_handle_prefix'])) unset($param['hash_handle_prefix']);
         }
         if (is_array($output)) {
-
-            $param['resolved'] = $asset;
-
+            // Several items share one asset: run them in the given order from
+            // a single callback (registering each separately kept only the
+            // first and made the asset depend on itself).
+            $callbacks = [];
             foreach ($output as $o) {
-                static::register_output($o, $param);
+                if (is_callable($o)) {
+                    $callbacks[] = $o;
+                } elseif (is_string($o)) {
+                    $callbacks[] = function () use ($o) {
+                        echo $o;
+                    };
+                }
             }
             unset($o);
-
-            return $asset;
-        }
-
-        if (is_callable($output)) {
+            $callback = function (...$args) use ($callbacks) {
+                foreach ($callbacks as $item) $item(...$args);
+            };
+        } else if (is_callable($output)) {
             $callback = $output;
         } else if (is_string($output)) {
             $callback = function () use (&$output) {

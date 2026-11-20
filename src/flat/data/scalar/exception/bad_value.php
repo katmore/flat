@@ -34,7 +34,7 @@ namespace flat\data\scalar\exception;
 class bad_value extends \flat\data\scalar\exception{
    private $_type_given;
    public function __construct($type_given) {
-      if (!is_string($type)) $type="unknown";
+      $type = is_string($type_given) ? $type_given : "unknown";
       $this->_type_given = $type;
       parent::__construct(
          "Value must be a scalar type; given type $type_given instead. ".

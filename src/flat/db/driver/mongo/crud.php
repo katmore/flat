@@ -107,8 +107,8 @@ class crud extends \flat\db\driver\mongo
       if (isset($option['sub_collection']) && is_string($option['sub_collection'])) {
          $col_ns = $option['sub_collection'];
       } else
-      if (!empty($param['collection_ns'])) {
-         $col_ns = $param['collection_ns'];
+      if (!empty($option['collection_ns'])) {
+         $col_ns = $option['collection_ns'];
       } 
       
       if (!empty($col_ns)) {

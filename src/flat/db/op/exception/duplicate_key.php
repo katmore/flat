@@ -56,16 +56,16 @@ abstract class duplicate_key extends \flat\db\op\exception {
       }  else {
          $label = "";
       }
-      $code = $this->_value_to_code($label.$namespace.$index);
+      $code = $this->_value_to_code($label.$namespace.(is_scalar($index) ? $index : ''));
       $this->_index = $index;
-      $this->_value = $value;      
-      if (!empty($index)) $index = "index: $index";
-      if (is_scalar( $index)) {
-         $index = ", $index";
+      $this->_value = $value;
+      if (is_scalar($index) && $index !== '') {
+         $index = ", index: $index";
+      } elseif (!empty($index)) {
+         $index = ", index: (non-scalar index)";
       } else {
-         $index="";
-         
-      }      
+         $index = "";
+      }
       if (!empty($value)) {
          if (is_scalar($value)) {
             $value = " (value: $value)";

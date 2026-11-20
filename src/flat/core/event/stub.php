@@ -46,8 +46,8 @@ namespace flat\core\event;
 class stub extends \flat\core\event {
 
    public function get_listeners() {
-      if (!is_array($this->listeners)) return array();
-      return $this->listeners;
+      if (!is_array($this->listener)) return array();
+      return $this->listener;
    }
 
    public function __construct($name) {

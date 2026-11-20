@@ -316,9 +316,9 @@ abstract class status {
 
       $format = str_replace("%class%",$status_code_class,$format);
 
-      $format = str_replace("%class-type%",$status_code_class['type'],$format);
+      $format = str_replace("%class-type%",static::CODE_CLASSES[$status_code_class]['type'],$format);
 
-      $format = str_replace("%class-description%",$status_code_class['description'],$format);
+      $format = str_replace("%class-description%",static::CODE_CLASSES[$status_code_class]['description'],$format);
 
       return $format;
    }
@@ -456,7 +456,7 @@ abstract class status {
     * @see \flat\api\status::format_code()
     */
    final public function get_code_class_type(): string {
-      return $this->format_code("%type%");
+      return $this->format_code("%class-type%");
    }
 
    /**
@@ -475,7 +475,7 @@ abstract class status {
     * @see \flat\api\status::format_code()
     */
    final public function get_code_class_description(): string {
-      return $this->format_code("%description%");
+      return $this->format_code("%class-description%");
    }
    
    /**

@@ -65,7 +65,7 @@ abstract class exception extends \Exception{
     * @return \stdClass
     */
    public function get_exception_data() : \stdClass {
-      return (object) $_exception_data;
+      return (object) $this->_exception_data;
    }
    public function __construct($msg,$code=0) {
       if (!is_int($code)) $code = 0;

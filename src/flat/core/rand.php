@@ -43,21 +43,30 @@ class rand implements \flat\core\generator {
     * @return int
     */   
    protected static function _get($min,$max) {
-      if (\PHP_VERSION>=7) {
-         return random_int($min,$max);
-      }
-      extract(unpack('Nrandom', openssl_random_pseudo_bytes(4,$strong)));
-      if (!$strong) throw new rand\exception\failed();
-      return abs($random) % (($max-$min)+1) + $min;
+      return random_int($min,$max);
+      /*
+       * CONSERVATIVELY DISABLED (modernization baseline, PHP >= 7.2 only):
+       * the pre-PHP-7 fallback below is commented out, not deleted, so the
+       * original code remains visible in place. It was unreachable on
+       * PHP >= 7, where random_int() above was always used.
+       *
+       * extract(unpack('Nrandom', openssl_random_pseudo_bytes(4,$strong)));
+       * if (!$strong) throw new rand\exception\failed();
+       * return abs($random) % (($max-$min)+1) + $min;
+       */
    }
-   
+
    public static function bytes($len) {
-      if (\PHP_VERSION>=7) {
-         $bytes = random_bytes($len);
-      } else {
-         $bytes = openssl_random_pseudo_bytes($len,$strong);
-         if (!$strong) throw new rand\exception\failed();
-      }
+      $bytes = random_bytes($len);
+      /*
+       * CONSERVATIVELY DISABLED (modernization baseline, PHP >= 7.2 only):
+       * the pre-PHP-7 fallback below is commented out, not deleted, so the
+       * original code remains visible in place. It was unreachable on
+       * PHP >= 7, where random_bytes() above was always used.
+       *
+       * $bytes = openssl_random_pseudo_bytes($len,$strong);
+       * if (!$strong) throw new rand\exception\failed();
+       */
       return $bytes;
    }
    
@@ -100,13 +109,22 @@ class rand implements \flat\core\generator {
     * @see http://php.net/manual/en/function.getrandmax.php
     * @see http://php.net/openssl_random_pseudo_bytes
     */
+   /*
+    * A $max of 0 (or NULL) means the default maximum, getrandmax(); $min must
+    * not exceed the resolved maximum. Owner-confirmed contract (KD-56).
+    */
    public static function get( $min=0, $max=NULL) {
       if (!$max) $max = getrandmax();
       self::_check_params($min,$max);
       return self::_get($min, $max);
    }   
-   public function __invoke( $min=0, $max=NULL) {
-      return self::get($min,$max);
+   /**
+    * Without arguments, uses the bounds this object was built with (owner
+    * answer, known-defects Q25); explicit arguments win.
+    */
+   public function __invoke( $min=NULL, $max=NULL) {
+      if ($min === NULL && $max === NULL) return $this->generate();
+      return self::get($min === NULL ? 0 : $min,$max);
    }
    /**
     * generates a random integer as prepared in constructor

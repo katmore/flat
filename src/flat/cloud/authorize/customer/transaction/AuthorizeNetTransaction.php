@@ -45,18 +45,18 @@ abstract class AuthorizeNetTransaction extends \AuthorizeNetTransaction {
 
       //validate transaction object
       $validate = $this->_validate_transaction_type($transaction);
+      // Only true passes; a string is the validation error message.
       if ($validate!==true) {
-         if ($validate===false) {
-            throw new \flat\cloud\authorize\bad_param("transaction","invalid transaction type");
-         }
          if (is_string($validate)) {
-            throw new \flat\cloud\authorize\bad_param("transaction",$validate_msg);
+            throw new \flat\cloud\authorize\bad_param("transaction",$validate);
          }
+         throw new \flat\cloud\authorize\bad_param("transaction","invalid transaction type");
       }
       parent::__construct();
       
+      // The SDK initializes its fields to null, so isset() skipped them all.
       foreach ($transaction as $prop=>$val) {
-         if (isset($this->$prop)) $this->$prop = $val;
+         if (property_exists($this,$prop)) $this->$prop = $val;
       }
       
    }

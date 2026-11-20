@@ -1,0 +1,17 @@
+#!/bin/sh
+# Runs bin/check-docs inside the repository's PHP 7.2 container, for machines
+# without PHP. Needs no service containers; uses its own Compose project so it
+# never touches a running test stack.
+set -eu
+# The script lives in docker/bin/; work from the repository root.
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+cd "$repo_dir"
+export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-flat-check-docs}"
+compose() { docker compose -f docker/docker-compose.yml "$@"; }
+image_ref=$(compose config --images php)
+if ! docker image inspect "$image_ref" >/dev/null 2>&1; then
+    printf 'Test image missing: %s\nBuild it once with docker/bin/test --build.\n' "$image_ref" >&2
+    exit 1
+fi
+trap 'compose down --remove-orphans >/dev/null 2>&1 || true' EXIT
+compose run --rm -T --no-deps --pull never --entrypoint php php bin/check-docs "$@"

@@ -1,0 +1,125 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Checks the repository's Markdown documentation for broken references:
+ *
+ *  - relative links `[text](path)` must point to an existing file or folder;
+ *  - `#anchor` parts must match a heading in the target (GitHub anchor rules);
+ *  - table rows must stay under 100 characters (longer text belongs in a list);
+ *  - a table must not be split by a blank line (the rows after it would render as
+ *    one paragraph);
+ *  - paths written in backticks that start at the repository root
+ *    (`bin/`, `docker/`, `docs/`, `src/`, `tests/`) must exist.
+ *
+ * Change logs and `history/` folders are records that keep old paths on purpose,
+ * so their backticked paths are not checked (their links still are). Third-party
+ * code under `src/flat/vendor/` and generated folders are skipped.
+ *
+ * Usage: bin/check-docs        (exit status 1 when any problem is found)
+ * Runs on PHP 7.2 or newer; docker/bin/check-docs runs it in the test container.
+ */
+$root = dirname(__DIR__);
+if (in_array('-h', $argv, true) || in_array('--help', $argv, true)) {
+    echo "Usage: bin/check-docs\nChecks Markdown links, anchors and repository-root paths in backticks.\n";
+    exit(0);
+}
+
+$skipDirs = ['.git', 'vendor', 'build', 'node_modules', 'src/flat/vendor'];
+$files = [];
+$iterator = new RecursiveIteratorIterator(
+    new RecursiveCallbackFilterIterator(
+        new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS),
+        function (SplFileInfo $file) use ($root, $skipDirs) {
+            $relative = substr($file->getPathname(), strlen($root) + 1);
+            return !($file->isDir() && in_array($relative, $skipDirs, true));
+        }
+    )
+);
+foreach ($iterator as $file) {
+    if ($file->isFile() && strtolower($file->getExtension()) === 'md') {
+        $files[] = substr($file->getPathname(), strlen($root) + 1);
+    }
+}
+sort($files);
+
+/** Text outside fenced code blocks, so examples are not treated as references. */
+function prose_lines(string $text): array {
+    $lines = [];
+    $inFence = false;
+    foreach (preg_split('/\R/', $text) as $line) {
+        if (preg_match('/^\s*(```|~~~)/', $line)) { $inFence = !$inFence; continue; }
+        if (!$inFence) $lines[] = $line;
+    }
+    return $lines;
+}
+
+/** GitHub heading anchors of a Markdown file, including -1, -2 for duplicates. */
+function heading_anchors(string $path): array {
+    static $cache = [];
+    if (isset($cache[$path])) return $cache[$path];
+    $anchors = [];
+    $seen = [];
+    foreach (prose_lines(file_get_contents($path)) as $line) {
+        if (!preg_match('/^#{1,6}\s+(.*?)\s*#*\s*$/', $line, $match)) continue;
+        $text = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $match[1]);
+        $text = str_replace(['`', '*'], '', $text);
+        $slug = function_exists('mb_strtolower') ? mb_strtolower($text, 'UTF-8') : strtolower($text);
+        $slug = preg_replace('/[^\p{L}\p{N}\p{M} _-]/u', '', $slug);
+        $slug = str_replace(' ', '-', $slug);
+        $anchor = isset($seen[$slug]) ? $slug . '-' . $seen[$slug] : $slug;
+        $seen[$slug] = isset($seen[$slug]) ? $seen[$slug] + 1 : 1;
+        $anchors[$anchor] = true;
+    }
+    return $cache[$path] = $anchors;
+}
+
+$problems = [];
+$linkCount = $pathCount = 0;
+foreach ($files as $file) {
+    $rows = file("$root/$file", FILE_IGNORE_NEW_LINES);
+    $isRecordFile = basename($file) === 'CHANGELOG.md' || strpos("/$file", '/history/') !== false;
+    $fence = false;
+    foreach ($rows as $n => $row) {
+        if (preg_match('/^\s*(```|~~~)/', $row)) { $fence = !$fence; continue; }
+        if (!$fence && $n >= 2 && $row !== '' && $row[0] === '|' && $rows[$n - 1] === '' && substr($rows[$n - 2], 0, 1) === '|') {
+            $problems[] = $file . ': table split by a blank line before line ' . ($n + 1);
+        }
+        if (!$fence && $row !== '' && $row[0] === '|' && strlen($row) > 100 && !$isRecordFile) {
+            $problems[] = $file . ': table row longer than 100 characters at line ' . ($n + 1);
+        }
+    }
+    $dir = dirname("$root/$file");
+    $isRecord = basename($file) === 'CHANGELOG.md' || strpos("/$file", '/history/') !== false;
+    foreach (prose_lines(file_get_contents("$root/$file")) as $line) {
+        // Links: ignore anything inside inline code.
+        $prose = preg_replace('/`[^`]*`/', '', $line);
+        preg_match_all('/\]\(([^)\s]+)(?:\s+"[^"]*")?\)/', $prose, $links);
+        foreach ($links[1] as $target) {
+            if (preg_match('/^[a-z][a-z0-9+.-]*:/i', $target)) continue; // URLs, mailto:
+            $linkCount++;
+            $hash = strpos($target, '#');
+            $pathPart = $hash === false ? $target : substr($target, 0, $hash);
+            $anchor = $hash === false ? '' : substr($target, $hash + 1);
+            $dest = $pathPart === '' ? "$root/$file" : "$dir/" . rawurldecode($pathPart);
+            if (!file_exists($dest)) {
+                $problems[] = "$file: broken link ($target)";
+            } elseif ($anchor !== '' && is_file($dest) && !isset(heading_anchors($dest)[strtolower($anchor)])) {
+                $problems[] = "$file: missing anchor ($target)";
+            }
+        }
+        if ($isRecord) continue;
+        // Repository-root paths in backticks.
+        preg_match_all('/`((?:bin|docker|docs|src|tests)\/[^`\s]*)`/', $line, $paths);
+        foreach ($paths[1] as $path) {
+            $path = rtrim($path, '.,;:)');
+            if (preg_match('/[<>*{}$]|\.\.\./', $path)) continue; // placeholders and globs
+            $pathCount++;
+            if (!file_exists("$root/$path")) $problems[] = "$file: missing path (`$path`)";
+        }
+    }
+}
+
+foreach ($problems as $problem) echo $problem, "\n";
+printf("%d Markdown files, %d links and %d repository paths checked: %d problem%s.\n",
+    count($files), $linkCount, $pathCount, count($problems), count($problems) === 1 ? '' : 's');
+exit($problems ? 1 : 0);

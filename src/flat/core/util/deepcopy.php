@@ -42,7 +42,7 @@ class deepcopy {
       if (!$objects_to_stdClass) {
          $objects_to_assoc = validate\assoc::only_bool_true($options,'objects_to_assoc');
       }
-      if ($data) {
+      if ($data!==NULL) {
          if (is_object($data)) {
             if ($objects_to_stdClass || $objects_to_assoc) {
                $clone = (array) $data;
@@ -71,7 +71,7 @@ class deepcopy {
       }
    }
    public static function arr(array $arr=NULL,array $options=NULL) {
-      if ($arr) {
+      if ($arr!==NULL) {
           /*
            * deep recursive copy array
            */

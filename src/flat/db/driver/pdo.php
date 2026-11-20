@@ -139,12 +139,15 @@ abstract class pdo extends \flat\db implements \flat\db\driver {
           * if 1 argument... determine if it's 
           *    rules object OR assoc array
           */ 
-         if (is_a($arg[0],"\\flat\\db\\driver\\pdo\\statement\\rules")) {
-            $param = new \flat\db\driver\pdo\statement\rules($arg[0]);
-         } else {
-            foreach ($param as $key=>&$val ) {
-               if (isset($arg[0][$key])) $val = $arg[0][$key];
-            }
+         /* CONSERVATIVELY DISABLED: load_statement(array $param) rejects an
+          * object before entering this body, so arg[0] cannot be a rules object.
+          * Original unreachable branch:
+          * if (is_a($arg[0],"\\flat\\db\\driver\\pdo\\statement\\rules")) {
+          *    $param = new \flat\db\driver\pdo\statement\rules($arg[0]);
+          * } else { ...array mapping below... }
+          */
+         foreach ($param as $key=>&$val ) {
+            if (isset($arg[0][$key])) $val = $arg[0][$key];
          }
       } else {
          $i=0;

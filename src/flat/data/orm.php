@@ -40,44 +40,66 @@ namespace flat\data;
 class orm implements \flat\core\controller {
    private $_driver;
    const fallback_driver = "\\flat\\data\\orm\\driver\\session";
-   private function _get_default_driver() {
-      
-   }
+   /* CONSERVATIVELY DISABLED unused private placeholder: no callers exist.
+    * private function _get_default_driver() {}
+    */
+   /**
+    * @param array $driver (optional) driver configuration. 'driver' selects the
+    *    driver: a \flat\data\orm\driver class name or object. The remaining
+    *    entries are given to the driver's constructor. Without 'driver', the
+    *    fallback session driver receives the configuration.
+    * @throws \flat\data\orm\exception\bad_param
+    */
    public function __construct(array $driver=NULL) {
-      //\flat\data\orm\driver
-      if (!$driver) {
-         $driver = self::default_handler;
-         $driver = new $driver();
-         return;
+      $config = $driver ? $driver : [];
+      $selected = self::fallback_driver;
+      if (isset($config['driver'])) {
+         $selected = $config['driver'];
+         unset($config['driver']);
       }
-      if (isset($param['driver'])) {
-         
-      }
-      $this->_driver = $driver; 
-      
-   }
-   
-   public function get($key) {
-      $this->_driver->get_data($key);
-   }
-   public function set($key,\flat\data $data) {
-      $this->_driver->set_data($key,$data);
-   } 
-   
-   private static $_s=NULL;
-   private static function _get_orm(array $options=NULL) {
-      if (isset($param['driver'])) {
-         if (
-            (assoc::non_empty_scalar($param,"driver")) ||
-            (is_a($param['driver'],"\\flat\\data\\orm\\driver"))
-         ) {
-            $driver = $param['driver'];
-            return new static($param['driver']);
-         }
+      // A driver is anything providing the get_data()/set_data() calls made
+      // below; the fallback session driver does not extend orm\driver.
+      $is_driver = function ($candidate) {
+         return method_exists($candidate, 'get_data') && method_exists($candidate, 'set_data');
+      };
+      if (is_object($selected) && $is_driver($selected)) {
+         $this->_driver = $selected;
+      } elseif (is_string($selected) && class_exists($selected) && $is_driver($selected)) {
+         $this->_driver = new $selected($config ? $config : NULL);
+      } else {
          throw new orm\exception\bad_param(
             "'driver' option must be either: a class name string, or orm driver object"
          );
       }
+   }
+   
+   public function get($key) {
+      return $this->_driver->get_data($key);
+   }
+   public function set($key,\flat\data $data) {
+      return $this->_driver->set_data($key,$data);
+   } 
+   
+   private static $_s=NULL;
+   private static function _get_orm(array $options=NULL) {
+      /* CONSERVATIVELY DISABLED unreachable driver-option branch. This
+       * method accepts $options, but the branch only reads undefined $param;
+       * its isset guard always fails. Public static callers also do not pass
+       * options into this method. Preserve current selection until its input
+       * contract is settled; original code follows:
+       *       if (isset($param['driver'])) {
+       *          if (
+       *             (assoc::non_empty_scalar($param,"driver")) ||
+       *             (is_a($param['driver'],"\\flat\\data\\orm\\driver"))
+       *          ) {
+       *             $driver = $param['driver'];
+       *             return new static($param['driver']);
+       *          }
+       *          throw new orm\exception\bad_param(
+       *             "'driver' option must be either: a class name string, or orm driver object"
+       *          );
+       *       }
+       */
       if (empty(self::$_s)) self::$_s = new static();
       return self::$_s;
    }

@@ -83,7 +83,7 @@ abstract class view implements \flat\core\resolver, \flat\core\app\event\factory
                new view\data(
                   array(
                      'path'=>$path,
-                     'resolved'=>"\\flat\\design".implode("\\",$resolved),
+                     'resolved'=>"\\flat\\design".implode("\\",$route),
                      'resource'=>$resource
                   )
                )

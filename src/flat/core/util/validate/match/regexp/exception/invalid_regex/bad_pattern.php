@@ -46,7 +46,7 @@ class bad_pattern extends \flat\core\util\validate\match\regexp\exception\invali
    public function __construct($preg_error,$pattern) {
       
       parent::__construct(
-         "bad pattern $pattern. reason: ".preg_errtxt::preg_errtxt($preg_error)
+         "bad pattern $pattern. reason: ".preg_error::preg_errtxt($preg_error)
       );
    }
 }

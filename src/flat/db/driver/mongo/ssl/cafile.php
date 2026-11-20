@@ -29,5 +29,6 @@ abstract class cafile {
          $this->file = $path;
          return $this->file;
       }
+      throw new \flat\lib\exception\app_error("could not write CA file: $path");
    }
 }

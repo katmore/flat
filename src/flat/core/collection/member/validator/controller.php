@@ -33,6 +33,7 @@
 namespace flat\core\collection\member\validator;
 class controller implements \flat\core\collection\member\checker {
    private $_validation;
+   private $_col;
    
    public function has_active_checks() {
       if ($this->_validation === true) return true;
@@ -46,7 +47,7 @@ class controller implements \flat\core\collection\member\checker {
           *    deal with return value appropriately
           *    see @return  description in _validate() definition
           */
-         $validate = $this->member_validate($data);
+         $validate = $this->_col->member_validate($data);
          if ($validate===false) {
             throw new exception\failed();
          } else
@@ -71,14 +72,15 @@ class controller implements \flat\core\collection\member\checker {
           *    apply the collections filter as appropriate
           *    see @return description in _filter() definition
           */
-         $filter = $this->member_filter($data);
+         $filter = $this->_col->member_filter($data);
          if ($filter!==NULL) return $filter;
          
          return $data;
       }
    }
    public function __construct(\flat\core\collection $col) {
-      if ($col instanceof collection\member\validator) {
+      $this->_col = $col;
+      if ($col instanceof \flat\core\collection\member\validator) {
          $this->_validation = true;
          return;
       }

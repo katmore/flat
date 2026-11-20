@@ -38,11 +38,17 @@ class bad_request extends \flat\api\response {
       if (empty($message)) {
          $trace = debug_backtrace();
          if (isset($trace[1+$trace_offset]) && !empty($trace[1+$trace_offset]['class'])) {
-            try {
-               $this->message = "Bad request indicated by ".(new \ReflectionClass($trace[1+$trace_offset]['class']))->getShortName();
-            } catch (\Exception $e) {
-               $this->message = "Bad request indicated";
-            }
+            /*
+             * CONSERVATIVELY DISABLED native-caller fallback: debug_backtrace()
+             * reports an already loaded class. ReflectionClass/getShortName
+             * cannot throw an Exception for that native class name. Original:
+             * try {
+             * $this->message = "Bad request indicated by ".(new \ReflectionClass($trace[1+$trace_offset]['class']))->getShortName();
+             * } catch (\Exception $e) {
+             * $this->message = "Bad request indicated";
+             * }
+             */
+            $this->message = "Bad request indicated by ".(new \ReflectionClass($trace[1+$trace_offset]['class']))->getShortName();
          }
       } else {
          $this->message = $message;

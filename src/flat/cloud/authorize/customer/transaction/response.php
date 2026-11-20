@@ -91,14 +91,15 @@ abstract class response extends \flat\data
     * @return \flat\cloud\authorize\cusotmer\transaction\success | \flat\cloud\authorize\cusotmer\transaction\failure
     */
    public static function load(\AuthorizeNetAIM_Response $transactionResponse) {
+      $status = [1=>'APPROVED',2=>'DECLINED',3=>'ERROR',4=>'HELD'];
       foreach([1,4] as $success_code) {
          if ($transactionResponse->response_code == $success_code) {
-            return new response\success(['transactionResponse'=>$transactionResponse]);
+            return new response\success(['transactionResponse'=>$transactionResponse,'status'=>$status[$success_code]]);
          }
       }
       foreach([2,3] as $failure_code) {
-         if ($transactionResponse->response_code == $error_code) {
-            return new response\failure(['transactionResponse'=>$transactionResponse]);
+         if ($transactionResponse->response_code == $failure_code) {
+            return new response\failure(['transactionResponse'=>$transactionResponse,'status'=>$status[$failure_code]]);
          }
       }
    }

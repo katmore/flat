@@ -37,7 +37,7 @@ class nodelist extends \RecursiveIteratorIterator implements \RecursiveIterator 
     $this->_position = 0;
     $this->_nodeList = $nodeList;
     
-    self::__construct($this,\RecursiveIteratorIterator::SELF_FIRST);
+    parent::__construct(new \RecursiveArrayIterator($this),\RecursiveIteratorIterator::SELF_FIRST);
     
   }
   
@@ -75,7 +75,7 @@ class nodelist extends \RecursiveIteratorIterator implements \RecursiveIterator 
      */
     public function getChildren()
     {
-        return new self($this->current());
+        return new self($this->current()->childNodes);
     }
 
     /**

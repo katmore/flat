@@ -36,7 +36,7 @@ class file extends \flat\core\md\convert {
     */
    public function __construct($source) {
       if (false ===($text = file_get_contents($source))) {
-         throw new convert\exception\invalid_source(
+         throw new \flat\core\md\convert\exception\invalid_source(
             "path '$source' could not be read"
          );
       }

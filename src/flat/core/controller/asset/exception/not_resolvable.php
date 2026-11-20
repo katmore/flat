@@ -33,6 +33,6 @@
 namespace flat\core\controller\asset\exception;
 class not_resolvable extends \flat\core\controller\asset\exception {
    public function __construct($asset_class,$asset_object) {
-      parent::__construct("asset '$asset_class' could resolve '$asset_object'");
+      parent::__construct("asset '$asset_class' could not resolve '$asset_object'");
    }
 }

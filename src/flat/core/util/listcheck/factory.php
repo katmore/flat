@@ -59,7 +59,7 @@ class factory {
 
    public function is_in_list($search) {
       if (!in_array($search, $this->list)) {
-         if (is_callable($this->fail_handler)) $this->fail_handler($this,$search);
+         if (is_callable($this->fail_handler)) call_user_func($this->fail_handler,$this,$search);
          return false;
       }
       return true;

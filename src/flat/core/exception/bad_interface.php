@@ -30,7 +30,5 @@
  * @author     D. Bird <retran@gmail.com>
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
-namespace flat\core;
-interface bad_interface {
-   public function __construct($interface,$class,$method,$reason="");
-}
+namespace flat\core\exception;
+interface bad_interface extends \flat\core\bad_interface {}

@@ -31,7 +31,7 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\core\md\convert\exception;
-class invalid_source extends exception {
+class invalid_source extends \flat\core\md\convert\exception {
    public function __construct($details="") {
       if (!empty($details)) $details=": ".$details;
       parent::__construct("invalid source $details");

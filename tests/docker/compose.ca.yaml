@@ -1,0 +1,9 @@
+# Optional corporate/cloud CA input; normal local Docker builds need no override.
+services:
+  php:
+    build:
+      secrets:
+        - proxy_ca
+secrets:
+  proxy_ca:
+    file: ${FLAT_TEST_CA_FILE:?Set FLAT_TEST_CA_FILE to a readable CA bundle}

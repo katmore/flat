@@ -31,7 +31,7 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\cloud\authorize\subscription;
-class not_found extends exception {
+class not_found extends \flat\cloud\authorize\exception {
    private $_subscriptionId;
    public function get_subscriptionId() {
       return $this->_subscriptionId;

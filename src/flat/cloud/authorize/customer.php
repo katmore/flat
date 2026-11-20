@@ -281,7 +281,7 @@ implements
       
       $payment_profile = self::_params_to_payment_profile($params);
       
-      $response = $this->_get_CIM()->createCustomerPaymentProfile($customerProfileId, $payment_profile);
+      $response = $this->_get_CIM()->createCustomerPaymentProfile($params['customerProfileId'], $payment_profile);
       
       if ($response->isError()) {
          throw new response_error($response->getMessageCode(), $response->getMessageText());
@@ -311,7 +311,7 @@ implements
       }
       $payment_profile = self::_params_to_payment_profile($params);
       
-      $response = $this->_get_CIM()->updateCustomerPaymentProfile($customerProfileId, $customerPaymentProfileId, $payment_profile);
+      $response = $this->_get_CIM()->updateCustomerPaymentProfile($params['customerProfileId'], $params['customerPaymentProfileId'], $payment_profile);
       if ($response->isError()) {
          throw new response_error($response->getMessageCode(), $response->getMessageText());
       }
@@ -348,33 +348,28 @@ implements
    }
    
    public function void_transaction(array $params) {
-      
+      // RETIRED by owner decision: never implemented (empty body returned null).
+      throw new \BadMethodCallException('authorize customer void_transaction() is not implemented');
    }
    
    public function refund_transaction(array $params) {
-      
+      // RETIRED by owner decision: never implemented (empty body returned null).
+      throw new \BadMethodCallException('authorize customer refund_transaction() is not implemented');
    }
    
    public function authonly($customerProfileId,$customerPaymentProfileId,$amount,array $extra_params=NULL) {
-      
+      // RETIRED by owner decision: never implemented (empty body returned null).
+      throw new \BadMethodCallException("authorize customer authonly() is not implemented; use create_transaction() with transactionType 'authonly'");
    }
    
    public function authcapture($customerProfileId,$customerPaymentProfileId,$amount,array $extra_params=NULL) {
-   
+      // RETIRED by owner decision: never implemented (empty body returned null).
+      throw new \BadMethodCallException("authorize customer authcapture() is not implemented; use create_transaction() with transactionType 'authcapture'");
    }
    
    public function captureonly($customerProfileId,$customerPaymentProfileId,array $extra_params=NULL) {
-      $params = [
-         'customerProfileId'=>$customerProfileId,
-         'customerPaymentProfileId'=>$customerPaymentProfileId,
-      ];
-      if (!empty($extra_params) && is_array($extra_params)) {
-         foreach($extra_params as $k=>$v) {
-            if (!empty($k)) {
-               
-            }
-         }
-      }
+      // RETIRED by owner decision: never implemented (empty body returned null).
+      throw new \BadMethodCallException("authorize customer captureonly() is not implemented; use create_transaction() with transactionType 'captureonly'");
    }
    
    /**
@@ -428,7 +423,8 @@ implements
                   $params['transaction']['transactionType'] = $key;
                }
             }
-            if (empty($customer_transaction_type)) {
+            $customer_transaction_type = $params['transaction']['transactionType'];
+            if (!isset($transtypes[$customer_transaction_type])) {
                throw new bad_param(
                   "transaction.transactionType",
                   "unknown transactionType specified"
@@ -480,7 +476,8 @@ implements
     * @return \flat\cloud\authorize\transaction
     */
    public function get_transaction(array $params) {
-      
+      // RETIRED by owner decision: never implemented (empty body returned null).
+      throw new \BadMethodCallException('authorize customer get_transaction() is not implemented');
    }
 }
 

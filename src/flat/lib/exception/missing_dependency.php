@@ -48,7 +48,7 @@ class missing_dependency extends \flat\lib\exception {
       $this->_dependency = $dependency;
       $this->_missing_class = $missing_class;
       $this->_class_set = $class_set;
-      if (empty($class)) {
+      if (empty($missing_class)) {
          $class = "";
       } else {
          if (is_array($missing_class)) $missing_class = implode(", ",$missing_class);

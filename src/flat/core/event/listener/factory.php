@@ -42,7 +42,7 @@
  * 
  */
 namespace flat\core\event\listener;
-abstract class factory extends \flat\core\event\loader {
+abstract class factory extends \flat\core\event\factory\loader {
    public function add_listener($event_name,$listener) {
       $this->event->add_listener($event_name,$listener);
    }

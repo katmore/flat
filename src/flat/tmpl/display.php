@@ -31,7 +31,7 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\tmpl;
-abstract class display extends \flat\tmpl\output {
+abstract class display implements \flat\tmpl\output {
 
    abstract public function __construct($design,$check_only=false);
 

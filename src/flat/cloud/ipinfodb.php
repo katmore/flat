@@ -53,7 +53,7 @@ abstract class ipinfodb {
    /**
     * number of seconds IP data that exists in Mongo is considered usable
     */
-   const location_ttl = 604800; //1 day = 604800 seconds
+   const location_ttl = 604800; //7 days = 604800 seconds (owner answer, known-defects Q26)
    
    private $_result;
    /**
@@ -171,7 +171,8 @@ abstract class ipinfodb {
    }
    
    public static function load($ip_addr) {
-      
+      // RETIRED by owner decision: never implemented (empty body returned null).
+      throw new \BadMethodCallException('ipinfodb::load() is not implemented; construct the lookup class and call result()');
    }
 }
 

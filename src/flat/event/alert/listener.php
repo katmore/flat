@@ -31,42 +31,45 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\event\alert;
-class listener extends \Thread {
-   private $_channel;
-   private $_client;
-   private $_destroy;
-   public function __construct($channel_name,$rabbitmq_client) {
-      $this->_channel = $channel_name;
-      $this->_client = $rabbitmq_client;
-   }
-   public function run() {
-      /*
-       * connect to "this->channel_name" using this->rabbitmq_client
-       */
-      
-      /*
-       * in infinite loop?...
-       *    if destroy flag given, disconnect from chan
-       *       and let thread be 'done'
-       */
-      if ($this->_destroy) {
-         /*
-          * disconnect
-          */
-         $this->synchronized(function($thread){
-            $thread->done = true;
-            $thread->notify();
-         }, $this);         
-      }
-   }
-   
-   public function __destruct() {
-      /** cause this thread to wait **/
-      $this->synchronized(function($thread){
-         if (!$thread->done) {
-            $this->_destory = true;
-            $thread->wait();
-         }
-      }, $this);
-   }
-}
+// RETIRED by owner decision: the unfinished pthread listener is no longer
+// declared. Use the supported alert::add_listener synchronous API instead.
+// The original scaffolding is retained below for historical reference.
+// class listener extends \Thread {
+//    private $_channel;
+//    private $_client;
+//    private $_destroy;
+//    public function __construct($channel_name,$rabbitmq_client) {
+//       $this->_channel = $channel_name;
+//       $this->_client = $rabbitmq_client;
+//    }
+//    public function run() {
+//       /*
+//        * connect to "this->channel_name" using this->rabbitmq_client
+//        */
+//
+//       /*
+//        * in infinite loop?...
+//        *    if destroy flag given, disconnect from chan
+//        *       and let thread be 'done'
+//        */
+//       if ($this->_destroy) {
+//          /*
+//           * disconnect
+//           */
+//          $this->synchronized(function($thread){
+//             $thread->done = true;
+//             $thread->notify();
+//          }, $this);
+//       }
+//    }
+//
+//    public function __destruct() {
+//       /** cause this thread to wait **/
+//       $this->synchronized(function($thread){
+//          if (!$thread->done) {
+//             $this->_destory = true;
+//             $thread->wait();
+//          }
+//       }, $this);
+//    }
+// }

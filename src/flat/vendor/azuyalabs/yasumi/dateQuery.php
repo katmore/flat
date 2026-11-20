@@ -20,11 +20,11 @@ class dateQuery {
    private static $_provider_map = [];
    
    /**
-    * @var string date used for this query
+    * @var int date used for this query (Unix timestamp)
     */
    private $_date;
    /**
-    * @return string date used for this query
+    * @return int date used for this query (Unix timestamp)
     */
    public function get_date() {
       return $this->_date;
@@ -57,12 +57,18 @@ class dateQuery {
       return $this->_provider;
    }
    
+   /**
+    * @return \DateTime the query date, as Yasumi's providers expect it
+    */
+   private function _date_time() {
+      return (new \DateTime())->setTimestamp($this->_date);
+   }
    public function isWorkingDay() {
-      return $this->_provider->isWorkingDay($this->_date);
+      return $this->_provider->isWorkingDay($this->_date_time());
    }
    
    public function isHoliday() {
-      return $this->_provider->isHoliday($this->_date);
+      return $this->_provider->isHoliday($this->_date_time());
    }
    const DEFAULT_SCHEDULE = [
     'Sun' => [],
@@ -104,20 +110,21 @@ class dateQuery {
     * @param string Optional $locale locale name (default 'en_US') 
     */
    public function __construct($date=null,$provider=self::DEFAULT_PROVIDER, $year = null, $locale = null) {
-      if (!is_string($date)) {
-         $date = $this->_date = time();
-      } else {
-         if (!($date = strtotime($date))) {
-            $date = $this->_date = time();
-         }
-      }
+      // A Unix timestamp (owner answer, known-defects Q7). strtotime() returns
+      // 0 for the epoch, so only false means the date could not be parsed.
+      $timestamp = is_string($date) ? strtotime($date) : false;
+      $this->_date = ($timestamp === false) ? time() : $timestamp;
       if (!$year || (!is_scalar($year) || is_bool($year))) {
-         $year = $this->_year = date('Y',$date);
+         $year = date('Y',$this->_date);
       }
-      $this->_provider_id = $provider."_".$year;
+      $this->_year = (string) $year;
+      $this->_provider_id = $provider."_".$year.($locale ? "_".$locale : "");
       if (empty(static::$_provider_map[$this->_provider_id])) {
-         $this->_provider = static::$_provider_map[$this->_provider_id] = Yasumi::create($provider, $year);
+         static::$_provider_map[$this->_provider_id] = $locale
+            ? Yasumi::create($provider, (int) $year, $locale)
+            : Yasumi::create($provider, (int) $year);
       }
+      $this->_provider = static::$_provider_map[$this->_provider_id];
    }
    
 }

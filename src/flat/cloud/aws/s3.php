@@ -15,8 +15,8 @@ namespace flat\cloud\aws;
 /**
  * AWS namespace aliases
  */
-use Aws\Common\Exception\MultipartUploadException;
-use Aws\S3\Model\MultipartUpload\UploadBuilder;
+use Aws\Exception\MultipartUploadException;
+use Aws\S3\MultipartUploader;
 use Aws\S3\S3Client;
 /**
  * s3 object controller
@@ -29,7 +29,12 @@ use Aws\S3\S3Client;
  * @abstract
  */
 class s3 extends \flat\cloud\aws {
-   const multipart_min_size = 10737418240; //10MB
+   /**
+    * files of this size or larger are uploaded in parts: 100 MB, Amazon's
+    * suggested multipart size (owner answer, known-defects Q20). A single
+    * PutObject request cannot exceed 5 GB, so this must stay below that.
+    */
+   const multipart_min_size = 104857600; //100MB
    /**
     * form a consistent s3 object key from given parameters
     * 
@@ -144,27 +149,32 @@ class s3 extends \flat\cloud\aws {
          ));
       } else {
          // Prepare the upload parameters.
-         $uploader = UploadBuilder::newInstance()
-             ->setClient($client)
-             ->setSource($file)
-             ->setBucket($bucket)
-             ->setKey(self::_canonicalize_key($key,$prefix))
-             ->setMinPartSize(25 * 1024 * 1024)
-             ->setConcurrency(3)
-             ->build();
+         $uploader = new MultipartUploader($client,$file,[
+             'bucket'=>$bucket,
+             'key'=>self::_canonicalize_key($key,$prefix),
+             'part_size'=>25 * 1024 * 1024,
+             'concurrency'=>3,
+             // The object's content type is set when the upload is created.
+             'before_initiate'=>function ($command) use ($contentType) {
+                 if (!empty($contentType)) $command['ContentType'] = $contentType;
+             },
+         ]);
          // Perform the upload. Abort the upload if something goes wrong.
          try {
              $uploader->upload();
              return;
          } catch (MultipartUploadException $e) {
-             $uploader->abort();
+             $upload = $e->getState()->getId();
+             if (!empty($upload['UploadId'])) $client->abortMultipartUpload($upload);
              throw new s3\upload_failure($e);
          } 
-         // We can poll the object until it is accessible
-         $client->waitUntil('ObjectExists', array(
-             'Bucket' => $bucket,
-             'Key'    => self::_canonicalize_key($key,$prefix)
-         ));
+         /* CONSERVATIVELY DISABLED unreachable waiter. Successful upload returns
+          * above; an upload/abort failure throws. Original:
+          * $client->waitUntil('ObjectExists', array(
+          *     'Bucket' => $bucket,
+          *     'Key' => self::_canonicalize_key($key,$prefix)
+          * ));
+          */
       }
    }
    

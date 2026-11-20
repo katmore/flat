@@ -35,14 +35,13 @@ class response_header extends \flat\event {
    private $_field;
    private $_value;
    public function get_header_string() : string {
-      if (!empty($this->_field)) {
-         if (!empty($this->_value)) {
-            return $this->_field . ": ". $this->_value;
-         } else {
-            return (string) $this->_field;
-         }
+      // CONSERVATIVELY DISABLED outer guard: the constructor requires a
+      // nonempty field, stored privately with no other writer. Original:
+      // if (!empty($this->_field)) { ... } else { return ""; }
+      if (!empty($this->_value)) {
+         return $this->_field . ": ". $this->_value;
       } else {
-         return "";
+         return (string) $this->_field;
       }
    }
    /**

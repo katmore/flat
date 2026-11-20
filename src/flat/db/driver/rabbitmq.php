@@ -124,6 +124,7 @@ class rabbitmq extends \flat\db implements
       foreach ($queue as $k=>&$v) {
          if (isset($param[$k])) $v = $param[$k];
       }
+      return $queue;
    }
    
    /**
@@ -324,6 +325,7 @@ class rabbitmq extends \flat\db implements
          $conn['keepalive'],
          $conn['heartbeat']
       );
+      return $connection;
    }
    /**
     * @see \flat\db\driver\rabbitmq::_load_conn

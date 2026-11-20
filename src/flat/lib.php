@@ -66,7 +66,7 @@ abstract class lib implements \flat\core\app {
          }
       }
       if (count($missing)) {
-         throw new \flat\lib\exception\missing_dependency($description,$missing,$class_name);
+         throw new \flat\lib\exception\missing_dependency($description,$missing,$class);
       }
    }
    
@@ -107,7 +107,7 @@ abstract class lib implements \flat\core\app {
    private static function _check_nonempty_param(array $param=NULL,$param_key) {
       if (is_array($param_key)) {
          foreach ($param_key as $key) {
-            self::_check_nonempty_param($param,$param_key);
+            self::_check_nonempty_param($param,$key);
          }
          return;
       }

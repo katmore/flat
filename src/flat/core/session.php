@@ -48,11 +48,14 @@ class session {
          throw new session\exception\nonce_not_found();
       }
       $meta = new session\nonce_meta((array) $_SESSION[self::root_ns."/".self::nonce_subns][$key][$nonce]);
+      /* CONSERVATIVELY DISABLED: new nonce_meta either returns an instance of
+       * that class or throws. It cannot reach this wrong-instance branch.
       if (!$meta instanceof session\nonce_meta) {
          var_dump($meta);
          die(__FILE__);
          throw new session\exception\invalid_nonce_data();
       }
+       */
       if ($meta->consumed) {
          throw new session\exception\nonce_consumed();
       }

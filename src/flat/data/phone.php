@@ -160,12 +160,13 @@ implements \flat\data\ready
 
       $ext=null;
       if (false !==($extp = strpos(strtolower($phoneNumber),'ext'))) {
+         $ext = preg_replace('/[^0-9]/','',substr($phoneNumber,$extp+3));
          $phoneNumber = substr($phoneNumber,0,$extp);
-         $this->extension = $ext = preg_replace('/[^0-9]/','',substr($phoneNumber,-1*$extp));
-      } elseif (false !==($xp = strpos($phoneNumber,'x'))) {
+      } elseif (false !==($xp = strpos(strtolower($phoneNumber),'x'))) {
+         $ext = preg_replace('/[^0-9]/','',substr($phoneNumber,$xp+1));
          $phoneNumber = substr($phoneNumber,0,$xp);
-         $this->extension = $ext = preg_replace('/[^0-9]/','',substr($phoneNumber,-1*$xp));
       }
+      if ($ext !== null) $this->extension = ($ext === '') ? null : $ext;
       if (substr($phoneNumber,0,3)=="011") {
          $phoneNumber = substr($phoneNumber,3);
       }
@@ -179,8 +180,9 @@ implements \flat\data\ready
              
             $this->country_code = 1;
             $phoneNumber = substr($phoneNumber,1);
-            $this->extension = substr($phoneNumber,(strlen($phoneNumber)-10)*-1);
-            if (empty($this->extension)) $this->extension = null;
+            if (strlen($phoneNumber) > 10) {
+               $this->extension = substr($phoneNumber,10);
+            }
             $phoneNumber = substr($phoneNumber,0,10);
              
          } else {
@@ -191,37 +193,37 @@ implements \flat\data\ready
             if ($zone==2) {
                //20 is country code
                if ($zoneP1==0) {
-                  $this->country_code == substr($phoneNumber,0,2);
+                  $this->country_code = substr($phoneNumber,0,2);
                }else {//rest of codes in zone 2 are three-digit country codes
-                  $this->country_code == substr($phoneNumber,0,3);
+                  $this->country_code = substr($phoneNumber,0,3);
                }
             }elseif($zone==3) {
                //30,31,32,33,34,36,39 are two-digit country codes
                if (($zoneP1==0)||($zoneP1==1)||($zoneP1==2)||($zoneP1==3)||($zoneP1==4)||($zoneP1==6)||($zoneP1==9)) {
-                  $this->country_code == substr($phoneNumber,0,2);
+                  $this->country_code = substr($phoneNumber,0,2);
                }else {//rest of codes in zone 3 are three-digit country codes
-                  $this->country_code == substr($phoneNumber,0,3);
+                  $this->country_code = substr($phoneNumber,0,3);
                }
             }elseif($zone==4) {
                //40,41,43,44,45,46,47,48,49 are two-digit country codes
-               if (($zoneP1==0)||($zoneP1==1)||($zoneP1==3)||($zoneP1==4)||($zoneP1==6)||($zoneP1==7)||($zoneP1==8)||($zoneP1==9)) {
-                  $this->country_code == substr($phoneNumber,0,2);
+               if (($zoneP1==0)||($zoneP1==1)||($zoneP1==3)||($zoneP1==4)||($zoneP1==5)||($zoneP1==6)||($zoneP1==7)||($zoneP1==8)||($zoneP1==9)) {
+                  $this->country_code = substr($phoneNumber,0,2);
                }else {//rest of codes in zone 4 are three-digit country codes
-                  $this->country_code == substr($phoneNumber,0,3);
+                  $this->country_code = substr($phoneNumber,0,3);
                }
             }elseif($zone==5) {
                //51,52,53,54,55,56,57,58 are two-digit country codes
                if (($zoneP1==1)||($zoneP1==2)||($zoneP1==3)||($zoneP1==4)||($zoneP1==5)||($zoneP1==6)||($zoneP1==7)||($zoneP1==8)) {
-                  $this->country_code == substr($phoneNumber,0,2);
+                  $this->country_code = substr($phoneNumber,0,2);
                }else {//rest of codes in zone 5 are three-digit country codes
-                  $this->country_code == substr($phoneNumber,0,3);
+                  $this->country_code = substr($phoneNumber,0,3);
                }
             }elseif($zone==6) {
                //60,61,62,63,64,65,66 are two-digit country codes
                if (($zoneP1==0)||($zoneP1==1)||($zoneP1==2)||($zoneP1==3)||($zoneP1==4)||($zoneP1==5)||($zoneP1==6)) {
-                  $this->country_code == substr($phoneNumber,0,2);
+                  $this->country_code = substr($phoneNumber,0,2);
                }else {//rest of codes in zone 6 are three-digit country codes
-                  $this->country_code == substr($phoneNumber,0,3);
+                  $this->country_code = substr($phoneNumber,0,3);
                }
             }elseif($zone==7) {
                //73,74,76,78 can indicate a zone 7 country codes longer than one-digit
@@ -256,37 +258,42 @@ implements \flat\data\ready
             }elseif($zone==8) {
                //81,82,84,86 are always two-digit country codes
                if (($zoneP1==1)||($zoneP1==2)||($zoneP1==4)||($zoneP1==6)) {
-                  $this->country_code == substr($phoneNumber,0,2);
+                  $this->country_code = substr($phoneNumber,0,2);
                } else {//rest of codes in zone 8 are three-digit country codes
-                  $this->country_code == substr($phoneNumber,0,3);
+                  $this->country_code = substr($phoneNumber,0,3);
                }
             }elseif($zone==9) {
                //turkey
                if ($zoneP1==0) {
-                   
+                  $this->country_code = substr($phoneNumber,0,2);
                } else
-                  if (($zoneP1==1)||($zoneP1==2)||($zoneP1==4)||($zoneP1==6)) {
+                  if (($zoneP1==1)||($zoneP1==2)||($zoneP1==3)||($zoneP1==4)||($zoneP1==5)||($zoneP1==8)) {
                      //91,92,93,94,95,98 are always two-digit country codes
-                     $this->country_code == substr($phoneNumber,0,2);
+                     $this->country_code = substr($phoneNumber,0,2);
                   } else
                      if ($zoneP1==9) { //99x
                         if (substr($phoneNumber,0,3)==995) {
                            if (substr($phoneNumber,0,5)==99534) {
                               //south ossetia
-                              $this->country_code == substr($phoneNumber,0,5);
-                           } else
-                              if (substr($phoneNumber,0,5)==99534) {
-                                 //abkhazia
-                                 $this->country_code == substr($phoneNumber,0,5);
-                              } else {
+                              $this->country_code = substr($phoneNumber,0,5);
+                           }
+                           /* CONSERVATIVELY DISABLED: the identical 99534 test
+                            * immediately above already handles this prefix.
+                            * Original unreachable alternative retained:
+                            * else if (substr($phoneNumber,0,5)==99534) {
+                            *    //abkhazia
+                            *    $this->country_code = substr($phoneNumber,0,5);
+                            * }
+                            */
+                              else {
                                  //georgia
-                                 $this->country_code == substr($phoneNumber,0,3);
+                                 $this->country_code = substr($phoneNumber,0,3);
                               }
                         } else { //rest of 99x are three-digit country codes
-                           $this->country_code == substr($phoneNumber,0,2);
+                           $this->country_code = substr($phoneNumber,0,3);
                         }
                   }else {//rest of codes in zone 9 are three-digit country codes
-                     $this->country_code == substr($phoneNumber,0,3);
+                     $this->country_code = substr($phoneNumber,0,3);
                   }
             } /*end zone/country code determination*/
              

@@ -41,3 +41,4 @@ class cancelled extends \flat\cloud\authorize\exception {
       parent::__construct("ARB is cancelled (subscriptionId: $subscriptionId)");
    }
 }
+class_alias(cancelled::class, __NAMESPACE__.'\\canceled');

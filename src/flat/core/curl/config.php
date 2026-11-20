@@ -43,10 +43,11 @@ class config {
    
    
    /**
-    * @var string
-    *    request method, ie: GET, POST, PUT, DELETE 
+    * @var string|null
+    *    request method, ie: GET, POST, PUT, DELETE. Unset (NULL) unless given,
+    *    so curl chooses: GET without a body, POST with one (owner answer Q24).
     */
-   public $request_method = "GET";
+   public $request_method = NULL;
    
    /**
     * @var string
@@ -110,13 +111,16 @@ class config {
             $this->$param = $$param;
          }
       }
+      foreach(array("request_method","referrer","user_agent","cache_dir") as $param) {
+         if (!empty($$param) && !is_string($this->$param)) throw new exception\bad_param($param,"must be string");
+         // Keep declared defaults (e.g. the flat/curl user agent) when an
+         // argument is not given; this loop used to replace them with null.
+         if ($$param !== null) $this->$param = $$param;
+      }
+      // Resolve the Chrome selector after the loop above.
       if (is_int($this->user_agent) && $this->user_agent == self::user_agent_chrome) {
          $this->user_agent = self::chrome_user_agent_str;
          $this->user_agent = str_replace("%chrome_version%",self::chrome_latest_version_str,$this->user_agent);
-      }
-      foreach(array("request_method","referrer","user_agent","cache_dir") as $param) {
-         if (!empty($$param) && !is_string($this->$param)) throw new exception\bad_param($param,"must be string");
-         $this->$param = $$param;
       }
       
       if (!is_int($this->timeout)) {

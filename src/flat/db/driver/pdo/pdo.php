@@ -189,39 +189,39 @@ class pdo extends \PDO {
          $executed = true;
          
          $stmt->execute();
-         if ($stmt->rowCount()) {
-            $class = null;
-            $clone = null;
-            $assoc = null;
-            $result=[];
-            if (is_string($record)) {
-               if ($record=='array') {
-                  $assoc = true;
-               } else {
-                  $class = $record;
-               }
-            } else
-            if (is_object($record)) {
-               $clone = $record;
+         // SELECT rowCount() is driver-dependent (SQLite reports zero).
+         // Fetching determines whether the result actually contains rows.
+         $class = null;
+         $clone = null;
+         $assoc = null;
+         $result=[];
+         if (is_string($record)) {
+            if ($record=='array') {
+               $assoc = true;
+            } else {
+               $class = $record;
             }
-            while($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-               //var_dump($row);
-               if ($callback) $callback($row);
-               if ($assoc) {
-                  $obj = $row;
-               } elseif ($class) {
-                  $obj = new $class($row);
-               } elseif ($clone) {
-                  $obj = clone $clone;
-                  $obj->map(new \flat\data\rules(['data'=>$row]));
-               }
-               if ($assoc || $class || $clone) {
-                  if (!$callback) $result[]=$obj;
-               }
+         } else
+         if (is_object($record)) {
+            $clone = $record;
+         }
+         while($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            //var_dump($row);
+            if ($callback) $callback($row);
+            if ($assoc) {
+               $obj = $row;
+            } elseif ($class) {
+               $obj = new $class($row);
+            } elseif ($clone) {
+               $obj = clone $clone;
+               $obj->map(new \flat\data\rules(['data'=>$row]));
             }
-            if (!$callback && ($assoc || $class || $clone)) {
-               return $result;
+            if ($assoc || $class || $clone) {
+               if (!$callback) $result[]=$obj;
             }
+         }
+         if (!$callback && ($assoc || $class || $clone)) {
+            return $result;
          }
          if (!$callback) return [];
          return;
