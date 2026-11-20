@@ -2807,3 +2807,21 @@ unchanged.
 - The consumer-impact entry for MOD-107 now also names the retired listener class.
 - Documentation only.
 
+## MOD-170 — Full API comparison (Reflection); one undocumented change found
+
+- The owner asked for the API check behind "drop-in replacement" to cover return types and
+  constants, and to be saved. New tool `tests/tools/apidump.php` (`dump` and `compare`)
+  loads every class under `src/flat` with PHP's Reflection, one class per process, and
+  compares kind, parent, interfaces, constants, properties and methods (modifiers,
+  parameters with types and defaults, return types). New in `notes/`: `API-V1.5.5.json`,
+  `API-V2.72.0.json` (the dumps) and `API-COMPARISON.md` (every difference with a verdict).
+- Result: nothing that worked in `v1.5.5` was removed and no parameter or return type
+  changed. Differences: `rand::__invoke()` default (KD-72), `curl\config::$request_method`
+  declared default (KD-70), constants `s3::multipart_min_size` and `xml\encode::flat_xml_ver`,
+  added constant `validate::RETIRED`, the two empty files removed in MOD-125, classes that
+  could not load before and now do, and one protected method that became static.
+- The static method (`native::_get_ormkey()`) was not in the consumer-impact document; entry
+  added (MOD-170 there). `RELEASE-NOTES.md` now cites the comparison and mentions the S3 change.
+- Not compared: behavior, private members, classes that cannot be loaded.
+- No change to flat's source or tests.
+

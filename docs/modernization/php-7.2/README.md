@@ -70,6 +70,7 @@ For a person or an agent picking this up:
 
 [notes/](notes/): How each area is tested, its deliberate quirks and decisions; lasting reference
 
+- [notes/API-COMPARISON.md](notes/API-COMPARISON.md): The public API of `v1.5.5` against `v2.72.0`, compared by Reflection, every difference with a verdict; the two full dumps are `notes/API-V1.5.5.json` and `notes/API-V2.72.0.json`. Read it when: checking the "drop-in replacement" claim.
 - [notes/COLLECTIONS-ROUTING-CLI.md](notes/COLLECTIONS-ROUTING-CLI.md): Collections, routing controller, CLI. Read it when: working on those areas.
 - [notes/DATA-XML.md](notes/DATA-XML.md): Data objects, XML encoding/decoding (incl. the 0.3 format). Read it when: working on those areas.
 - [notes/DATABASE-ASSETS-MINIFIER.md](notes/DATABASE-ASSETS-MINIFIER.md): PDO, Mongo, assets, JavaScript minifier. Read it when: working on those areas.

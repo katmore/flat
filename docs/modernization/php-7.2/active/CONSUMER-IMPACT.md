@@ -485,6 +485,12 @@ Every known-defect fix changes behavior a consumer might have relied on.
 - After: Returns the requested version (v3/v5 are deterministic); `$uuid()` is still a random v4
 - Search consumer code for: UUID objects used as callables: `$u(` with arguments
 
+### MOD-170 — Native session handler key method
+
+- Before: `\flat\data\orm\driver\session\handler\native::_get_ormkey()` was an instance method that the class itself also called statically (`self::_get_ormkey()`)
+- After: It is `final protected static`. Calls through `$this->_get_ormkey()` still work (PHP allows it); it cannot be overridden either way (`final`). Found by the API comparison in `notes/API-COMPARISON.md`; the original change was made while restoring the legacy session driver (MOD-092, MOD-100) and was not recorded here
+- Search consumer code for: subclasses of the native session handler calling `_get_ormkey(`
+
 ### MOD-165 (KD-79) — Unsupported API methods
 
 - Before: A request method the resource does not implement (for example `POST` to a resource that only implements `GET`) made `set_input()` return a `no_interface` (405) response without calling the response handler. Applications whose handler writes the HTTP response, such as flat-webapp, sent an empty `200`

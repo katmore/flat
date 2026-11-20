@@ -8,11 +8,13 @@ will be `v2.73.0`, `v2.74.0`, `v2.80.0`, and so on.
 ## Upgrading from 1.x: a drop-in replacement
 
 v2.72.0 is meant to be a drop-in replacement for `v1.5.5`, and the public API is the same.
-Comparing the two versions, about 1,300 public and protected classes and methods
-exist in both with the same parameters. The exceptions are one unfinished,
-thread-based alert listener that could not run without the pthreads extension (it
-is no longer declared), and the default value of `rand::__invoke()` (part of a bug
-fix, below). The PHP requirement is unchanged: `>=7.2.1`.
+Every class, method, property and constant of the two versions was compared with PHP's
+Reflection (parameter types, defaults, return types and constant values included): nothing
+that worked in `v1.5.5` was removed, and no parameter or return type changed. The only
+differences are one unfinished, thread-based alert listener that could not run without the
+pthreads extension (it is no longer declared), a few default and constant values changed
+by bug fixes (below), and one protected method that became `static`. The comparison is in
+`docs/modernization/php-7.2/notes/API-COMPARISON.md`. The PHP requirement is unchanged: `>=7.2.1`.
 
 What did change is behavior, almost all of it bug fixes: things that did not work
 now work as documented. That is the point of the release, and it means a result that
