@@ -53,7 +53,7 @@ wide tables); never delete a document.
 
 ## 2. State at handoff
 
-- **flat:** `master` is at `b628c0c` and is the owner's. `php-7.2` holds the content of the
+- **flat:** `master` is at `ac6a6cf` (`v1.72.1`) when this was written and is the owner's. `php-7.2` holds the content of the
   point releases `v1.72.1` (commit `ac6a6cf`) and `v1.72.2` (the tip of `php-7.2`; an unsupported
   API method answers 500, MOD-186). The owner creates the tags and Releases, so check whether
   they exist. `php-7.3` is the work branch, created by the owner and merged with `php-7.2`
