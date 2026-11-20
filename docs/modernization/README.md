@@ -34,6 +34,7 @@ The major version follows semantic versioning. It stays at 1 while the public AP
  * Rerun the whole test suite (and the integration tests, once the owner has asked for them) for every phase; record failures, skips and coverage gaps.
  * Never weaken an assertion or drop a check to make an upgrade pass. Changing tested behavior is a deliberate maintainer decision.
  * Keep runtime-compatibility fixes separate from behavior changes in each phase's CHANGELOG.md and in the commits, and list consumer-visible changes in the phase's `active/CONSUMER-IMPACT.md`.
+ * At the end of every phase, re-run `composer audit --locked` on both test locks and revisit the dismissed Dependabot alerts: record which can be fixed on the new PHP, and give the maintainer the list to reopen or resolve.
  * The maintainer decides when a phase is complete. Creating or merging release branches and moving to the next PHP version need the maintainer's explicit go-ahead.
 
 ### Conventions

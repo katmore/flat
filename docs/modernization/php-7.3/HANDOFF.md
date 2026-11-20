@@ -70,9 +70,16 @@ wide tables); never delete a document.
   sockets are built from pinned commits; Composer 2.2 pinned by digest), `docker/docker-compose.yml`
   (MongoDB 4.0 and RabbitMQ 3.8.34 by digest), and `tests/docker/runtime` and `tests/docker/tools`
   (Composer manifests and locks, platform pinned to PHP 7.2.34 and `ext-mongodb` 1.16.2).
-- **Dependabot:** one alert fixed, four to be dismissed by the owner (fixes need PHP 8.1 or
-  later). Re-run `composer audit --locked` on both locks at the end of your phase and update the
-  note in your phase folder: a newer PHP may allow newer packages.
+- **Dependabot:** alert 1 is fixed (MOD-178). Alerts 2, 3, 4 and 5 could not be fixed on PHP 7.2
+  and were dismissed by the owner on GitHub as "tolerable risk" with a comment pointing at the
+  note (the owner believes this went through; the agent cannot read alerts, so the exact state is
+  unconfirmed). Dismissed alerts do not come back by themselves, so this phase must revisit them:
+  at the end of the phase run `composer audit --locked` on both locks (a newer PHP allows newer
+  packages) and, for each of the four, record in a note in your phase folder whether a fixed
+  release is now installable and whether the lock moved to it. List the ones that can now be
+  fixed for the owner, who reopens or resolves them on GitHub; do the same at every later phase,
+  and expect the library fixes (`mongodb/mongodb` 1.21.x) to need PHP 8.1 or later. The old
+  note is `docs/modernization/php-7.2/notes/DEPENDENCY-ALERTS.md`.
 - **flat-webapp (`katmore/flat-webapp`):** also has a `php-7.3` branch (created by the owner;
   at `202644b`, the same as its `php-7.2`). It requires flat `1.72.*` and
   its Docker setup is development-only. See section 4. The owner writes its application code.
@@ -280,7 +287,8 @@ Do not fix these as part of the PHP step; raise them with the owner if they matt
   changed nothing a caller can see.
 - Every behavior change has a consumer-impact entry and a change-log entry; modernizations and
   compatibility fixes are recorded in their own categories.
-- Dependency audit re-run and the note updated for the new PHP.
+- Dependency audit re-run on both locks; the note in the phase folder says, for each dismissed
+  alert, whether it can be fixed now, and the owner has the list to reopen or resolve them.
 - flat-webapp's `php-7.3` branch runs on PHP 7.3 against flat (section 4).
 - Release notes are drafted for the owner; `bin/check-docs` is clean.
 - Open questions are answered or recorded, and the owner has declared the phase complete.
