@@ -61,7 +61,9 @@ wide tables); never delete a document.
   The old `modernize-26` branch was retired on 2026-11-20 and no longer exists. Release `v1.72.0` is published (tag `619adcb`).
 - **Tests:** 1,428 unit tests pass on PHP 7.2.34 with 100% class, method and line coverage
   (1,062 methods; the line count is in the coverage report), PHPUnit 8.5. The inventory is generated; see the phase README.
-- **Numbering (decision D3):** keep counting across phases: next MOD-187, KD-80, Q37 (the first change-log entry of this phase should record the retirement of `modernize-26` and the branch-model update of `docs/modernization/README.md`, 2026-11-20).
+- **Deferred to v2.X:** `docs/modernization/DEFERRED-V2.md` lists what the owner holds back for
+  the v2.X releases (first item: the 405 with an `Allow` header). Do not do those in this phase.
+- **Numbering (decision D3):** keep counting across phases: next MOD-188, KD-80, Q37 (the first change-log entry of this phase should record the retirement of `modernize-26` and the branch-model update of `docs/modernization/README.md`, 2026-11-20).
 - **Known defects:** 79 tracked, all resolved.
 - **Test environment (all in the repository):** `docker/Dockerfile` (PHP 7.2 base image pinned
   by digest; xdebug, ImageMagick and imagick, the MongoDB extension 1.16.2 with libmongoc, and
