@@ -2692,3 +2692,15 @@ unchanged.
   view: foreground and detached both start, the broken page answers 500, and the
   log shows the PHP fatal.
 - No change to flat's source or tests.
+
+## MOD-162 — flat-webapp Docker setup is development-only
+
+- In the `php-7.2` branch of `katmore/flat-webapp` (owner's request): the
+  `--production` option, the `PHP_INI` build argument and compose variable are
+  removed; the image always uses PHP's `php.ini-development` plus `zz-errors.ini`.
+  The README now says plainly that the Docker setup is for local development, is
+  not production-ready and does not try to be. This supersedes the production mode
+  of MOD-158 (entry kept as written).
+- Checked from a clean copy: `--production` is rejected (usage, status 2); development
+  behavior unchanged (generic pages, errors in the live log, `E_ALL`, display off).
+- No change to flat's source or tests.
