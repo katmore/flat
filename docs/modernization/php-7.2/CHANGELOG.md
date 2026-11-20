@@ -2930,3 +2930,13 @@ unchanged.
   PHP 8.1 or newer; they are listed, with whether flat is exposed, in `notes/DEPENDENCY-ALERTS.md`.
 - Undo: revert this commit and rebuild the image.
 
+
+## MOD-179 — master, modernize-26 and php-7.2 brought to the same commit
+
+- At the owner's explicit request, Claude merged `master` into `modernize-26` (merge commit
+  `cd1bada`, no file changes: the only commit `master` had extra was the owner's earlier merge
+  of `modernize-26`) and fast-forwarded `master`, `modernize-26` and `php-7.2` to it. This puts
+  the Dependabot fix (MOD-178: MongoDB extension 1.16.2, library 1.16.1) into the default
+  branch, where GitHub reads the lock file, so alert 1 should close on the next scan.
+- The tag `v1.72.0` is unchanged (`619adcb`) and is an ancestor of all three branches.
+- Documentation only.
