@@ -290,7 +290,16 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
          }
          return $response;
       } else {
-         return new \flat\api\response\no_interface;
+         // No interface matches the request method: answer 405, and tell the response
+         // handler as for every other response (it is what writes the status and body).
+         $response = new \flat\api\response\no_interface;
+         if (is_callable($response_handler)) {
+            $handler_return = $response_handler($response,$method);
+            if ($handler_return instanceof \flat\api\response) {
+               $response = $handler_return;
+            }
+         }
+         return $response;
       }
    }
 

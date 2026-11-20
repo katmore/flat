@@ -46,6 +46,26 @@ class ControllerTest extends TestCase
         api::set_method('GET'); $this->assertSame(42, $api->set_input($input)->value);
         api::set_accept_mtype('application/json'); $this->assertSame('application/json', api::get_accept_mtype());
     }
+    public function testUnsupportedMethodAnswersMethodNotAllowedThroughTheResponseHandler()
+    {
+        $api = new GetApi; $input = new \flat\input\map(['value'=>42]);
+        $seen = [];
+        $response = $api->set_input($input,'POST',function ($response,$method) use (&$seen) { $seen[] = [$response,$method]; });
+        $this->assertInstanceOf(response\no_interface::class,$response);
+        $this->assertSame(405,$response->get_status()->get_code());
+        $this->assertCount(1,$seen); // the handler is told, as it is for every other response
+        $this->assertSame($response,$seen[0][0]);
+        $this->assertSame('POST',$seen[0][1]);
+        // the handler may replace the response, as for any other
+        $replacement = new response\ok(['replaced'=>true]);
+        $this->assertSame($replacement,$api->set_input($input,'DELETE',function () use ($replacement) { return $replacement; }));
+        // the shared (static) handler is used when none is passed
+        api::set_response_handler(function ($response) use (&$seen) { $seen[] = $response; });
+        $api->set_input($input,'PUT');
+        $this->assertInstanceOf(response\no_interface::class,end($seen));
+        // methods the resource does implement are unaffected
+        $this->assertSame(42,$api->set_input($input,'GET')->value);
+    }
     public function testAnyInterfaceFallsBackToSpecificMethodOrUsesItsOwnResponse()
     {
         $input = new \flat\input\map(['value'=>42]); $api = new AnyApi;

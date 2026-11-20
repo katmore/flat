@@ -531,7 +531,8 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
             return \flat\core\config::get("design/root_dir");
         } catch (\Exception $e) {
         }
-        return __DIR__ . str_replace('/', DIRECTORY_SEPARATOR, '/../../../../../../../app/Resources/design/tmpl');
+        // The folder that contains the 'tmpl' design folder: the design lookup adds DESIGN_PREFIX ('tmpl') itself.
+        return __DIR__ . str_replace('/', DIRECTORY_SEPARATOR, '/../../../../../../../app/Resources/design');
     }
 
     /**

@@ -107,7 +107,15 @@ class ControllerTest extends TestCase
             $p->setValue(null,$p->getName() === 'base_dir' ? null : []);
         }
         try {
-            $this->assertStringEndsWith('/app/Resources/design/tmpl',tmpl::get_design_root_dir());
+            // The fallback is the folder that CONTAINS the 'tmpl' folder: the design lookup adds 'tmpl' itself.
+            $this->assertStringEndsWith('/app/Resources/design',tmpl::get_design_root_dir());
+            try {
+                tmpl::display('missing_design');
+                $this->fail('a design that does not exist must be rejected');
+            } catch (\flat\core\controller\tmpl\exception\bad_design $e) {
+                $this->assertRegExp('#/app/Resources/design/tmpl/+missing_design\.php#',$e->getMessage());
+                $this->assertStringNotContainsString('/tmpl/tmpl',$e->getMessage());
+            }
             foreach (['base_dir'=>$this->root,'searched'=>['design/root_dir'=>true],'value'=>['design/root_dir'=>$this->root]] as $name=>$value) {
                 $p = new \ReflectionProperty(\flat\core\config::class,$name); $p->setAccessible(true); $p->setValue(null,$value);
             }
