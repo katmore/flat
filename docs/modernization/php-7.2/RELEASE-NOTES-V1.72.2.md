@@ -20,6 +20,8 @@ PHP 7.2.34.
 - Tooling only: PHPUnit's result cache moved to `build/tests/`, and `docker/bin/test` sends
   Docker build progress to stderr so `docker/bin/test inventory` prints clean Markdown.
 
+A correct 405 with an `Allow` header is planned for a v2.X release (`docs/modernization/DEFERRED-V2.md`).
+
 ## Upgrading from v1.72.1
 
 Nothing to change in your code. If you check for a `405` from an API resource that lacks a

@@ -3038,3 +3038,10 @@ unchanged.
 - Tests: `ControllerTest` and `ResponseTest` assert 500. Documented in the class docblock.
 - Verified: `docker/bin/test all --coverage`, 1,428 tests, 100% (see MOD-185).
 - Regenerated `TEST-INVENTORY.md` (one test renamed).
+
+## MOD-187 — Deferred-to-v2 list
+
+- New `docs/modernization/DEFERRED-V2.md` collects changes held back for the `v2.X` releases (the
+  maintainer plans them after the phases catch up with the current PHP major version). First
+  item: answer a correct 405 with an `Allow` header for an unsupported API method (the design
+  worked out for MOD-186 is written down there). Documentation only.

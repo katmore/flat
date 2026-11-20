@@ -43,3 +43,4 @@ While the modernization runs, every phase keeps its own branch (`php-7.2`, `php-
  * `TEST-INVENTORY.md` is generated, never edited by hand: `docker/bin/test inventory <phase>/active/KNOWN-DEFECTS.md > <phase>/TEST-INVENTORY.md`.
  * Markdown is written to read well both rendered and as plain text: headings, short paragraphs and lists; tables only for short, regular data (a few short cells per row), never for sentences.
  * How to run the tests, for every phase: [TESTING.md](./TESTING.md).
+ * Changes wanted but held back for the `v2.X` releases: [DEFERRED-V2.md](./DEFERRED-V2.md).
