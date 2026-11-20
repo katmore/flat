@@ -489,7 +489,16 @@ class asset extends core\controller\asset implements core\app
         }
 
         if ($flags & self::SYSTEM_PATH_ABSOLUTE) {
+            /*
+             * APPROVED EXCEPTION to prime directive 2 (never hide an error from PHP).
+             * The maintainer wrote this in 2019 and approved keeping it on 2026-11-20: the absolute
+             * path is best effort ("if possible"), and realpath() can raise a notice or warning here
+             * (for example under open_basedir). The original path is then kept. Do not remove or
+             * copy this pattern; see "Approved exceptions" in AGENTS.md.
+             */
+            $error_reporting = error_reporting(error_reporting() & ~E_NOTICE & ~E_WARNING);
             !empty($realpath = realpath($system_path)) && $system_path = $realpath;
+            error_reporting($error_reporting);
         }
 
         return $system_path;

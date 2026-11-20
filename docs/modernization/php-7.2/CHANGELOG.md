@@ -2981,3 +2981,19 @@ unchanged.
   `RELEASE-NOTES-V1.72.1.md`; the owner creates the tag and the Release.
 - Documentation only.
 
+
+## MOD-183 — Two approved exceptions to prime directive 2 restored
+
+- The maintainer reviewed the two places MOD-180 had cleaned and decided to keep both, as
+  approved exceptions to prime directive 2 (2026-11-20). `src/flat/asset.php` has the 2019
+  `error_reporting` mask around `realpath()` again, exactly as written. `src/flat/core/session.php`
+  masks notices and warnings the same way around the `session_start()` retry loop (this replaces
+  the 2017 `@`; `error_reporting` is restored right after the loop). Both carry a comment block
+  that says so.
+- Result: library behavior is again identical to v1.72.0 (no new warnings anywhere). The two
+  MOD-180 consumer-impact entries are superseded by two MOD-183 entries saying the change was
+  taken back. MOD-180 stays as written.
+- `AGENTS.md` gains an "Approved exceptions" list; nothing may be added to it except by the
+  maintainer.
+- The session failure test now checks that PHP raises the failures, that none passes the mask,
+  and that `error_reporting` is restored.

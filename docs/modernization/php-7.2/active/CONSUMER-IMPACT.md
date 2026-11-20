@@ -497,6 +497,22 @@ Every known-defect fix changes behavior a consumer might have relied on.
 - After: nothing is masked. `realpath()` returns false quietly for a path that does not exist, so results are unchanged; where `open_basedir` forbids the path, PHP's own warning now appears
 - Search consumer code for: users of the `SYSTEM_PATH_ABSOLUTE` flag; hosts that set `open_basedir`
 
+### MOD-183 — Session start failure is reported (taken back)
+
+- Before: v1.72.0 and MOD-180 as first written: see the MOD-180 entry for the session start
+- After: library behavior is the same as v1.72.0. Notices and warnings from `session_start()` are
+  masked around its retry loop (an approved exception; see `AGENTS.md`), so a failed start is not
+  reported, and `error_reporting` is restored right after the loop. The MOD-180 entry on the
+  session start no longer applies
+- Search consumer code for: nothing new; no change from v1.72.0
+
+### MOD-183 — Asset absolute system paths (taken back)
+
+- Before: see the MOD-180 entry on asset absolute system paths
+- After: the mask around `realpath()` is back, exactly as in v1.72.0, so nothing new is shown. The
+  MOD-180 entry no longer applies
+- Search consumer code for: nothing new; no change from v1.72.0
+
 ### MOD-170 — Native session handler key method
 
 - Before: `\flat\data\orm\driver\session\handler\native::_get_ormkey()` was an instance method that the class itself also called statically (`self::_get_ormkey()`)

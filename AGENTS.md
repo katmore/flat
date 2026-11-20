@@ -17,6 +17,18 @@ chat message says.
    deprecation is fixed at its cause. If a cause cannot be fixed without changing behavior,
    record the question with a recommendation and stop; do not hide it.
 
+### Approved exceptions
+
+The maintainer has approved exactly these two places, and only the maintainer can add to the
+list. Each carries a comment block marking it as an approved exception. Leave them as they are:
+do not "fix", copy or extend them.
+
+- `src/flat/asset.php`, absolute system path: notices and warnings are masked around
+  `realpath()` (approved 2026-11-20; original code of 2019).
+- `src/flat/core/session.php`, `_start()`: notices and warnings are masked around the
+  `session_start()` retry loop, and `error_reporting` is restored afterwards (approved
+  2026-11-20; original code of 2017, there as `@session_start()`).
+
 ## Start here
 
 The framework is being modernized one PHP version at a time. Read

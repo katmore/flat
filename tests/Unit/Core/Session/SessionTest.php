@@ -187,17 +187,25 @@ namespace flat\test\Unit\Core\Session {
         public function testFailedStorageRetriesAndReturnsNoId()
         {
             ini_set('session.save_path', $this->directory.'/missing');
-            $warnings = [];
-            set_error_handler(function ($level,$message) use (&$warnings) { $warnings[] = $message; return true; });
+            $before = error_reporting();
+            $raised = []; $shown = [];
+            // PHP calls a handler for every raised error and the handler decides what to do with
+            // it by checking error_reporting(), as PHP's own display does.
+            set_error_handler(function ($level,$message) use (&$raised,&$shown) {
+                $raised[] = $message;
+                if (error_reporting() & $level) $shown[] = $message;
+                return true;
+            });
             try { $id = session::start([]); } finally { restore_error_handler(); }
             $this->assertSame('', $id);
             $this->assertSame(PHP_SESSION_NONE, session_status());
             $this->assertTrue(isset($_SESSION));
-            // The failure is reported, not hidden: each of the 100 attempts says why it failed.
-            $this->assertNotEmpty($warnings);
-            $this->assertStringContainsString('session_start(): open(', $warnings[0]);
-            $this->assertStringContainsString('/missing/sess_', $warnings[0]);
-            $this->assertSame(0, count($warnings) % 100);
+            // Approved exception (see AGENTS.md): the failures are raised by PHP but masked, and
+            // error_reporting is back to what it was.
+            $this->assertNotEmpty($raised);
+            $this->assertStringContainsString('session_start(): open(', $raised[0]);
+            $this->assertSame([], $shown);
+            $this->assertSame($before, error_reporting());
         }
     }
 }

@@ -198,6 +198,15 @@ class session {
          if (!empty($session_id)) {
             session_id($session_id);
          }
+         /*
+          * APPROVED EXCEPTION to prime directive 2 (never hide an error from PHP).
+          * The maintainer wrote this in 2017 (originally as @session_start()) and approved keeping
+          * it, in this form, on 2026-11-20: session_start() can raise a notice or warning in rare
+          * cases (a session that was already started elsewhere), and this loop retries. Notices and
+          * warnings are masked only around the loop, and error_reporting is restored afterwards.
+          * Do not remove or copy this pattern; see "Approved exceptions" in AGENTS.md.
+          */
+         $error_reporting = error_reporting(error_reporting() & ~E_NOTICE & ~E_WARNING);
          for($i=0;$i<100;$i++) {
             $newstart = session_start();
             if ($newstart) {
@@ -205,6 +214,7 @@ class session {
             }
             usleep(10000);
          }
+         error_reporting($error_reporting);
       }
       if (!isset($_SESSION)) {
          throw new session\exception\no_session_var();
