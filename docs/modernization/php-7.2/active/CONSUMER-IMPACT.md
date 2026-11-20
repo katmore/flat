@@ -123,6 +123,7 @@ review; otherwise the summary comes from the change log entry.
 
 - Before: Registered the `listener` callback, then always raised `Error` (publish on an unassigned driver)
 - After: Throws `BadMethodCallException` immediately; no listener is registered. Code catching `\Error` no longer catches it (verified)
+- Also: the unfinished pthread class `\flat\event\alert\listener` (it extended `\Thread`, which needs the pthreads extension) is no longer declared, so its `run()` and `__destruct()` are gone
 
 ### MOD-067 — Mongo collection-name setters
 

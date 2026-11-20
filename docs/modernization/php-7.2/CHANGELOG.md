@@ -2791,3 +2791,19 @@ unchanged.
   modernization README ("Branches during and after the project").
 - Documentation only.
 
+## MOD-169 — API compatibility check; release notes say "drop-in"
+
+- The owner asked that the release be described as a drop-in replacement for
+  `v1.5.5`. Before writing that, the public API was compared between `v1.5.5` and
+  `php-7.2`: every non-private class and method declared under `src/flat` (third-party
+  `vendor` folders excluded) was extracted with PHP's tokenizer and compared by name
+  and parameter list (about 1,300 symbols each side; return types, constants and
+  properties were not compared). Result: 2 removed (`run()` and `__destruct()` of the
+  retired pthread `\flat\event\alert\listener`, MOD-107), 1 changed (the default of
+  `rand::__invoke()`, KD-72), 3 added. The two files deleted in MOD-125 were 0-byte
+  and declared no class.
+- `RELEASE-NOTES.md` now presents the release as a drop-in replacement with that
+  evidence, and says what did change (behavior: bug fixes).
+- The consumer-impact entry for MOD-107 now also names the retired listener class.
+- Documentation only.
+
