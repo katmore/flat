@@ -83,6 +83,8 @@ repository broke this, and had to be replaced.)
 - A README says what is true now. History (what was retired, why something changed, who
   decided) goes in the phase's `CHANGELOG.md` or a note, never in a README. Keep every
   document short: do not repeat what is recorded elsewhere, link to it.
+  (Why this rule exists: my human scolded me and was not pleased, because I put branch history in
+  a README and wrote more than was needed.)
 - Never delete documents. A finished or replaced document moves to the phase's
   `history/` folder and starts with a banner saying what replaced it.
 - Generated files are never edited by hand. Regenerate the phase's

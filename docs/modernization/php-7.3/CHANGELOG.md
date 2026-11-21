@@ -116,3 +116,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   main README's php-7.3 progress line is one line. `AGENTS.md` (flat and flat-webapp) gets a
   rule: a README says what is true now, history goes in a changelog or note, documents stay
   short. Maintainer's request, after `da67d6c`. No other change.
+
+## MOD-195 — Documentation: the reason for the MOD-194 rule is written into AGENTS.md
+
+- Kind: documentation. At the maintainer's request, the rule added in MOD-194 now says why it
+  exists: the maintainer scolded the agent and was not pleased. flat and flat-webapp
+  `AGENTS.md`. No other change.
