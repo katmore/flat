@@ -109,3 +109,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   the live model (phase branches, `master` merged by the maintainer). The retirement stays
   recorded in `AGENTS.md` and in [HANDOFF.md](HANDOFF.md).
 - Nothing else changed.
+
+## MOD-194 — Documentation: shorter READMEs, new rule against history in READMEs
+
+- Kind: documentation. The php-7.3 README status is cut to three lines that link here; the
+  main README's php-7.3 progress line is one line. `AGENTS.md` (flat and flat-webapp) gets a
+  rule: a README says what is true now, history goes in a changelog or note, documents stay
+  short. Maintainer's request, after `da67d6c`. No other change.

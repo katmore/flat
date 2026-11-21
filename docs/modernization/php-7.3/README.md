@@ -7,28 +7,11 @@ project plan, branch model and the rules every phase follows are in
 
 ## Status: in progress (started 2026-11-20)
 
-- **Environment:** moved to PHP 7.3.33 (MOD-189). The exact image, tools and extension pins are in
-  [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md).
-- **Tests:** 1,429 tests pass on PHP 7.3.33 (the 1,428 of php-7.2 plus the version test), with
-  100% class, method and line coverage (331 classes, 1,062 methods, 8,047 lines).
-  How to run them: [../TESTING.md](../TESTING.md).
-- **Runtime fixes:** one, in the vendored JShrink minifier (MOD-190). A `php -l` scan of every
-  PHP file (it reports compile-time warnings) finds nothing else, and searches for the other
-  7.3 changes found nothing.
-- **Modernizations:** one so far, `array_key_first()` (MOD-191, [notes/MODERNIZATIONS.md](notes/MODERNIZATIONS.md)).
-- **API comparison with v1.72.0:** no difference ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
-- **Mutation sample:** 80% caught, 8 survivors not triaged ([active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)).
-- **Dependency audit:** the four alerts are all still open and cannot be fixed on 7.3; every fixed
-  release needs PHP 8.1 ([notes/DEPENDENCY-ALERTS.md](notes/DEPENDENCY-ALERTS.md)).
-- **flat-webapp:** moved to PHP 7.3.33 on its `php-7.3` branch, against flat's `php-7.3` branch;
-  it runs and the log is clean ([notes/CONSUMER-CHECK.md](notes/CONSUMER-CHECK.md)).
-- **Prime directive 2 search (end of phase):** the only `error_reporting` change is the approved
-  mask in `src/flat/asset.php`; there is no `@` and no ignore list in the code. Two findings are
-  open questions: Q38 (two tests switch off the AWS SDK's deprecation notice) and Q39 (a test
-  skips itself when run as root). See [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
-- **Open owner questions:** Q37, Q38 and Q39. Q38 and Q39 must be answered before the phase can
-  be declared complete.
-- **Not done yet:** release notes for `v1.73.0` (draft them once the questions are answered).
+- The suite passes on PHP 7.3.33 with 100% coverage; what changed and why is in
+  [CHANGELOG.md](CHANGELOG.md), the environment in [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md).
+- Open owner questions: Q37, Q38 and Q39 ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
+  Q38 and Q39 must be answered before the phase can be declared complete.
+- Not done yet: release notes for `v1.73.0`.
 
 ## Resume here
 

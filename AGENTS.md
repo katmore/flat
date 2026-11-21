@@ -80,6 +80,9 @@ repository broke this, and had to be replaced.)
   short paragraphs and lists. A table is for short, regular data (a few
   columns of a few words each); never put sentences in cells or let a row run
   past a normal line width. If it would need HTML to look right, restructure it.
+- A README says what is true now. History (what was retired, why something changed, who
+  decided) goes in the phase's `CHANGELOG.md` or a note, never in a README. Keep every
+  document short: do not repeat what is recorded elsewhere, link to it.
 - Never delete documents. A finished or replaced document moves to the phase's
   `history/` folder and starts with a banner saying what replaced it.
 - Generated files are never edited by hand. Regenerate the phase's
