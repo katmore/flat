@@ -191,3 +191,18 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   objects do not have (`data`, `message`) and asserted `null`, which raised a notice. It now asserts
   the property is absent (`assertObjectNotHasAttribute`), which is stricter, and reads an absent
   `message` with `?? ''` where it only checks the text.
+
+## MOD-204 — Line endings: every file is LF, and Git enforces it
+
+- Kind: whitespace only, no content change (`git diff --ignore-cr-at-eol` is empty).
+- 21 tracked files in flat had CRLF line endings (1,442 lines): 19 under `src/flat`
+  (`orm.php`, the `orm/` folder, `exception.php`, `core/collection/controller.php`,
+  `core/controller/data.php`, `core/exception/`, `cloud/authorize/`, `db/crud.php`,
+  `data/validate_failure_provider.php`, `api/response/invalid_status.php`) and two vendored files
+  (`vendor/azuyalabs/yasumi/dateQuery.php`, `vendor/neitanod/forceutf8/Encoding.php`).
+  All are now LF; no other tracked file had CRLF. flat-webapp had none.
+- Why it was missed: flat had no `.gitattributes`, and its `.gitignore` ignores every dotfile
+  except two, so one would have been ignored. Now `.gitattributes` holds `* text=auto eol=lf`
+  (the same line as flat-webapp) and `.gitignore` allows it.
+- Verified: `git ls-files --eol` shows every text file as `i/lf w/lf`; `docker/bin/test all
+  --coverage`, 1,432 tests, 100%.

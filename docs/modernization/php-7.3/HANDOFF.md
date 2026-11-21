@@ -238,11 +238,8 @@ Environment:
   user 1000 when started as root; keep it that way.
 
 Editing:
-- 19 PHP files in `src/` and `tests/` use CRLF line endings (for example
-  `src/flat/core/collection/controller.php`, `src/flat/orm.php`, `src/flat/exception.php`). An
-  editor or script that converts them hides the real change. Edit them byte-preservingly and check
-  that `git diff --stat` is small. List them with a search for carriage returns before editing a
-  file you have not touched.
+- Line endings are LF everywhere (`.gitattributes`, MOD-204). If `git ls-files --eol` shows a CRLF file,
+  something went wrong: tell the owner.
 - Shell pitfall: `grep -c pattern file && python ...` skips the Python when the count is 0. Use
   `;` or separate commands. A test that cannot fail proves nothing: when you add or change one,
   show it failing without the fix.
