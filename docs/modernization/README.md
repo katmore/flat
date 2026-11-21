@@ -7,7 +7,7 @@ Development on the flat framework largely halted in 2020. There are various issu
 This modernization is taking place in multiple deliberate steps to avoid consumer disruption.
 
 The phases are going to correspond with the major versions of PHP starting at PHP 7.2 up to present released version.
-Each phase has its own branch, i.e. **php-7.2** for php-7.2 (the last PHP version flat was using when development stalled in 2020). **master** carries the latest completed phase; the maintainer merges a phase into it when the phase is done. (History: a separate integration branch, **modernize-26**, was used until 2026-11-20 and was then retired and deleted by the maintainer, because it only duplicated `master` plus the phase branch. Old documents that mention it describe how things were at the time and stay as written.)
+Each phase has its own branch, i.e. **php-7.2** for php-7.2 (the last PHP version flat was using when development stalled in 2020). **master** carries the latest completed phase; the maintainer merges a phase into it when the phase is done.
 
 ### flat-webapp branches
 The sample application `katmore/flat-webapp` follows the same pattern: a **php-7.2** branch (created from its `master`, commit `7186607`), later phases in their own branches, and each finished phase merged to its `master` by the maintainer. Its `devel` branch is being retired. Integration tests against it: [php-7.2/active/WEBAPP-TESTS.md](./php-7.2/active/WEBAPP-TESTS.md).
