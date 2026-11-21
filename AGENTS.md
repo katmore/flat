@@ -35,6 +35,16 @@ are: do not "fix", copy or extend them.
   `AWS_SUPPRESS_PHP_DEPRECATION_WARNING` (approved 2026-11-21). It cannot be fixed before the
   php-8.1 phase, which must remove it.
 
+## Error reporting
+
+Every development and test environment reports everything: `error_reporting` is `E_ALL` (PHP's
+own `php.ini-development`), PHPUnit turns notices, warnings and deprecations into failures
+(`phpunit.xml.dist`), and neither warnings nor deprecations are ever suppressed or put off. When
+you build or change an environment, check that it holds: a `php.ini` exists and `error_reporting()`
+is `E_ALL` (the image build verifies it). Fix a deprecation when you find it, in the same phase:
+do not put off what can be done now. (Why: a test image without a `php.ini` hid every notice and
+deprecation for two phases.)
+
 ## Start here
 
 The framework is being modernized one PHP version at a time. Read

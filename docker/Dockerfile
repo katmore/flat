@@ -45,9 +45,12 @@ RUN --mount=type=secret,id=proxy_ca \
     cd /tmp/mongodb; phpize; ./configure --with-mongodb-ssl=no; make -j2; make install; \
     docker-php-ext-enable mongodb; rm -rf /tmp/mongodb /tmp/mongodb.tar.gz /tmp/mongoc.tar.gz
 RUN docker-php-ext-install sockets
+# Report everything, always: PHP's own development configuration (error_reporting = E_ALL).
+# Never lower this, and never switch off deprecations or warnings (AGENTS.md).
+RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
 COPY --from=dependencies /opt/flat-test /opt/flat-test
 COPY tests/docker/bootstrap.php /opt/flat-test/bootstrap.php
 RUN chmod -R a+rX /opt/flat-test
-RUN php -r 'if (PHP_VERSION !== "7.3.33") { throw new RuntimeException("Unexpected PHP version"); } foreach (["curl","dom","imagick","mongodb","pdo_sqlite","sockets","xdebug"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: ".$extension); } } require "/opt/flat-test/tools/vendor/autoload.php"; require "/opt/flat-test/runtime/vendor/autoload.php"; echo "Verified PHP ".PHP_VERSION." and locked test dependencies\n";'
+RUN php -r 'if (PHP_VERSION !== "7.3.33") { throw new RuntimeException("Unexpected PHP version"); } if (error_reporting() !== E_ALL) { throw new RuntimeException("error_reporting is not E_ALL"); } foreach (["curl","dom","imagick","mongodb","pdo_sqlite","sockets","xdebug"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: ".$extension); } } require "/opt/flat-test/tools/vendor/autoload.php"; require "/opt/flat-test/runtime/vendor/autoload.php"; echo "Verified PHP ".PHP_VERSION." and locked test dependencies\n";'
 WORKDIR /app
 ENTRYPOINT ["php", "/opt/flat-test/tools/vendor/bin/phpunit", "--bootstrap", "/opt/flat-test/bootstrap.php"]
