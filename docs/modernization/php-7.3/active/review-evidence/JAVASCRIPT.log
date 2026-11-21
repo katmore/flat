@@ -1,0 +1,12 @@
+{"src":"var n=8; var result=n / \"2\" / 2;","out":"var n=8;var result=n /\"2\"/ 2;","before":"2","after":"2"}
+{"src":"var n=8; var result=n / '2' / 2;","out":"var n=8;var result=n /'2'/ 2;","before":"2","after":"2"}
+{"src":"var result=/\"q\"/.test('\"q\"');","out":"var result=/\"q\"/.test('\"q\"');","before":"true","after":"true"}
+{"src":"var result=/'q'/.test(\"'q'\");","out":"var result=/'q'/.test(\"'q'\");","before":"true","after":"true"}
+{"src":"var result=/\"q\"/","out":"var result=/\"q\"/","before":"/\"q\"/","after":"/\"q\"/"}
+{"src":"var result=/'q'/","out":"var result=/'q'/","before":"/'q'/","after":"/'q'/"}
+{"src":"var x=1; // comment\nvar result=x;","out":"var x=1;var result=x;","before":"1","after":"1"}
+{"src":"var a=1;/**/var result=a;","out":"var a=1;var result=a;","before":"1","after":"1"}
+{"src":"var result=/[\"/]/.test(\"/\");","out":"var result=/[\"/]/.test(\"/\");","before":"true","after":"true"}
+{"src":"var/**/result=1;","out":"varresult=1;","before":"1","after":"undefined"}
+{"src":"function f(){return/**/1;} var result=f();","out":"function f(){return1;}var result=f();","before":"1","after":"ReferenceError: return1 is not defined"}
+{"src":"var x=1; var result=x+/**/+x;","out":"var x=1;var result=x++x;","before":"2","after":"SyntaxError: Unexpected identifier 'x'"}

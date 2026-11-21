@@ -1,0 +1,19 @@
+tests/docker/runtime/composer.json is valid for simple usage with Composer but has
+strict errors that make it unable to be published as a package
+See https://getcomposer.org/doc/04-schema.md for details on the schema
+# Publish errors
+- name : The property name is required
+- description : The property description is required
+# General warnings
+- No license specified, it is recommended to do so. For closed-source software you may use "proprietary" as license.
+- require.authorizenet/authorizenet : exact version constraints (1.9.9) should be avoided if the package follows semantic versioning
+- require.php-amqplib/php-amqplib : exact version constraints (2.12.3) should be avoided if the package follows semantic versioning
+- require.azuyalabs/yasumi : exact version constraints (1.8.0) should be avoided if the package follows semantic versioning
+tests/docker/tools/composer.json is valid for simple usage with Composer but has
+strict errors that make it unable to be published as a package
+See https://getcomposer.org/doc/04-schema.md for details on the schema
+# Publish errors
+- name : The property name is required
+- description : The property description is required
+# General warnings
+- No license specified, it is recommended to do so. For closed-source software you may use "proprietary" as license.

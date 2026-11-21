@@ -1,0 +1,1 @@
+Unable to process this request{"type":"php-error","name":"error","line":5,"file":"/evidence/handled-fatal.php","message":"review fatal canary","errno":256,"trace":["[internal] AppWeb\\{closure}()","/evidence/handled-fatal.php(5) trigger_error()"]}

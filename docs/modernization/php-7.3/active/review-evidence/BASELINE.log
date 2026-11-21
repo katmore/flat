@@ -1,0 +1,58 @@
+ Network flat-review-baseline_default  Creating
+ Network flat-review-baseline_default  Created
+ Container flat-review-baseline-mongo-1  Creating
+ Container flat-review-baseline-rabbitmq-1  Creating
+ Container flat-review-baseline-rabbitmq-1  Created
+ Container flat-review-baseline-mongo-1  Created
+ Container flat-review-baseline-mongo-1  Starting
+ Container flat-review-baseline-rabbitmq-1  Starting
+ Container flat-review-baseline-mongo-1  Started
+ Container flat-review-baseline-rabbitmq-1  Started
+ Container flat-review-baseline-rabbitmq-1  Waiting
+ Container flat-review-baseline-mongo-1  Waiting
+ Container flat-review-baseline-mongo-1  Healthy
+ Container flat-review-baseline-rabbitmq-1  Healthy
+PHPUnit 8.5.56 by Sebastian Bergmann and contributors.
+
+.............................................................   61 / 1432 (  4%)
+.............................................................  122 / 1432 (  8%)
+.............................................................  183 / 1432 ( 12%)
+.............................................................  244 / 1432 ( 17%)
+.............................................................  305 / 1432 ( 21%)
+.............................................................  366 / 1432 ( 25%)
+.............................................................  427 / 1432 ( 29%)
+.............................................................  488 / 1432 ( 34%)
+.............................................................  549 / 1432 ( 38%)
+.............................................................  610 / 1432 ( 42%)
+.............................................................  671 / 1432 ( 46%)
+.............................................................  732 / 1432 ( 51%)
+.............................................................  793 / 1432 ( 55%)
+.............................................................  854 / 1432 ( 59%)
+.............................................................  915 / 1432 ( 63%)
+.............................................................  976 / 1432 ( 68%)
+............................................................. 1037 / 1432 ( 72%)
+............................................................. 1098 / 1432 ( 76%)
+............................................................. 1159 / 1432 ( 80%)
+............................................................. 1220 / 1432 ( 85%)
+............................................................. 1281 / 1432 ( 89%)
+............................................................. 1342 / 1432 ( 93%)
+............................................................. 1403 / 1432 ( 97%)
+.............................                                 1432 / 1432 (100%)
+
+Time: 24.89 seconds, Memory: 60.00 MB
+
+OK (1432 tests, 6357 assertions)
+
+Generating code coverage report in Clover XML format ... done [1.9 seconds]
+
+Generating code coverage report in PHP format ... done [33 ms]
+ Container flat-review-baseline-rabbitmq-1  Stopping
+ Container flat-review-baseline-mongo-1  Stopping
+ Container flat-review-baseline-mongo-1  Stopped
+ Container flat-review-baseline-mongo-1  Removing
+ Container flat-review-baseline-mongo-1  Removed
+ Container flat-review-baseline-rabbitmq-1  Stopped
+ Container flat-review-baseline-rabbitmq-1  Removing
+ Container flat-review-baseline-rabbitmq-1  Removed
+ Network flat-review-baseline_default  Removing
+ Network flat-review-baseline_default  Removed

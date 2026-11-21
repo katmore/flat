@@ -1,0 +1,8 @@
+{"input":[],"old":[],"new":[],"equal":true}
+{"input":[null,false,0],"old":{"a":null,"b":false,"c":0},"new":{"a":null,"b":false,"c":0},"equal":true}
+{"input":{"a":null,"b":2},"old":{"a":null,"b":2},"new":{"a":null,"b":2},"equal":true}
+{"input":{"2":"x","9":"y"},"old":[],"new":[],"equal":true}
+{"xml_options":{"dump_ok":false,"checksum":[]},"equal":true}
+{"xml_options":{"dump_ok":true,"checksum":[]},"equal":true}
+{"xml_options":{"dump_ok":false,"checksum":["md5"]},"equal":true}
+Baseline diagnostics (captured explicitly for differential comparison): [[8192,"The each() function is deprecated. This message will be suppressed on further calls"],[2,"htmlspecialchars() expects parameter 1 to be string, resource given"],[2,"htmlspecialchars() expects parameter 1 to be string, resource given"],[2,"htmlspecialchars() expects parameter 1 to be string, resource given"],[8,"Undefined variable: input"]]

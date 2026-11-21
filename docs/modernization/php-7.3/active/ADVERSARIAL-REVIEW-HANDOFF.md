@@ -18,12 +18,12 @@ already missed things once (see "Where I expect weaknesses"), so do not trust it
 
 ## What is under review
 
-Frozen targets (later v1.73.1 work is out of scope):
+Frozen review targets:
 
 - flat: `v1.72.2` (`c257625`) to `8bee551` (`master` and `php-7.3`), 47 commits.
 - flat-webapp: `202644b` to `9b8cc1a` (`master` and `php-7.3`), 13 commits.
-- What the review confirms is fixed in the owner's v1.73.1 release, not in v1.73.0. The owner then
-  works through the findings one at a time with the author, who proposes options for each.
+- This review is part of preparing v1.73.1, which is not released yet. The owner works through
+  confirmed findings one at a time with the author, who proposes options for each.
 - Start with `docs/modernization/php-7.3/README.md`, `HANDOFF.md` (the plan the author followed)
   and `CHANGELOG.md` (MOD-188 to MOD-214; every change has an entry). The claims are in
   `RELEASE-NOTES.md`.

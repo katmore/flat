@@ -290,3 +290,12 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: documentation, owner's decision. The adversarial review handoff now says the review
   targets the frozen v1.73.0 state, is report-only, and that confirmed findings are fixed in v1.73.1,
   one at a time with options from the author. No other change.
+
+## MOD-217 — Documentation: independent adversarial review
+
+- Kind: documentation, owner's request. Corrected the review handoff: v1.73.1 is unreleased
+  and this review prepares it; removed the exclusion of v1.73.1 work. This clarifies MOD-216.
+- [Review](active/ADVERSARIAL-REVIEW.md) records eight findings from source inspection,
+  test-assertion review and Docker experiments, with evidence and reproduction steps. No
+  source, tests or locks changed. The full framework suite passes; the webapp HTTP run was
+  blocked by dependency-download HTTP 403 responses. Fixes await owner review.

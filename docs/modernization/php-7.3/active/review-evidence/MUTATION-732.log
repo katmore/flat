@@ -1,0 +1,40 @@
+ Network flat-review-mutate2_default  Creating
+ Network flat-review-mutate2_default  Created
+ Container flat-review-mutate2-rabbitmq-1  Creating
+ Container flat-review-mutate2-mongo-1  Creating
+ Container flat-review-mutate2-rabbitmq-1  Created
+ Container flat-review-mutate2-mongo-1  Created
+ Container flat-review-mutate2-mongo-1  Starting
+ Container flat-review-mutate2-rabbitmq-1  Starting
+ Container flat-review-mutate2-rabbitmq-1  Started
+ Container flat-review-mutate2-mongo-1  Started
+ Container flat-review-mutate2-mongo-1  Waiting
+ Container flat-review-mutate2-rabbitmq-1  Waiting
+ Container flat-review-mutate2-mongo-1  Healthy
+ Container flat-review-mutate2-rabbitmq-1  Healthy
+baseline run...
+[1/12] killed   src/flat/core/collection/controller.php:157  true  ->  false
+[2/12] killed   src/flat/core/xml/encode.php:122  !  ->  (removed)
+[3/12] killed   src/flat/db/driver/mongo/crud.php:217  !  ->  (removed)
+[4/12] killed   src/flat/core/xml/encode.php:132  ===  ->  !==
+[5/12] killed   src/flat/db/driver/mongo/crud.php:396  !  ->  (removed)
+[6/12] invalid  src/flat/core/xml/encode.php:501  1  ->  0
+[7/12] SURVIVED src/flat/core/xml/encode.php:327  1  ->  0
+[8/12] killed   src/flat/db/driver/mongo/crud.php:555  ||  ->  &&
+[9/12] SURVIVED src/flat/core/xml/encode.php:655  false  ->  true
+[10/12] killed   src/flat/core/xml/encode.php:505  !  ->  (removed)
+[11/12] killed   src/flat/core/xml/encode.php:167  ===  ->  !==
+[12/12] killed   src/flat/db/driver/mongo/crud.php:231  &&  ->  ||
+# Mutation probe
+
+- Source files: 3; candidate mutants: 331; run: 12 (seed 732, limit 12, with services); invalid (did not compile): 1.
+- Killed: 9; timed out (counted as killed): 0; **survived: 2** of 11 valid mutants (81.8% caught).
+
+## Survivors
+
+Each needs triage: a missing assertion (add a test) or an equivalent change (no observable effect).
+
+| File | Line | Mutation | Source line |
+| --- | --- | --- | --- |
+| `src/flat/core/xml/encode.php` | 327 | `1` to `0` | `if (is_numeric(substr($attr,0,1))) $attr="hash_".$attr;` |
+| `src/flat/core/xml/encode.php` | 655 | `false` to `true` | `if ($xml !== null && $xml !== false) return $xml;` |
