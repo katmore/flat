@@ -1,0 +1,181 @@
+Framework: docker/bin/test all --offline --coverage
+PHPUnit 8.5.56 by Sebastian Bergmann and contributors.
+
+.............................................................   61 / 1462 (  4%)
+.............................................................  122 / 1462 (  8%)
+.............................................................  183 / 1462 ( 12%)
+.............................................................  244 / 1462 ( 16%)
+.............................................................  305 / 1462 ( 20%)
+.............................................................  366 / 1462 ( 25%)
+.............................................................  427 / 1462 ( 29%)
+.............................................................  488 / 1462 ( 33%)
+.............................................................  549 / 1462 ( 37%)
+.............................................................  610 / 1462 ( 41%)
+.............................................................  671 / 1462 ( 45%)
+.............................................................  732 / 1462 ( 50%)
+.............................................................  793 / 1462 ( 54%)
+.............................................................  854 / 1462 ( 58%)
+.............................................................  915 / 1462 ( 62%)
+.............................................................  976 / 1462 ( 66%)
+............................................................. 1037 / 1462 ( 70%)
+............................................................. 1098 / 1462 ( 75%)
+............................................................. 1159 / 1462 ( 79%)
+............................................................. 1220 / 1462 ( 83%)
+............................................................. 1281 / 1462 ( 87%)
+............................................................. 1342 / 1462 ( 91%)
+............................................................. 1403 / 1462 ( 95%)
+...........................................................   1462 / 1462 (100%)
+
+Time: 21.2 seconds, Memory: 60.00 MB
+
+OK (1462 tests, 6454 assertions)
+
+Generating code coverage report in Clover XML format ... done [3.35 seconds]
+
+Generating code coverage report in PHP format ... done [72 ms]
+ Container flat-remaining-all-mongo-1  Stopping
+ Container flat-remaining-all-rabbitmq-1  Stopping
+ Container flat-remaining-all-mongo-1  Stopped
+ Container flat-remaining-all-mongo-1  Removing
+ Container flat-remaining-all-mongo-1  Removed
+ Container flat-remaining-all-rabbitmq-1  Stopped
+ Container flat-remaining-all-rabbitmq-1  Removing
+ Container flat-remaining-all-rabbitmq-1  Removed
+ Network flat-remaining-all_default  Removing
+ Network flat-remaining-all_default  Removed
+
+Webapp: COMPOSER_PREFER_INSTALL=source docker/bin/test
+PHPUnit\n";'
+#27 9.499 Verified PHP 7.3.33 and PHPUnit
+#27 DONE 9.5s
+
+#28 [tests stage-1 6/6] WORKDIR /app
+#28 DONE 8.7s
+
+#29 [tests] exporting to image
+#29 exporting layers
+#29 exporting layers 12.9s done
+#29 writing image sha256:caaf2539f314fbb3db9d92436e9e1b73598ff7631cb6bc8e01d6248cec2fba2e
+#29 writing image sha256:caaf2539f314fbb3db9d92436e9e1b73598ff7631cb6bc8e01d6248cec2fba2e done
+#29 naming to docker.io/library/flat-webapp-tests done
+#29 DONE 12.9s
+
+#30 [tests] resolving provenance for metadata file
+#30 DONE 0.0s
+ flat-webapp-web  Built
+ flat-webapp-tests  Built
+ Network flat-webapp-test_default  Creating
+ Network flat-webapp-test_default  Created
+ Container flat-webapp-test-web-1  Creating
+ Container flat-webapp-test-web-1  Created
+ Container flat-webapp-test-web-1  Starting
+ Container flat-webapp-test-web-1  Started
+ Container flat-webapp-test-web-1  Waiting
+ Container flat-webapp-test-web-1  Healthy
+PHPUnit 8.5.57 by Sebastian Bergmann and contributors.
+
+................................................................. 65 / 66 ( 98%)
+.                                                                 66 / 66 (100%)
+
+Time: 389 ms, Memory: 6.00 MB
+
+OK (66 tests, 196 assertions)
+
+Scratch empty-input parser: InputTest plus existing unsupported-method body checks
+PHPUnit 8.5.56 by Sebastian Bergmann and contributors.
+
+.....FFFF...FF                                                    14 / 14 (100%)
+
+Time: 371 ms, Memory: 6.00 MB
+
+There were 6 failures:
+
+1) Tests\Functional\InputTest::testTheRealRequestBodyIsParsed with data set #0 ('POST', 'application/json', '{"k":"v","zero":0,"flag":false}', array('v', 0, false))
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 (
+-    'k' => 'v'
+-    'zero' => 0
+-    'flag' => false
+-)
++Array &0 ()
+
+/app/tests/Functional/InputTest.php:13
+phpvfscomposer:///opt/flat-test/tools/vendor/phpunit/phpunit/phpunit:97
+
+2) Tests\Functional\InputTest::testTheRealRequestBodyIsParsed with data set #1 ('PUT', 'application/json; charset=utf-8', '{"nested":{"k":"v"}}', array(array('v')))
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 (
+-    'nested' => Array &1 (
+-        'k' => 'v'
+-    )
+-)
++Array &0 ()
+
+/app/tests/Functional/InputTest.php:13
+phpvfscomposer:///opt/flat-test/tools/vendor/phpunit/phpunit/phpunit:97
+
+3) Tests\Functional\InputTest::testTheRealRequestBodyIsParsed with data set #2 ('DELETE', 'text/plain', '{"inferred":"json"}', array('json'))
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 (
+-    'inferred' => 'json'
+-)
++Array &0 ()
+
+/app/tests/Functional/InputTest.php:13
+phpvfscomposer:///opt/flat-test/tools/vendor/phpunit/phpunit/phpunit:97
+
+4) Tests\Functional\InputTest::testTheRealRequestBodyIsParsed with data set #3 ('POST', 'application/x-www-form-urlencoded', 'a=1&b=a%2Bb%26c&items%5B%5D=x...B%5D=y', array('1', 'a+b&c', array('x', 'y')))
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 (
+-    'a' => '1'
+-    'b' => 'a+b&c'
+-    'items' => Array &1 (
+-        0 => 'x'
+-        1 => 'y'
+-    )
+-)
++Array &0 ()
+
+/app/tests/Functional/InputTest.php:13
+phpvfscomposer:///opt/flat-test/tools/vendor/phpunit/phpunit/phpunit:97
+
+5) Tests\Functional\InputTest::testTheRealRequestBodyIsParsed with data set #7 ('POST', 'application/json', '5', array(5))
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 (
+-    'data' => 5
+-)
++Array &0 ()
+
+/app/tests/Functional/InputTest.php:13
+phpvfscomposer:///opt/flat-test/tools/vendor/phpunit/phpunit/phpunit:97
+
+6) Tests\Functional\InputTest::testGetUsesQueryFieldsInsteadOfTheBody
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 (
+-    'k' => 'query'
+-)
++Array &0 ()
+
+/app/tests/Functional/InputTest.php:32
+phpvfscomposer:///opt/flat-test/tools/vendor/phpunit/phpunit/phpunit:97
+
+FAILURES!
+Tests: 14, Assertions: 36, Failures: 6.

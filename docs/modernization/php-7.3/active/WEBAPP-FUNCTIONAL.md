@@ -1,40 +1,31 @@
-# Functional tests in flat-webapp
+# Tests in flat-webapp
 
-The owner asked for these on 2026-11-21 and chose to keep them in flat-webapp, which settles
-the question the old plan left open ([../../php-7.2/active/WEBAPP-TESTS.md](../../php-7.2/active/WEBAPP-TESTS.md),
-written when they were to live in flat). They are on flat-webapp's `php-7.3` branch.
+Run `docker/bin/test` in flat-webapp. It installs the tracked application lock, starts Apache
+on PHP 7.3.33, runs PHPUnit 8.5 tests and checks the server log. Docker is the only host
+requirement. The installed flat version and commit must match the locked published release.
 
-## How they run
+## Coverage
 
-`docker/bin/test [PHPUnit arguments]` in flat-webapp: Apache with the application (the dev image,
-working tree mounted) and a PHPUnit 8.5 container on PHP 7.3.33, linked by Compose. The tests
-(in flat-webapp's tests folder, Functional) send real HTTP requests with curl through a small helper class. The run
-fails on a test failure, and also when the server log shows any PHP warning, notice,
-deprecation or fatal error. Test dependencies have their own lock, kept with the tests.
+- 36 HTTP cases exercise the shipped application's views, API, method overrides and assets.
+- Nine HTTP cases observe actual parsed JSON/form bodies and GET input through a test-only
+  endpoint. The endpoint is enabled only in the test Compose stack, which has no host port.
+- 21 isolated checks cover native/structured/truncated error logs, the log command's exit status,
+  native fatal paths, generic error-handler responses and the installed dependency lock.
 
-## What is covered (36 tests, shipped application only)
+The body checks were challenged with a scratch parser returning empty input for every request.
+Six new checks failed while the five existing unsupported-method body checks still passed.
 
-- View: home on seven path spellings, unknown views (404), POST and HEAD, the stylesheet.
-- API: the `example` resource (GET, query string as input, HEAD, a GET body ignored), the
-  forbidden catch-all (403), methods without a handler (500), the GET method override.
-- Shown able to fail: with the greeting and the home template changed, 11 tests fail.
+## Error contracts
 
-## Not covered, and why
+The server-log gate rejects native PHP messages, including catchable/recoverable fatals, and
+application JSON error records. No expected errors are ignored in the application server log.
 
-- Request bodies cannot be observed: `example` implements GET only, so POST, PUT and DELETE
-  answer 500 whatever they carry. Covering input parsing, a real POST, PUT or DELETE and the
-  fatal-error page needs test-only resources and templates mounted while testing (not added; the
-  owner chose the shipped application only).
-- `PATCH`: support is deferred to v2.X (owner); the fatal error it causes is Q43.
+Separate PHP child processes deliberately exercise malformed JSON, unknown PATCH, handled user
+fatal errors and handled exceptions. Tests assert their exit status, body and complete diagnostic
+record; handled errors also assert HTTP status 500. The child diagnostics are asserted test
+outputs, not discarded server messages.
 
-## Known behaviors of the application
-
-flat-webapp's `app/` and `web/` model what the one known consumer does: they change only for a
-literal bug (owner, 2026-11-21). Two findings of the tests:
-
-- Q43: `PATCH` and other unknown methods end in a PHP fatal error and a 500. A 500 is fine; flat
-  has no 501 response. `PATCH` itself waits for v2.X. Not in the tests (the server-log check would
-  fail, and an allowlist is not allowed).
-- Q44: malformed JSON was silently treated as empty input, a literal bug in `InputTrait`. Fixed with
-  one line (a `json_last_error()` check): it now ends in the app's own PHP fatal error. Not in the
-  tests (the server-log check rejects fatal errors).
+Application behavior is retained: malformed JSON and unknown PATCH end in native fatal errors;
+recognized methods without a handler answer the existing JSON 500. PATCH support and a correct
+405 remain deferred to v2.X. Changes and validation: MOD-222 to MOD-224 in
+[../CHANGELOG.md](../CHANGELOG.md).

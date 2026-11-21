@@ -339,3 +339,33 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - New tool-level controls reproduced two missed-reference failures before the fix. All three
   tool regression tests now pass, including parameter-type changes and legacy-baseline handling.
   No framework API change. Inventory regenerated.
+
+## MOD-222 — Lock flat-webapp to the published PHP 7.3 release
+
+- Kind: reproducibility fix, finding 8. flat-webapp now requires flat 1.73.* and tracks its
+  application Composer lock. It resolves v1.73.0 at 8bee551; tests verify the installed version
+  and reference against that lock, and reconcile existing installs before running.
+- Development Apache workers use the configured host UID/GID so private checkouts are readable.
+  Test HTTP traffic bypasses external proxies for the local web service. An explicit Composer
+  source-download option supports environments without archive access; test images omit Git
+  histories. PHP remains 7.3.33 and application behavior is unchanged.
+
+## MOD-223 — Reject structured errors in flat-webapp's log gate
+
+- Kind: tooling fix, finding 5. The runner now uses a tested PHP log checker for native PHP
+  messages (including catchable/recoverable fatals), application JSON errors and truncated error
+  records. Its command exits nonzero for errors; ordinary access/startup logs pass.
+- Isolated native PHP tests exercise the real fatal/exception handlers and ensure their emitted
+  records are rejected by the gate. The application error handlers and responses are unchanged.
+
+## MOD-224 — Observe parsed webapp input and test failure contracts
+
+- Kind: tests, finding 6. A test-only HTTP endpoint exposes the actual InputTrait result for
+  JSON, inferred JSON, form data and GET input. No app/ or web/ code changed. Native malformed-JSON
+  and PATCH paths are checked in separate PHP processes with exact expected failures.
+- A scratch empty-input mutant causes six new input checks to fail; the five existing
+  unsupported-method body checks still pass. The fixture is enabled only in the test stack,
+  which exposes no host port.
+- Validation: the full framework suite passes 1,462 tests, 6,454 assertions and 100% reported
+  coverage. flat-webapp passes 66 tests, 196 assertions, including real HTTP checks and the strict
+  server-log gate. Composer validates the application lock. No release was published.

@@ -14,16 +14,12 @@ with Node to check semantics. Scratch probes and clones remain at /tmp/flat-revi
 The first four findings are existing defects exposed by this review, not regressions introduced
 by the PHP version step. They matter because the suite passes while missing these behaviors.
 
-Follow-up: findings 3 and 4 are fixed in MOD-220 (KD-91, KD-92). Nested form value handling
-is a separate open decision, Q45 in the known-defects document.
+## Fix status
 
-Follow-up: finding 7 is fixed in MOD-221; reference-return controls now exercise the comparator.
-
-## Findings
-
-Follow-up: finding 1 is fixed as KD-89 (MOD-218). The findings below describe the reviewed commits.
-Finding 2 is fixed as KD-90 (MOD-219): cURL and Markdown HTML parsing preserve caller reporting;
-XPath diagnostics retain their existing exception path.
+Findings 1 to 8 are addressed in MOD-218 to MOD-224 of [../CHANGELOG.md](../CHANGELOG.md).
+Q45 remains open for the separate nested-form-value contract; reserved form key encoding is fixed.
+Current validation passes 1,462 framework tests and 66 webapp tests. The findings below describe
+the original reviewed commits. [Validation and mutation evidence](review-evidence/WEBAPP-FIXES.log).
 
 ### 1. P1: Empty JavaScript comments can turn working programs into broken code
 
@@ -159,7 +155,7 @@ require. Do not change the consumer's application behavior to address this tooli
   not three demonstrated missing tests. [731](review-evidence/MUTATION-731.log),
   [732](review-evidence/MUTATION-732.log). This sample does not prove overall mutation adequacy.
 
-## Limits and remaining checks
+## Original review limits
 
 - The webapp HTTP baseline could not complete: GitHub dependency downloads returned CONNECT
   tunnel HTTP 403 and Composer fell back to source downloads. Stopped that install after repeated

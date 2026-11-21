@@ -96,6 +96,12 @@ fixed at its cause; "behavior" says what a caller can see.
 - Category: A. Finding 4, fixed (MOD-220): reject absent schemes through `bad_param` before
   accessing the parsed scheme. Four missing-scheme URL cases now exercise the public constructor.
 
+### KD-93 - Nested form values reach urlencode as arrays
+
+- Category: B, pending Q45. A cURL request with form data `['items'=>['x']]` raises the native
+  `urlencode()` argument warning. Rejecting nested values explicitly or supporting bracketed
+  fields changes the contract; the key-encoding fix does not choose between them.
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered. Q45 is open.
