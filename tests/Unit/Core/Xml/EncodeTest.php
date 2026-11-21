@@ -140,13 +140,10 @@ class EncodeTest extends TestCase
         $this->assertStringContainsString('data:application/php-object-dump;base64,',$doc->saveXML());
         $this->assertEquals($object,encode::unserialize($doc->saveXML()));
     }
-    public function testResourceFallbackWithAndWithoutDumpPreservesWarnings()
+    public function testResourceFallbackWithAndWithoutDumpRaisesNoWarnings()
     {
-        $handle = fopen('php://memory','r+'); $warnings=[];
-        set_error_handler(function ($level,$message) use (&$warnings) {
-            if (strpos($message,'htmlspecialchars() expects parameter 1 to be string') === 0 || $message === 'Undefined variable: input') { $warnings[]=$message; return true; }
-            return false;
-        });
+        // Any PHP warning or notice fails the test (PHPUnit converts them).
+        $handle = fopen('php://memory','r+');
         try {
             $plain = encode::serialize($handle,['dump_ok'=>false,'checksum'=>[]]);
             $this->assertStringContainsString('<!--unserializable-->',$plain);
@@ -155,8 +152,7 @@ class EncodeTest extends TestCase
             $this->assertStringContainsString('extxs:encoding="none"',$dump);
             $legacy = encode::serialize($handle,['dump_ok'=>false,'checksum'=>['md5']]);
             $this->assertStringContainsString('<fx:data md5="'.md5(''). '">', $legacy);
-        } finally { restore_error_handler(); fclose($handle); }
-        $this->assertCount(4,$warnings);
+        } finally { fclose($handle); }
     }
     public function testLegacyIndexAndScalarTypeDecoding()
     {

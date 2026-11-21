@@ -649,11 +649,14 @@ class encode implements \flat\core\serializer,\flat\core\status\beta {
             
         } else {
            if (empty($data) && $data !== '0') return "<!--empty-->";
-           $xml = htmlspecialchars($data, ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8');
+           // Only scalars can be escaped; a resource (the one non-scalar that reaches here) used to make
+           // htmlspecialchars() warn and return null, and still falls through to the code below (KD-88).
+           $xml = is_scalar($data) ? htmlspecialchars($data, ENT_SUBSTITUTE | ENT_XML1 | ENT_DISALLOWED,'UTF-8') : null;
            if ($xml !== null && $xml !== false) return $xml;
             $checksum_attr = "";
             foreach ($checksum as $algo) {
-               if ($hash = hash($algo,$input)) {
+               // The checksum covers empty data: this used the undefined variable $input, which hashes ''. Output kept (Q42, KD-88).
+               if ($hash = hash($algo,'')) {
                   if (!hexdec($hash)) continue;
                   $attr = preg_replace("/[^a-zA-Z0-9]+/", "", $algo);
                   if (is_numeric(substr($attr,0,1))) $attr="hash_".$attr;
