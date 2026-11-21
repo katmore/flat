@@ -223,10 +223,10 @@ class minifier
                      // check for some regex that breaks stuff
                      if ($this->a === '/' && ($this->b === '\'' || $this->b === '"')) {
                         $this->saveRegex();
-                        // Was `continue;`, which inside a switch is equivalent to `break` and
-                        // raises a warning on PHP 7.3. Written as `break` it behaves exactly as
-                        // before (Q37 in docs/modernization/php-7.3 asks about the intent).
-                        break;
+                        // Skip the getReal() below: saveRegex() has already read the next real
+                        // character into $this->b. (Was `continue;` inside two switches, which acted
+                        // like `break` and made that second getReal() drop a character; KD-80.)
+                        continue 3;
                      }
 
                      echo $this->a;
