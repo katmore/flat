@@ -331,3 +331,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   values need the separate Q45 decision.
 - Focused request tests reproduced one encoding failure and four native notice errors before
   the fixes; all 33 request cases now pass. Consumer impact recorded and inventory regenerated.
+
+## MOD-221 — API comparison detects reference returns
+
+- Kind: tooling fix, finding 7. Dump ReflectionMethod::returnsReference and compare changes in
+  either direction. Existing baselines without this flag default to value returns.
+- New tool-level controls reproduced two missed-reference failures before the fix. All three
+  tool regression tests now pass, including parameter-type changes and legacy-baseline handling.
+  No framework API change. Inventory regenerated.

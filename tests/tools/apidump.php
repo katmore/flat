@@ -62,6 +62,7 @@ function describe_class($name) {
         $out['methods'][$m->getName()] = [
             'visibility' => $m->isPublic() ? 'public' : 'protected', 'static' => $m->isStatic(),
             'abstract' => $m->isAbstract(), 'final' => $m->isFinal(),
+            'returns_reference' => $m->returnsReference(),
             'params' => $params, 'return' => type_string($m->getReturnType()),
         ];
     }
@@ -145,8 +146,11 @@ if ($mode === 'compare') {
         foreach ($o['methods'] as $m => $v) {
             if (!isset($n['methods'][$m])) { $note('method removed', "`$name::$m()`"); continue; }
             $w = $n['methods'][$m];
-            foreach (['visibility', 'static', 'abstract', 'final'] as $k) {
-                if ($v[$k] !== $w[$k]) $note('method modifier changed', "`$name::$m()`: $k " . json_encode($v[$k]) . ' to ' . json_encode($w[$k]));
+            foreach (['visibility', 'static', 'abstract', 'final', 'returns_reference'] as $k) {
+                // Older dumps predate the return-reference flag; their value-returning
+                // methods compare as false without producing differences everywhere.
+                $before = $v[$k] ?? false; $after = $w[$k] ?? false;
+                if ($before !== $after) $note('method modifier changed', "`$name::$m()`: $k " . json_encode($before) . ' to ' . json_encode($after));
             }
             if ($v['return'] !== $w['return']) $note('return type changed', "`$name::$m()`: " . json_encode($v['return']) . ' to ' . json_encode($w['return']));
             if (count($v['params']) !== count($w['params'])) {

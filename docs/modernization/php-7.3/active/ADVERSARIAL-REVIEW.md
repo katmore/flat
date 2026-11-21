@@ -17,6 +17,8 @@ by the PHP version step. They matter because the suite passes while missing thes
 Follow-up: findings 3 and 4 are fixed in MOD-220 (KD-91, KD-92). Nested form value handling
 is a separate open decision, Q45 in the known-defects document.
 
+Follow-up: finding 7 is fixed in MOD-221; reference-return controls now exercise the comparator.
+
 ## Findings
 
 Follow-up: finding 1 is fixed as KD-89 (MOD-218). The findings below describe the reviewed commits.

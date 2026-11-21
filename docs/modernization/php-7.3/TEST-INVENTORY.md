@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 787 test methods in 93 files, running 1459 test cases.
+- 790 test methods in 94 files, running 1462 test cases.
 - 129 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -1049,6 +1049,12 @@ PHPUnit's `--list-tests-xml` and converts it with
 ### `tests/Unit/Tmpl/DesignOutputTest.php` (1)
 
 - `testResolvableOutputForwardsTheOptionalTemplateData` (line 11)
+
+### `tests/Unit/Tools/ApiDumpTest.php` (3)
+
+- `testReferenceReturnChangesAreDetectedInBothDirections` (line 41)
+- `testOlderValueReturnBaselineStillComparesWithoutDifferences` (line 47)
+- `testParameterTypeControlStillFindsAChange` (line 54)
 
 ### `tests/Unit/Vendor/EncodingTest.php` (4)
 
