@@ -39,7 +39,7 @@ class ResponseTest extends TestCase
         $this->assertSame('value',(new response\ok((object) ['key'=>'value']))->key);
         $this->assertSame([1,2],(new response\ok([1,2]))->data);
         $this->assertSame('scalar',(new response\ok('scalar'))->data);
-        $this->assertNull((new response\ok(0))->data);
+        $this->assertObjectNotHasAttribute('data',new response\ok(0));
         $status = new \flat\api\status\forbidden;
         $this->assertSame($status,(new response\map($status))->get_status());
         $this->assertSame('value',(new response\map($status,['key'=>'value']))->key);
@@ -72,8 +72,8 @@ class ResponseTest extends TestCase
             $this->assertSame($data,(new response\not_found('missing',$data))->data);
         }
         $this->assertSame('missing',(new response\not_found('missing',['key'=>'value']))->data->message);
-        $this->assertNull((new response\not_found('',null,999))->message);
-        $this->assertNull((new response\unauthorized('',null,999))->message);
+        $this->assertObjectNotHasAttribute('message',new response\not_found('',null,999));
+        $this->assertObjectNotHasAttribute('message',new response\unauthorized('',null,999));
     }
     public function testBadRequestAddsMessageToArrayOrObjectWithoutOverwritingIt()
     {
@@ -122,15 +122,15 @@ class ResponseTest extends TestCase
     public function testResponsesCreatedOutsideAnyClassNameNoCaller()
     {
         list($bad,$forbidden) = response_made_outside_a_class();
-        $this->assertStringNotContainsString('indicated by',(string) $bad->message);
-        $this->assertStringNotContainsString('indicated by',(string) $forbidden->message);
+        $this->assertStringNotContainsString('indicated by',(string) ($bad->message ?? ''));
+        $this->assertStringNotContainsString('indicated by',(string) ($forbidden->message ?? ''));
     }
     public function testTraceOffsetLandingOnAFunctionNamesNoCaller()
     {
         // With offset 1 the named frame is the plain function, which has no class.
         list($bad,$forbidden) = responses_made_through_a_function(1);
-        $this->assertStringNotContainsString('indicated by',(string) $bad->message);
-        $this->assertStringNotContainsString('indicated by',(string) $forbidden->message);
+        $this->assertStringNotContainsString('indicated by',(string) ($bad->message ?? ''));
+        $this->assertStringNotContainsString('indicated by',(string) ($forbidden->message ?? ''));
         // With offset 0 the named frame is still the class that made the response.
         list($bad,$forbidden) = responses_made_through_a_function(0);
         $this->assertSame('Bad request indicated by ResponseMaker',$bad->message);
