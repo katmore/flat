@@ -22,7 +22,7 @@ There are two entry points with the same arguments:
   PHP 7.3 container and starts and other service containers as required.  
 
 From the repository root, run `docker/bin/test`. It builds the pinned PHP 7.3 image,
-starts the required MongoDB/RabbitMQ containers, runs the tests, then removes the
+starts the required service containers, runs the tests, then removes the
 containers and their test data. Only Docker Engine and Docker Compose are needed.
 
 ```sh
