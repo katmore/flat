@@ -137,9 +137,9 @@ the `php-7.2` branch and the `v1.72.0` tag.
      do not touch the mask.
    - `session::start()` calls plain `session_start()` in its retry loop. A failed start reports
      PHP's warning on each attempt (consumer-impact entry MOD-184).
-   - Tests and tools no longer use `@` or `/dev/null`. Keep PHPUnit's defaults (it turns notices,
-     warnings and deprecations into failures; `phpunit.xml.dist` has no setting that hides
-     them). Never add one.
+   - Tests and tools no longer use `@` or `/dev/null`. Never add a setting that hides errors.
+     Correction, 2026-11-21: PHPUnit's defaults do not make the suite see notices and
+     deprecations, because the test image has no `php.ini` (see Q40 in `active/KNOWN-DEFECTS.md`).
    - At the end of the phase search again (`error_reporting`, `ini_set`, `@`, `ignore`): only the
      asset mask may be found. Record the result in the phase change log.
 6. Scan for 7.3 problems beyond what the tests reach. The official 7.2-to-7.3 migration guide in

@@ -7,11 +7,19 @@ follows "How each fix lands" in that file. Questions continue the php-7.2 number
 
 ## Defects found in this phase
 
-None so far.
+### KD-80 - JShrink drops a character after a regex that starts with a quote
+
+- Category: A in effect (the owner confirmed the intent, Q37). `src/flat/vendor/tedious/JShrink/minifier.php`,
+  `loop()`: after `saveRegex()` a `continue;` meant "next loop pass" but, inside two nested
+  `switch` statements, only left the inner one. The loop then called `getReal()` a second time and
+  lost the character `saveRegex()` had already read: `return /'a'/.test(s);` became
+  `return /'a'/test(s);` and `return /'q'/; foo();` lost its `;`.
+- Fixed (MOD-196): `continue 3;`. Tests assert the correct output.
+- **Fixed.**
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 39 are all open.
+Each has a recommendation; "agree" is enough. Questions 37 to 39 are answered; 40 is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -24,7 +32,8 @@ Each has a recommendation; "agree" is enough. Questions 37 to 39 are all open.
     Recommend: keep `break` (no behavior change in this phase). If you want the loop
     `continue`, it goes through the known-defect process as KD-80, with a test that pins the
     input where the two differ.
-    **Open.**
+    **Answered (owner, 2026-11-21):** fix it as intended, even with a behavior change. Done as
+    KD-80 (MOD-196): `break` really did corrupt the output.
 
 38. **Two tests switch off the AWS SDK's PHP deprecation notice (prime directive 2).**
     `tests/Unit/Cloud/AwsConfigTest.php` and `tests/Unit/Cloud/S3MultipartTest.php` set the
@@ -48,7 +57,8 @@ Each has a recommendation; "agree" is enough. Questions 37 to 39 are all open.
     - (c) Remove the suppression and let the tests fail until PHP 8.1. Not recommended: a red
       suite for three phases hides real failures.
     Recommend (a). Only the owner can add to the exceptions list.
-    **Open.**
+    **Answered (owner, 2026-11-21): (a).** Both tests are now in the "Approved exceptions" list
+    of `AGENTS.md` and carry a comment block; the php-8.1 phase must remove them (MOD-198).
 
 39. **`ConfigTest` skips a test when run as root (prime directive 2).**
     `tests/Unit/Core/ConfigTest.php` (line 164),
@@ -60,4 +70,19 @@ Each has a recommendation; "agree" is enough. Questions 37 to 39 are all open.
     Recommend: replace the skip with an assertion that fails when the process is root
     (the check cannot work there), so a wrong environment is red, not silently green.
     This is a test-only change; it needs your word because it touches a rule.
+    **Answered (owner, 2026-11-21): agreed.** Done in MOD-197.
+
+40. **Errors the test environment cannot see (prime directive 2).** The test image has no
+    `php.ini`, so PHP's built-in default applies: `E_NOTICE`, `E_STRICT` and `E_DEPRECATED`
+    are off. PHPUnit 8.5 also does not turn deprecations into failures. So real notices and
+    deprecations have never shown in the suite, on 7.2 or 7.3: the earlier statements "no
+    warning, notice or deprecation" (MOD-189 to MOD-192, the handoff) only covered warnings and
+    errors. A measured run with everything on finds 19 failing unit tests in 11 places
+    (list and command: [HIDDEN-ERRORS.md](HIDDEN-ERRORS.md)); the service tests were not measured.
+    Recommend: (1) the test image uses PHP's own `php.ini-development` (E_ALL), as flat-webapp's
+    image already does, and `phpunit.xml.dist` sets `convertDeprecationsToExceptions="true"`;
+    (2) fix every cause through the known-defect process, one entry each, with the behavior
+    changes in the consumer-impact list; (3) none of this is done yet. It also affects the
+    published `v1.72.x`, so you may want to say so in the `v1.73.0` notes.
+    Not changed: it raises what the tests report, so I want your word first.
     **Open.**

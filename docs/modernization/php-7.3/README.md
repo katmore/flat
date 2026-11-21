@@ -9,8 +9,8 @@ project plan, branch model and the rules every phase follows are in
 
 - The suite passes on PHP 7.3.33 with 100% coverage; what changed and why is in
   [CHANGELOG.md](CHANGELOG.md), the environment in [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md).
-- Open owner questions: Q37, Q38 and Q39 ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
-  Q38 and Q39 must be answered before the phase can be declared complete.
+- Open owner question: Q40, errors the test environment hides ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
+  It must be answered, and what it finds fixed, before the phase can be declared complete.
 - Not done yet: release notes for `v1.73.0`.
 
 ## Resume here

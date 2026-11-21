@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 779 test methods in 93 files, running 1429 test cases.
+- 779 test methods in 93 files, running 1432 test cases.
 - 124 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -179,7 +179,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Cloud/AwsConfigTest.php` (1)
 
-- `testS3ClientConfigurationUsesRealSdkWithoutMakingRequests` (line 21)
+- `testS3ClientConfigurationUsesRealSdkWithoutMakingRequests` (line 27)
 
 ### `tests/Unit/Cloud/AwsTest.php` (8)
 
@@ -203,10 +203,10 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Cloud/S3MultipartTest.php` (4)
 
-- `testThresholdRoutesToRealSdkMultipartWorkflow` (line 49)
-- `testMultipartUploadKeepsTheContentTypeAndThresholdStaysBelowTheSinglePutLimit` (line 59)
-- `testPartFailureAbortsTheStartedUploadAndWrapsSdkFailure` (line 68)
-- `testInitiationFailureDoesNotAttemptAbortWithoutAnUploadId` (line 81)
+- `testThresholdRoutesToRealSdkMultipartWorkflow` (line 56)
+- `testMultipartUploadKeepsTheContentTypeAndThresholdStaysBelowTheSinglePutLimit` (line 66)
+- `testPartFailureAbortsTheStartedUploadAndWrapsSdkFailure` (line 75)
+- `testInitiationFailureDoesNotAttemptAbortWithoutAnUploadId` (line 88)
 
 ### `tests/Unit/Cloud/TwitterUserInfoTest.php` (2)
 
@@ -292,15 +292,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testMissingKeysAreCachedAndDefaultsPreserveTypes` (line 142)
 - `testInvalidPhpConfigIsRejectedAndCanUseDefault` (line 153)
 - `testDirectoriesAndUnreadableFilesAreNotLoadedAsConfig` (line 162)
-- `testReferenceFilesAreReadOnlyOncePerNamespace` (line 173)
-- `testEnumeratesValuesWithReferences` (line 182)
-- `testReferenceValuesAndNamespaceCaching` (line 196)
-- `testRejectsInvalidReferenceDocuments` (line 208): 4 data-provider cases
-- `testMissingReferenceDocumentAndCachedMisses` (line 226)
-- `testWholeReferencesAndNestedValues` (line 239)
-- `testMissingWholeReferenceReportsTheOriginalKey` (line 257)
-- `testInlineReferencesIncludingDuplicatesBooleansAndMalformedTokens` (line 266)
-- `testNonScalarInlineReferenceThrows` (line 282)
+- `testReferenceFilesAreReadOnlyOncePerNamespace` (line 174)
+- `testEnumeratesValuesWithReferences` (line 183)
+- `testReferenceValuesAndNamespaceCaching` (line 197)
+- `testRejectsInvalidReferenceDocuments` (line 209): 4 data-provider cases
+- `testMissingReferenceDocumentAndCachedMisses` (line 227)
+- `testWholeReferencesAndNestedValues` (line 240)
+- `testMissingWholeReferenceReportsTheOriginalKey` (line 258)
+- `testInlineReferencesIncludingDuplicatesBooleansAndMalformedTokens` (line 267)
+- `testNonScalarInlineReferenceThrows` (line 283)
 
 ### `tests/Unit/Core/Curl/ConfigTest.php` (5)
 
@@ -1054,8 +1054,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Vendor/JsMinifierTest.php` (2)
 
-- `testWhitespaceCommentsStringsAndRegexArePreservedAsNeeded` (line 8): 20 data-provider cases
-- `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 37): 3 data-provider cases
+- `testWhitespaceCommentsStringsAndRegexArePreservedAsNeeded` (line 8): 23 data-provider cases
+- `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 40): 3 data-provider cases
 
 ### `tests/Unit/Vendor/MarkdownTest.php` (4)
 

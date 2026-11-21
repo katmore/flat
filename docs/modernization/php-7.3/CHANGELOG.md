@@ -122,3 +122,37 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: documentation. At the maintainer's request, the rule added in MOD-194 now says why it
   exists: the maintainer scolded the agent and was not pleased. flat and flat-webapp
   `AGENTS.md`. No other change.
+
+## MOD-196 — Behavior change (KD-80): JShrink keeps the character after a regex starting with a quote
+
+- Kind: behavior change (bug fix), owner decision Q37 (2026-11-21). Replaces the `break` of MOD-190.
+- `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`: `continue 3;` (was `break;` after
+  MOD-190, `continue;` before). `saveRegex()` already reads the next real character into `$this->b`;
+  the loop's own `getReal()` that followed lost it.
+- Tests (`JsMinifierTest`): one expected value corrected (`function f(){return /'quoted'/;}`, it
+  had pinned the lost `;`), three cases added (`.test(s)`, `;foo()`, `;}` before a newline). All four
+  fail with the old code, pass with the fix.
+- Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). Verified:
+  `docker/bin/test all --coverage`.
+- Undo: put `break;` back (the four tests then fail).
+
+## MOD-197 — Test change (Q39): `ConfigTest` fails as root instead of skipping
+
+- Kind: test, no library change. `testDirectoriesAndUnreadableFilesAreNotLoadedAsConfig` asserted
+  nothing and skipped when the process was root; it now fails with a message. Shown failing as
+  root and passing as user 1000 (the harness user).
+
+## MOD-198 — Approved exception (Q38): AWS SDK deprecation notice in two tests
+
+- Kind: documentation and comments. At the owner's decision the two tests that set
+  `AWS_SUPPRESS_PHP_DEPRECATION_WARNING` are listed in "Approved exceptions" in `AGENTS.md`, each
+  with a comment block; the php-8.1 phase must remove them. flat-webapp's `AGENTS.md` now points
+  to flat's list. The old comment "verifies the maintained PHP 7.2 baseline" is replaced.
+
+## MOD-199 — Finding: the test environment hides notices and deprecations (Q40)
+
+- Kind: finding, nothing hidden or lowered by me, nothing changed yet. Found while checking a
+  `strpos()` deprecation that the suite did not report. Corrects MOD-189 to MOD-192 and the handoff,
+  which said no warning, notice or deprecation remained: that held for warnings and errors only.
+  Details and the 19 failing tests of a measured run: [active/HIDDEN-ERRORS.md](active/HIDDEN-ERRORS.md).
+  Question Q40 asks for the owner's decision.
