@@ -1053,8 +1053,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 ### `tests/Unit/Tools/ApiDumpTest.php` (3)
 
 - `testReferenceReturnChangesAreDetectedInBothDirections` (line 41)
-- `testOlderValueReturnBaselineStillComparesWithoutDifferences` (line 47)
-- `testParameterTypeControlStillFindsAChange` (line 54)
+- `testOlderBaselinesRequireFreshReferenceMetadata` (line 47)
+- `testParameterTypeControlStillFindsAChange` (line 55)
 
 ### `tests/Unit/Vendor/EncodingTest.php` (4)
 

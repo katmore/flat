@@ -369,3 +369,23 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Validation: the full framework suite passes 1,462 tests, 6,454 assertions and 100% reported
   coverage. flat-webapp passes 66 tests, 196 assertions, including real HTTP checks and the strict
   server-log gate. Composer validates the application lock. No release was published.
+
+## MOD-225 — Compact, reproducible webapp test images
+
+- Kind: build tooling. Keep source-download Git histories out of the runtime image. An explicit
+  WEBAPP_GITHUB_ARCHIVES option seeds Composer's cache from official GitHub ZIPs at the locked
+  commit references when API archives are unavailable. The original lock remains unchanged.
+- Separate application and test-tool download preferences. The rebuilt PHP 7.3.33 test image is
+  about 470 MB and passes all 66 webapp tests, 196 assertions and the strict log gate. Removed
+  the oversized temporary image and its build-cache descendants created during this work.
+
+## MOD-226 — Refuse incomplete legacy API metadata
+
+- Kind: tooling correction to MOD-221. A missing return-reference flag cannot be treated as a
+  known value return: an old reference-returning method could otherwise change unnoticed.
+  Comparisons now exit 2 with a short regeneration instruction when either dump lacks the flag.
+- Controls cover both reference-change directions, incomplete legacy dumps, equal complete dumps
+  and parameter-type changes. Historical API dumps are retained; new comparisons must re-dump
+  both versions with the current tool.
+- Final validation: all 1,462 framework tests pass (6,458 assertions, full service suite and
+  100% reported coverage). All 66 webapp tests and its strict log gate pass on the compact image.

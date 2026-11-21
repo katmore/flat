@@ -120,6 +120,16 @@ if ($mode === 'dump') {
 if ($mode === 'compare') {
     $old = json_decode(file_get_contents($argv[2]), true);
     $new = json_decode(file_get_contents($argv[3]), true);
+    foreach ([$old, $new] as $dump) {
+        foreach ($dump as $class) {
+            foreach ($class['methods'] ?? [] as $method) {
+                if (!array_key_exists('returns_reference', $method)) {
+                    echo "# API comparison\n\nIncomplete: return-reference metadata is missing. Re-dump both versions with the current tool.\n";
+                    exit(2);
+                }
+            }
+        }
+    }
     $lines = []; $counts = [];
     $note = function ($category, $text) use (&$lines, &$counts) { $lines[$category][] = $text; $counts[$category] = ($counts[$category] ?? 0) + 1; };
     $state = function ($c) { return isset($c['unloadable']) ? 'unloadable' : (isset($c['nodeclaration']) ? 'declares nothing' : 'ok'); };
@@ -147,9 +157,7 @@ if ($mode === 'compare') {
             if (!isset($n['methods'][$m])) { $note('method removed', "`$name::$m()`"); continue; }
             $w = $n['methods'][$m];
             foreach (['visibility', 'static', 'abstract', 'final', 'returns_reference'] as $k) {
-                // Older dumps predate the return-reference flag; their value-returning
-                // methods compare as false without producing differences everywhere.
-                $before = $v[$k] ?? false; $after = $w[$k] ?? false;
+                $before = $v[$k]; $after = $w[$k];
                 if ($before !== $after) $note('method modifier changed', "`$name::$m()`: $k " . json_encode($before) . ' to ' . json_encode($after));
             }
             if ($v['return'] !== $w['return']) $note('return type changed', "`$name::$m()`: " . json_encode($v['return']) . ' to ' . json_encode($w['return']));

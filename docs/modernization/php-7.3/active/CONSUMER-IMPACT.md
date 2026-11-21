@@ -65,6 +65,14 @@ consumers saw before, what they see now, and what to search for in their code.
   non-ASCII text, and relative or scheme-relative URLs passed to cURL requests.
 - Verified: reserved-key round trips and four missing-scheme cases failed before the fixes and pass now.
 
+### MOD-221, MOD-226 — API comparison requires complete signature metadata
+
+- Before: the API tool missed method return-reference changes and legacy dumps did not record
+  that flag. After: fresh dumps record and compare it; incomplete inputs exit 2 with instructions
+  to re-dump both versions instead of assuming a value return.
+- Search comparison scripts for `tests/tools/apidump.php` and regenerate their input dumps with
+  the current tool. This changes test tooling, not the framework's public API.
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

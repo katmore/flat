@@ -179,3 +179,110 @@ phpvfscomposer:///opt/flat-test/tools/vendor/phpunit/phpunit/phpunit:97
 
 FAILURES!
 Tests: 14, Assertions: 36, Failures: 6.
+
+Final compact image: COMPOSER_PREFER_INSTALL=source WEBAPP_GITHUB_ARCHIVES=1 docker/bin/test
+PHPUnit\n";'
+#21 CACHED
+
+#22 [tests dependencies 2/5] WORKDIR /opt/flat-webapp-tests
+#22 CACHED
+
+#23 [tests stage-1 3/6] COPY --from=dependencies /opt/flat-webapp-tests /opt/flat-webapp-tests
+#23 CACHED
+
+#24 [tests dependencies 4/5] COPY tests/docker/github-archives.php /usr/local/bin/github-archives.php
+#24 CACHED
+
+#25 [tests stage-1 2/6] RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
+#25 CACHED
+
+#26 [tests stage-1 4/6] RUN chmod -R a+rX /opt/flat-webapp-tests
+#26 CACHED
+
+#27 [tests stage-1 6/6] WORKDIR /app
+#27 CACHED
+
+#28 [tests] exporting to image
+#28 exporting layers done
+#28 writing image sha256:7473304843fedb2fb422becb1c582612e6ed8d5e71836c4119d4efd044095316 done
+#28 naming to docker.io/library/flat-webapp-tests
+#28 naming to docker.io/library/flat-webapp-tests done
+#28 DONE 0.0s
+
+#29 [web] exporting to image
+#29 exporting layers done
+#29 writing image sha256:6ace81c250db70c8134614ef922d92dc5988dc9152cacbcc6750f52e18a97ed2 done
+#29 naming to docker.io/library/flat-webapp-web done
+#29 DONE 0.0s
+
+#30 [web] resolving provenance for metadata file
+#30 DONE 0.0s
+
+#31 [tests] resolving provenance for metadata file
+#31 DONE 0.0s
+ flat-webapp-tests  Built
+ flat-webapp-web  Built
+ Network flat-webapp-test_default  Creating
+ Network flat-webapp-test_default  Created
+ Container flat-webapp-test-web-1  Creating
+ Container flat-webapp-test-web-1  Created
+ Container flat-webapp-test-web-1  Starting
+ Container flat-webapp-test-web-1  Started
+ Container flat-webapp-test-web-1  Waiting
+ Container flat-webapp-test-web-1  Healthy
+PHPUnit 8.5.57 by Sebastian Bergmann and contributors.
+
+................................................................. 65 / 66 ( 98%)
+.                                                                 66 / 66 (100%)
+
+Time: 323 ms, Memory: 6.00 MB
+
+OK (66 tests, 196 assertions)
+
+Runtime image size: 469968181 bytes
+
+Final framework validation after complete-metadata controls
+PHPUnit 8.5.56 by Sebastian Bergmann and contributors.
+
+.............................................................   61 / 1462 (  4%)
+.............................................................  122 / 1462 (  8%)
+.............................................................  183 / 1462 ( 12%)
+.............................................................  244 / 1462 ( 16%)
+.............................................................  305 / 1462 ( 20%)
+.............................................................  366 / 1462 ( 25%)
+.............................................................  427 / 1462 ( 29%)
+.............................................................  488 / 1462 ( 33%)
+.............................................................  549 / 1462 ( 37%)
+.............................................................  610 / 1462 ( 41%)
+.............................................................  671 / 1462 ( 45%)
+.............................................................  732 / 1462 ( 50%)
+.............................................................  793 / 1462 ( 54%)
+.............................................................  854 / 1462 ( 58%)
+.............................................................  915 / 1462 ( 62%)
+.............................................................  976 / 1462 ( 66%)
+............................................................. 1037 / 1462 ( 70%)
+............................................................. 1098 / 1462 ( 75%)
+............................................................. 1159 / 1462 ( 79%)
+............................................................. 1220 / 1462 ( 83%)
+............................................................. 1281 / 1462 ( 87%)
+............................................................. 1342 / 1462 ( 91%)
+............................................................. 1403 / 1462 ( 95%)
+...........................................................   1462 / 1462 (100%)
+
+Time: 17.68 seconds, Memory: 60.00 MB
+
+OK (1462 tests, 6458 assertions)
+
+Generating code coverage report in Clover XML format ... done [1.67 seconds]
+
+Generating code coverage report in PHP format ... done [205 ms]
+ Container flat-final-all-mongo-1  Stopping
+ Container flat-final-all-rabbitmq-1  Stopping
+ Container flat-final-all-mongo-1  Stopped
+ Container flat-final-all-mongo-1  Removing
+ Container flat-final-all-mongo-1  Removed
+ Container flat-final-all-rabbitmq-1  Stopped
+ Container flat-final-all-rabbitmq-1  Removing
+ Container flat-final-all-rabbitmq-1  Removed
+ Network flat-final-all_default  Removing
+ Network flat-final-all_default  Removed
