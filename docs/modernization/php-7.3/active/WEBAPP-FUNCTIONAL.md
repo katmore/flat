@@ -30,10 +30,11 @@ deprecation or fatal error. Test dependencies have their own lock, kept with the
 ## Known behaviors of the application
 
 flat-webapp's `app/` and `web/` model what the one known consumer does: they change only for a
-literal bug (owner, 2026-11-21). Two behaviors the tests found are kept as they are:
+literal bug (owner, 2026-11-21). Two findings of the tests:
 
 - Q43: `PATCH` and other unknown methods end in a PHP fatal error and a 500. A 500 is fine; flat
   has no 501 response. `PATCH` itself waits for v2.X. Not in the tests (the server-log check would
   fail, and an allowlist is not allowed).
-- Q44: malformed JSON is silently treated as empty input (pinned by a test). A literal bug, but its
-  obvious fix ends in a PHP fatal error, so it waits for the owner.
+- Q44: malformed JSON was silently treated as empty input, a literal bug in `InputTrait`. Fixed with
+  one line (a `json_last_error()` check): it now ends in the app's own PHP fatal error. Not in the
+  tests (the server-log check rejects fatal errors).

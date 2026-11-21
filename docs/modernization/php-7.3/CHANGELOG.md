@@ -268,3 +268,13 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   changed; the rule is: only for a literal bug. Q43: a 500 is fine and flat has no 501 response, so
   nothing changes. Q44 is a literal bug but its obvious fix would raise a PHP fatal error (the check
   runs before the error handlers exist), so it is open again and left unchanged.
+
+## MOD-214 — flat-webapp: the malformed-JSON check works (Q44)
+
+- Kind: bug fix in flat-webapp's `app/AppWeb/InputTrait.php`, owner's decision (2026-11-21): one
+  line, no custom 500 handling, no new flat object. `json_decode()` returns `null` on bad JSON, which
+  the old `false !== ...` test accepted; it now tests `json_last_error()`. Malformed JSON ends in the
+  app's own `trigger_error(E_USER_ERROR)`, a PHP fatal error and a blank 500; a valid JSON `false`
+  body is accepted (it used to be called malformed). The functional test for a malformed body is
+  replaced by one for `false`. Why 405 does not apply to `PATCH`: flat throws `unknown_method` before
+  any response exists, and a 405 needs an `Allow` header (`DEFERRED-V2.md` items 1 and 4).

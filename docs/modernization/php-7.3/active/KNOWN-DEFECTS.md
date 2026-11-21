@@ -68,7 +68,7 @@ fixed at its cause; "behavior" says what a caller can see.
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 43 are answered; 44 is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; none is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -174,9 +174,11 @@ Each has a recommendation; "agree" is enough. Questions 37 to 43 are answered; 4
     error then gives a 500 "Unable to process this request" (a `400` would suit a client mistake
     better).
     Owner's rule (2026-11-21): `app/` and `web/` model the one known consumer and change only for a
-    literal bug. This is one, but the obvious fix would not do what it says: `_get_input()` runs
-    before the controller installs its error handlers, so the `trigger_error(E_USER_ERROR)` of that
-    branch would be a PHP fatal error (blank 500 and a `PHP Fatal error` in the log), not a clean
-    error response. Left unchanged for now; the functional test pins the current behavior.
-    Say if you still want the one-line fix and I will make it, with the test and a log note.
-    **Open.**
+    literal bug; no custom 500 handling and no new flat object. This is a literal bug. The obvious
+    fix does not give a clean error response: `_get_input()` runs before the controller installs its
+    error handlers, so the branch's `trigger_error(E_USER_ERROR)` is a PHP fatal error (blank 500 and
+    a `PHP Fatal error` in the log).
+    **Answered (owner, 2026-11-21): fix it, nothing more.** Done in flat-webapp (MOD-214): the check
+    is `JSON_ERROR_NONE === json_last_error()`. A malformed JSON body now ends in that fatal error,
+    and a valid JSON `false` body is accepted. The functional suite cannot include a malformed
+    body, because its server-log check rejects any PHP fatal error.
