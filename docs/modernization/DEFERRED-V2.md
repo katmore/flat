@@ -59,3 +59,17 @@ were removed without changing the output (KD-88). A checksum of nothing says not
 **Plan for v2.X.** Decide what a resource's checksum should cover (for example its type), and change
 it then, because changing it changes output a consumer may have stored. (Q42, php-7.3.)
 
+## 4. Support for `PATCH`
+
+**Today (v1.73.0).** flat accepts `DELETE`, `GET`, `HEAD`, `OPTIONS`, `POST`, `PUT` and `TRACE`
+(`\flat\core\controller\api::VALID_METHOD_LIST`). Any other method, `PATCH` included, throws
+`unknown_method`. In flat-webapp that happens before its error handlers exist, so the request ends
+in a PHP fatal error (Q43, php-7.3).
+
+**Decision (owner, 2026-11-21).** `PATCH` stays out until a `v2.X` release, which comes only after
+the phases have caught up to the latest stable PHP release.
+
+**Plan for v2.X.** Add `PATCH` to the valid methods with its own method interface
+(`\flat\api\method\PATCH`, a `PATCH_method()` like the others), tests, and the matching consumer
+guidance. It is a new public interface, so it cannot go into `v1.X`.
+

@@ -161,7 +161,9 @@ Each has a recommendation; "agree" is enough. Questions 37 to 42 are answered; 4
     for example around the call:
     `try { api::set_method($requestMethod); } catch (api\exception\unknown_method $e) { http_response_code(501); header('Content-Type: application/json'); echo json_encode(['message'=>'method not implemented']); exit; }`
     Supporting `PATCH` itself would be a new flat interface: a v2.X matter.
-    **Open.**
+    **Answered in part (owner, 2026-11-21):** `PATCH` support stays out until v2.X, after the phases
+    reach the latest stable PHP; recorded as `DEFERRED-V2.md` item 4 (MOD-211). Still open: whether
+    the application should answer unknown methods with the 501 above instead of a fatal error.
 
 44. **Malformed JSON is treated as empty input (flat-webapp, your code).**
     `app/AppWeb/InputTrait.php` checks `json_decode()` against `false`, but a malformed document

@@ -25,7 +25,7 @@ deprecation or fatal error. Test dependencies have their own lock, kept with the
   answer 500 whatever they carry. Covering input parsing, a real POST, PUT or DELETE and the
   fatal-error page needs test-only resources and templates mounted while testing (not added; the
   owner chose the shipped application only).
-- `PATCH`: see Q43.
+- `PATCH`: support is deferred to v2.X (owner); the fatal error it causes is Q43.
 
 ## Findings (in `app/`, not changed)
 

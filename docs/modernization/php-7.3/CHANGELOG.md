@@ -249,3 +249,8 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   compose.test.yml). Owner's request, 2026-11-21. Overview and findings:
   [active/WEBAPP-FUNCTIONAL.md](active/WEBAPP-FUNCTIONAL.md). Two findings in `app/` became questions
   Q43 and Q44. The handoff's "integration tests are on hold" sentence is replaced.
+
+## MOD-211 — Decision recorded: `PATCH` support waits for v2.X
+
+- Kind: documentation, owner's decision (2026-11-21). New item 4 in
+  [DEFERRED-V2.md](../DEFERRED-V2.md); Q43 is marked answered in part. No code change.
