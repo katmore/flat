@@ -23,9 +23,9 @@ namespace flat\core\util\image\exception;
  */
 class bad_dim extends \flat\core\util\image\exception {
    /**
-    * @param string $err error description
+    * @param string $reason error description
     */
    public function __construct($reason) {
-      parent::__construct("bad dimension specified: $err.");
+      parent::__construct("bad dimension specified: $reason.");
    }
 }

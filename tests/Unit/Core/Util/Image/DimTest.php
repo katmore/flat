@@ -34,10 +34,11 @@ class DimTest extends TestCase
         $d->scale(); $this->assertSame('80x40', (string) $d);
     }
     /** @dataProvider invalidSizes */
-    public function testInvalidSizes($value)
+    public function testInvalidSizes($value, $message)
     {
         $this->expectException(\flat\core\util\image\exception\bad_dim::class);
+        $this->expectExceptionMessage($message);
         $this->size($value, 10);
     }
-    public function invalidSizes() { return [['not numeric'], [-1]]; }
+    public function invalidSizes() { return [['not numeric','bad dimension specified: width must be numeric.'], [-1,'bad dimension specified: width must evaluate to an integer 0 or greater.']]; }
 }

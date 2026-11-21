@@ -213,9 +213,8 @@ class MapperTest extends TestCase
 
     public function testMissingVisitThrowsCannotGetProperty()
     {
-        // The legacy exception omits the requested name; preserve that message.
         $this->expectException(cannot_get_property::class);
-        $this->expectExceptionMessage('mapper cannot get property:  reason: does not exist');
+        $this->expectExceptionMessage('mapper cannot get property: missing reason: does not exist');
         (new MapperFixture)->visit(function () {}, ['missing']);
     }
 

@@ -45,7 +45,7 @@ trait mapper  {
             } catch (\ReflectionException $e) {
                if (empty($option['ignore_cannot_get'])) {
                   throw new mappable\exception\cannot_get_property(
-                     $property,
+                     $p,
                      "does not exist"
                   );
                }

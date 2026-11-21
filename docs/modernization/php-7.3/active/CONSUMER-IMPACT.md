@@ -16,6 +16,22 @@ consumers saw before, what they see now, and what to search for in their code.
   literal that starts with `'` or `"`; re-minify those files.
 - Verified: yes (tests fail without the fix).
 
+### MOD-202 (KD-83) — `bad_dim` message includes the reason
+
+- Before: `flat\core\util\image\exception\bad_dim` always said `bad dimension specified: .`.
+- After: `bad dimension specified: width must be numeric.` (or `height`, or `... must evaluate to an
+  integer 0 or greater.`). Same class, same code, same conditions.
+- Search consumer code for: `bad_dim`, code or logs that match the old message text.
+- Verified: yes.
+
+### MOD-202 (KD-85) — Mapper exception names the missing property
+
+- Before: asking the mapper for a property that does not exist threw `cannot_get_property` with
+  an empty name: `mapper cannot get property:  reason: does not exist`.
+- After: `mapper cannot get property: missing reason: does not exist`. Same class and condition.
+- Search consumer code for: `cannot_get_property`, `ignore_cannot_get`, code that matches the old text.
+- Verified: yes.
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.
