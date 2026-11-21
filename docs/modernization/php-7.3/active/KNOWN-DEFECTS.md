@@ -75,6 +75,17 @@ fixed at its cause; "behavior" says what a caller can see.
 - Tests: the minifier comment cases check output in PHPUnit and execute original/minified
   programs with `docker/bin/test-javascript`. Both checks failed before the fix.
 
+### KD-90 - cURL and Markdown HTML parsing leak libxml error capture
+
+- Category: A. Adversarial finding 2. Both HTML parsers enabled global libxml error capture,
+  leaving later XML operations silent. cURL XPath error handling also depended on that leak.
+- Fixed (MOD-219): HTML parsing respects the caller's setting and buffered errors. XPath captures
+  diagnostics only for the query, reports failures through the existing `xpath_error`, and restores
+  the setting in `finally`. No errors are discarded by the parsers.
+- Regression checks cover both caller modes, existing buffered errors, invalid XPath and warning
+  propagation. The nested HTML5 Markdown fixture checks its two native parser warnings as well
+  as its rendered output; those warnings were previously hidden.
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; none is open.

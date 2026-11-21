@@ -64,7 +64,6 @@ class MarkdownTest extends TestCase
             ["Heading {#setext}\n==================", ['id="setext"']],
             ["Two[^second] then one[^first].\n\n[^first]: First note\n    continued\n[^second]: Second note\n\n[^unused]: not referenced", ['First note','continued','Second note','fnref1:first']],
             ["Text[^block].\n\n[^block]:\n\n    > quoted footnote", ['quoted footnote','footnotes']],
-            ["<div markdown=\"1\">\n<section markdown=\"1\">\n**nested**\n</section>\n</div>", ['<strong>nested</strong>']],
             ["    code\nplain", ['<pre><code>code</code></pre>','<p>plain</p>']],
             ["``` invalid fence text\n\n#", ['invalid fence text','#']],
             ['*', ['<p>*</p>']],
@@ -92,5 +91,41 @@ class MarkdownTest extends TestCase
         $this->assertSame($parser->text('plain'),$parser->parse('plain'));
         $this->assertSame(extra::instance('flat-test'),extra::instance('flat-test'));
         $this->assertNotSame(extra::instance('flat-test'),extra::instance('flat-test-other'));
+    }
+    /** @dataProvider libxmlModes */
+    public function testHtmlMarkupPreservesCallerLibxmlStateAndBufferedErrors($internal)
+    {
+        $previous = libxml_use_internal_errors($internal);
+        try {
+            if ($internal) (new \DOMDocument)->loadXML('<prior>');
+            $before = libxml_get_errors();
+            $html = (new extra)->text('<div markdown="1">**bold**</div>');
+            $this->assertStringContainsString('<strong>bold</strong>', $html);
+            $this->assertSame($internal, libxml_use_internal_errors());
+            $this->assertEquals($before, libxml_get_errors());
+        } finally { libxml_clear_errors(); libxml_use_internal_errors($previous); }
+    }
+    public function libxmlModes() { return [[false], [true]]; }
+    public function testNestedHtml5MarkupReportsParserWarningsAndStillRenders()
+    {
+        $previous = libxml_use_internal_errors(false);
+        $warnings = [];
+        $handler = null;
+        $handler = set_error_handler(function ($level, $message, $file, $line) use (&$warnings, &$handler) {
+            if ($level === E_WARNING && strpos($message, 'DOMDocument::loadHTML(): Tag section invalid') === 0) {
+                $warnings[] = $message;
+                return true;
+            }
+            return $handler ? $handler($level, $message, $file, $line) : false;
+        });
+        try {
+            $html = (new extra)->text("<div markdown=\"1\">\n<section markdown=\"1\">\n**nested**\n</section>\n</div>");
+            $this->assertStringContainsString('<strong>nested</strong>', $html);
+            $this->assertSame([
+                'DOMDocument::loadHTML(): Tag section invalid in Entity, line: 2',
+                'DOMDocument::loadHTML(): Tag section invalid in Entity, line: 1',
+            ], $warnings);
+            $this->assertFalse(libxml_use_internal_errors());
+        } finally { restore_error_handler(); libxml_use_internal_errors($previous); }
     }
 }

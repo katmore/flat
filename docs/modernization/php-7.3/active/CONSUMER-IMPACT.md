@@ -42,6 +42,19 @@ consumers saw before, what they see now, and what to search for in their code.
   block comments or quoted `/**/`. Re-minify affected assets.
 - Verified: PHPUnit output regressions and Docker JavaScript execution checks fail without the fix.
 
+### MOD-219 (KD-90) — HTML parsing preserves libxml reporting
+
+- Before: cURL DOM parsing and Markdown HTML blocks enabled libxml error capture globally.
+  Their HTML diagnostics and errors from later, unrelated XML operations could go unreported.
+- After: both HTML parsers respect the caller's reporting mode and existing error buffer.
+  With normal PHP reporting enabled, HTML parser warnings reach the caller. This includes
+  libxml's warning for HTML5 tags such as `section`; rendered Markdown remains the same unless
+  the caller's warning handler interrupts it. cURL invalid XPath still throws `xpath_error`
+  with its diagnostic, and restores the caller's reporting mode on success or failure.
+- Search consumer code for: `use_dom`, `get_dom`, `simplexpath`, Markdown HTML blocks,
+  `libxml_use_internal_errors`, and warning handlers around those operations.
+- Verified: state/buffer and warning regressions fail before the fix; output assertions retained.
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

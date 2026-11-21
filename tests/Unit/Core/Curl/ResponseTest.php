@@ -132,6 +132,61 @@ namespace flat\test\Unit\Core\Curl {
                 $this->assertSame('//[', $error->get_query()); $this->assertNotEmpty($error->get_details());
             }
         }
+        /** @dataProvider libxmlModes */
+        public function testDomAndXPathPreserveCallerLibxmlStateAndBufferedErrors($internal)
+        {
+            libxml_use_internal_errors($internal);
+            if ($internal) (new \DOMDocument)->loadXML('<prior>');
+            $before = libxml_get_errors();
+            $response = new response($this->config(), ['use_dom']);
+            $this->assertSame('text', (string) $response->simplexpath('//p')[0]);
+            $this->assertSame($internal, libxml_use_internal_errors());
+            $this->assertEquals($before, libxml_get_errors());
+            try { $response->simplexpath('//['); $this->fail('Expected XPath error'); }
+            catch (\flat\core\curl\exception\xpath_error $error) {
+                $this->assertStringContainsString('Invalid expression', $error->get_details());
+                $this->assertSame($internal, libxml_use_internal_errors());
+                if ($internal) {
+                    $after = libxml_get_errors();
+                    $this->assertEquals($before, array_slice($after, 0, count($before)));
+                    $this->assertStringContainsString('Invalid expression', end($after)->message);
+                } else $this->assertSame([], libxml_get_errors());
+            }
+        }
+        public function libxmlModes() { return [[false], [true]]; }
+        /** @dataProvider libxmlModes */
+        public function testXPathArgumentWarningRestoresCallerLibxmlState($internal)
+        {
+            libxml_use_internal_errors($internal);
+            $response = new response($this->config(), ['use_dom']);
+            set_error_handler(function ($level, $message, $file, $line) {
+                throw new \ErrorException($message, 0, $level, $file, $line);
+            });
+            try {
+                try { $response->simplexpath([]); $this->fail('Expected XPath argument warning'); }
+                catch (\ErrorException $error) {
+                    $this->assertSame(E_WARNING, $error->getSeverity());
+                    $this->assertStringContainsString('SimpleXMLElement::xpath() expects parameter 1 to be string', $error->getMessage());
+                    $this->assertSame($internal, libxml_use_internal_errors());
+                }
+            } finally { restore_error_handler(); }
+        }
+        public function testHtmlParserWarningReachesCallerAndLeavesReportingEnabled()
+        {
+            libxml_use_internal_errors(false);
+            CurlDouble::$responses['https://example.com/page'] = ['body'=>'<html><body><widget>text</widget></body></html>'];
+            set_error_handler(function ($level, $message, $file, $line) {
+                throw new \ErrorException($message, 0, $level, $file, $line);
+            });
+            try {
+                try { new response($this->config(), ['use_dom']); $this->fail('Expected HTML parser warning'); }
+                catch (\ErrorException $error) {
+                    $this->assertSame(E_WARNING, $error->getSeverity());
+                    $this->assertStringContainsString('DOMDocument::loadHTML(): Tag widget invalid', $error->getMessage());
+                    $this->assertFalse(libxml_use_internal_errors());
+                }
+            } finally { restore_error_handler(); }
+        }
         public function testTransferFailureRetainsErrorDetails()
         {
             CurlDouble::$responses['https://example.com/page'] = ['fail'=>true,'errno'=>7];

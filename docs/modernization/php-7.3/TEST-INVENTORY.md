@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 780 test methods in 93 files, running 1447 test cases.
-- 125 methods use a data provider (one case per data set).
+- 785 test methods in 93 files, running 1454 test cases.
+- 128 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -324,7 +324,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` (line 83)
 - `testEmptyUrlencodedQueryStringIsRejected` (line 91)
 
-### `tests/Unit/Core/Curl/ResponseTest.php` (20)
+### `tests/Unit/Core/Curl/ResponseTest.php` (23)
 
 - `testDefaultRequestsSendTheFlatUserAgentAndKeepCurlsMethodChoice` (line 23)
 - `testFacadeAcceptsUrlsAndConfigurationObjects` (line 32)
@@ -337,15 +337,18 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testInvalidCookieFile` (line 112): 2 data-provider cases
 - `testDomAndXPathResults` (line 118)
 - `testInvalidXPathReportsQuery` (line 127)
-- `testTransferFailureRetainsErrorDetails` (line 135)
-- `testErrorAfterFileTransferStillFails` (line 145)
-- `testRobotsRules` (line 155): 6 data-provider cases
-- `testRobotsCheckCanDenyOrAllowConstructor` (line 168)
-- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 176)
-- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 183)
-- `testFalsyTextBodyInitializesDomOnDemand` (line 192)
-- `testMissingTransferInfoRaisesItsDeclaredException` (line 199)
-- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 206)
+- `testDomAndXPathPreserveCallerLibxmlStateAndBufferedErrors` (line 136): 2 data-provider cases
+- `testXPathArgumentWarningRestoresCallerLibxmlState` (line 158): 2 data-provider cases
+- `testHtmlParserWarningReachesCallerAndLeavesReportingEnabled` (line 174)
+- `testTransferFailureRetainsErrorDetails` (line 190)
+- `testErrorAfterFileTransferStillFails` (line 200)
+- `testRobotsRules` (line 210): 6 data-provider cases
+- `testRobotsCheckCanDenyOrAllowConstructor` (line 223)
+- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 231)
+- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 238)
+- `testFalsyTextBodyInitializesDomOnDemand` (line 247)
+- `testMissingTransferInfoRaisesItsDeclaredException` (line 254)
+- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 261)
 
 ### `tests/Unit/Core/DebugTest.php` (13)
 
@@ -1058,12 +1061,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testCommentsPreserveTokenBoundariesAndStringContents` (line 40): 15 data-provider cases
 - `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 66): 3 data-provider cases
 
-### `tests/Unit/Vendor/MarkdownTest.php` (4)
+### `tests/Unit/Vendor/MarkdownTest.php` (6)
 
 - `testQuoteHandlerRejectsANonmatchingExtensionMarker` (line 9)
 - `testBothBundledLoadersWorkInAFreshPhpRuntime` (line 18)
-- `testSupportedBlockAndInlineSyntax` (line 25): 48 data-provider cases
-- `testConfigurationAndRepeatedParserInstances` (line 83)
+- `testSupportedBlockAndInlineSyntax` (line 25): 47 data-provider cases
+- `testConfigurationAndRepeatedParserInstances` (line 82)
+- `testHtmlMarkupPreservesCallerLibxmlStateAndBufferedErrors` (line 96): 2 data-provider cases
+- `testNestedHtml5MarkupReportsParserWarningsAndStillRenders` (line 109)
 
 ### `tests/Unit/Vendor/YasumiDateQueryTest.php` (5)
 

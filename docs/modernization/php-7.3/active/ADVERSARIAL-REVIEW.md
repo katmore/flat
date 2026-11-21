@@ -17,6 +17,8 @@ by the PHP version step. They matter because the suite passes while missing thes
 ## Findings
 
 Follow-up: finding 1 is fixed as KD-89 (MOD-218). The findings below describe the reviewed commits.
+Finding 2 is fixed as KD-90 (MOD-219): cURL and Markdown HTML parsing preserve caller reporting;
+XPath diagnostics retain their existing exception path.
 
 ### 1. P1: Empty JavaScript comments can turn working programs into broken code
 

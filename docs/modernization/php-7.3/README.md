@@ -16,7 +16,7 @@ project plan, branch model and the rules every phase follows are in
 
 1. Read the phase rules in [../README.md](../README.md) and `AGENTS.md`, then
    [HANDOFF.md](HANDOFF.md).
-2. Run `docker/bin/test` and confirm 1,447 tests pass before changing anything.
+2. Run `docker/bin/test` and confirm 1,454 tests pass before changing anything.
 3. Pick up the "Not done yet" list above. Every notice, warning or deprecation is fixed at its
    cause (prime directive 2). Commit runtime fixes, behavior changes and modernizations
    separately, each with its change-log entry.

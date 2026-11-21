@@ -311,3 +311,15 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   the defect before the source fix. Inventory regenerated. Validation: all 1,447 tests pass on
   PHP 7.3.33 (6,372 assertions, full service suite, 100% reported coverage); all 15 JavaScript
   programs preserve their expected results in the execution check.
+
+## MOD-219 — HTML parsing preserves libxml reporting (KD-90)
+
+- Kind: bug fix, adversarial finding 2. Removed global error-capture changes from cURL DOM
+  initialization and bundled ParsedownExtra HTML parsing. Scoped cURL XPath diagnostic capture
+  to the query with `finally` restoration, retaining its existing exception and diagnostic text.
+- Tests reproduce the leaks and hidden HTML warnings before the fix, check both caller modes
+  and existing buffered errors, and verify restoration when XPath reports an error or a PHP
+  warning interrupts it. The nested HTML5 Markdown output assertion is retained alongside exact
+  expectations for its previously hidden parser warnings. Consumer impact recorded; inventory
+  regenerated. Validation: all 1,454 tests pass on PHP 7.3.33 (6,402 assertions, MongoDB and
+  RabbitMQ included), with 100% reported class, method and line coverage.
