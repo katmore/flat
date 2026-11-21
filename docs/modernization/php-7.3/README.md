@@ -36,6 +36,7 @@ project plan, branch model and the rules every phase follows are in
 
 - [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): Defects found in this phase and the open owner questions. Read it when: answering questions; before a fix.
 - [active/WEBAPP-FUNCTIONAL.md](active/WEBAPP-FUNCTIONAL.md): The functional (HTTP) tests that live in flat-webapp: what they cover and two findings. Read it when: working on them.
+- [active/ADVERSARIAL-REVIEW-HANDOFF.md](active/ADVERSARIAL-REVIEW-HANDOFF.md): The brief for a second agent to review this phase adversarially: scope, claims to break, expected weak spots. Read it when: reviewing the phase.
 - [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md): The php-7.3 mutation sample and its untriaged survivors. Read it when: extending tests.
 - [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md): Behavior changes of this phase that applications may notice (none so far). Read it when: before releasing.
 

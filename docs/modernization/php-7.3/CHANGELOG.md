@@ -278,3 +278,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   body is accepted (it used to be called malformed). The functional test for a malformed body is
   replaced by one for `false`. Why 405 does not apply to `PATCH`: flat throws `unknown_method` before
   any response exists, and a 405 needs an `Allow` header (`DEFERRED-V2.md` items 1 and 4).
+
+## MOD-215 — Documentation: adversarial review handoff
+
+- Kind: documentation, owner's request. [active/ADVERSARIAL-REVIEW-HANDOFF.md](active/ADVERSARIAL-REVIEW-HANDOFF.md)
+  briefs a second agent to review the phase: frozen commit ranges, ground rules, the claims to try to
+  break, and where the author expects weaknesses. No code change.
