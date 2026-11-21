@@ -155,8 +155,6 @@ require. Do not change the consumer's application behavior to address this tooli
 - The webapp HTTP baseline could not complete: GitHub dependency downloads returned CONNECT
   tunnel HTTP 403 and Composer fell back to source downloads. Stopped that install after repeated
   failures; no webapp test pass is claimed. [Install log](review-evidence/WEBAPP-INSTALL.log).
-- No independent PHP 7.2 image run or Composer resolution on a real PHP 7.2 host. The release-note
-  historical claim was checked against source, not reproduced on that runtime.
 - No exhaustive resolution check of every historical image digest/upstream commit, broad fuzzing,
   cold rebuild of both webapp images, or full mutation campaign. No claim of exhaustive correctness.
 - The working-tree handoff correction passed docker/bin/check-docs before this report was written;
