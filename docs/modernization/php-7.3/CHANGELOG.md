@@ -284,3 +284,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: documentation, owner's request. [active/ADVERSARIAL-REVIEW-HANDOFF.md](active/ADVERSARIAL-REVIEW-HANDOFF.md)
   briefs a second agent to review the phase: frozen commit ranges, ground rules, the claims to try to
   break, and where the author expects weaknesses. No code change.
+
+## MOD-216 — Documentation: review findings go into v1.73.1
+
+- Kind: documentation, owner's decision. The adversarial review handoff now says the review
+  targets the frozen v1.73.0 state, is report-only, and that confirmed findings are fixed in v1.73.1,
+  one at a time with options from the author. No other change.
