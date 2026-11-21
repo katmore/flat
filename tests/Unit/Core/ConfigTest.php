@@ -161,7 +161,8 @@ class ConfigTest extends TestCase
 
     public function testDirectoriesAndUnreadableFilesAreNotLoadedAsConfig()
     {
-        if (function_exists('posix_geteuid') && posix_geteuid() === 0) $this->markTestSkipped('root can read every file');
+        // Root reads every file, so this check cannot work as root: fail instead of skipping (docker/bin/test runs PHP as user 1000).
+        if (function_exists('posix_geteuid')) $this->assertNotSame(0, posix_geteuid(), 'Run the suite as a non-root user: root reads every file.');
         mkdir($this->directory . '/folder.php');
         $locked = $this->values('locked', ['key' => 'secret']);
         chmod($locked, 0000);
