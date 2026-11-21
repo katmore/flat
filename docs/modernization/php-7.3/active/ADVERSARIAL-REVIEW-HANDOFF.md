@@ -89,6 +89,6 @@ break something on purpose and see whether the suite notices.
 
 ## Deliverable
 
-A file `docs/modernization/php-7.3/active/ADVERSARIAL-REVIEW.md` with: findings ordered by
+A new file, ADVERSARIAL-REVIEW.md, in this folder, with: findings ordered by
 severity, each with evidence and a way to reproduce it; the claims you confirmed; what you could
 not check and why. Keep it short; link to logs instead of pasting them.
