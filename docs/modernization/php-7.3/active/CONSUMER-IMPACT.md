@@ -32,6 +32,16 @@ consumers saw before, what they see now, and what to search for in their code.
 - Search consumer code for: `cannot_get_property`, `ignore_cannot_get`, code that matches the old text.
 - Verified: yes.
 
+### MOD-218 (KD-89) — JavaScript comments preserve program behavior
+
+- Before: `var/**/result=1` became `varresult=1`, `return/**/1` became `return1`, and
+  `x+/**/+x` became invalid `x++x`. Empty-comment text inside quoted strings was deleted.
+- After: comments preserve needed token separators and line breaks; quoted comment text is
+  unchanged. A line break inside a block comment after `return` still ends that return statement.
+- Search consumer code for: `JShrink`, `minifier::minify`, and generated JavaScript containing
+  block comments or quoted `/**/`. Re-minify affected assets.
+- Verified: PHPUnit output regressions and Docker JavaScript execution checks fail without the fix.
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

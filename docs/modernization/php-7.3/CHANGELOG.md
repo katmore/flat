@@ -299,3 +299,15 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   test-assertion review and Docker experiments, with evidence and reproduction steps. No
   source, tests or locks changed. The full framework suite passes; the webapp HTTP run was
   blocked by dependency-download HTTP 403 responses. Fixes await owner review.
+
+## MOD-218 — JShrink preserves comment token boundaries (KD-89)
+
+- Kind: bug fix, adversarial finding 1. Removed global empty-comment stripping. The parser now
+  accepts empty comments, preserves comment whitespace/newlines and separates adjacent plus/minus
+  tokens. Quoted comment text remains intact. Consumer impact: KD-89 in the phase impact list.
+- Added shared regression cases: PHPUnit checks output, and `docker/bin/test-javascript` executes
+  original/minified programs against explicit expected results. The execution check uses a pinned
+  Node container; PHP minification still uses the existing PHP 7.3 image. Both checks reproduced
+  the defect before the source fix. Inventory regenerated. Validation: all 1,447 tests pass on
+  PHP 7.3.33 (6,372 assertions, full service suite, 100% reported coverage); all 15 JavaScript
+  programs preserve their expected results in the execution check.

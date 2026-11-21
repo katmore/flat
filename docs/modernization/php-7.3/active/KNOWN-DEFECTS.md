@@ -66,6 +66,15 @@ fixed at its cause; "behavior" says what a caller can see.
   scalars are escaped, and the checksum hashes `''` explicitly. The test now fails on any warning.
   Whether the checksum should cover something else is Q42. **Fixed (MOD-207).**
 
+### KD-89 - JShrink removes comment separators and changes quoted strings
+
+- Category: A. Adversarial finding 1. The global removal of empty comments joined tokens and
+  deleted literal text inside strings. Other block comments also lost their separating whitespace.
+- Fixed (MOD-218): parse empty comments normally, preserve token separators and comment
+  newlines, and keep adjacent plus/minus operators separate. String contents remain literal.
+- Tests: the minifier comment cases check output in PHPUnit and execute original/minified
+  programs with `docker/bin/test-javascript`. Both checks failed before the fix.
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; none is open.

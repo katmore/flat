@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 779 test methods in 93 files, running 1432 test cases.
-- 124 methods use a data provider (one case per data set).
+- 780 test methods in 93 files, running 1447 test cases.
+- 125 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -1052,10 +1052,11 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testBomRemovalAndEncodingLabels` (line 27)
 - `testIconvOptionsUseTheActualExtension` (line 39)
 
-### `tests/Unit/Vendor/JsMinifierTest.php` (2)
+### `tests/Unit/Vendor/JsMinifierTest.php` (3)
 
 - `testWhitespaceCommentsStringsAndRegexArePreservedAsNeeded` (line 8): 23 data-provider cases
-- `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 40): 3 data-provider cases
+- `testCommentsPreserveTokenBoundariesAndStringContents` (line 40): 15 data-provider cases
+- `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 66): 3 data-provider cases
 
 ### `tests/Unit/Vendor/MarkdownTest.php` (4)
 

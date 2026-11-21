@@ -1,0 +1,20 @@
+#!/bin/sh
+# Execute original and minified regression programs. Requires only Docker.
+set -eu
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+cd "$repo_dir"
+cases=$(mktemp)
+trap 'rm -f "$cases"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+# Use the same unprivileged PHP runtime and dependencies as docker/bin/test.
+test_uid=$(id -u)
+test_gid=$(id -g)
+if [ "$test_uid" = 0 ]; then test_uid=1000; test_gid=1000; fi
+docker run --rm --user "$test_uid:$test_gid" --network none --entrypoint php \
+    -v "$repo_dir:/app:ro" -w /app flat-tests-php73 \
+    tests/tools/minifier-cases.php > "$cases"
+docker run --rm -i --user "$test_uid:$test_gid" --network none \
+    -v "$repo_dir/tests/tools/minifier-check.js:/check.js:ro" \
+    node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee \
+    node /check.js < "$cases"

@@ -12,6 +12,9 @@ Everything is defined in this repository (`docker/Dockerfile`, `docker/docker-co
 - `error_reporting` is `E_ALL`: the image uses PHP's `php.ini-development` and the build fails if it
   is not. PHPUnit fails on notices, warnings and deprecations (`phpunit.xml.dist`). MOD-200.
 - PHPUnit 8.5.56 (kept; moving PHPUnit is a separate decision).
+- JavaScript execution checks: Node 22.23.5, separate `node:22-bookworm-slim` container pinned
+  to `sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee` in
+  `docker/bin/test-javascript`. PHP minification remains on PHP 7.3.33.
 - Composer 2.2.31, image `composer:2.2` pinned
   `sha256:4c156e03ca848b69528dde30996d8922b47a9946e76d5cc563cf7f0898e8aa86` (unchanged).
 - Composer platform pins, `tests/docker/tools/composer.json` and

@@ -27,7 +27,12 @@ docker/bin/test all --coverage       # full line/method/class coverage
 docker/bin/test unit --filter SshTest
 docker/bin/test --build              # build only
 docker/bin/test --down               # explicit cleanup after an interrupted host
+docker/bin/test-javascript           # execute minifier regressions, after building the PHP image
 ```
+
+The JavaScript check runs minification in the PHP 7.3 test image and executes both the original
+and minified programs against expected results in a separate, digest-pinned Node container.
+Docker downloads that additional image on first use; no host Node installation is needed.
 
 `docker/bin/test inventory` prints a Markdown inventory of every test to stdout,
 built from PHPUnit's `--list-tests-xml` by `tests/tools/inventory.php`. It needs

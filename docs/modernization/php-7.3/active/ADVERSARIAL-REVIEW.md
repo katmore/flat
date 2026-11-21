@@ -16,6 +16,8 @@ by the PHP version step. They matter because the suite passes while missing thes
 
 ## Findings
 
+Follow-up: finding 1 is fixed as KD-89 (MOD-218). The findings below describe the reviewed commits.
+
 ### 1. P1: Empty JavaScript comments can turn working programs into broken code
 
 In `src/flat/vendor/tedious/JShrink/minifier.php`, initialize removes every /**/ before lexical
