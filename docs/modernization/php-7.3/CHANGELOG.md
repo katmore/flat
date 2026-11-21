@@ -101,3 +101,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   Two findings recorded as questions, nothing hidden or changed: Q38 and Q39.
 - flat-webapp moved to PHP 7.3.33 on its `php-7.3` branch (separate repository; commit message
   "Move to PHP 7.3").
+
+## MOD-193 — Documentation: the branch-model README no longer mentions `modernize-26`
+
+- Kind: documentation, by the maintainer (commit `da67d6c`). MOD-188 says the README states the
+  retirement of `modernize-26`; since this change it does not. The README now only describes
+  the live model (phase branches, `master` merged by the maintainer). The retirement stays
+  recorded in `AGENTS.md` and in [HANDOFF.md](HANDOFF.md).
+- Nothing else changed.
