@@ -46,4 +46,4 @@ project plan, branch model and the rules every phase follows are in
 - [notes/DEPENDENCY-ALERTS.md](notes/DEPENDENCY-ALERTS.md): The end-of-phase audit of both locks and the four dismissed alerts. Read it when: looking at GitHub's security alerts.
 - [notes/CONSUMER-CHECK.md](notes/CONSUMER-CHECK.md): The consumer check against flat-webapp on 7.3. Read it when: checking an application against the impact list.
 
-[history/](history/): Finished or replaced; empty so far
+`history/` (finished or replaced documents) is created when the first one moves there.

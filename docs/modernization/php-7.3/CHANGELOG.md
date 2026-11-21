@@ -206,3 +206,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   (the same line as flat-webapp) and `.gitignore` allows it.
 - Verified: `git ls-files --eol` shows every text file as `i/lf w/lf`; `docker/bin/test all
   --coverage`, 1,432 tests, 100%.
+
+## MOD-205 — Documentation: broken `history/` link in the phase README
+
+- Kind: documentation. The README linked an empty `history/` folder, which Git does not keep, so
+  `check-docs` failed on a fresh clone (not in the working copy). The link is removed; the
+  folder is created when a document first moves there. Found by the pre-release check from a clone.
