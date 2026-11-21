@@ -86,9 +86,19 @@ fixed at its cause; "behavior" says what a caller can see.
   propagation. The nested HTML5 Markdown fixture checks its two native parser warnings as well
   as its rendered output; those warnings were previously hidden.
 
+### KD-91 - Form keys containing delimiters are sent incorrectly
+
+- Category: A. Finding 3, fixed (MOD-220): encode field names as well as values. Regression
+  checks decode reserved characters and UTF-8 keys back to their original fields.
+
+### KD-92 - URLs without a scheme raise undefined-index notices
+
+- Category: A. Finding 4, fixed (MOD-220): reject absent schemes through `bad_param` before
+  accessing the parsed scheme. Four missing-scheme URL cases now exercise the public constructor.
+
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; none is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered. Q45 is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -202,3 +212,10 @@ Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; n
     is `JSON_ERROR_NONE === json_last_error()`. A malformed JSON body now ends in that fatal error,
     and a valid JSON `false` body is accepted. The functional suite cannot include a malformed
     body, because its server-log check rejects any PHP fatal error.
+
+45. **Nested form values (follow-up to finding 3).** The existing form encoder accepts arrays
+    or objects of scalar values. Nested arrays reach `urlencode()` and raise a native warning.
+    Encoding reserved characters in keys is fixed independently. Should nested values be rejected
+    with `bad_param`, or encoded as bracketed form fields? Recommend rejecting nested values
+    explicitly; supporting nested form structures is a separate behavior choice. No nested-value
+    behavior was changed while fixing key encoding.

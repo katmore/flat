@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 785 test methods in 93 files, running 1454 test cases.
-- 128 methods use a data provider (one case per data set).
+- 787 test methods in 93 files, running 1459 test cases.
+- 129 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -310,19 +310,21 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testCachingUsesWritableTemporaryDirectoryByDefault` (line 40)
 - `testUnwritableCacheDirectoryIsRejected` (line 46)
 
-### `tests/Unit/Core/Curl/RequestTest.php` (11)
+### `tests/Unit/Core/Curl/RequestTest.php` (13)
 
 - `testUrlParsingPreservesComponentsAndNoBodyDefaults` (line 7)
 - `testInvalidUrls` (line 17): 5 data-provider cases
-- `testUrlencodedArrayObjectAndStringBodies` (line 27)
-- `testNonStringScalarInUrlencodedModeHasNoBody` (line 36)
-- `testJsonBodyAndContentType` (line 40)
-- `testJsonEncodingFailureIsRejected` (line 46)
-- `testJsonPreservesFalsyBodies` (line 52): 5 data-provider cases
-- `testRawModePreservesTheSuppliedBody` (line 63): 6 data-provider cases
-- `testRawModeRequiresANonemptyStringContentType` (line 74): 5 data-provider cases
-- `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` (line 83)
-- `testEmptyUrlencodedQueryStringIsRejected` (line 91)
+- `testMissingSchemeRaisesBadParamWithoutPhpNotices` (line 28): 4 data-provider cases
+- `testFormKeysAndValuesSurviveEncoding` (line 35)
+- `testUrlencodedArrayObjectAndStringBodies` (line 46)
+- `testNonStringScalarInUrlencodedModeHasNoBody` (line 55)
+- `testJsonBodyAndContentType` (line 59)
+- `testJsonEncodingFailureIsRejected` (line 65)
+- `testJsonPreservesFalsyBodies` (line 71): 5 data-provider cases
+- `testRawModePreservesTheSuppliedBody` (line 82): 6 data-provider cases
+- `testRawModeRequiresANonemptyStringContentType` (line 93): 5 data-provider cases
+- `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` (line 102)
+- `testEmptyUrlencodedQueryStringIsRejected` (line 110)
 
 ### `tests/Unit/Core/Curl/ResponseTest.php` (23)
 

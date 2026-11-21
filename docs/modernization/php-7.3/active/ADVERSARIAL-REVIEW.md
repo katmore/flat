@@ -14,6 +14,9 @@ with Node to check semantics. Scratch probes and clones remain at /tmp/flat-revi
 The first four findings are existing defects exposed by this review, not regressions introduced
 by the PHP version step. They matter because the suite passes while missing these behaviors.
 
+Follow-up: findings 3 and 4 are fixed in MOD-220 (KD-91, KD-92). Nested form value handling
+is a separate open decision, Q45 in the known-defects document.
+
 ## Findings
 
 Follow-up: finding 1 is fixed as KD-89 (MOD-218). The findings below describe the reviewed commits.

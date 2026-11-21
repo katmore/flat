@@ -323,3 +323,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   expectations for its previously hidden parser warnings. Consumer impact recorded; inventory
   regenerated. Validation: all 1,454 tests pass on PHP 7.3.33 (6,402 assertions, MongoDB and
   RabbitMQ included), with 100% reported class, method and line coverage.
+
+## MOD-220 — cURL form key encoding and URL validation
+
+- Kind: bug fixes, findings 3 and 4 (KD-91, KD-92). URL-encode form names and reject absent URL
+  schemes before reading the scheme index. Existing scalar-value encoding is retained; nested
+  values need the separate Q45 decision.
+- Focused request tests reproduced one encoding failure and four native notice errors before
+  the fixes; all 33 request cases now pass. Consumer impact recorded and inventory regenerated.

@@ -55,6 +55,16 @@ consumers saw before, what they see now, and what to search for in their code.
   `libxml_use_internal_errors`, and warning handlers around those operations.
 - Verified: state/buffer and warning regressions fail before the fix; output assertions retained.
 
+### MOD-220 (KD-91, KD-92) — cURL form keys and missing URL schemes
+
+- Before: form names such as `a&b` and `a=b` changed the fields received by the server. URLs
+  such as `/relative` raised a PHP notice before validation.
+- After: form names are URL-encoded, preserving those keys and their values. Missing schemes
+  raise `bad_param` with a missing-scheme reason, without a PHP notice.
+- Search consumer code for: `flat\core\curl\request`, form keys containing `&`, `=`, `+` or
+  non-ASCII text, and relative or scheme-relative URLs passed to cURL requests.
+- Verified: reserved-key round trips and four missing-scheme cases failed before the fixes and pass now.
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

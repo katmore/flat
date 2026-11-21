@@ -48,6 +48,7 @@ class request {
       if (false === ($parsed = parse_url($url))) {
          throw new exception\bad_param("url","not valid url");
       }
+      if (!isset($parsed['scheme'])) throw new exception\bad_param("url","missing scheme");
       if ( ($parsed['scheme']!="http") && ($parsed['scheme']!="https")) {
          throw new exception\bad_param("url","$url has bad protocol: ". $parsed['scheme'] ." (must be http or https)");
       }
@@ -104,7 +105,7 @@ class request {
                $this->field_count=0;
                $fields_string = '';
                foreach($data as $key=>$value) {
-                  $fields_string .= $key.'='.urlencode($value).'&';
+                  $fields_string .= urlencode((string) $key).'='.urlencode($value).'&';
                   $this->field_count++;
                }
                $this->data = rtrim($fields_string, '&');
