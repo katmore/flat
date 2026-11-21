@@ -1,4 +1,7 @@
-# Errors the test environment hides (Q40)
+# Errors the test environment hid (Q40)
+
+Status: all fixed (KD-80 to KD-87, MOD-196 and MOD-200 to MOD-203); this is the record of the
+measurement. The environment now reports `E_ALL` and fails on deprecations.
 
 The test image has no `php.ini`, so PHP 7.3 uses its built-in `error_reporting`
 (`E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED`, 22519), and PHPUnit 8.5 prints

@@ -156,3 +156,38 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   which said no warning, notice or deprecation remained: that held for warnings and errors only.
   Details and the 19 failing tests of a measured run: [active/HIDDEN-ERRORS.md](active/HIDDEN-ERRORS.md).
   Question Q40 asks for the owner's decision.
+
+## MOD-200 — Environment: report everything (answers Q40)
+
+- Kind: environment, owner's instruction (2026-11-21): deprecations and warnings are never
+  suppressed on dev and are fixed when found.
+- `docker/Dockerfile`: the image copies PHP's `php.ini-development` to `php.ini`
+  (`error_reporting = E_ALL`), and the image build fails unless `error_reporting()` is `E_ALL`.
+- `phpunit.xml.dist`: `convertDeprecationsToExceptions`, `convertErrorsToExceptions`,
+  `convertNoticesToExceptions` and `convertWarningsToExceptions` are all `true`.
+- Result: 20 tests failed at once ([active/HIDDEN-ERRORS.md](active/HIDDEN-ERRORS.md) has the
+  first measurement); MOD-201 to MOD-203 fix them. Rule added to `AGENTS.md` (flat and flat-webapp).
+
+## MOD-201 — Runtime-compatibility fixes, no behavior change (KD-81, 82, 84, 86, 87)
+
+- Kind: runtime-compatibility fix. Each is a notice or deprecation fixed at its cause; callers see
+  nothing different. Detail per item in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+- `core/html/encode.php` (`_option_to_param` static), `core/curl/request.php` (initialize
+  `$fields_string`), `core/collection/controller.php` (`get()` and `is_exist()` check the index),
+  `orm.php` (no `each()`), `vendor/tedious/JShrink/minifier.php` (guard the `strpos()` needle).
+- Verified: `docker/bin/test all --coverage`, 1,432 tests, 100%.
+- Undo: revert the commit (the tests then fail, since the environment reports the errors).
+
+## MOD-202 — Behavior changes (KD-83, KD-85): two exception messages
+
+- Kind: behavior change (bug fix), owner's instruction to fix what can be fixed now.
+- `bad_dim` says why (`... width must be numeric.`); the mapper's `cannot_get_property` names the
+  property. Tests assert the new messages (`DimTest` gained a message check; `MapperTest`'s
+  expected message changed). Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+
+## MOD-203 — Tests that relied on hidden notices
+
+- Kind: test correction, no assertion weakened. `ResponseTest` read properties the response
+  objects do not have (`data`, `message`) and asserted `null`, which raised a notice. It now asserts
+  the property is absent (`assertObjectNotHasAttribute`), which is stricter, and reads an absent
+  `message` with `?? ''` where it only checks the text.

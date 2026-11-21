@@ -17,9 +17,50 @@ follows "How each fix lands" in that file. Questions continue the php-7.2 number
 - Fixed (MOD-196): `continue 3;`. Tests assert the correct output.
 - **Fixed.**
 
+The next seven were hidden until the test image reported everything (Q40, MOD-200). Each is
+fixed at its cause; "behavior" says what a caller can see.
+
+### KD-81 - Html encode calls a non-static method statically
+
+- `flat\core\html\encode::_option_to_param()` is private, uses no `$this`, and was called
+  statically (deprecated in PHP 7, fatal in 8). Now `static`. Behavior: none. **Fixed (MOD-201).**
+
+### KD-82 - Curl request appends to an undefined variable
+
+- `flat\core\curl\request`, `urlencoded` bodies: `$fields_string` was never initialized (notice).
+  Now `''`. Behavior: none. **Fixed (MOD-201).**
+
+### KD-83 - `bad_dim` message lost its reason
+
+- `flat\core\util\image\exception\bad_dim::__construct($reason)` used an undefined `$err`, so the
+  message was always `bad dimension specified: .`. Now it uses `$reason`. Behavior: the message
+  is `bad dimension specified: width must be numeric.` and so on. **Fixed (MOD-202).**
+
+### KD-84 - Collection `get()` and `is_exist()` read a missing key
+
+- `flat\core\collection\controller`: an unknown key read an undefined index (notice) before
+  answering `null` / `false`. Now checked with `isset`. Behavior: none. **Fixed (MOD-201).**
+
+### KD-85 - Mapper exception did not name the missing property
+
+- `flat\core\mapper`: the `cannot_get_property` thrown for a missing property used an undefined
+  `$property`, so its message had an empty name. It now names the property. Behavior: the message
+  is `mapper cannot get property: missing reason: does not exist`. **Fixed (MOD-202).**
+
+### KD-86 - `each()` in the ORM field map
+
+- `flat\orm`: `each()` is deprecated since PHP 7.2. Replaced by `key()`, `current()` and
+  `next()` on the same array. Behavior: none. **Fixed (MOD-201).**
+
+### KD-87 - JShrink `strpos()` with a `false` needle
+
+- `src/flat/vendor/tedious/JShrink/minifier.php`: at the end of the input `$this->b` is `false`
+  and went to `strpos()` (deprecated in PHP 7.3; it was never found, and still is not). The call is
+  now guarded. Behavior: none. **Fixed (MOD-201).**
+
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 39 are answered; 40 is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 40 are answered; none is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -72,17 +113,11 @@ Each has a recommendation; "agree" is enough. Questions 37 to 39 are answered; 4
     This is a test-only change; it needs your word because it touches a rule.
     **Answered (owner, 2026-11-21): agreed.** Done in MOD-197.
 
-40. **Errors the test environment cannot see (prime directive 2).** The test image has no
-    `php.ini`, so PHP's built-in default applies: `E_NOTICE`, `E_STRICT` and `E_DEPRECATED`
-    are off. PHPUnit 8.5 also does not turn deprecations into failures. So real notices and
-    deprecations have never shown in the suite, on 7.2 or 7.3: the earlier statements "no
-    warning, notice or deprecation" (MOD-189 to MOD-192, the handoff) only covered warnings and
-    errors. A measured run with everything on finds 19 failing unit tests in 11 places
-    (list and command: [HIDDEN-ERRORS.md](HIDDEN-ERRORS.md)); the service tests were not measured.
-    Recommend: (1) the test image uses PHP's own `php.ini-development` (E_ALL), as flat-webapp's
-    image already does, and `phpunit.xml.dist` sets `convertDeprecationsToExceptions="true"`;
-    (2) fix every cause through the known-defect process, one entry each, with the behavior
-    changes in the consumer-impact list; (3) none of this is done yet. It also affects the
-    published `v1.72.x`, so you may want to say so in the `v1.73.0` notes.
-    Not changed: it raises what the tests report, so I want your word first.
-    **Open.**
+40. **Errors the test environment cannot see (prime directive 2).** The test image had no
+    `php.ini`, so PHP's default hid `E_NOTICE`, `E_STRICT` and `E_DEPRECATED`, and PHPUnit 8.5 does
+    not fail on deprecations; the statements "no notice or deprecation" of MOD-189 to MOD-192
+    only covered warnings and errors. Details: [HIDDEN-ERRORS.md](HIDDEN-ERRORS.md).
+    **Answered (owner, 2026-11-21):** deprecations and warnings are never suppressed on dev, and
+    everything found is fixed now, not deferred. Done: the image uses `php.ini-development`
+    (`E_ALL`) and PHPUnit fails on deprecations (MOD-200); the 20 failing tests, 7 causes plus
+    test corrections, are fixed (KD-81 to KD-87, MOD-201 to MOD-203). The rule is in `AGENTS.md`.
