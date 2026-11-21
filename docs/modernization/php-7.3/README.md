@@ -9,15 +9,16 @@ project plan, branch model and the rules every phase follows are in
 
 - The suite passes on PHP 7.3.33 with 100% coverage; what changed and why is in
   [CHANGELOG.md](CHANGELOG.md), the environment in [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md).
-- No open owner questions. Q40 (errors the old test image hid) is fixed: see
-  [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+- Open owner questions: Q41 and Q42 ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)). Q41
+  (a test helper swallows the Authorize.Net SDK's deprecation notice) must be answered before the
+  phase can be declared complete.
 - Not done yet: release notes for `v1.73.0`.
 
 ## Resume here
 
 1. Read the phase rules in [../README.md](../README.md) and `AGENTS.md`, then
    [HANDOFF.md](HANDOFF.md).
-2. Run `docker/bin/test` and confirm 1,429 tests pass before changing anything.
+2. Run `docker/bin/test` and confirm 1,432 tests pass before changing anything.
 3. Pick up the "Not done yet" list above. Every notice, warning or deprecation is fixed at its
    cause (prime directive 2). Commit runtime fixes, behavior changes and modernizations
    separately, each with its change-log entry.

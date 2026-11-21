@@ -102,6 +102,7 @@ on services in Compose, so unit mode needs only the PHP image.
 ## What runs where
 
 - PHP/PHPUnit: PHP 7.3 container (exact patch set in `docker/Dockerfile`), pinned official base digest
+- Error reporting: `E_ALL` (`php.ini-development`); PHPUnit fails on notices, warnings and deprecations
 - MongoDB integration: Separate pinned MongoDB 4.0 Compose service
 - RabbitMQ integration: Separate pinned RabbitMQ 3.8.34 Compose service
 - PDO: Native SQLite inside the PHP container; no MySQL service is currently used

@@ -218,3 +218,20 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: documentation, owner's suggestion. `docs/modernization/php-7.3/history/.gitkeep` keeps the
   empty folder in Git, and `.gitignore` allows `.gitkeep` (it ignores other dotfiles). The phase
   README links `history/` again, as the phase skeleton in `docs/modernization/README.md` expects.
+
+## MOD-207 — Fix (KD-88): XML encode of a resource raises no warnings
+
+- Kind: runtime-compatibility fix, no behavior change (output identical). `core/xml/encode.php`:
+  `htmlspecialchars()` only for scalars; the checksum hashes `''` explicitly instead of an undefined
+  variable. `EncodeTest::testResourceFallbackWithAndWithoutDumpRaisesNoWarnings` (renamed from
+  `...PreservesWarnings`) no longer captures warnings, so any warning fails it; shown failing
+  without the fix. Intent question Q42.
+
+## MOD-208 — Pre-release check: findings and corrections
+
+- Kind: verification. A full re-check from a fresh clone found: the broken `history/` link
+  (MOD-205, MOD-206); one more swallowed deprecation, in `tests/Support/LegacyAuthorizeSdk.php`,
+  recorded as Q41 and not changed; the XML warnings pinned by a test (KD-88, MOD-207).
+- Also: `notes/API-V1.73.0.json` was regenerated from the final environment (only the free-text
+  `reason` of the seven unloadable classes differs from the earlier dump; no API difference with
+  `v1.72.0`); the phase README test count and the environment notes are corrected.

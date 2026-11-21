@@ -9,6 +9,8 @@ Everything is defined in this repository (`docker/Dockerfile`, `docker/docker-co
   `sha256:bd6f2dc7a4e4537e927355c94a74c3022911aa504278f5f0fd94016c90dfaecc` (the tag
   `php:7.3.33-cli` has the same digest).
 - PCRE library 10.32 (PCRE2). PHP 7.2.34 had PCRE 8.41.
+- `error_reporting` is `E_ALL`: the image uses PHP's `php.ini-development` and the build fails if it
+  is not. PHPUnit fails on notices, warnings and deprecations (`phpunit.xml.dist`). MOD-200.
 - PHPUnit 8.5.56 (kept; moving PHPUnit is a separate decision).
 - Composer 2.2.31, image `composer:2.2` pinned
   `sha256:4c156e03ca848b69528dde30996d8922b47a9946e76d5cc563cf7f0898e8aa86` (unchanged).

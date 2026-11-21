@@ -58,9 +58,17 @@ fixed at its cause; "behavior" says what a caller can see.
   and went to `strpos()` (deprecated in PHP 7.3; it was never found, and still is not). The call is
   now guarded. Behavior: none. **Fixed (MOD-201).**
 
+### KD-88 - XML encode of a resource raised warnings
+
+- `flat\core\xml\encode`: a resource went through `htmlspecialchars()` (warning, returns `null`)
+  and its checksum read an undefined `$input` (notice, hashes the empty string). The 7.2 phase knew
+  and deferred it; the test pinned the four warnings. Fixed without changing any output: only
+  scalars are escaped, and the checksum hashes `''` explicitly. The test now fails on any warning.
+  Whether the checksum should cover something else is Q42. **Fixed (MOD-207).**
+
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 40 are answered; none is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 40 are answered; 41 and 42 are open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -121,3 +129,23 @@ Each has a recommendation; "agree" is enough. Questions 37 to 40 are answered; n
     everything found is fixed now, not deferred. Done: the image uses `php.ini-development`
     (`E_ALL`) and PHPUnit fails on deprecations (MOD-200); the 20 failing tests, 7 causes plus
     test corrections, are fixed (KD-81 to KD-87, MOD-201 to MOD-203). The rule is in `AGENTS.md`.
+
+41. **A test helper swallows the Authorize.Net SDK's deprecation notice (prime directive 2).**
+    `tests/Support/LegacyAuthorizeSdk.php` installs an error handler while a legacy SDK class
+    loads, and discards every `E_USER_DEPRECATED` raised from the SDK's `lib/deprecated/` files
+    ("AuthorizeNetCIM is deprecated, use AuthorizeNet::API instead"). It is not in the approved
+    list and my earlier searches missed it. The cause is that flat's Authorize.Net wrappers are
+    built on the SDK's deprecated classes; removing it means porting them to the SDK's current
+    API, which changes flat's public API, so it cannot be done in a PHP step. Applications that
+    use those wrappers see the same notice at run time. Not changed.
+    Recommend: approve it as an exception like Q38 (narrow: only that notice, only from those
+    files, only in this helper; comment block and an `AGENTS.md` entry), and add the port to
+    `docs/modernization/DEFERRED-V2.md`. Alternative: do the port now as a v2 change.
+    **Open.**
+
+42. **XML resource checksum covers empty data (intent).** KD-88 removed the warnings and kept the
+    output: `encode::serialize($resource, ['checksum'=>['md5']])` writes the checksum of the empty
+    string (the old code hashed an undefined `$input`). A checksum of nothing says nothing.
+    Recommend: keep it for the 1.x line (changing it changes output for any consumer that stored
+    it) and decide at the v2.X releases what a resource's checksum should cover; add it to
+    `docs/modernization/DEFERRED-V2.md` if you agree. **Open.**

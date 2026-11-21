@@ -771,12 +771,12 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testOnlyWholeBytesOfHexDigitsAreTypedAsHexBinary` (line 119): 7 data-provider cases
 - `testArrayTypeDetectionInspectsTheFirstTenKeys` (line 127)
 - `testDumpEnabledEmptyAndNumericStringObjectKeys` (line 136)
-- `testResourceFallbackWithAndWithoutDumpPreservesWarnings` (line 143)
-- `testLegacyIndexAndScalarTypeDecoding` (line 161)
-- `testInstanceAndCompatibilityAlias` (line 167)
-- `testRoundTripsValuesWithExplicitMetadata` (line 175): 18 data-provider cases
-- `testAssocDecodingConvertsObjectsWithoutChangingScalarTypes` (line 191)
-- `testLegacyXmlWithoutNewMetadataCanStillBeRead` (line 197)
+- `testResourceFallbackWithAndWithoutDumpRaisesNoWarnings` (line 143)
+- `testLegacyIndexAndScalarTypeDecoding` (line 157)
+- `testInstanceAndCompatibilityAlias` (line 163)
+- `testRoundTripsValuesWithExplicitMetadata` (line 171): 18 data-provider cases
+- `testAssocDecodingConvertsObjectsWithoutChangingScalarTypes` (line 187)
+- `testLegacyXmlWithoutNewMetadataCanStillBeRead` (line 193)
 
 ### `tests/Unit/Data/ErrorDetailsTest.php` (6)
 

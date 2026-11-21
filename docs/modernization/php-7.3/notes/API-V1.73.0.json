@@ -2641,7 +2641,7 @@
     },
     "flat\\cloud\\authorize\\AuthorizeNetCIM": {
         "unloadable": true,
-        "reason": "Deprecated: AuthorizeNetCIM is deprecated, use AuthorizeNet::API instead. For CIM, see examples in https://github.com/AuthorizeNet/sample-code-php/tree/master/CustomerProfiles . in /opt/flat-test/runtime/vendor/authorizenet/authorizenet/lib/deprecated/AuthorizeNetCIM.php on line 10"
+        "reason": "PHP Deprecated:  AuthorizeNetCIM is deprecated, use AuthorizeNet::API instead. For CIM, see examples in https://github.com/AuthorizeNet/sample-code-php/tree/master/CustomerProfiles . in /opt/flat-test/runtime/vendor/authorizenet/authorizenet/lib/deprecated/AuthorizeNetCIM.php on line 10"
     },
     "flat\\cloud\\authorize\\bad_param": {
         "kind": "class",
@@ -18699,7 +18699,7 @@
     },
     "flat\\core\\util\\validate\\collection": {
         "unloadable": true,
-        "reason": "Fatal error: Interface 'flat\\core\\collection\\validator' not found in /app/src/flat/core/util/validate/collection.php on line 34"
+        "reason": "PHP Fatal error:  Interface 'flat\\core\\collection\\validator' not found in /app/src/flat/core/util/validate/collection.php on line 34"
     },
     "flat\\core\\util\\validate\\collector": {
         "kind": "interface",
@@ -24561,23 +24561,23 @@
     },
     "flat\\db\\driver\\mongo\\ssl\\cafile\\base64": {
         "unloadable": true,
-        "reason": "Fatal error: Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile' not found in /app/src/flat/db/driver/mongo/ssl/cafile/base64.php on line 13"
+        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile' not found in /app/src/flat/db/driver/mongo/ssl/cafile/base64.php:13"
     },
     "flat\\db\\driver\\mongo\\ssl\\cafile\\file": {
         "unloadable": true,
-        "reason": "Fatal error: Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile' not found in /app/src/flat/db/driver/mongo/ssl/cafile/file.php on line 13"
+        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile' not found in /app/src/flat/db/driver/mongo/ssl/cafile/file.php:13"
     },
     "flat\\db\\driver\\mongo\\ssl\\localcert": {
         "unloadable": true,
-        "reason": "Fatal error: Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile' not found in /app/src/flat/db/driver/mongo/ssl/localcert.php on line 13"
+        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile' not found in /app/src/flat/db/driver/mongo/ssl/localcert.php:13"
     },
     "flat\\db\\driver\\mongo\\ssl\\localcert\\base64": {
         "unloadable": true,
-        "reason": "Fatal error: Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile\\base64' not found in /app/src/flat/db/driver/mongo/ssl/localcert/base64.php on line 13"
+        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile\\base64' not found in /app/src/flat/db/driver/mongo/ssl/localcert/base64.php:13"
     },
     "flat\\db\\driver\\mongo\\ssl\\localcert\\file": {
         "unloadable": true,
-        "reason": "Fatal error: Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile\\file' not found in /app/src/flat/db/driver/mongo/ssl/localcert/file.php on line 13"
+        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile\\file' not found in /app/src/flat/db/driver/mongo/ssl/localcert/file.php:13"
     },
     "flat\\db\\driver\\pdo": {
         "kind": "class",
