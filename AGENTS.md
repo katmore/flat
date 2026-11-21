@@ -34,6 +34,9 @@ are: do not "fix", copy or extend them.
   PHP deprecation notice (`E_USER_DEPRECATED`, emitted for PHP below 8.1) is switched off with
   `AWS_SUPPRESS_PHP_DEPRECATION_WARNING` (approved 2026-11-21). It cannot be fixed before the
   php-8.1 phase, which must remove it.
+- `tests/Support/LegacyAuthorizeSdk.php`: the Authorize.Net SDK's `E_USER_DEPRECATED` notice,
+  raised from its `lib/deprecated/` files when a legacy class loads, is discarded (approved
+  2026-11-21). It stays until flat's wrappers are ported to the SDK's current API (v2.X).
 
 ## Error reporting
 

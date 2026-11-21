@@ -38,3 +38,24 @@ out and then set aside:
   flat does not send headers anywhere else, so it should not start here.
 - Tests assert the status, the header and the override; the consumer-impact document records
   the status change back to 405.
+
+## 2. Port the Authorize.Net wrappers to the SDK's current API
+
+**Today (v1.73.0).** flat's `flat\cloud\authorize` wrappers are built on the Authorize.Net SDK's
+classes under `lib/deprecated/` (`AuthorizeNetAIM`, `AuthorizeNetCIM`, `AuthorizeNetARB`, ...). The
+SDK raises an `E_USER_DEPRECATED` notice ("use AuthorizeNet::API instead") when they load, so
+applications that use the wrappers see it too. One test helper discards that notice, as an approved
+exception (`AGENTS.md`).
+
+**Plan for v2.X.** Port the wrappers to the SDK's current API. That changes flat's public API, so
+it cannot go into `v1.X`. Then remove the exception and the helper. (Q41, php-7.3.)
+
+## 3. What the checksum of an XML-encoded resource covers
+
+**Today (v1.73.0).** `flat\core\xml\encode::serialize($resource, ['checksum'=>['md5']])` writes
+the checksum of the empty string: the original code hashed an undefined variable, and the warnings
+were removed without changing the output (KD-88). A checksum of nothing says nothing.
+
+**Plan for v2.X.** Decide what a resource's checksum should cover (for example its type), and change
+it then, because changing it changes output a consumer may have stored. (Q42, php-7.3.)
+

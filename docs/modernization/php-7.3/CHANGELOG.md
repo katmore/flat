@@ -235,3 +235,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Also: `notes/API-V1.73.0.json` was regenerated from the final environment (only the free-text
   `reason` of the seven unloadable classes differs from the earlier dump; no API difference with
   `v1.72.0`); the phase README test count and the environment notes are corrected.
+
+## MOD-209 — Approved exception (Q41) and two items for v2.X (Q42)
+
+- Kind: documentation and comments, owner's decision. `tests/Support/LegacyAuthorizeSdk.php` is in
+  the "Approved exceptions" list of `AGENTS.md` and carries a comment block. `DEFERRED-V2.md` gets
+  item 2 (port the Authorize.Net wrappers to the SDK's current API) and item 3 (what an XML resource
+  checksum covers). No code change.

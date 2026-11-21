@@ -68,7 +68,7 @@ fixed at its cause; "behavior" says what a caller can see.
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 40 are answered; 41 and 42 are open.
+Each has a recommendation; "agree" is enough. Questions 37 to 42 are answered; none is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -141,11 +141,12 @@ Each has a recommendation; "agree" is enough. Questions 37 to 40 are answered; 4
     Recommend: approve it as an exception like Q38 (narrow: only that notice, only from those
     files, only in this helper; comment block and an `AGENTS.md` entry), and add the port to
     `docs/modernization/DEFERRED-V2.md`. Alternative: do the port now as a v2 change.
-    **Open.**
+    **Answered (owner, 2026-11-21): agreed.** Done in MOD-209 (`AGENTS.md`, comment block, DEFERRED-V2 item 2).
 
 42. **XML resource checksum covers empty data (intent).** KD-88 removed the warnings and kept the
     output: `encode::serialize($resource, ['checksum'=>['md5']])` writes the checksum of the empty
     string (the old code hashed an undefined `$input`). A checksum of nothing says nothing.
     Recommend: keep it for the 1.x line (changing it changes output for any consumer that stored
     it) and decide at the v2.X releases what a resource's checksum should cover; add it to
-    `docs/modernization/DEFERRED-V2.md` if you agree. **Open.**
+    `docs/modernization/DEFERRED-V2.md` if you agree.
+    **Answered (owner, 2026-11-21): agreed.** Written down as DEFERRED-V2 item 3 (MOD-209).
