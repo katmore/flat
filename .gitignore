@@ -2,6 +2,7 @@
 !/.gitignore
 !/.dockerignore
 !/.gitattributes
+!.gitkeep
 /vendor/
 composer.lock
 # Repository-owned test locks are reproducibility inputs.

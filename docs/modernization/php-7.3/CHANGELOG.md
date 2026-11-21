@@ -212,3 +212,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: documentation. The README linked an empty `history/` folder, which Git does not keep, so
   `check-docs` failed on a fresh clone (not in the working copy). The link is removed; the
   folder is created when a document first moves there. Found by the pre-release check from a clone.
+
+## MOD-206 — Documentation: `history/` is kept with a `.gitkeep` (replaces the MOD-205 fix)
+
+- Kind: documentation, owner's suggestion. `docs/modernization/php-7.3/history/.gitkeep` keeps the
+  empty folder in Git, and `.gitignore` allows `.gitkeep` (it ignores other dotfiles). The phase
+  README links `history/` again, as the phase skeleton in `docs/modernization/README.md` expects.
