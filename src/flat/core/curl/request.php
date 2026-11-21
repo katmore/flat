@@ -102,6 +102,7 @@ class request {
             }
             if (is_array($data) || is_object($data)) {
                $this->field_count=0;
+               $fields_string = '';
                foreach($data as $key=>$value) {
                   $fields_string .= $key.'='.urlencode($value).'&';
                   $this->field_count++;

@@ -113,7 +113,7 @@ class encode implements \flat\core\serializer
         return $html;
     }
 
-    private function _option_to_param(?array $options): array
+    private static function _option_to_param(?array $options): array
     {
         !is_array($options) && $options = [];
 

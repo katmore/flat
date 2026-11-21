@@ -154,7 +154,7 @@ trait controller {
     * @final
     */
    final public function is_exist($key) {
-      if (isset($this->member[$this->index[$key]])) return true;
+      if (isset($this->index[$key]) && isset($this->member[$this->index[$key]])) return true;
       return false;
    }
     
@@ -168,7 +168,7 @@ trait controller {
     * @final
     */
    final public function get($key) {
-      if (isset($this->member[$this->index[$key]])) return $this->member[$this->index[$key]];
+      if (isset($this->index[$key]) && isset($this->member[$this->index[$key]])) return $this->member[$this->index[$key]];
       //if (is_int($key)) if (isset($this->member[$key])) return $this->member[$key];
       return NULL;
    }

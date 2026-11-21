@@ -192,7 +192,9 @@ abstract class orm {
                   $fieldlist as $field
             )
             {
-               if (!list($k,$v)=each($mapArg)) break 1;
+               if (key($mapArg) === null) break 1;
+               $v = current($mapArg);
+               next($mapArg);
                $map[$field] = $v;
             }
          } elseif (is_object($mapArg)) {
