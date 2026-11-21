@@ -261,3 +261,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   consumer does, so it is not changed even for bugs. Q43 and Q44 are answered on that basis (the
   snippets they carried are not applied); the behaviors stay, documented in
   [active/WEBAPP-FUNCTIONAL.md](active/WEBAPP-FUNCTIONAL.md). flat-webapp's `AGENTS.md` says so.
+
+## MOD-213 — Correction to MOD-212: `app/` changes for literal bugs only
+
+- Kind: documentation, owner's clarification (2026-11-21). MOD-212 said `app/` and `web/` are never
+  changed; the rule is: only for a literal bug. Q43: a 500 is fine and flat has no 501 response, so
+  nothing changes. Q44 is a literal bug but its obvious fix would raise a PHP fatal error (the check
+  runs before the error handlers exist), so it is open again and left unchanged.

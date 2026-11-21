@@ -27,10 +27,13 @@ deprecation or fatal error. Test dependencies have their own lock, kept with the
   owner chose the shipped application only).
 - `PATCH`: support is deferred to v2.X (owner); the fatal error it causes is Q43.
 
-## Known behaviors of the application (never changed)
+## Known behaviors of the application
 
-flat-webapp's `app/` and `web/` model what the one known consumer does, so they are not changed,
-bug fixes included (owner, 2026-11-21). Two behaviors the tests found are kept as they are:
+flat-webapp's `app/` and `web/` model what the one known consumer does: they change only for a
+literal bug (owner, 2026-11-21). Two behaviors the tests found are kept as they are:
 
-- Q43: `PATCH` and other unknown methods end in a PHP fatal error (not in the tests).
-- Q44: malformed JSON is silently treated as empty input (pinned by a test).
+- Q43: `PATCH` and other unknown methods end in a PHP fatal error and a 500. A 500 is fine; flat
+  has no 501 response. `PATCH` itself waits for v2.X. Not in the tests (the server-log check would
+  fail, and an allowlist is not allowed).
+- Q44: malformed JSON is silently treated as empty input (pinned by a test). A literal bug, but its
+  obvious fix ends in a PHP fatal error, so it waits for the owner.

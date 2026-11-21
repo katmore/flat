@@ -68,7 +68,7 @@ fixed at its cause; "behavior" says what a caller can see.
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; none is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 43 are answered; 44 is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -161,9 +161,10 @@ Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; n
     for example around the call:
     `try { api::set_method($requestMethod); } catch (api\exception\unknown_method $e) { http_response_code(501); header('Content-Type: application/json'); echo json_encode(['message'=>'method not implemented']); exit; }`
     Supporting `PATCH` itself would be a new flat interface: a v2.X matter.
-    **Answered (owner, 2026-11-21):** no change to flat-webapp's `app/` or `web/`: they model what the one
-    known consumer does. `PATCH` support stays out until v2.X, after the phases reach the latest stable
-    PHP (`DEFERRED-V2.md` item 4, MOD-211). The fatal error stays a known behavior of that application.
+    **Answered (owner, 2026-11-21):** a 500 is fine, and flat has no 501 status or response (checked:
+    its API statuses stop at `server_error`), so no new status is invented and `app/` is not changed.
+    `PATCH` support stays out until v2.X, after the phases reach the latest stable PHP
+    (`DEFERRED-V2.md` item 4, MOD-211). The fatal error stays a known behavior of that application.
 
 44. **Malformed JSON is treated as empty input (flat-webapp, your code).**
     `app/AppWeb/InputTrait.php` checks `json_decode()` against `false`, but a malformed document
@@ -172,5 +173,10 @@ Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; n
     Not changed. Recommend: test `json_last_error() !== JSON_ERROR_NONE` instead; the existing
     error then gives a 500 "Unable to process this request" (a `400` would suit a client mistake
     better).
-    **Answered (owner, 2026-11-21):** no change to `app/` or `web/` (see Q43). Known behavior of the
-    consumer-like application; the functional test pins it.
+    Owner's rule (2026-11-21): `app/` and `web/` model the one known consumer and change only for a
+    literal bug. This is one, but the obvious fix would not do what it says: `_get_input()` runs
+    before the controller installs its error handlers, so the `trigger_error(E_USER_ERROR)` of that
+    branch would be a PHP fatal error (blank 500 and a `PHP Fatal error` in the log), not a clean
+    error response. Left unchanged for now; the functional test pins the current behavior.
+    Say if you still want the one-line fix and I will make it, with the test and a log note.
+    **Open.**
