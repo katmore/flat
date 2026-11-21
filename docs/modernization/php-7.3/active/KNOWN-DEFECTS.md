@@ -68,7 +68,7 @@ fixed at its cause; "behavior" says what a caller can see.
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 42 are answered; 43 and 44 are open.
+Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; none is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -161,9 +161,9 @@ Each has a recommendation; "agree" is enough. Questions 37 to 42 are answered; 4
     for example around the call:
     `try { api::set_method($requestMethod); } catch (api\exception\unknown_method $e) { http_response_code(501); header('Content-Type: application/json'); echo json_encode(['message'=>'method not implemented']); exit; }`
     Supporting `PATCH` itself would be a new flat interface: a v2.X matter.
-    **Answered in part (owner, 2026-11-21):** `PATCH` support stays out until v2.X, after the phases
-    reach the latest stable PHP; recorded as `DEFERRED-V2.md` item 4 (MOD-211). Still open: whether
-    the application should answer unknown methods with the 501 above instead of a fatal error.
+    **Answered (owner, 2026-11-21):** no change to flat-webapp's `app/` or `web/`: they model what the one
+    known consumer does. `PATCH` support stays out until v2.X, after the phases reach the latest stable
+    PHP (`DEFERRED-V2.md` item 4, MOD-211). The fatal error stays a known behavior of that application.
 
 44. **Malformed JSON is treated as empty input (flat-webapp, your code).**
     `app/AppWeb/InputTrait.php` checks `json_decode()` against `false`, but a malformed document
@@ -171,5 +171,6 @@ Each has a recommendation; "agree" is enough. Questions 37 to 42 are answered; 4
     request carries on with empty input. The functional tests pin the current behavior.
     Not changed. Recommend: test `json_last_error() !== JSON_ERROR_NONE` instead; the existing
     error then gives a 500 "Unable to process this request" (a `400` would suit a client mistake
-    better). After you decide, I update the test.
-    **Open.**
+    better).
+    **Answered (owner, 2026-11-21):** no change to `app/` or `web/` (see Q43). Known behavior of the
+    consumer-like application; the functional test pins it.

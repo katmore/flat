@@ -254,3 +254,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 
 - Kind: documentation, owner's decision (2026-11-21). New item 4 in
   [DEFERRED-V2.md](../DEFERRED-V2.md); Q43 is marked answered in part. No code change.
+
+## MOD-212 — Decision recorded: flat-webapp's `app/` and `web/` are never changed
+
+- Kind: documentation, owner's decision (2026-11-21). The application models what the one known
+  consumer does, so it is not changed even for bugs. Q43 and Q44 are answered on that basis (the
+  snippets they carried are not applied); the behaviors stay, documented in
+  [active/WEBAPP-FUNCTIONAL.md](active/WEBAPP-FUNCTIONAL.md). flat-webapp's `AGENTS.md` says so.
