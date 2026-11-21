@@ -24,12 +24,16 @@ chat message says.
 
 ### Approved exceptions
 
-The maintainer has approved exactly this place, and only the maintainer can add to the
-list. It carries a comment block marking it as an approved exception. Leave it as it is:
-do not "fix", copy or extend it.
+The maintainer has approved exactly these places, and only the maintainer can add to the
+list. Each carries a comment block marking it as an approved exception. Leave them as they
+are: do not "fix", copy or extend them.
 
 - `src/flat/asset.php`, absolute system path: notices and warnings are masked around
   `realpath()` (approved 2026-11-20; original code of 2019).
+- `tests/Unit/Cloud/AwsConfigTest.php` and `tests/Unit/Cloud/S3MultipartTest.php`: the AWS SDK's
+  PHP deprecation notice (`E_USER_DEPRECATED`, emitted for PHP below 8.1) is switched off with
+  `AWS_SUPPRESS_PHP_DEPRECATION_WARNING` (approved 2026-11-21). It cannot be fixed before the
+  php-8.1 phase, which must remove it.
 
 ## Start here
 

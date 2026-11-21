@@ -9,7 +9,13 @@ class AwsConfigTest extends TestCase
     protected function setUp(): void
     {
         $this->deprecationSetting = getenv('AWS_SUPPRESS_PHP_DEPRECATION_WARNING');
-        // This suite deliberately verifies the maintained PHP 7.2 baseline.
+        /*
+         * APPROVED EXCEPTION to prime directive 2 (AGENTS.md, "Approved exceptions"; approved
+         * 2026-11-21). The locked AWS SDK emits an E_USER_DEPRECATED notice whenever a client is
+         * built on a PHP version below 8.1. That cause cannot be fixed before the php-8.1 phase,
+         * so this test switches the notice off with the SDK's own variable. Remove it in the
+         * php-8.1 phase. Do not copy this pattern.
+         */
         putenv('AWS_SUPPRESS_PHP_DEPRECATION_WARNING=true');
         $this->openConfigSandbox(['s3'=>['key'=>'local-key','secret'=>'local-secret','region'=>'us-east-1','bucket'=>'local-bucket']]);
     }
