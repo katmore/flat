@@ -182,9 +182,8 @@ repository entry and `dev-php-7.3`, as the php-7.2 work did before `v1.72.0`); a
 it requires `1.73.*`. Do this only after flat's environment is on 7.3.
 
 Its own `AGENTS.md` carries the prime directives and its working rules. Its Docker setup is
-development-only and must never be described as production-ready. Integration tests against it
-are on hold on purpose (`docs/modernization/php-7.2/active/WEBAPP-TESTS.md`); do not write any
-until the owner asks. Its review and the consumer check are in
+development-only and must never be described as production-ready. Functional tests
+against it now live in flat-webapp itself (the owner asked, 2026-11-21): `active/WEBAPP-FUNCTIONAL.md`. Its review and the consumer check are in
 `docs/modernization/php-7.2/active/WEBAPP-REVIEW.md`.
 
 ## 5. Decisions the owner made (2026-11-20)

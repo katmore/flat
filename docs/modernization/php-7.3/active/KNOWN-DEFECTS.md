@@ -68,7 +68,7 @@ fixed at its cause; "behavior" says what a caller can see.
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 42 are answered; none is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 42 are answered; 43 and 44 are open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -150,3 +150,24 @@ Each has a recommendation; "agree" is enough. Questions 37 to 42 are answered; n
     it) and decide at the v2.X releases what a resource's checksum should cover; add it to
     `docs/modernization/DEFERRED-V2.md` if you agree.
     **Answered (owner, 2026-11-21): agreed.** Written down as DEFERRED-V2 item 3 (MOD-209).
+
+43. **A `PATCH` request kills the application with a PHP fatal error (flat-webapp, your code).**
+    `app/AppWeb/ApiController.php` calls `\flat\core\controller\api::set_method()` before it installs
+    its error handlers. flat accepts only `DELETE GET TRACE OPTIONS POST PUT HEAD`, so `PATCH` (or any
+    other method) throws `unknown_method` uncaught: a `PHP Fatal error` in the server log and a bare
+    500 page instead of JSON. Found by the functional tests, whose server-log check fails on it.
+    Not changed (`app/` is yours); `PATCH` is left out of the tests until you decide.
+    Recommend: answer `501 Not Implemented` (RFC 7231: the server does not recognize the method),
+    for example around the call:
+    `try { api::set_method($requestMethod); } catch (api\exception\unknown_method $e) { http_response_code(501); header('Content-Type: application/json'); echo json_encode(['message'=>'method not implemented']); exit; }`
+    Supporting `PATCH` itself would be a new flat interface: a v2.X matter.
+    **Open.**
+
+44. **Malformed JSON is treated as empty input (flat-webapp, your code).**
+    `app/AppWeb/InputTrait.php` checks `json_decode()` against `false`, but a malformed document
+    gives `null`, so the "malformed JSON in request document" error can never happen and the
+    request carries on with empty input. The functional tests pin the current behavior.
+    Not changed. Recommend: test `json_last_error() !== JSON_ERROR_NONE` instead; the existing
+    error then gives a 500 "Unable to process this request" (a `400` would suit a client mistake
+    better). After you decide, I update the test.
+    **Open.**

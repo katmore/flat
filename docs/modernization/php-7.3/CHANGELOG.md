@@ -242,3 +242,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   the "Approved exceptions" list of `AGENTS.md` and carries a comment block. `DEFERRED-V2.md` gets
   item 2 (port the Authorize.Net wrappers to the SDK's current API) and item 3 (what an XML resource
   checksum covers). No code change.
+
+## MOD-210 — Functional tests in flat-webapp (documentation here)
+
+- Kind: documentation; the code is in flat-webapp (its tests folder and its docker/bin/test script, Dockerfile.test and
+  compose.test.yml). Owner's request, 2026-11-21. Overview and findings:
+  [active/WEBAPP-FUNCTIONAL.md](active/WEBAPP-FUNCTIONAL.md). Two findings in `app/` became questions
+  Q43 and Q44. The handoff's "integration tests are on hold" sentence is replaced.

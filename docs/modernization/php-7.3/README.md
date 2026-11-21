@@ -9,7 +9,7 @@ project plan, branch model and the rules every phase follows are in
 
 - The suite passes on PHP 7.3.33 with 100% coverage; what changed and why is in
   [CHANGELOG.md](CHANGELOG.md), the environment in [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md).
-- No open owner questions (Q37 to Q42 answered).
+- Open owner questions: Q43 and Q44, two findings in flat-webapp's `app/` from its new functional tests ([active/WEBAPP-FUNCTIONAL.md](active/WEBAPP-FUNCTIONAL.md)). They do not touch flat's code.
 - Release notes for `v1.73.0` are drafted in [RELEASE-NOTES.md](RELEASE-NOTES.md); the owner declares the phase complete.
 
 ## Resume here
@@ -35,6 +35,7 @@ project plan, branch model and the rules every phase follows are in
 [active/](active/): Work in progress
 
 - [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): Defects found in this phase and the open owner questions. Read it when: answering questions; before a fix.
+- [active/WEBAPP-FUNCTIONAL.md](active/WEBAPP-FUNCTIONAL.md): The functional (HTTP) tests that live in flat-webapp: what they cover and two findings. Read it when: working on them.
 - [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md): The php-7.3 mutation sample and its untriaged survivors. Read it when: extending tests.
 - [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md): Behavior changes of this phase that applications may notice (none so far). Read it when: before releasing.
 
