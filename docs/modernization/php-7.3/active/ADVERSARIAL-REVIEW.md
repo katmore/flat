@@ -17,8 +17,8 @@ by the PHP version step. They matter because the suite passes while missing thes
 ## Fix status
 
 Findings 1 to 8 are addressed in MOD-218 to MOD-224 of [../CHANGELOG.md](../CHANGELOG.md).
-Q45 remains open for the separate nested-form-value contract; reserved form key encoding is fixed.
-Current validation passes 1,462 framework tests and 66 webapp tests. The findings below describe
+The nested-form follow-up, Q45, is resolved as KD-93 (MOD-227).
+Current validation passes 1,471 framework tests and 66 webapp tests. The findings below describe
 the original reviewed commits. [Validation and mutation evidence](review-evidence/WEBAPP-FIXES.log).
 
 ### 1. P1: Empty JavaScript comments can turn working programs into broken code

@@ -389,3 +389,14 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   both versions with the current tool.
 - Final validation: all 1,462 framework tests pass (6,458 assertions, full service suite and
   100% reported coverage). All 66 webapp tests and its strict log gate pass on the compact image.
+
+## MOD-227 — Reject unsupported form values (Q45, KD-93)
+
+- Kind: bug fix, owner's decision on Q45. Validate URL-encoded field values before passing them
+  to `urlencode()`. Nested arrays, non-stringable objects and resources now raise `bad_param`;
+  scalar/null/stringable values keep their encoding, and JSON remains available for nested data.
+- Reproduced seven native warnings before the fix. Added constructor regressions for nested
+  array/object containers, bracketed query-string input and resources, plus flat-value and nested
+  JSON compatibility checks. Consumer impact recorded and inventory regenerated.
+- Validation: all 1,471 tests pass on PHP 7.3.33 (6,480 assertions, MongoDB/RabbitMQ included),
+  with 100% reported class, method and line coverage.

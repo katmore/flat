@@ -2,6 +2,8 @@
 namespace flat\test\Unit\Core\Curl;
 use flat\core\curl\request;
 use PHPUnit\Framework\TestCase;
+class FormStringValue { public function __toString() { return 'a&b'; } }
+class FormMagicCallValue { public function __call($name, $arguments) { return 'not stringable'; } }
 class RequestTest extends TestCase
 {
     public function testUrlParsingPreservesComponentsAndNoBodyDefaults()
@@ -56,10 +58,53 @@ class RequestTest extends TestCase
     {
         $this->assertNull((new request('https://example.com/', 42))->data);
     }
+    /** @dataProvider invalidFormValues */
+    public function testNestedFormValuesRaiseBadParamWithoutPhpWarnings($data)
+    {
+        $this->expectException(\flat\core\curl\exception\bad_param::class);
+        $this->expectExceptionMessage('urlencoded form values must be scalar, null, or stringable');
+        new request('https://example.com/', $data);
+    }
+    public function invalidFormValues()
+    {
+        return [
+            [['items'=>['x']]],
+            [(object) ['items'=>['x']]],
+            ['items%5B%5D=x'],
+            [['items'=>[]]],
+            [['item'=>(object) ['key'=>'value']]],
+            [['item'=>new FormMagicCallValue]],
+        ];
+    }
+    public function testResourceFormValuesRaiseBadParamWithoutPhpWarnings()
+    {
+        $resource = fopen('php://memory', 'r+');
+        try {
+            $this->expectException(\flat\core\curl\exception\bad_param::class);
+            $this->expectExceptionMessage('urlencoded form values must be scalar, null, or stringable');
+            new request('https://example.com/', ['file'=>$resource]);
+        } finally { fclose($resource); }
+    }
+    public function testFlatFormValuesKeepTheirEncoding()
+    {
+        $fields = ['zero'=>0,'false'=>false,'true'=>true,'null'=>null,'decimal'=>1.25,'text'=>'a b','object'=>new FormStringValue];
+        foreach ([$fields, (object) $fields] as $data) {
+            $request = new request('https://example.com/', $data);
+            $this->assertSame('zero=0&false=&true=1&null=&decimal=1.25&text=a+b&object=a%26b', $request->data);
+            $this->assertSame(7, $request->field_count);
+            $this->assertSame('application/x-www-form-urlencoded', $request->content_type);
+        }
+    }
     public function testJsonBodyAndContentType()
     {
         $request = new request('https://example.com/', ['value'=>0], 'json');
         $this->assertSame('{"value":0}', $request->data);
+        $this->assertSame('application/json', $request->content_type);
+    }
+    public function testJsonBodiesStillAcceptNestedData()
+    {
+        $request = new request('https://example.com/', ['items'=>['x'],'meta'=>(object) ['key'=>'value']], 'json');
+        $this->assertSame('{"items":["x"],"meta":{"key":"value"}}', $request->data);
         $this->assertSame('application/json', $request->content_type);
     }
     public function testJsonEncodingFailureIsRejected()

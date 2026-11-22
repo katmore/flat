@@ -98,13 +98,13 @@ fixed at its cause; "behavior" says what a caller can see.
 
 ### KD-93 - Nested form values reach urlencode as arrays
 
-- Category: B, pending Q45. A cURL request with form data `['items'=>['x']]` raises the native
-  `urlencode()` argument warning. Rejecting nested values explicitly or supporting bracketed
-  fields changes the contract; the key-encoding fix does not choose between them.
+- Category: B, resolved by the owner's Q45 decision. Fixed (MOD-227): reject nested arrays,
+  non-stringable objects and resources with `bad_param` before form encoding. Scalar, null and
+  stringable values retain their encoding; nested JSON bodies are unaffected.
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered. Q45 is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; none is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -225,3 +225,7 @@ Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered. Q
     with `bad_param`, or encoded as bracketed form fields? Recommend rejecting nested values
     explicitly; supporting nested form structures is a separate behavior choice. No nested-value
     behavior was changed while fixing key encoding.
+
+    **Answered (owner):** reject nested form values explicitly. Done in MOD-227 (KD-93), with
+    regressions for array/object form containers, bracketed query strings, invalid field values
+    and preserved flat-value/JSON encoding.

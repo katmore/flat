@@ -60,6 +60,8 @@ class request {
     * 
     * @param string $url
     * @param mixed $data (optional) request data
+    *    URL-encoded field values must be scalar, null, or stringable.
+    *    Nested form structures are rejected; use JSON to send nested data.
     * @param string $encode (optional) default to "urlencoded"
     *    other acceptable values are "none" and "json"
     * @param string $content_type (optional) ignored unless $encode = "none".
@@ -105,6 +107,9 @@ class request {
                $this->field_count=0;
                $fields_string = '';
                foreach($data as $key=>$value) {
+                  if ($value !== null && !is_scalar($value) && !(is_object($value) && method_exists($value,'__toString'))) {
+                     throw new exception\bad_param('data','urlencoded form values must be scalar, null, or stringable');
+                  }
                   $fields_string .= urlencode((string) $key).'='.urlencode($value).'&';
                   $this->field_count++;
                }

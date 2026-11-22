@@ -9,14 +9,14 @@ project plan, branch model and the rules every phase follows are in
 
 - The suite passes on PHP 7.3.33 with 100% coverage; what changed and why is in
   [CHANGELOG.md](CHANGELOG.md), the environment in [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md).
-- Q45 is open: nested form values; see [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+- No open owner questions (Q37 to Q45 answered).
 - Release notes for `v1.73.0` are drafted in [RELEASE-NOTES.md](RELEASE-NOTES.md); the owner declares the phase complete.
 
 ## Resume here
 
 1. Read the phase rules in [../README.md](../README.md) and `AGENTS.md`, then
    [HANDOFF.md](HANDOFF.md).
-2. Run `docker/bin/test` and confirm 1,462 tests pass before changing anything.
+2. Run `docker/bin/test` and confirm 1,471 tests pass before changing anything.
 3. Pick up the "Not done yet" list above. Every notice, warning or deprecation is fixed at its
    cause (prime directive 2). Commit runtime fixes, behavior changes and modernizations
    separately, each with its change-log entry.

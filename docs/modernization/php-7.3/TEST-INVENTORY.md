@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 790 test methods in 94 files, running 1462 test cases.
-- 129 methods use a data provider (one case per data set).
+- 794 test methods in 94 files, running 1471 test cases.
+- 130 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -310,21 +310,25 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testCachingUsesWritableTemporaryDirectoryByDefault` (line 40)
 - `testUnwritableCacheDirectoryIsRejected` (line 46)
 
-### `tests/Unit/Core/Curl/RequestTest.php` (13)
+### `tests/Unit/Core/Curl/RequestTest.php` (17)
 
-- `testUrlParsingPreservesComponentsAndNoBodyDefaults` (line 7)
-- `testInvalidUrls` (line 17): 5 data-provider cases
-- `testMissingSchemeRaisesBadParamWithoutPhpNotices` (line 28): 4 data-provider cases
-- `testFormKeysAndValuesSurviveEncoding` (line 35)
-- `testUrlencodedArrayObjectAndStringBodies` (line 46)
-- `testNonStringScalarInUrlencodedModeHasNoBody` (line 55)
-- `testJsonBodyAndContentType` (line 59)
-- `testJsonEncodingFailureIsRejected` (line 65)
-- `testJsonPreservesFalsyBodies` (line 71): 5 data-provider cases
-- `testRawModePreservesTheSuppliedBody` (line 82): 6 data-provider cases
-- `testRawModeRequiresANonemptyStringContentType` (line 93): 5 data-provider cases
-- `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` (line 102)
-- `testEmptyUrlencodedQueryStringIsRejected` (line 110)
+- `testUrlParsingPreservesComponentsAndNoBodyDefaults` (line 9)
+- `testInvalidUrls` (line 19): 5 data-provider cases
+- `testMissingSchemeRaisesBadParamWithoutPhpNotices` (line 30): 4 data-provider cases
+- `testFormKeysAndValuesSurviveEncoding` (line 37)
+- `testUrlencodedArrayObjectAndStringBodies` (line 48)
+- `testNonStringScalarInUrlencodedModeHasNoBody` (line 57)
+- `testNestedFormValuesRaiseBadParamWithoutPhpWarnings` (line 62): 6 data-provider cases
+- `testResourceFormValuesRaiseBadParamWithoutPhpWarnings` (line 79)
+- `testFlatFormValuesKeepTheirEncoding` (line 88)
+- `testJsonBodyAndContentType` (line 98)
+- `testJsonBodiesStillAcceptNestedData` (line 104)
+- `testJsonEncodingFailureIsRejected` (line 110)
+- `testJsonPreservesFalsyBodies` (line 116): 5 data-provider cases
+- `testRawModePreservesTheSuppliedBody` (line 127): 6 data-provider cases
+- `testRawModeRequiresANonemptyStringContentType` (line 138): 5 data-provider cases
+- `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` (line 147)
+- `testEmptyUrlencodedQueryStringIsRejected` (line 155)
 
 ### `tests/Unit/Core/Curl/ResponseTest.php` (23)
 

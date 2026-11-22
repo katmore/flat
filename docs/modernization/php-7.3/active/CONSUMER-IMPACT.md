@@ -73,6 +73,19 @@ consumers saw before, what they see now, and what to search for in their code.
 - Search comparison scripts for `tests/tools/apidump.php` and regenerate their input dumps with
   the current tool. This changes test tooling, not the framework's public API.
 
+### MOD-227 (KD-93, Q45) — Reject unsupported form field values
+
+- Before: nested form arrays, non-stringable objects and resources reached `urlencode()` and
+  raised native PHP warnings; without a strict error handler they could become empty values.
+- After: the request constructor throws `flat\core\curl\exception\bad_param` for the data
+  parameter before encoding an unsupported field. Scalar, null and stringable values retain
+  their bytes. JSON bodies still accept nested structures.
+- Search consumer code for: cURL URL-encoded request data containing arrays, non-stringable
+  objects or resources, including bracketed fields in a query-string body. Supply flat values
+  or deliberately use JSON for nested data.
+- Verified: seven invalid-value cases raised native warnings before the fix; regressions now
+  require the declared exception and preserve valid form/JSON output.
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.
