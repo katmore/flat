@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 825 test methods in 102 files, running 1507 test cases.
-- 132 methods use a data provider (one case per data set).
-- 3 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
+- 830 test methods in 102 files, running 1522 test cases.
+- 134 methods use a data provider (one case per data set).
+- 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -28,8 +28,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Sandbox/PaymentMethodTest.php` (2)
 
-- `testAPaymentMethodCanBeRemoved` (line 68): groups: sandbox, anet, services
-- `testAnUnknownPaymentMethodIsAResponseError` (line 82): groups: sandbox, anet, services
+- `testAPaymentMethodCanBeAddedChangedAndRemoved` (line 65): groups: sandbox, anet, services
+- `testAnUnknownPaymentMethodIsAResponseError` (line 86): groups: sandbox, anet, services
 
 ### `tests/Sandbox/SubscriptionTest.php` (2)
 
@@ -132,16 +132,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testProfileAliasDoesNotReplaceExplicitId` (line 84)
 - `testProfileFieldsReachTheSdkCustomer` (line 92)
 - `testCreateForwardsValidationMode` (line 103): 7 data-provider cases
-- `testExplicitPaymentObjectIsForwarded` (line 120)
-- `testInvalidRequestsStopBeforeClientCalls` (line 128): 18 data-provider cases
-- `testUpdateAndDeleteForwardIds` (line 157): 2 data-provider cases
-- `testClientRejectionBecomesResponseError` (line 169): 4 data-provider cases
-- `testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway` (line 183): 6 data-provider cases
-- `testPaymentMethodCreationAndUpdateForwardValidatedIds` (line 206)
-- `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` (line 216)
-- `testPaymentMethodRejectionUsesExistingResponseError` (line 226): 2 data-provider cases
-- `testTransactionSpecificationsNormalizeAndReachTheClient` (line 237): 15 data-provider cases
-- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 263)
+- `testExplicitPaymentObjectIsConvertedForTheSdk` (line 120)
+- `testInvalidRequestsStopBeforeClientCalls` (line 132): 18 data-provider cases
+- `testUpdateAndDeleteForwardIds` (line 161): 2 data-provider cases
+- `testClientRejectionBecomesResponseError` (line 173): 4 data-provider cases
+- `testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway` (line 187): 6 data-provider cases
+- `testPaymentMethodCreationAndUpdateForwardValidatedIds` (line 210)
+- `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` (line 224)
+- `testPaymentMethodRejectionUsesExistingResponseError` (line 235): 2 data-provider cases
+- `testTransactionSpecificationsNormalizeAndReachTheClient` (line 248): 15 data-provider cases
+- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 274)
 
 ### `tests/Unit/Cloud/AuthorizeDataTest.php` (13)
 
@@ -171,11 +171,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testBothFlatClientsRaiseNoResponse` (line 71)
 - `testAWrapperCallRaisesInsteadOfLookingSuccessful` (line 82)
 
-### `tests/Unit/Cloud/AuthorizePaymentMethodTest.php` (3)
+### `tests/Unit/Cloud/AuthorizePaymentMethodTest.php` (8)
 
-- `testCurrentlyAPaymentArrayIsAPhpErrorNamingAnAbstractClass` (line 64): **known defect KD-100**
-- `testCurrentlyAPaymentProfileObjectBecomesXmlAuthorizeNetCannotAccept` (line 73): **known defect KD-100**
-- `testCurrentlyUpdatingAPaymentMethodSendsTheSameInvalidXml` (line 83): **known defect KD-100**
+- `testACardPaymentMethodBecomesTheXmlAuthorizeNetDefines` (line 95): 4 data-provider cases
+- `testACustomerTypeIsSent` (line 110)
+- `testBankAccountFieldsWithoutAWrapperAreRecognised` (line 117)
+- `testABankAccountPaymentMethodBecomesBankAccountXml` (line 124)
+- `testUpdatingAPaymentMethodNamesTheMethodInsideThePaymentProfile` (line 134)
+- `testAPaymentGivenToCreateAProfileIsPartOfTheProfile` (line 143)
+- `testAPaymentIsRequired` (line 152)
+- `testAnInvalidPaymentStopsBeforeAnyRequest` (line 162): 8 data-provider cases
 
 ### `tests/Unit/Cloud/AuthorizeSubscriptionSdkTest.php` (3)
 

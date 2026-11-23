@@ -187,27 +187,27 @@ fixed at its cause; "behavior" says what a caller can see.
   `testASubscriptionMissingFromTheListIsNotFound` (fail without the fix).
 - **Fixed.**
 
-### KD-100 - flat cannot build a payment method Authorize.Net accepts
+### KD-100 - flat could not build a payment method Authorize.Net accepts
 
-- Category: C (unfinished; the php-7.2 notes listed it as a blocker, `php-7.2/notes/PAYMENT-ALERT.md`). Found
-  while writing the payment-method sandbox tests (MOD-260); no sandbox is needed to see it.
-  - `create_paymethod()` and `update_paymethod()` take `payment` as an array or a
-    `customer\payment_profile`. An array is built with `new payment_profile(...)`, an abstract class, so it is
-    a PHP `Error`. No concrete subclass exists in flat.
-  - With a hand-made subclass the request is invalid: elements without a name (`<>1</>`, flat's internal
-    state leaking through the SDK's array cast), the card fields without their `<creditCard>` wrapper, and a
-    field `<type>` that Authorize.Net does not define.
-  - `delete_paymethod()` is fine (the sandbox tests cover it); so is reading a payment method through the SDK.
-- Tests (they pin today's behavior):
-  - `Cloud/AuthorizePaymentMethodTest::testCurrentlyAPaymentArrayIsAPhpErrorNamingAnAbstractClass`
-  - `Cloud/AuthorizePaymentMethodTest::testCurrentlyAPaymentProfileObjectBecomesXmlAuthorizeNetCannotAccept`
-  - `Cloud/AuthorizePaymentMethodTest::testCurrentlyUpdatingAPaymentMethodSendsTheSameInvalidXml`
-- Options: see Q50.
-- **Open** (Q50).
+- Category: C, answered (owner, 2026-11-23, Q50: make them work). Found while writing the payment-method sandbox
+  tests (MOD-260); no sandbox was needed to see it (the php-7.2 notes had listed it as a blocker,
+  `php-7.2/notes/PAYMENT-ALERT.md`). `create_paymethod()`, `update_paymethod()` and a `payment` given to
+  `create()` took an array that built an abstract class (a PHP `Error`), or a `customer\payment_profile` object
+  whose XML was invalid: elements without a name (flat's internal state leaking through the SDK's array cast), no
+  `<creditCard>` wrapper, and a field `<type>` Authorize.Net does not define.
+- Fixed (MOD-262): `payment` is converted into the SDK's own objects. The shapes it accepts are in the docblock of
+  `create_paymethod()`: an array (or `payment_profile` object) with `billTo`, `customerType` and `payment`, where
+  `payment` is an array with a `creditCard` or `bankAccount` element, an array of card or bank account fields, or a
+  `payment_profile\creditCard` / `bankAccount` object. Unknown fields, both types at once, an empty profile, or a
+  missing `payment` are `bad_param` or `missing_required_param`, before any request. The design follows the
+  subscription wrapper's.
+- Tests: `Cloud/AuthorizePaymentMethodTest` (the four ways to give a card, a bank account, update, create with a
+  payment, and the rejected shapes) and the sandbox test `PaymentMethodTest`.
+- **Fixed.**
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 49 are answered; Q50 is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 50 are answered; none is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -379,12 +379,5 @@ Each has a recommendation; "agree" is enough. Questions 37 to 49 are answered; Q
     **Answered (owner, 2026-11-23):** it should fail, with a message that says what happened and that it may be
     temporary. Done as KD-98 (MOD-259).
 
-50. **KD-100: should flat's payment-method calls be made to work, or left as they are until v2.X?**
-    - (a) Make them work: a concrete payment profile class and a conversion to the SDK's own objects
-      (`AuthorizeNetPaymentProfile` and `AuthorizeNetCreditCard`), so arrays and objects both build valid XML.
-      This adds behavior to deprecated code, and the design (what an array looks like) is yours to choose.
-    - (b) Leave them, mark the two methods `@deprecated` as unusable in the release notes, and remove all of it
-      in v2.X.
-    Recommend (b), unless the known consumer calls `create_paymethod()` or `update_paymethod()` (then it must do
-    so with its own class, and (a) needs to match that). Do you know whether it does?
-
+50. **KD-100: should flat's payment-method calls be made to work, or left as they are until v2.X?** Recommended
+    leaving them. **Answered (owner, 2026-11-23):** (a), make them work. Done as KD-100 (MOD-262).

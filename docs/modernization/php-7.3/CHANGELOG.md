@@ -706,3 +706,18 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test all --coverage`, 1,507 tests, 6,625 assertions, 100% (334 classes, 1,069 methods,
   8,422 statements), no PHP message; `sandbox` without keys: 5 pass, 5 fail as intended. The test inventory is regenerated.
 
+## MOD-262 — KD-100 fixed: Authorize.Net payment methods work (Q50 answered)
+
+- Kind: behavior change (owner's decision, 2026-11-23: option a). `flat\cloud\authorize\customer` converts the
+  `payment` param into the SDK's `AuthorizeNetPaymentProfile` (private helpers in `customer.php`); `create_paymethod()`
+  and `update_paymethod()` require it. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Tests: the three tests that pinned the broken behavior (MOD-260) are replaced by `AuthorizePaymentMethodTest`
+  asserting the correct XML (`@group known-defect` removed); five older customer tests that pinned the old
+  forwarding (the same object passed through, or a request without `payment`) now assert the conversion. The sandbox
+  `PaymentMethodTest` adds, changes and removes a payment method through flat alone; the mock gained the update
+  stubs and an unmasked read (the SDK sends `unmaskExpirationDate` as `1`).
+- Verified: `docker/bin/test all --coverage`, 1,522 tests, 6,685 assertions, 100% (334 classes, 1,071 methods,
+  8,465 statements), no PHP message; the test inventory is regenerated (no `@group known-defect` test remains).
+  Lesson recorded: objects a test needs are built in the test, not in a data provider, because providers run outside
+  code coverage.
+

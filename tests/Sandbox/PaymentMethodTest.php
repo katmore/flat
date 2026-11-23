@@ -6,11 +6,9 @@ use PHPUnit\Framework\TestCase;
 use flat\cloud\authorize\response_error;
 
 /**
- * flat's payment-method calls against the sandbox (or the documentation-based mock).
- *
- * flat cannot create a payment method itself yet (KD-100), so each test makes one with the legacy SDK's own
- * objects and then tests what flat can do with it: remove it, and report an unknown one. Test card number
- * 4111111111111111 is Authorize.Net's documented Visa test number; no real card is ever used.
+ * flat's payment-method calls against the sandbox (or the documentation-based mock): add, change and remove a
+ * payment method. Test card number 4111111111111111 is Authorize.Net's documented Visa test number; no real
+ * card is ever used. The SDK's own client is used only to read the result back.
  *
  * @group sandbox
  * @group anet
@@ -53,30 +51,36 @@ class PaymentMethodTest extends TestCase
     private function customerWithACard()
     {
         list($customer, $profileId) = $this->customerProfile();
-
-        $card = new \AuthorizeNetPaymentProfile;
-        $card->customerType = 'individual';
-        $card->billTo->firstName = 'Flat';
-        $card->billTo->lastName = 'Sandbox';
-        $card->payment->creditCard->cardNumber = '4111111111111111';
-        $card->payment->creditCard->expirationDate = (date('Y') + 3) . '-12';
-        $response = $customer->client()->createCustomerPaymentProfile($profileId, $card, 'none');
-        $this->assertFalse($response->isError(), 'setting up the payment method: ' . $response->getMessageCode() . ' ' . $response->getMessageText());
-        return [$customer, $profileId, $response->getPaymentProfileId()];
+        $paymentId = $customer->create_paymethod([
+            'customerProfileId'=>$profileId,
+            'payment'=>[
+                'billTo'=>['firstName'=>'Flat', 'lastName'=>'Sandbox'],
+                'payment'=>['creditCard'=>['cardNumber'=>'4111111111111111', 'expirationDate'=>'2035-12']],
+            ],
+        ]);
+        $this->assertMatchesRegularExpression('/^\d+$/', (string) $paymentId);
+        return [$customer, $profileId, $paymentId];
     }
 
-    public function testAPaymentMethodCanBeRemoved()
+    public function testAPaymentMethodCanBeAddedChangedAndRemoved()
     {
         list($customer, $profileId, $paymentId) = $this->customerWithACard();
 
-        $before = $customer->client()->getCustomerPaymentProfile($profileId, $paymentId);
-        $this->assertFalse($before->isError(), $before->getMessageText());
-        $this->assertStringEndsWith('1111', (string) $before->xml->paymentProfile->payment->creditCard->cardNumber);
+        $added = $customer->client()->getCustomerPaymentProfile($profileId, $paymentId, true);
+        $this->assertFalse($added->isError(), $added->getMessageText());
+        $this->assertStringEndsWith('1111', (string) $added->xml->paymentProfile->payment->creditCard->cardNumber);
+        $this->assertSame('2035-12', (string) $added->xml->paymentProfile->payment->creditCard->expirationDate);
+        $this->assertSame('Flat', (string) $added->xml->paymentProfile->billTo->firstName);
+
+        $this->assertNull($customer->update_paymethod([
+            'customerProfileId'=>$profileId, 'customerPaymentProfileId'=>$paymentId,
+            'payment'=>['billTo'=>['firstName'=>'Flat', 'lastName'=>'Sandbox'], 'payment'=>['cardNumber'=>'4111111111111111', 'expirationDate'=>'2036-12']],
+        ]));
+        $changed = $customer->client()->getCustomerPaymentProfile($profileId, $paymentId, true);
+        $this->assertSame('2036-12', (string) $changed->xml->paymentProfile->payment->creditCard->expirationDate);
 
         $this->assertNull($customer->delete_paymethod(['customerProfileId'=>$profileId, 'customerPaymentProfileId'=>$paymentId]));
-
-        $after = $customer->client()->getCustomerPaymentProfile($profileId, $paymentId);
-        $this->assertTrue($after->isError(), 'the payment method should be gone');
+        $this->assertTrue($customer->client()->getCustomerPaymentProfile($profileId, $paymentId)->isError(), 'the payment method should be gone');
     }
 
     public function testAnUnknownPaymentMethodIsAResponseError()

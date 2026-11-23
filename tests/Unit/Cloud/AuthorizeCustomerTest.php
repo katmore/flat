@@ -117,11 +117,15 @@ class AuthorizeCustomerTest extends TestCase
             [['validationMode'=>'testMode'], 'testMode'], [['validate'=>123], 'liveMode']];
     }
 
-    public function testExplicitPaymentObjectIsForwarded()
+    public function testExplicitPaymentObjectIsConvertedForTheSdk()
     {
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
         $customer = new CustomerFixture; $payment = new PaymentProfileFixture;
+        $payment->billTo = new authorize\customer\billTo(['firstName'=>'Local']);
         $customer->create(['description'=>'local customer', 'payment'=>$payment]);
-        $this->assertSame($payment, $customer->client->calls[0][1][0]->paymentProfiles[0]);
+        $profile = $customer->client->calls[0][1][0]->paymentProfiles[0];
+        $this->assertInstanceOf(\AuthorizeNetPaymentProfile::class, $profile);
+        $this->assertSame('Local', $profile->billTo->firstName);
     }
 
     /** @dataProvider invalidRequests */
@@ -142,7 +146,7 @@ class AuthorizeCustomerTest extends TestCase
         return [['get', [], $missing], ['update', [], $missing], ['update', ['id'=>'42'], $bad],
             ['create', [], $bad], ['create', ['email'=>'a', 'validate'=>'invalid'], $bad],
             ['create', ['email'=>'a', 'payment'=>'invalid'], $bad],
-            ['create', ['email'=>'a', 'payment'=>[]], \Error::class],
+            ['create', ['email'=>'a', 'payment'=>[]], $bad],
             ['create_paymethod', [], $missing], ['update_paymethod', [], $missing],
             ['update_paymethod', ['customerPaymentProfileId'=>'7'], $missing],
             ['delete_paymethod', [], $missing], ['delete_paymethod', ['customerPaymentProfileId'=>'7'], $missing],
@@ -205,33 +209,40 @@ class AuthorizeCustomerTest extends TestCase
     }
     public function testPaymentMethodCreationAndUpdateForwardValidatedIds()
     {
-        $customer = new CustomerFixture; $payment = new PaymentProfileFixture;
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
+        $customer = new CustomerFixture; $payment = ['billTo'=>['firstName'=>'Local']];
         $customer->client->response->paymentIds = [new \SimpleXMLElement('<id>7</id>')];
         $this->assertSame('7',$customer->create_paymethod(['customerProfileId'=>'42','payment'=>$payment]));
-        $this->assertSame(['createCustomerPaymentProfile',['42',$payment]],$customer->client->calls[0]);
+        $this->assertSame('createCustomerPaymentProfile',$customer->client->calls[0][0]);
+        $this->assertSame('42',$customer->client->calls[0][1][0]);
+        $this->assertSame('Local',$customer->client->calls[0][1][1]->billTo->firstName);
         $this->assertSame(['//customerPaymentProfileId'],$customer->client->response->queries);
         $this->assertNull($customer->update_paymethod(['customerProfileId'=>'42','customerPaymentProfileId'=>'7','payment'=>$payment]));
-        $this->assertSame(['updateCustomerPaymentProfile',['42','7',$payment]],$customer->client->calls[1]);
+        $this->assertSame(['updateCustomerPaymentProfile','42','7'],[$customer->client->calls[1][0],$customer->client->calls[1][1][0],$customer->client->calls[1][1][1]]);
+        $this->assertSame('Local',$customer->client->calls[1][1][2]->billTo->firstName);
     }
     public function testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice()
     {
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
         $customer = new CustomerFixture;
         $previous = set_error_handler(function ($severity,$message,$file,$line) { throw new \ErrorException($message,0,$severity,$file,$line); });
         try {
             $this->expectException(authorize\unexpected_response::class);
-            $customer->create_paymethod(['customerProfileId'=>'42']);
+            $customer->create_paymethod(['customerProfileId'=>'42','payment'=>['billTo'=>['firstName'=>'Local']]]);
         } finally { restore_error_handler(); }
     }
     /** @dataProvider rejectedPaymentMethods */
     public function testPaymentMethodRejectionUsesExistingResponseError($method,$params)
     {
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
         $customer = new CustomerFixture; $customer->client->response->error = true;
         $this->expectException(authorize\response_error::class);
         $customer->$method($params);
     }
     public function rejectedPaymentMethods()
     {
-        return [['create_paymethod',['customerProfileId'=>'42']], ['update_paymethod',['customerProfileId'=>'42','customerPaymentProfileId'=>'7']]];
+        $payment = ['billTo'=>['firstName'=>'Local']];
+        return [['create_paymethod',['customerProfileId'=>'42','payment'=>$payment]], ['update_paymethod',['customerProfileId'=>'42','customerPaymentProfileId'=>'7','payment'=>$payment]]];
     }
     /** @dataProvider transactionSpecifications */
     public function testTransactionSpecificationsNormalizeAndReachTheClient($params,$label,$class)

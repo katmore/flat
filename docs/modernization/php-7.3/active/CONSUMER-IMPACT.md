@@ -172,6 +172,19 @@ consumers saw before, what they see now, and what to search for in their code.
 - Search consumer code for: `get_info(`, `unexpected_response`, `not_found`, and any lookup you built to work around it.
 - Verified: against the schema and in tests; the real-sandbox confirmation is the owner's next run.
 
+### MOD-262 (KD-100) — Authorize.Net payment methods work
+
+- Before: `customer::create_paymethod()` and `update_paymethod()` (and a `payment` given to `create()`) could not
+  work: an array raised a PHP `Error` ("Cannot instantiate abstract class ...payment_profile"), and a
+  `payment_profile` object produced invalid XML that Authorize.Net refuses. Without a `payment` they sent an
+  empty payment profile.
+- After: they build valid requests (see the docblock of `create_paymethod()` for the shapes). Unknown fields, both
+  payment types, an empty profile and a missing `payment` throw `bad_param` or `missing_required_param` before any
+  request. The returned id and the other exceptions are unchanged.
+- Search consumer code for: `create_paymethod`, `update_paymethod`, `payment_profile` (a class of your own that extends
+  it still works), `customer\payment_profile\creditCard`, and any workaround that calls the SDK directly.
+- Verified: yes (unit tests; sandbox tests ready for the owner's run).
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

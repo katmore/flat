@@ -32,6 +32,8 @@ Each has a "before, after, what to search for" entry in `docs/modernization/php-
   (`merchantCustomerId`, `description`, `email`); before, the profile was empty and the real service refused it
   (`E00041`). When Authorize.Net gives no usable answer (no connection, timeout, untrusted certificate), the
   wrappers throw `no_response`; before, the call returned as if it had worked.
+- **Authorize.Net payment methods (deprecated):** `create_paymethod()` and `update_paymethod()` now build requests
+  Authorize.Net accepts (before: a PHP error for an array, invalid XML for an object); see the docblock for the shapes.
 - **Authorize.Net subscriptions (deprecated):** several calls on one `subscription` object no longer resend the
   earlier calls' data, and `get_info()` works (it always threw before).
 
