@@ -31,6 +31,7 @@ The major version follows semantic versioning. It stays at 1 while the public AP
  * Advance one PHP minor version at a time and skip none: 7.2, 7.3, 7.4, 8.0, 8.1, and onward.
  * Fix the phase's known bugs before starting the next phase, so bug fixes and PHP upgrades never mix.
  * Run PHP, Composer, the tests and their services in Docker configured in this repository, and record the exact PHP patch and tool versions used.
+ * Bring every tool, service and dependency of the test environment up to the newest release the phase's PHP supports, aggressively and one at a time (full suite, own commit and change-log entry each). The known consumer's versions never hold them back; the public API stays compatible through workarounds, not by pinning old tools. Details: `AGENTS.md`, "Keep everything current".
  * Rerun the whole test suite (and the integration tests, once the owner has asked for them) for every phase; record failures, skips and coverage gaps.
  * Never weaken an assertion or drop a check to make an upgrade pass. Changing tested behavior is a deliberate maintainer decision.
  * Keep runtime-compatibility fixes separate from behavior changes in each phase's CHANGELOG.md and in the commits, and list consumer-visible changes in the phase's `active/CONSUMER-IMPACT.md`.

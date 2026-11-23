@@ -517,3 +517,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   it and the check failed with a misleading "Usage". The copy is now readable; an unreadable file and a
   wrong argument count have separate messages; a test covers both. Shown failing before the fix and
   passing after it from a root host with files owned by 1000, with no workaround.
+
+## MOD-241 — Rule recorded: keep every tool, service and dependency current
+
+- Kind: documentation, owner's directives (2026-11-23): be aggressive about updating tooling, services and
+  dependencies; never hold them back for the known consumer; keep the public API compatible through
+  workarounds. Now in `AGENTS.md` ("Keep everything current"), in the phase rules of
+  `docs/modernization/README.md`, and in flat-webapp's `AGENTS.md`, so it applies to every later phase and
+  release, not only v1.73.x. The handoff's "nothing else" and "PHPUnit is a separate decision" are corrected.

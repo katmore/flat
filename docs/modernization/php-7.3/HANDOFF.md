@@ -109,7 +109,8 @@ the `php-7.2` branch and the `v1.72.0` tag.
    `history/`; the test inventory is generated, not written.
 2. **Baseline first.** Before changing anything, run the full suite in the current 7.2
    environment and confirm 1,428 passing. Every later failure is then yours.
-3. **Change the environment to PHP 7.3 and nothing else:**
+3. **Change the environment to PHP 7.3 and nothing else:** (correction, 2026-11-23: "nothing else" meant no
+   behavior change; every tool and service is upgraded too, see `AGENTS.md`, "Keep everything current")
    - base image `php:7.3-cli` pinned by digest, at the newest 7.3 patch release (the owner chose
      the newest; expected 7.3.33, verify it) and record the exact patch, as 7.2.34 was recorded;
    - rebuild the extensions from pinned commits and check each supports 7.3 (the MongoDB
@@ -246,7 +247,8 @@ Editing:
   `@group known-defect` tag only while a test still asserts defective behavior.
 - The suite uses PHPUnit 8.5, which runs on PHP 7.3 too: keep it. Some assertion names differ in
   PHPUnit 9 (`assertRegExp` is the PHPUnit 8 name; 9 calls it `assertMatchesRegularExpression`),
-  so moving PHPUnit is a separate decision, not part of this step.
+  so moving PHPUnit is a separate decision, not part of this step. (Correction, 2026-11-23: it is part of
+  the step; PHPUnit moved to 9.6, see `AGENTS.md`, "Keep everything current".)
 
 GitHub and the session:
 - This session's git access cannot push tags, delete branches, or read Dependabot alerts
