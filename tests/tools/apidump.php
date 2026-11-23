@@ -62,6 +62,7 @@ function describe_class($name) {
         $out['methods'][$m->getName()] = [
             'visibility' => $m->isPublic() ? 'public' : 'protected', 'static' => $m->isStatic(),
             'abstract' => $m->isAbstract(), 'final' => $m->isFinal(),
+            'returns_reference' => $m->returnsReference(),
             'params' => $params, 'return' => type_string($m->getReturnType()),
         ];
     }
@@ -119,6 +120,16 @@ if ($mode === 'dump') {
 if ($mode === 'compare') {
     $old = json_decode(file_get_contents($argv[2]), true);
     $new = json_decode(file_get_contents($argv[3]), true);
+    foreach ([$old, $new] as $dump) {
+        foreach ($dump as $class) {
+            foreach ($class['methods'] ?? [] as $method) {
+                if (!array_key_exists('returns_reference', $method)) {
+                    echo "# API comparison\n\nIncomplete: return-reference metadata is missing. Re-dump both versions with the current tool.\n";
+                    exit(2);
+                }
+            }
+        }
+    }
     $lines = []; $counts = [];
     $note = function ($category, $text) use (&$lines, &$counts) { $lines[$category][] = $text; $counts[$category] = ($counts[$category] ?? 0) + 1; };
     $state = function ($c) { return isset($c['unloadable']) ? 'unloadable' : (isset($c['nodeclaration']) ? 'declares nothing' : 'ok'); };
@@ -145,8 +156,9 @@ if ($mode === 'compare') {
         foreach ($o['methods'] as $m => $v) {
             if (!isset($n['methods'][$m])) { $note('method removed', "`$name::$m()`"); continue; }
             $w = $n['methods'][$m];
-            foreach (['visibility', 'static', 'abstract', 'final'] as $k) {
-                if ($v[$k] !== $w[$k]) $note('method modifier changed', "`$name::$m()`: $k " . json_encode($v[$k]) . ' to ' . json_encode($w[$k]));
+            foreach (['visibility', 'static', 'abstract', 'final', 'returns_reference'] as $k) {
+                $before = $v[$k]; $after = $w[$k];
+                if ($before !== $after) $note('method modifier changed', "`$name::$m()`: $k " . json_encode($before) . ' to ' . json_encode($after));
             }
             if ($v['return'] !== $w['return']) $note('return type changed', "`$name::$m()`: " . json_encode($v['return']) . ' to ' . json_encode($w['return']));
             if (count($v['params']) !== count($w['params'])) {

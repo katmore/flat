@@ -33,6 +33,11 @@
 namespace flat\cloud\authorize;
 use \flat\cloud\authorize as authorize;
 
+/**
+ * @deprecated since v1.73.1. Authorize.Net no longer supports the legacy SDK classes this is built on
+ *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see
+ *    docs/modernization/DEFERRED-V2.md, item 2.
+ */
 abstract class subscription extends \flat\cloud\authorize
    implements 
       \flat\cloud\ccgateway\subscription,
@@ -303,6 +308,8 @@ abstract class subscription extends \flat\cloud\authorize
    const arb_search_result_ttl = 3600; //1 hour ttl
    /**
     * retrieves info for specified subscription.
+    *    Authorize.Net's subscription list can lag: a subscription created a moment ago may not be listed yet,
+    *    and this then throws \flat\cloud\authorize\subscription\not_found. Try again after a few seconds.
     *    if mongo_crud_cache is configured, will search there for
     *    subscriptionId, using that data if found and within
     *    arb_search_result_ttl.
@@ -356,7 +363,7 @@ abstract class subscription extends \flat\cloud\authorize
              if ($response->isError()) {
               throw new authorize\response_error($response->getMessageCode(), $response->getMessageText());
       }
-      if (($totals = $response->xpath('/ARBGetSubscriptionListResponse/ARBGetSubscriptionListResult/totalNumInResultSet')) && isset($totals[0])) {
+      if (($totals = $response->xpath('/ARBGetSubscriptionListResponse/totalNumInResultSet')) && isset($totals[0])) {
       $total = (int)(string)$totals[0];
       
       } else {
@@ -364,7 +371,6 @@ abstract class subscription extends \flat\cloud\authorize
       }
       $subscriptionDetail = $response->xpath(
       '/ARBGetSubscriptionListResponse'.
-      '/ARBGetSubscriptionListResult'.
                      '/subscriptionDetails'.
                         '/subscriptionDetail'
       );
@@ -499,7 +505,7 @@ abstract class subscription extends \flat\cloud\authorize
     */
    protected function _get_ARB() {
       if (!$this->_ARB) {
-         $arb = new \AuthorizeNetARB(
+         $arb = new AuthorizeNetARB(
                $this->_get_login_id(),
                $this->_get_transaction_key()
          );

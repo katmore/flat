@@ -278,3 +278,552 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   body is accepted (it used to be called malformed). The functional test for a malformed body is
   replaced by one for `false`. Why 405 does not apply to `PATCH`: flat throws `unknown_method` before
   any response exists, and a 405 needs an `Allow` header (`DEFERRED-V2.md` items 1 and 4).
+
+## MOD-215 — Documentation: adversarial review handoff
+
+- Kind: documentation, owner's request. [active/ADVERSARIAL-REVIEW-HANDOFF.md](active/ADVERSARIAL-REVIEW-HANDOFF.md)
+  briefs a second agent to review the phase: frozen commit ranges, ground rules, the claims to try to
+  break, and where the author expects weaknesses. No code change.
+
+## MOD-216 — Documentation: review findings go into v1.73.1
+
+- Kind: documentation, owner's decision. The adversarial review handoff now says the review
+  targets the frozen v1.73.0 state, is report-only, and that confirmed findings are fixed in v1.73.1,
+  one at a time with options from the author. No other change.
+
+## MOD-217 — Documentation: independent adversarial review
+
+- Kind: documentation, owner's request. Corrected the review handoff: v1.73.1 is unreleased
+  and this review prepares it; removed the exclusion of v1.73.1 work. This clarifies MOD-216.
+- [Review](active/ADVERSARIAL-REVIEW.md) records eight findings from source inspection,
+  test-assertion review and Docker experiments, with evidence and reproduction steps. No
+  source, tests or locks changed. The full framework suite passes; the webapp HTTP run was
+  blocked by dependency-download HTTP 403 responses. Fixes await owner review.
+
+## MOD-218 — JShrink preserves comment token boundaries (KD-89)
+
+- Kind: bug fix, adversarial finding 1. Removed global empty-comment stripping. The parser now
+  accepts empty comments, preserves comment whitespace/newlines and separates adjacent plus/minus
+  tokens. Quoted comment text remains intact. Consumer impact: KD-89 in the phase impact list.
+- Added shared regression cases: PHPUnit checks output, and `docker/bin/test-javascript` executes
+  original/minified programs against explicit expected results. The execution check uses a pinned
+  Node container; PHP minification still uses the existing PHP 7.3 image. Both checks reproduced
+  the defect before the source fix. Inventory regenerated. Validation: all 1,447 tests pass on
+  PHP 7.3.33 (6,372 assertions, full service suite, 100% reported coverage); all 15 JavaScript
+  programs preserve their expected results in the execution check.
+
+## MOD-219 — HTML parsing preserves libxml reporting (KD-90)
+
+- Kind: bug fix, adversarial finding 2. Removed global error-capture changes from cURL DOM
+  initialization and bundled ParsedownExtra HTML parsing. Scoped cURL XPath diagnostic capture
+  to the query with `finally` restoration, retaining its existing exception and diagnostic text.
+- Tests reproduce the leaks and hidden HTML warnings before the fix, check both caller modes
+  and existing buffered errors, and verify restoration when XPath reports an error or a PHP
+  warning interrupts it. The nested HTML5 Markdown output assertion is retained alongside exact
+  expectations for its previously hidden parser warnings. Consumer impact recorded; inventory
+  regenerated. Validation: all 1,454 tests pass on PHP 7.3.33 (6,402 assertions, MongoDB and
+  RabbitMQ included), with 100% reported class, method and line coverage.
+
+## MOD-220 — cURL form key encoding and URL validation
+
+- Kind: bug fixes, findings 3 and 4 (KD-91, KD-92). URL-encode form names and reject absent URL
+  schemes before reading the scheme index. Existing scalar-value encoding is retained; nested
+  values need the separate Q45 decision.
+- Focused request tests reproduced one encoding failure and four native notice errors before
+  the fixes; all 33 request cases now pass. Consumer impact recorded and inventory regenerated.
+
+## MOD-221 — API comparison detects reference returns
+
+- Kind: tooling fix, finding 7. Dump ReflectionMethod::returnsReference and compare changes in
+  either direction. Existing baselines without this flag default to value returns.
+- New tool-level controls reproduced two missed-reference failures before the fix. All three
+  tool regression tests now pass, including parameter-type changes and legacy-baseline handling.
+  No framework API change. Inventory regenerated.
+
+## MOD-222 — Lock flat-webapp to the published PHP 7.3 release
+
+- Kind: reproducibility fix, finding 8. flat-webapp now requires flat 1.73.* and tracks its
+  application Composer lock. It resolves v1.73.0 at 8bee551; tests verify the installed version
+  and reference against that lock, and reconcile existing installs before running.
+- Development Apache workers use the configured host UID/GID so private checkouts are readable.
+  Test HTTP traffic bypasses external proxies for the local web service. An explicit Composer
+  source-download option supports environments without archive access; test images omit Git
+  histories. PHP remains 7.3.33 and application behavior is unchanged.
+
+## MOD-223 — Reject structured errors in flat-webapp's log gate
+
+- Kind: tooling fix, finding 5. The runner now uses a tested PHP log checker for native PHP
+  messages (including catchable/recoverable fatals), application JSON errors and truncated error
+  records. Its command exits nonzero for errors; ordinary access/startup logs pass.
+- Isolated native PHP tests exercise the real fatal/exception handlers and ensure their emitted
+  records are rejected by the gate. The application error handlers and responses are unchanged.
+
+## MOD-224 — Observe parsed webapp input and test failure contracts
+
+- Kind: tests, finding 6. A test-only HTTP endpoint exposes the actual InputTrait result for
+  JSON, inferred JSON, form data and GET input. No app/ or web/ code changed. Native malformed-JSON
+  and PATCH paths are checked in separate PHP processes with exact expected failures.
+- A scratch empty-input mutant causes six new input checks to fail; the five existing
+  unsupported-method body checks still pass. The fixture is enabled only in the test stack,
+  which exposes no host port.
+- Validation: the full framework suite passes 1,462 tests, 6,454 assertions and 100% reported
+  coverage. flat-webapp passes 66 tests, 196 assertions, including real HTTP checks and the strict
+  server-log gate. Composer validates the application lock. No release was published.
+
+## MOD-225 — Compact, reproducible webapp test images
+
+- Kind: build tooling. Keep source-download Git histories out of the runtime image. An explicit
+  WEBAPP_GITHUB_ARCHIVES option seeds Composer's cache from official GitHub ZIPs at the locked
+  commit references when API archives are unavailable. The original lock remains unchanged.
+- Separate application and test-tool download preferences. The rebuilt PHP 7.3.33 test image is
+  about 470 MB and passes all 66 webapp tests, 196 assertions and the strict log gate. Removed
+  the oversized temporary image and its build-cache descendants created during this work.
+
+## MOD-226 — Refuse incomplete legacy API metadata
+
+- Kind: tooling correction to MOD-221. A missing return-reference flag cannot be treated as a
+  known value return: an old reference-returning method could otherwise change unnoticed.
+  Comparisons now exit 2 with a short regeneration instruction when either dump lacks the flag.
+- Controls cover both reference-change directions, incomplete legacy dumps, equal complete dumps
+  and parameter-type changes. Historical API dumps are retained; new comparisons must re-dump
+  both versions with the current tool.
+- Final validation: all 1,462 framework tests pass (6,458 assertions, full service suite and
+  100% reported coverage). All 66 webapp tests and its strict log gate pass on the compact image.
+
+## MOD-227 — Reject unsupported form values (Q45, KD-93)
+
+- Kind: bug fix, owner's decision on Q45. Validate URL-encoded field values before passing them
+  to `urlencode()`. Nested arrays, non-stringable objects and resources now raise `bad_param`;
+  scalar/null/stringable values keep their encoding, and JSON remains available for nested data.
+- Reproduced seven native warnings before the fix. Added constructor regressions for nested
+  array/object containers, bracketed query-string input and resources, plus flat-value and nested
+  JSON compatibility checks. Consumer impact recorded and inventory regenerated.
+- Validation: all 1,471 tests pass on PHP 7.3.33 (6,480 assertions, MongoDB/RabbitMQ included),
+  with 100% reported class, method and line coverage.
+
+## MOD-228 — Tooling upgrade 1 of 7: test-lock packages (within their constraints)
+
+- Kind: tooling, owner's instruction (2026-11-23): upgrade every tool PHP 7.3 allows, one at a time
+  (the php-7.3 handoff had said "nothing else"; that applied to the PHP step only).
+- `tests/docker/tools/composer.lock`: PHPUnit 8.5.56 to 8.5.57. `tests/docker/runtime/composer.lock`:
+  Guzzle 7.17.0, `guzzlehttp/promises` 2.6.2, `guzzlehttp/psr7` 2.13.6, jmespath 2.10.0, phpseclib
+  3.0.59. `php-token-stream` stays at 3.1.3: Composer offered 4.0.4, a 2020 release of an abandoned
+  package that only sorts higher (it leaves with PHPUnit 9). Links and `plugin-api-version` keep the
+  old lock's form. Already the newest PHP 7.3 allows, so unchanged: `mongodb/mongodb` 1.16.1, the
+  AWS SDK 3.337.3, the MongoDB extension 1.16.2 (1.17 needs PHP 7.4).
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-229 — Tooling upgrade 2 of 7: the Composer image
+
+- Kind: tooling. `docker/Dockerfile`: the dependency stage uses `composer:2.11` (2.11.2) pinned by
+  digest, was 2.2.31. It installs from the locks exactly as before (no blocking by the newer security
+  check; it only warns that `doctrine/annotations` is abandoned). The locks were not regenerated.
+  The Composer that runs the tests' packages is still the image's PHP 7.3.33 runtime.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-230 — Tooling upgrade 3 of 7: ImageMagick
+
+- Kind: tooling. `docker/Dockerfile`: ImageMagick 6 is built from the pinned commit of release
+  6.9.13-61, the newest 6.x (was 6.9.10-23). Same configure options. The imagick extension and the
+  MongoDB extension layers rebuilt on top of it.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-231 — Tooling upgrade 4 of 7: the imagick extension
+
+- Kind: tooling. `docker/Dockerfile`: imagick is built from the pinned commit of release 3.8.1 (was an
+  unreleased snapshot that reported its version as `@PACKAGE_VERSION@`). It supports PHP 5.6 and later.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-232 — Correction to MOD-231: imagick still reports `@PACKAGE_VERSION@`
+
+- Kind: documentation. MOD-231 implied the old snapshot's placeholder version was fixed by the upgrade.
+  It is not: an extension built from a Git commit never fills in `@PACKAGE_VERSION@`, so
+  `phpversion('imagick')` shows it for any release. The pin is the commit of the `3.8.1` tag
+  (`70087bab33eab913e99ac77d64d04d1a2fd0b7b0`); that is how the version is known.
+
+## MOD-233 — Tooling upgrade 5 of 7: Xdebug
+
+- Kind: tooling. `docker/Dockerfile`: Xdebug 3.1.6 (the last release for PHP 7.3; 3.2 needs PHP 8.0) from
+  its pinned commit, was 2.9.8. Xdebug 3 needs its mode set: `xdebug.mode=develop,coverage` (develop
+  keeps the enhanced diagnostics 2.x had by default; coverage is what `--coverage` needs). No error
+  reporting setting is touched; the image still reports `E_ALL`.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-234 — Tooling upgrade 6 of 7: PHPUnit 9.6
+
+- Kind: tooling and test code, no library change. PHPUnit 8.5 to 9.6.39 (the last line for PHP 7.3),
+  with php-code-coverage 9.2.32 and the other `sebastian/*` packages; `php-token-stream` leaves with
+  it. `tests/docker/tools/composer.json` and its lock were re-resolved on the 7.3.33 platform;
+  the root `composer.json` dev requirement follows.
+- `phpunit.xml.dist`: coverage settings moved to PHPUnit 9's `<coverage>` element with the same
+  meaning (`src/flat`, uncovered files not processed). The four convert-to-exception settings stay.
+- Tests: `assertFileNotExists` to `assertFileDoesNotExist` (7), `assertRegExp` to
+  `assertMatchesRegularExpression` (5). `assertObjectNotHasAttribute`, deprecated in 9.6 with a
+  replacement that only exists in PHPUnit 10, became `property_exists()` (3, `ResponseTest`).
+  `tests/Support/PhpSubprocess.php` hands the child's raw Xdebug coverage to php-code-coverage 9 as
+  `RawCodeCoverageData` (17 tests failed with a TypeError under `--coverage` until then).
+  No assertion was removed or loosened.
+- Coverage numbers changed, still 100%: classes 332 (was 331), methods 1,063 (1,062), statements
+  8,393 (8,061). Measured against 8.5 on the unit suite: php-code-coverage 9 counts executable lines
+  differently in 264 files (+328 statements net), and counts one class the old one did not:
+  `data/orm/driver/session/exception/bad_param.php` (a one-line constructor), now covered.
+- The inventory generator and the mutation probe work unchanged (inventory output is identical).
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 6,480 assertions, 100%, no PHP message.
+
+## MOD-235 — Clarification of MOD-234: the extra class in the coverage count is not new code
+
+- Kind: documentation. `flat\data\orm\driver\session\exception\bad_param` has been in the source since
+  2026-11-13 (php-7.2 phase, KD-19-23); no Codex-era commit touched it. It is one of 17 `bad_param`
+  classes, one per component. The old php-code-coverage reported 0 classes, methods and statements
+  for it even while a test threw it; php-code-coverage 9 reports 1, 1 and 1, covered. Checked by
+  running `SessionDriverTest` under both PHPUnit versions. A counting difference only.
+
+## MOD-236 — Tooling upgrade 7a of 7: the MongoDB test service
+
+- Kind: tooling and one test fixture. `docker/docker-compose.yml`: MongoDB 5.0 pinned by digest (was 4.0),
+  health check through `mongosh`. 7.0 (the newest the 1.16 driver supports) was tried first and
+  failed: flat's update count needs the `getLastError` command, removed in MongoDB 5.1 (Q46, open).
+  5.0 is the newest where the unchanged library works.
+- `CrudTest::testInvalidDocumentWritePreservesTheDriverException` used `['$invalid'=>'document']`,
+  which MongoDB 5.0 accepts, so it no longer raised the driver exception. It now writes an array
+  `_id`, which every MongoDB version rejects; same assertion. Passes on 4.0 and on 5.0.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-237 — Tooling upgrade 7b of 7: the RabbitMQ test service
+
+- Kind: tooling. `docker/docker-compose.yml`: RabbitMQ 3.13.7 pinned by digest (was 3.8.34). 4.4 was
+  tried first and failed: flat's default queue declaration (non-durable, non-exclusive) is denied by
+  RabbitMQ 4 (Q47, open). 3.13 is the newest where the unchanged library works.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-238 — Tooling upgrade 8 of 9: flat-webapp's Composer image
+
+- Kind: tooling, in flat-webapp (`docker/compose.yml` and `docker/Dockerfile.test`): `composer:2.11`
+  pinned by digest, was 2.2. Installs from the existing locks are unchanged.
+- Verified: `docker/bin/test` in flat-webapp, 66 tests, clean server log (run from a scratch copy; see the
+  root-run log bug reported with the adversarial review fixes, not yet fixed).
+
+## MOD-239 — Tooling upgrade 9 of 9: flat-webapp's PHPUnit
+
+- Kind: tooling and two test lines, in flat-webapp. PHPUnit 9.6.39 (was 8.5.57) with the matching
+  `sebastian/*` packages, relocked on the 7.3.33 platform; `assertRegExp` became
+  `assertMatchesRegularExpression` (2, `tests/Unit/DependencyLockTest.php` there). No assertion changed otherwise.
+- Verified: `docker/bin/test` in flat-webapp, 66 tests, 196 assertions, clean server log.
+
+## MOD-240 — Fix (KD-94): flat-webapp's log check on a root host (v1.73.1)
+
+- Kind: tooling bug fix, in flat-webapp (its `docker/bin/test` and its log check script), owner's decision
+  (2026-11-23). `mktemp` made the log copy private, so a container running as another user could not read
+  it and the check failed with a misleading "Usage". The copy is now readable; an unreadable file and a
+  wrong argument count have separate messages; a test covers both. Shown failing before the fix and
+  passing after it from a root host with files owned by 1000, with no workaround.
+
+## MOD-241 — Rule recorded: keep every tool, service and dependency current
+
+- Kind: documentation, owner's directives (2026-11-23): be aggressive about updating tooling, services and
+  dependencies; never hold them back for the known consumer; keep the public API compatible through
+  workarounds. Now in `AGENTS.md` ("Keep everything current"), in the phase rules of
+  `docs/modernization/README.md`, and in flat-webapp's `AGENTS.md`, so it applies to every later phase and
+  release, not only v1.73.x. The handoff's "nothing else" and "PHPUnit is a separate decision" are corrected.
+
+## MOD-242 — Fix (KD-95): Mongo update counts work on MongoDB 5.1 and later (v1.73.1)
+
+- Kind: behavior change (bug fix), owner's decision on Q46 (2026-11-23). `src/flat/db/driver/mongo.php` and
+  `mongo/crud.php`: the driver keeps its update's acknowledged result and `get_affected_records()` reads the
+  matched count from it; the server's removed `getLastError` is asked only when no update went through the
+  driver. Tests: two service tests pin today's behavior on a real server (an update that changes nothing
+  still counts its match; no match is not modified), three unit tests prove the count does not call the
+  server; the unit ones fail without the fix. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Verified: `docker/bin/test all --coverage`, 1,476 tests, 100% (332 classes, 1,064 methods, 8,401 statements).
+
+## MOD-243 — Tooling: the MongoDB test service moves to 9.0
+
+- Kind: tooling. `docker/docker-compose.yml`: MongoDB 9.0 (9.0.8) pinned by digest, was 5.0 (MOD-236). Tried
+  from the newest down: 9.0 passes, so nothing older is needed. The PHP driver 1.16 (the last for PHP 7.3)
+  documents support only up to MongoDB 7.0, but the whole suite passes on 9.0.
+- Verified: `docker/bin/test all --coverage`, 1,476 tests, 100%, no PHP message.
+
+## MOD-244 — Fix (KD-96): default RabbitMQ queues work on RabbitMQ 4 (v1.73.1)
+
+- Kind: behavior change (bug fix), owner's decision on Q47 (2026-11-23). `src/flat/db/driver/rabbitmq.php`:
+  `publish()` declares its queue durable on a RabbitMQ 4 or later broker unless the caller chose `durable` or an
+  exclusive queue; older brokers are unchanged. Tests: two service tests fail without the fix (the default
+  queue, and the documented-parameters test); two more pin that an explicit `exclusive` or `durable` choice is
+  kept. The test's own direct declaration became durable. Checked against 3.13 as well: flat still declares
+  non-durable there (the one test that assumes a 4.x broker fails with the broker's "inequivalent arg
+  'durable'" error). Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Verified: `docker/bin/test all --coverage`, 1,479 tests, 100% (332 classes, 1,065 methods, 8,409 statements).
+
+## MOD-245 — Tooling: the RabbitMQ test service moves to 4.4
+
+- Kind: tooling. `docker/docker-compose.yml`: RabbitMQ 4.4.1 (`4.4-alpine`) pinned by digest, was 3.13.7
+  (MOD-237); `latest` is the same release.
+
+## MOD-246 — Fix (KD-97): the RabbitMQ driver works with php-amqplib 3 (v1.73.1)
+
+- Kind: compatibility fix, no change for php-amqplib 2 users. `src/flat/db/driver/rabbitmq.php` builds the connection
+  with `AMQPConnection` where it exists and `AMQPStreamConnection` otherwise (php-amqplib 3 removed the alias).
+  `RabbitMqTest` accepts the common base class and a new subprocess test, in which the legacy class is defined
+  first, proves version 2 callers still get it (it fails when that branch is disabled). Consumer impact:
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Verified: rabbitmq tests on php-amqplib 2.12.3 and 3.7.5; `docker/bin/test all --coverage`, 1,480 tests, 100%.
+
+## MOD-247 — Dependency upgrade: php-amqplib 3.7.5 in the test runtime lock
+
+- Kind: tooling. `tests/docker/runtime/composer.json`: `php-amqplib/php-amqplib` `^3.7` (was exactly 2.12.3);
+  the lock resolves 3.7.5 (the newest allowing PHP 7.3). The other pins (`authorizenet`, `yasumi`) follow in
+  their own entries.
+
+## MOD-248 — Dependency upgrade: yasumi 2.4.0 in the test runtime lock
+
+- Kind: tooling. `tests/docker/runtime/composer.json`: `azuyalabs/yasumi` `^2.4` (was exactly 1.8.0); the lock
+  resolves 2.4.0, the newest allowing PHP 7.3 (2.5 and later need a newer PHP). No flat change was needed.
+- Verified: `docker/bin/test all --coverage`, 1,480 tests, 100%, no PHP message.
+
+## MOD-249 — Tooling: Node 26 for the JavaScript execution checks
+
+- Kind: tooling. `docker/bin/test-javascript`: `node:26-slim` (Node 26.13.1, the current LTS) pinned by digest,
+  was Node 22. The 15 minifier programs still preserve their JavaScript results.
+
+## MOD-250 — Tooling: ImageMagick 7
+
+- Kind: tooling. `docker/Dockerfile`: ImageMagick 7.1.2-36 (the `ImageMagick` repository's pinned commit; the 7.x line,
+  where 6.x is the legacy branch) replaces 6.9.13-61 (MOD-230). Same configure options; imagick 3.8.1 builds against it.
+- Verified: `docker/bin/test all --coverage`, 1,480 tests, 100%, no PHP message.
+
+## MOD-251 — Dependency upgrade: flat-webapp's application lock
+
+- Kind: tooling, in flat-webapp. `composer.lock`: Guzzle 7.17.0 and psr7 2.13.6 (the only updates PHP 7.3.33
+  allows within the constraints); the pinned flat release and the lock's `plugin-api-version` are unchanged.
+  The test lock already had nothing newer. Verified: `docker/bin/test` in flat-webapp, 67 tests, clean log.
+
+## MOD-252 — Dependency sweep recorded; Authorize.Net SDK 2.x is Q48
+
+- Kind: documentation. Every tool, service and dependency of both repositories is now at the newest release
+  PHP 7.3.33 allows (see [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)), except `authorizenet/authorizenet`:
+  2.0.4 removes the classes flat's public API exposes. Q48 asks how to proceed; `DEFERRED-V2.md` item 2 now
+  says the port can ship in v1.X.
+
+## MOD-253 — Authorize.Net wrappers deprecated; removal in v2.X (Q48 answered)
+
+- Kind: documentation in code, owner's decision (2026-11-23): not ported (Authorize.Net does not support the legacy
+  SDK classes), deprecated now, removed in v2.X. All 45 class declarations under `src/flat/cloud/authorize` carry
+  `@deprecated since v1.73.1` (the 3 shim files only `require` another file); no runtime notice. New test
+  `AuthorizeDeprecationTest` fails if one loses its tag (shown failing). `DEFERRED-V2.md` item 2 is now "Remove the
+  Authorize.Net wrappers"; the approved-exception wording in `AGENTS.md` and in the test helper says "removed".
+  The API comparison was redone against re-dumps of v1.72.0 and v1.73.0 (see `notes/API-COMPARISON.md`).
+- Also: `TEST-INVENTORY.md` is regenerated. It had not been after the tests added in MOD-242, 244 and 246, which the
+  rule requires.
+- Verified: `docker/bin/test all --coverage`, 1,481 tests, 6,546 assertions, 100% (332 classes, 1,065 methods,
+  8,412 statements), no PHP message.
+
+## MOD-254 — Release notes drafted for v1.73.1
+
+- Kind: documentation. [RELEASE-NOTES-V1.73.1.md](RELEASE-NOTES-V1.73.1.md) covers the fixes (MOD-218 to MOD-220,
+  MOD-227, MOD-242, MOD-244, MOD-246), the Authorize.Net deprecation (MOD-253) and the tooling upgrades
+  (MOD-228 to MOD-251). The dependency audit was re-run: the same four advisories, which need PHP 8.1.
+
+## MOD-255 — Optional Authorize.Net sandbox tests
+
+- Kind: tests and tooling. New suite `sandbox` (`tests/Sandbox`, `phpunit.xml.dist`) and mode `docker/bin/test sandbox`
+  (`bin/test`, `docker/bin/test`, `docker/docker-compose.sandbox.yml`, `tests/docker/compose.sandbox.ca.yaml`).
+  Credentials come from `FLAT_TEST_ANET_LOGIN_ID` and `FLAT_TEST_ANET_TRANSACTION_KEY`; without them the tests that need
+  them fail with a message, they do not skip. TLS verification stays on; the test clients trust `FLAT_TEST_CA_FILE`.
+  The suite is outside `unit`, `all` and the inventory. See [TESTING.md](../TESTING.md).
+- Six tests: made-up credentials give `E00007` through the current API and through flat's legacy customer wrapper;
+  the legacy client targets the sandbox only; and, with credentials, authentication works and a customer profile can
+  be created, read, updated and deleted (an unknown profile is a response error).
+- Found: KD-98 (legacy wrappers are silent when the request fails; Q49). Run without credentials: 3 pass, 3 fail as
+  intended. The credentialed run waits for the owner's environment variables.
+
+## MOD-256 — Documentation-based mock for the sandbox tests
+
+- Kind: tests and tooling. `docker/bin/test sandbox-mock` starts WireMock 3.13.2 (pinned by digest;
+  `docker/docker-compose.anet-mock.yml`, stubs in `tests/docker/anet-mock/mappings`) and runs the `sandbox` suite
+  against it with fake credentials. The tests take the server from `FLAT_TEST_ANET_URL` and a fixed run id from
+  `FLAT_TEST_ANET_RUN_ID` when set; against the real sandbox nothing changes.
+- The stubs follow Authorize.Net's documentation, not recorded traffic (see the README beside them). Stand-in for
+  the credentialed run until it happens; the real sandbox stays the reference.
+- Verified: 6 tests pass offline; breaking one stub on purpose makes the update test fail.
+
+## MOD-257 — The Authorize.Net tests join the services category
+
+- Kind: tests and tooling (owner's request). WireMock (MOD-256) is a test service like MongoDB and RabbitMQ:
+  `docker/bin/test all` and `services` start it and run `tests/Sandbox` against it, and the new mode `anet` runs only
+  those tests. The tests carry `@group anet` and `@group services`; `unit` still excludes them. `sandbox-mock` (MOD-256)
+  is gone; the real sandbox stays `docker/bin/test sandbox` (group `sandbox`, never part of `all`).
+- `phpunit.xml.dist`: the `sandbox` test suite is removed; `tests/Sandbox` is part of the `unit` suite, as the
+  MongoDB and RabbitMQ tests are. The test inventory is regenerated (it now lists them).
+- Old-to-new: mode `sandbox-mock` is now `anet`; suite `sandbox` is now in suite `unit`.
+- Verified: `docker/bin/test all --coverage`, 1,487 tests, 6,556 assertions, 100% (332 classes, 1,065 methods,
+  8,412 statements, unchanged), no PHP message. `unit` 1,424 tests; `anet` 6; `sandbox` without keys: 3 pass, 3 fail as intended.
+
+## MOD-258 — First real-sandbox result: KD-99 fixed; the real sandbox runs only on request
+
+- Kind: bug fix (KD-99) and tests. The owner's first run of `docker/bin/test sandbox` (5 of 6 passed) failed the
+  create test with `E00041`: `profile_Customer` dropped every field, so flat sent `<profile/>`. Fixed with
+  `property_exists()`; the unit test that pinned the bug now asserts the email arrives, and one test covers all
+  three fields. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- The mock now answers `E00041` to an empty profile, as the sandbox did (one stub, verified by that run).
+- The real sandbox is contacted only by an explicit `docker/bin/test sandbox` (or `bin/test sandbox`), which sets
+  `FLAT_TEST_ANET_SANDBOX=1`. Without that flag and without `FLAT_TEST_ANET_URL` the tests throw before any
+  request, so keys in a shell can never make `all` or `anet` reach the sandbox.
+
+## MOD-259 — KD-98 fixed: the Authorize.Net wrappers raise `no_response` (Q49 answered)
+
+- Kind: behavior change (owner's decision, 2026-11-23). New exception `flat\cloud\authorize\no_response`
+  (extends `unexpected_response`); `flat\cloud\authorize\AuthorizeNetCIM` checks every reply, and a new
+  `flat\cloud\authorize\AuthorizeNetARB` (used by `subscription` in place of the SDK's own class) does the same. See
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). Both new classes carry `@deprecated since v1.73.1`;
+  the deprecation test now expects 47 declarations. The sandbox test client no longer throws by itself.
+- Verified: new `AuthorizeNoResponseTest` fails without the fix; run live without the proxy CA, the sandbox test
+  shows the new message. The release notes mention both Authorize.Net fixes.
+- Verified: `docker/bin/test all --coverage`, 1,497 tests, 6,590 assertions, 100% (334 classes, 1,068 methods), no PHP
+  message. The new test restores libxml's reporting mode, which flat's CIM constructor leaves switched to internal capture.
+
+## MOD-260 — Payment-method sandbox tests; KD-100 found (Q50)
+
+- Kind: tests and documentation, no code change. `tests/Sandbox/PaymentMethodTest.php` (same groups as the other
+  sandbox tests, so `all`, `services`, `anet` and `sandbox` run it): a payment method is made with the SDK's own
+  objects (flat cannot, KD-100), then flat's `delete_paymethod()` removes it, and an unknown one is a
+  `response_error`. The mock gained stubs for the three payment-profile messages (a scenario: none, exists, none).
+- The mock's response root now carries the `xsi` and `xsd` namespaces first, as real responses do; the SDK's XPath
+  handling depends on it (found when `create_paymethod()` could not read its id from a default-namespace-only reply).
+- Found: KD-100 (`create_paymethod()` and `update_paymethod()` cannot work; three tests pin today's behavior as
+  `@group known-defect`). Q50 asks whether to fix or leave them for v2.X.
+
+## MOD-261 — Subscription sandbox tests; KD-101 and KD-102 fixed
+
+- Kind: tests and two bug fixes. `tests/Sandbox/SubscriptionTest.php` (same groups as the other sandbox tests):
+  one wrapper creates a subscription, reads its status and details, changes the amount and the card, cancels it,
+  and reports an unknown one. The mock has the ARB messages (a scenario: none, active, canceled); fixtures
+  `SandboxArb` and `SandboxSubscription` in `tests/Sandbox/SandboxSupport.php`.
+- Fixed: KD-101 (the legacy ARB client's payload accumulated across calls; flat's client now empties it after each
+  request) and KD-102 (`get_info()` read a list element the schema does not have). See
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). New `AuthorizeSubscriptionSdkTest` fails without both.
+- Limit: the mock matches on element names, so it cannot show KD-101; the unit test does. KD-102 is
+  schema-based: the owner's sandbox run is its confirmation.
+- Verified: `docker/bin/test all --coverage`, 1,507 tests, 6,625 assertions, 100% (334 classes, 1,069 methods,
+  8,422 statements), no PHP message; `sandbox` without keys: 5 pass, 5 fail as intended. The test inventory is regenerated.
+
+## MOD-262 — KD-100 fixed: Authorize.Net payment methods work (Q50 answered)
+
+- Kind: behavior change (owner's decision, 2026-11-23: option a). `flat\cloud\authorize\customer` converts the
+  `payment` param into the SDK's `AuthorizeNetPaymentProfile` (private helpers in `customer.php`); `create_paymethod()`
+  and `update_paymethod()` require it. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Tests: the three tests that pinned the broken behavior (MOD-260) are replaced by `AuthorizePaymentMethodTest`
+  asserting the correct XML (`@group known-defect` removed); five older customer tests that pinned the old
+  forwarding (the same object passed through, or a request without `payment`) now assert the conversion. The sandbox
+  `PaymentMethodTest` adds, changes and removes a payment method through flat alone; the mock gained the update
+  stubs and an unmasked read (the SDK sends `unmaskExpirationDate` as `1`).
+- Verified: `docker/bin/test all --coverage`, 1,522 tests, 6,685 assertions, 100% (334 classes, 1,071 methods,
+  8,465 statements), no PHP message; the test inventory is regenerated (no `@group known-defect` test remains).
+  Lesson recorded: objects a test needs are built in the test, not in a data provider, because providers run outside
+  code coverage.
+
+## MOD-263 — Second real-sandbox result: KD-103 fixed, KD-104 open
+
+- Kind: bug fix and tests. The owner's run (6 of 10 passed) failed three tests with `E00013`: `create()` asked for
+  `liveMode` validation without a payment profile (KD-103, fixed; see [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)),
+  and one with `subscription\not_found` from `get_info()` right after `create()` (KD-104, open).
+- The mock answers `E00013` for a validation mode without payment profiles, as the sandbox did: with the fix removed
+  the same three tests fail the same way, with it they pass. The subscription sandbox test now waits for the list
+  and reports what it held, so the next run explains KD-104.
+- What passed on the real sandbox: authentication, invalid credentials (current API and legacy wrapper), the
+  sandbox-only guard, `get_status()` (`active`), `is_updatable()`, and the unknown-profile error.
+- Verified: `docker/bin/test all --coverage`, 1,529 tests, 6,692 assertions, 100% (334 classes, 1,071 methods,
+  8,466 statements), no PHP message.
+
+## MOD-264 — Third real-sandbox result: all ten pass; KD-104 resolved
+
+- Kind: documentation and a docblock. The owner's run passed all ten sandbox tests (customer profiles, payment
+  methods, subscriptions). That confirms KD-99, KD-100, KD-101, KD-102 and KD-103 against the real service.
+- KD-104 was the list lagging behind a new subscription (not a flat defect): documented in the `get_info()`
+  docblock, the consumer-impact entry of KD-102 and the release notes; the mock README lists its known differences
+  from the real sandbox.
+
+## MOD-265 — Transaction sandbox tests; KD-105 fixed
+
+- Kind: tests and a bug fix. `tests/Sandbox/TransactionTest.php` (same groups as the other sandbox tests): a saved
+  payment method is charged by `authcapture`, `authonly` and `captureonly` (approved), and the documented decline
+  ZIP code 46282 gives a `response_error`. The mock has the transaction messages and the decline.
+- Fixed: KD-105 (`create_transaction()` skipped flat's own SDK adapters, so the request was invalid; `authonly` and
+  `captureonly` had no fields). See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Open until the owner's run: that the sandbox approves each kind and how it declines (E00027 is from the
+  documentation). The mock cannot show either.
+- Verified: `docker/bin/test all --coverage`, 1,538 tests, 6,748 assertions, 100% (334 classes, 1,071 methods,
+  8,467 statements), no PHP message; the test inventory is regenerated.
+
+## MOD-266 — The test script retries a failed service start
+
+- Kind: tooling (owner's request: no manual reruns). `docker/bin/test`: starting the services is retried, up to three
+  attempts; each failed attempt prints `compose ps -a` and the last 80 log lines of the services, then removes the stack
+  before the next try. A third failure stops the run with the logs shown. Nothing is hidden: a retry is visible in
+  the output.
+- Why not a fix of the cause: the failure (RabbitMQ exiting at startup, seen at the start of a full run after Docker
+  had been restarted) could not be reproduced: 30 clean starts on an idle machine and under CPU load, and 6 real
+  runs after the change. The logs were always lost with the removed container; the printed logs now keep them.
+  `HANDOFF.md` no longer tells agents to rerun by hand.
+- Verified: the retry loop with a stubbed `compose` (fails twice then works; always fails, stops after three), and
+  six real `docker/bin/test rabbitmq` runs.
+
+## MOD-267 — Start only the services the selected tests need
+
+- Kind: tooling (owner's request: a run that needs no RabbitMQ must not start it). `docker/bin/test` used to start
+  every service of its mode (`all`, the default, started MongoDB, RabbitMQ and the Authorize.Net mock even for
+  `--filter AuthorizeCustomerTest`). Now it asks the new `bin/test services-needed` (helper `tests/tools/services.php`,
+  which applies `--filter`, `--group` and `--exclude-group` to PHPUnit's test list, since `--list-tests-xml` ignores
+  them) and starts only the services those tests belong to by group (`mongo`, `rabbitmq`, `anet`). A test in `services`
+  without a specific group asks for all three; an argument the helper does not understand keeps every test (more
+  services, never fewer). The result is printed ("Test services needed: ...").
+- Mode `unit` and the real-sandbox mode `sandbox` start nothing, as before. `--offline` checks the images of the
+  services needed.
+- Verified: `docker/bin/test all --filter AuthorizeCustomerTest` started no service; `--filter TransactionTest` only
+  `anet-mock`; `--filter RabbitMqTest` only `rabbitmq`; `anet` only `anet-mock`; the full run starts all three. New
+  `ServicesToolTest` (16 cases). `all --coverage` passes.
+  Full run: `docker/bin/test all --coverage`, 1,554 tests, 6,812 assertions, 100% (334 classes, 1,071 methods,
+  8,467 statements); the test inventory is regenerated.
+
+
+## MOD-268 — First run of the Authorize.Net tests on the real sandbox: transactions
+
+- Kind: test and mock corrections; no change to flat's code, so no `CONSUMER-IMPACT.md` entry.
+- `docker/bin/test sandbox` (2026-11-23): 14 tests, 13 passed at first. This was the first real run of
+  `tests/Sandbox/TransactionTest.php`: `authcapture` and `authonly` are approved (transaction fields and the
+  direct response read correctly), and the documented decline (billing ZIP code 46282, `E00027`) is raised as a
+  `response_error`. The KD-105 fix is confirmed.
+- Difference found: the sandbox account's processor refuses `captureonly` with `E00027` "Capture Only transactions
+  are not allowed for this processor." The request is well formed (a malformed one is a schema error). That is
+  service behavior, not a flat bug. The test is now `testACaptureOnlyIsRefusedByTheProcessorAsAResponseError`, and the
+  mock stub `47-createcustomerprofiletransaction-captureonly.json` gives the same refusal (it approved before).
+  Listed in `tests/docker/anet-mock/README.md`.
+- Cause fixed: both runs printed the SDK's deprecation notices while PHPUnit loaded the test files. The classes
+  `SandboxCim` and `SandboxArb` extended the legacy SDK classes when `SandboxSupport.php` was included, before the
+  approved `LegacyAuthorizeSdk` helper could handle them. They moved to `tests/Sandbox/SandboxCim.php` and
+  `SandboxArb.php`, included when a test first needs them (after the helper has loaded the SDK class). No notice is
+  hidden or newly handled; the helper is unchanged.
+- Verified: `docker/bin/test sandbox` 14 of 14 (39 assertions); `anet` 14 of 14; `all --coverage` 1,554 tests,
+  6,812 assertions, 100% (334 classes, 1,071 methods, 8,467 statements), no deprecation output. The test inventory is
+  regenerated.
+
+## MOD-269 — Capture Only is withdrawn at Authorize.Net
+
+- Kind: documentation correction to MOD-268, which called the `captureonly` refusal processor behavior. Authorize.Net's
+  article "What are the transaction types that can be submitted?" says the Capture Only method is no longer available,
+  so it is neither an account setting nor a sandbox quirk. No code change.
+- Recorded in `DEFERRED-V2.md` (item 2), `RELEASE-NOTES-V1.73.1.md`, `tests/docker/anet-mock/README.md` and the comment
+  of `TransactionTest`. The test and the mock stub stay as they were.
+
+## MOD-270 — Remove Capture Only (KD-106, owner decision)
+
+- Kind: removal of a public API, decided by the owner (2026-11-23): Authorize.Net withdrew Capture Only, so nothing
+  that uses it can work. This is the one removal in v1.73.1's API (see `notes/API-COMPARISON.md`).
+- Removed: `src/flat/cloud/authorize/customer/transaction/captureonly.php` and its `AuthorizeNetTransaction` adapter;
+  `customer::captureonly()`; the `captureonly` entry and docblock lines of `create_transaction()`; the mock stub
+  `47-createcustomerprofiletransaction-captureonly.json`; the sandbox test of the refusal; the `captureonly` rows of the
+  unit tests. Added a test that the class and method are gone and that `create_transaction()` rejects the type.
+- The deprecation test's count of declaring files is 45 (was 47). The API dump `notes/API-V1.73.1.json` is
+  regenerated (the old one predated KD-100 to KD-105). Documentation that said "refused" now says "removed"
+  (`DEFERRED-V2.md`, the release notes, the mock README); MOD-268 and MOD-269 stay as written.
+- Verified: `docker/bin/test sandbox` 13 of 13 on the real sandbox; `all --coverage` 1,547 tests, 6,760 assertions, 100%
+  (332 classes, 1,068 methods); `check-docs` 0 problems; the test inventory is regenerated.

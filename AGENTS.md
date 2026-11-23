@@ -36,7 +36,7 @@ are: do not "fix", copy or extend them.
   php-8.1 phase, which must remove it.
 - `tests/Support/LegacyAuthorizeSdk.php`: the Authorize.Net SDK's `E_USER_DEPRECATED` notice,
   raised from its `lib/deprecated/` files when a legacy class loads, is discarded (approved
-  2026-11-21). It stays until flat's wrappers are ported to the SDK's current API (v2.X).
+  2026-11-21). It stays until flat's Authorize.Net wrappers are removed (v2.X).
 
 ## Error reporting
 
@@ -47,6 +47,19 @@ you build or change an environment, check that it holds: a `php.ini` exists and 
 is `E_ALL` (the image build verifies it). Fix a deprecation when you find it, in the same phase:
 do not put off what can be done now. (Why: a test image without a `php.ini` hid every notice and
 deprecation for two phases.)
+
+## Keep everything current
+
+Every phase brings every tool, service and dependency of the test environment up to the newest release
+that phase's PHP version supports: base images, extensions, Composer and its packages, PHPUnit, Xdebug,
+ImageMagick, MongoDB, RabbitMQ and the rest. Be aggressive about it. Do it one at a time (the full suite
+after each, one commit and one change-log entry each). Never hold something back out of consideration
+for the one known consumer or because a phase is "only the PHP step". flat's public API stays compatible
+with its earlier versions; when a newer tool or service breaks something, find a compatible workaround in
+flat or in the tests rather than pinning the old version. Record in the phase's environment note what is
+at its newest and, for anything that is not, the reason (for example, a release that needs a newer PHP).
+(Why: the php-7.3 handoff said "nothing else", and PHPUnit, Composer, Xdebug, ImageMagick, MongoDB and
+RabbitMQ stayed years old until the owner asked.)
 
 ## Start here
 

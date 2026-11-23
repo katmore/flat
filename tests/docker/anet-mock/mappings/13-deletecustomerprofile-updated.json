@@ -1,0 +1,29 @@
+{
+  "name": "deleteCustomerProfile (updated)",
+  "priority": 1,
+  "request": {
+    "method": "POST",
+    "url": "/xml/v1/request.api",
+    "bodyPatterns": [
+      {
+        "matchesXPath": "/*[local-name()='deleteCustomerProfileRequest']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='name' and text()='flatmock-login']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='transactionKey' and text()='flatmock-key-0001']"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/xml; charset=utf-8"
+    },
+    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<deleteCustomerProfileResponse xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Ok</resultCode><message><code>I00001</code><text>Successful.</text></message></messages></deleteCustomerProfileResponse>"
+  },
+  "scenarioName": "customer-profile",
+  "requiredScenarioState": "Updated",
+  "newScenarioState": "Started"
+}

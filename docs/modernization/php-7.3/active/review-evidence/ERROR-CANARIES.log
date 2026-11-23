@@ -1,0 +1,22 @@
+PHPUnit 8.5.56 by Sebastian Bergmann and contributors.
+
+EE                                                                  2 / 2 (100%)
+
+Time: 31 ms, Memory: 6.00 MB
+
+There were 2 errors:
+
+1) ErrorCanaryTest::testNotice
+review notice canary
+
+/evidence/ErrorCanaryTest.php:4
+phpvfscomposer:///opt/flat-test/tools/vendor/phpunit/phpunit/phpunit:97
+
+2) ErrorCanaryTest::testDeprecation
+review deprecation canary
+
+/evidence/ErrorCanaryTest.php:5
+phpvfscomposer:///opt/flat-test/tools/vendor/phpunit/phpunit/phpunit:97
+
+ERRORS!
+Tests: 2, Assertions: 0, Errors: 2.

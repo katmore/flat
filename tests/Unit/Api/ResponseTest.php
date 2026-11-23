@@ -39,7 +39,7 @@ class ResponseTest extends TestCase
         $this->assertSame('value',(new response\ok((object) ['key'=>'value']))->key);
         $this->assertSame([1,2],(new response\ok([1,2]))->data);
         $this->assertSame('scalar',(new response\ok('scalar'))->data);
-        $this->assertObjectNotHasAttribute('data',new response\ok(0));
+        $this->assertFalse(property_exists(new response\ok(0),'data'));
         $status = new \flat\api\status\forbidden;
         $this->assertSame($status,(new response\map($status))->get_status());
         $this->assertSame('value',(new response\map($status,['key'=>'value']))->key);
@@ -72,8 +72,8 @@ class ResponseTest extends TestCase
             $this->assertSame($data,(new response\not_found('missing',$data))->data);
         }
         $this->assertSame('missing',(new response\not_found('missing',['key'=>'value']))->data->message);
-        $this->assertObjectNotHasAttribute('message',new response\not_found('',null,999));
-        $this->assertObjectNotHasAttribute('message',new response\unauthorized('',null,999));
+        $this->assertFalse(property_exists(new response\not_found('',null,999),'message'));
+        $this->assertFalse(property_exists(new response\unauthorized('',null,999),'message'));
     }
     public function testBadRequestAddsMessageToArrayOrObjectWithoutOverwritingIt()
     {

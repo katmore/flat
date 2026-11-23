@@ -58,15 +58,22 @@ class response {
    }
    public function simplexpath($xquery,$demand_result=true) {
       if (empty($this->_simplexml)) $this->_init_dom();
-      if (false === ($result =   $this->_simplexml->xpath($xquery))) {
-         $details = [];
-         if (count($xmlerr = libxml_get_errors())) {
-            $xmlerr = array_pop($xmlerr);
-            if (($xmlerr instanceof \LibXMLError) && !empty($xmlerr->message)) {
-               $details []= $xmlerr->message;
+      // Capture only this query's diagnostics to report them through xpath_error.
+      // Do not clear errors buffered by a caller that already enabled capture.
+      $use_internal = libxml_use_internal_errors(true);
+      try {
+         if (false === ($result = $this->_simplexml->xpath($xquery))) {
+            $details = [];
+            if (count($xmlerr = libxml_get_errors())) {
+               $xmlerr = array_pop($xmlerr);
+               if (($xmlerr instanceof \LibXMLError) && !empty($xmlerr->message)) {
+                  $details []= $xmlerr->message;
+               }
             }
+            throw new exception\xpath_error($xquery,implode(", ",$details));
          }
-         throw new exception\xpath_error($xquery,implode(", ",$details));
+      } finally {
+         libxml_use_internal_errors($use_internal);
       }
       if ($demand_result && count($result)<1) {
          throw new exception\no_xpath_results($xquery,"url: ".$this->request->url_string);
@@ -367,10 +374,7 @@ class response {
       $this->request = $request;
    }
    private function _init_dom() {
-      /*
-       * tell libxml not be a whiney
-       */
-      libxml_use_internal_errors(true);
+      // Leave HTML diagnostics and the error buffer under the caller's control.
       
       /*
        * create DOM object from the imdb result page

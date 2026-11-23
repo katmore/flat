@@ -154,7 +154,6 @@ class minifier
    {
       $this->options = array_merge(static::$defaultOptions, $options);
       $js = str_replace("\r\n", "\n", $js);
-      $js = str_replace('/**/', '', $js);
       $this->input = str_replace("\r", "\n", $js);
 
       // We add a newline to the end of the script to make it easier to deal
@@ -216,6 +215,17 @@ class minifier
                      break;
 
                   case ' ':
+                     // A removed comment can separate two + or - tokens. Keep that
+                     // separator; lock() only protects whitespace present in the input.
+                     if ($this->a === '+' || $this->a === '-') {
+                        do {
+                           $this->b = $this->getReal();
+                        } while ($this->b === ' ');
+                        echo $this->a;
+                        if ($this->b === '+' || $this->b === '-') echo ' ';
+                        $this->saveString();
+                        break;
+                     }
                      if(!static::isAlphaNumeric($this->a))
                         break;
 
@@ -361,18 +371,23 @@ class minifier
    protected function processMultiLineComments($startIndex)
    {
       $this->getChar(); // current C
-      $thirdCommentString = $this->getChar();
+      // Peek so an empty comment's closing * is still visible to getNext().
+      $thirdCommentString = substr($this->input, $this->index, 1);
 
       // kill everything up to the next */ if it's there
       if ($this->getNext('*/')) {
 
          $this->getChar(); // get *
          $this->getChar(); // get /
-         $char = $this->getChar(); // get next real character
+         // Comments separate tokens, and a newline inside a comment participates
+         // in automatic semicolon insertion (for example after return).
+         $char = strpos(substr($this->input, $startIndex, $this->index - $startIndex), "\n") === false ? ' ' : "\n";
 
          // Now we reinsert conditional comments and YUI-style licensing comments
          if (($this->options['flaggedComments'] && $thirdCommentString === '!')
                || ($thirdCommentString === '@') ) {
+
+                  $char = $this->getChar(); // preserved comment: keep the following character
 
                   // If conditional comments or flagged comments are not the first thing in the script
                   // we need to echo a and fill it with a space before moving on.

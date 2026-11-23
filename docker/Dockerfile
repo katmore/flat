@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM composer:2.2@sha256:4c156e03ca848b69528dde30996d8922b47a9946e76d5cc563cf7f0898e8aa86 AS dependencies
+FROM composer:2.11@sha256:50ea4d33fdcde1adb0f045547295faa1548b33872e5f789dae5b02ce2fb5de93 AS dependencies
 WORKDIR /opt/flat-test
 COPY tests/docker/tools/composer.json tests/docker/tools/composer.lock tools/
 COPY tests/docker/runtime/composer.json tests/docker/runtime/composer.lock runtime/
@@ -17,21 +17,23 @@ FROM php:7.3-cli@sha256:bd6f2dc7a4e4537e927355c94a74c3022911aa504278f5f0fd94016c
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/xdebug/xdebug/tar.gz/3e09864af111d63b7eb486d88bfc6eb7d6429b85 -o /tmp/source.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/xdebug/xdebug/tar.gz/78ef02f7374db83e152751b4567b5a1bc9d9e86a -o /tmp/source.tar.gz; \
     mkdir /tmp/xdebug; tar -xzf /tmp/source.tar.gz -C /tmp/xdebug --strip-components=1; \
     cd /tmp/xdebug; phpize; ./configure --enable-xdebug; make -j2; make install; \
-    docker-php-ext-enable xdebug; rm -rf /tmp/xdebug /tmp/source.tar.gz
+    docker-php-ext-enable xdebug; \
+    echo 'xdebug.mode=develop,coverage' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    rm -rf /tmp/xdebug /tmp/source.tar.gz
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/ImageMagick/ImageMagick6/tar.gz/e97831dfdfc064c5246cd7ba195ff6ecd4958f34 -o /tmp/source.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/ImageMagick/ImageMagick/tar.gz/7289289c644dc34e1e53b7b483a1b6f21758eac8 -o /tmp/source.tar.gz; \
     mkdir /tmp/magick; tar -xzf /tmp/source.tar.gz -C /tmp/magick --strip-components=1; \
     cd /tmp/magick; ./configure --prefix=/usr/local --without-perl --without-x --disable-openmp --disable-docs; \
     make -j2; make install; ldconfig; rm -rf /tmp/magick /tmp/source.tar.gz
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/Imagick/imagick/tar.gz/42c07db5d0075b26471397fb6de8ffb4bd2692d8 -o /tmp/source.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/Imagick/imagick/tar.gz/70087bab33eab913e99ac77d64d04d1a2fd0b7b0 -o /tmp/source.tar.gz; \
     mkdir /tmp/imagick; tar -xzf /tmp/source.tar.gz -C /tmp/imagick --strip-components=1; \
     cd /tmp/imagick; phpize; ./configure; make -j2; make install; \
     docker-php-ext-enable imagick; rm -rf /tmp/imagick /tmp/source.tar.gz

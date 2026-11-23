@@ -1,0 +1,8 @@
+["\/relative","ErrorException","Undefined index: scheme"]
+["example.com","ErrorException","Undefined index: scheme"]
+["\/\/example.com\/path","ErrorException","Undefined index: scheme"]
+["https:\/\/example.com\/","ok"]
+[{"a&b":"x"},"a&b=x",{"a":"","b":"x"}]
+[{"a=b":"x"},"a=b=x",{"a":"b=x"}]
+[{"arr":["x"]},"ErrorException","urlencode() expects parameter 1 to be string, array given"]
+[{"null":null},"null=",{"null":""}]

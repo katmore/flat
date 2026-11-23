@@ -27,7 +27,48 @@ docker/bin/test all --coverage       # full line/method/class coverage
 docker/bin/test unit --filter SshTest
 docker/bin/test --build              # build only
 docker/bin/test --down               # explicit cleanup after an interrupted host
+docker/bin/test-javascript           # execute minifier regressions, after building the PHP image
 ```
+
+`docker/bin/test` starts only the services the selected tests need. Before it starts anything it asks
+`bin/test services-needed` (no test runs) which of MongoDB, RabbitMQ and the Authorize.Net mock the tests chosen by
+the mode, `--filter`, `--group` and `--exclude-group` use, and prints the answer ("Test services needed: ..."). So
+`docker/bin/test --filter AuthorizeCustomerTest` starts nothing, `--filter TransactionTest` starts the mock only, and
+`unit` starts no service. A test file or directory as an argument is not understood: every test is then assumed to be
+selected. If the question cannot be answered, the script says so and starts what the mode could use.
+
+If starting the services fails, `docker/bin/test` prints the state and logs of the failed attempt, removes the
+stack and tries again, up to three attempts. A run that needed a retry says so in its output; a third failure
+stops the run.
+
+The JavaScript check runs minification in the PHP 7.3 test image and executes both the original
+and minified programs against expected results in a separate, digest-pinned Node container.
+Docker downloads that additional image on first use; no host Node installation is needed.
+
+## Authorize.Net tests: mock and real sandbox
+
+`tests/Sandbox` holds functional tests of flat's Authorize.Net wrappers. They run in two ways:
+
+- `docker/bin/test anet` (and `services` and `all`, which include it) runs them against a WireMock stand-in with
+  fake credentials: no Internet, no keys. WireMock is a test service like MongoDB and RabbitMQ. Its answers come
+  from the documentation, not from the sandbox (`tests/docker/anet-mock/README.md`), so a pass there is not a
+  pass against the sandbox.
+- `docker/bin/test sandbox` runs the same tests against the real Authorize.Net sandbox. It is never part of
+  `unit`, `all` or CI, so a sandbox outage cannot block work, and the tests refuse to contact it unless that
+  command set the flag (keys in your shell do nothing on their own). A test that needs credentials fails with a message
+  saying what to set; it does not skip.
+
+```sh
+export FLAT_TEST_ANET_LOGIN_ID=...        # a SANDBOX account's API login ID
+export FLAT_TEST_ANET_TRANSACTION_KEY=... # its transaction key
+docker/bin/test sandbox
+```
+
+- Use sandbox keys only. Never commit them or paste them into a chat.
+- The container needs outbound HTTPS to `apitest.authorize.net`. Behind a TLS-intercepting proxy, also set
+  `FLAT_TEST_CA_FILE` to the proxy's CA bundle. Certificate verification stays on: the test clients trust that
+  bundle in place of the SDK's bundled one, which the SDK hard-codes.
+- Tests clean up what they create (customer profiles are deleted in `tearDown`) and tag it `flat-<random>`.
 
 `docker/bin/test inventory` prints a Markdown inventory of every test to stdout,
 built from PHPUnit's `--list-tests-xml` by `tests/tools/inventory.php`. It needs
@@ -103,8 +144,8 @@ on services in Compose, so unit mode needs only the PHP image.
 
 - PHP/PHPUnit: PHP 7.3 container (exact patch set in `docker/Dockerfile`), pinned official base digest
 - Error reporting: `E_ALL` (`php.ini-development`); PHPUnit fails on notices, warnings and deprecations
-- MongoDB integration: Separate pinned MongoDB 4.0 Compose service
-- RabbitMQ integration: Separate pinned RabbitMQ 3.8.34 Compose service
+- MongoDB integration: Separate pinned MongoDB 9.0 Compose service
+- RabbitMQ integration: Separate pinned RabbitMQ 4.4 Compose service
 - PDO: Native SQLite inside the PHP container; no MySQL service is currently used
 - SSH/SFTP unit cases: Explicit transport/clock double with native local streams; no SFTP server is claimed
 - Native HTTP/session/process fixtures: Test-owned child PHP processes inside the PHP container

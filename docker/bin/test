@@ -13,13 +13,20 @@ export FLAT_TEST_UID="$(id -u)" FLAT_TEST_GID="$(id -g)"
 if [ "$FLAT_TEST_UID" = 0 ]; then export FLAT_TEST_UID=1000 FLAT_TEST_GID=1000; fi
 export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-flat-tests}"
 compose() {
+    files="-f docker/docker-compose.yml"
+    # The sandbox mode needs the Internet and no services (see docker/docker-compose.sandbox.yml).
+    if [ "${test_mode:-all}" = sandbox ]; then
+        files="$files -f docker/docker-compose.sandbox.yml"
+        if [ -n "${FLAT_TEST_CA_FILE:-}" ]; then files="$files -f tests/docker/compose.sandbox.ca.yaml"; fi
+    fi
+    case "${test_mode:-all}" in all|services|anet) files="$files -f docker/docker-compose.anet-mock.yml" ;; esac
     if [ "${offline:-false}" != true ] && [ -n "${FLAT_TEST_CA_FILE:-}" ]; then
         # Newer Compose builds through Bake, which refuses a secret read from a
         # path outside the build context unless file-read entitlements are relaxed.
         BUILDX_BAKE_ENTITLEMENTS_FS="${BUILDX_BAKE_ENTITLEMENTS_FS:-0}" \
-            docker compose -f docker/docker-compose.yml -f tests/docker/compose.ca.yaml "$@"
+            docker compose $files -f tests/docker/compose.ca.yaml "$@"
     else
-        docker compose -f docker/docker-compose.yml "$@"
+        docker compose $files "$@"
     fi
 }
 usage() {
@@ -31,6 +38,10 @@ usage() {
     echo '  --build:       build the test image only'
     echo '  --down:        remove this test stack (after an interrupted run)'
     echo 'Examples: docker/bin/test unit --filter SshTest; docker/bin/test all --offline --coverage'
+    echo 'Optional: docker/bin/test sandbox runs the tests against the real Authorize.Net sandbox (needs'
+    echo 'FLAT_TEST_ANET_LOGIN_ID and FLAT_TEST_ANET_TRANSACTION_KEY in your shell; never part of all).'
+    echo 'docker/bin/test anet runs only the Authorize.Net tests, against the WireMock stand-in that all and'
+    echo 'services also use (answers follow the documentation; fake credentials, no Internet needed).'
     echo
     echo 'bin/test arguments:'
     bin/test --help | sed -n '1,/^  -h/p'
@@ -50,7 +61,7 @@ for arg do
             --down) action=down; continue ;;
             -h|--help) usage; exit ;;
             --) passthrough=false ;;
-            all|unit|services|mongo|rabbitmq) test_mode=$arg ;;
+            all|unit|services|mongo|rabbitmq|anet|sandbox) test_mode=$arg ;;
             inventory) inventory=true ;;
         esac
     fi
@@ -60,24 +71,29 @@ if [ "$action" = down ]; then compose down --volumes --remove-orphans; exit; fi
 if [ "$action" = build ] && "$offline"; then
     echo '--build and --offline cannot be combined' >&2; exit 2
 fi
-service_names=
+# The services a test mode could need. Which of them the selected tests do need is worked out further down.
+candidates=
 if ! "$inventory"; then
     case "$test_mode" in
-        all|services) service_names='mongo rabbitmq' ;;
-        mongo) service_names=mongo ;;
-        rabbitmq) service_names=rabbitmq ;;
+        all|services) candidates='mongo rabbitmq anet-mock' ;;
+        mongo) candidates=mongo ;;
+        rabbitmq) candidates=rabbitmq ;;
+        anet) candidates=anet-mock ;;
     esac
 fi
-if "$offline"; then
-    # Names come only from the fixed test-mode values above. No host parser or
-    # private cache is required; Compose supplies the exact pinned image refs.
-    image_refs=$(compose config --images php $service_names)
+# Offline: every image must already exist. Names come only from the fixed values above and below; no host parser
+# or private cache is required, and Compose supplies the exact pinned image refs.
+check_images() {
+    image_refs=$(compose config --images $*)
     for image_ref in $image_refs; do
         if ! docker image inspect "$image_ref" >/dev/null 2>&1; then
             printf 'Offline image missing: %s\nRun docker/bin/test all online once to prepare the images.\n' "$image_ref" >&2
             exit 1
         fi
     done
+}
+if "$offline"; then
+    check_images php
 else
     # Build progress goes to stderr: the inventory action prints only its Markdown to stdout.
     compose build php >&2
@@ -96,9 +112,45 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
+# Starting the services can fail now and then (RabbitMQ has been seen to exit at startup; the cause was never
+# captured, because the container is removed with its log). So a failed start is retried, never silently: each
+# failure prints the services' state and their own logs first, and the third failure stops the run.
+start_services() {
+    attempt=1
+    while :; do
+        if "$offline"; then
+            if compose up -d --wait --pull never $service_names; then return 0; else status=$?; fi
+        else
+            if compose up -d --wait $service_names; then return 0; else status=$?; fi
+        fi
+        printf 'Starting the test services failed (attempt %s of 3, status %s). State and logs follow.\n' "$attempt" "$status" >&2
+        compose ps -a >&2 || true
+        compose logs --no-color --tail=80 $service_names >&2 || true
+        compose down --volumes --remove-orphans >&2 || true
+        if [ "$attempt" -ge 3 ]; then return "$status"; fi
+        attempt=$((attempt + 1))
+        printf 'Trying again (attempt %s of 3).\n' "$attempt" >&2
+    done
+}
+# Start only the services the selected tests need: a run that selects no MongoDB, RabbitMQ or Authorize.Net mock
+# test starts none of them. bin/test lists the tests the arguments select; nothing runs and no service is needed.
+service_names=
+if [ -n "$candidates" ]; then
+    if listing=$(compose run --rm -T --no-deps --pull never --entrypoint sh php bin/test services-needed "$@"); then
+        needed=$(printf '%s\n' "$listing" | tail -n 1)
+    else
+        printf 'Could not work out which services the tests need; starting all that this mode can use.\n' >&2
+        needed=$candidates
+    fi
+    for name in $candidates; do
+        case " $needed " in *" $name "*) service_names="$service_names $name" ;; esac
+    done
+    service_names=${service_names# }
+    printf 'Test services needed: %s\n' "${service_names:-none}" >&2
+    if "$offline" && [ -n "$service_names" ]; then check_images php $service_names; fi
+fi
 if [ -n "$service_names" ]; then
-    if "$offline"; then compose up -d --wait --pull never $service_names;
-    else compose up -d --wait $service_names; fi
+    start_services
 fi
 if "$inventory"; then
     # No TTY, so only bin/test's Markdown reaches stdout.

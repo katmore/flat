@@ -1,0 +1,22 @@
+libxml internal errors after markdown: true
+/evidence/libxml.php:6:
+bool(false)
+buffered XML errors: 1
+# API comparison
+
+Classes, interfaces and traits compared: 1 (old) and 1 (new).
+
+## Counts
+
+- parameter type changed: 1
+
+## parameter type changed
+
+- `flat\Probe::value()` parameter 1 ($x): "int" to "string"
+# API comparison
+
+Classes, interfaces and traits compared: 1 (old) and 1 (new).
+
+## Counts
+
+- no differences

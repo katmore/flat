@@ -30,9 +30,31 @@
  * @author     D. Bird <retran@gmail.com>
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
-namespace flat\cloud\authorize\customer\transaction;
-class captureonly extends \flat\cloud\authorize\customer\transaction {
-   public static function get_data_type() {
-      return 'captureonly';
+namespace flat\cloud\authorize;
+/**
+ * Authorize.Net gave no usable answer: the request got no reply at all (network failure, timeout, a certificate
+ *    that is not trusted, the service unavailable) or a reply that is not an Authorize.Net XML response.
+ *    Unlike a \flat\cloud\authorize\response_error, nothing says whether the request was processed.
+ *
+ * @deprecated since v1.73.1. Authorize.Net no longer supports the legacy SDK classes this is built on
+ *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see
+ *    docs/modernization/DEFERRED-V2.md, item 2.
+ */
+class no_response extends \flat\cloud\authorize\unexpected_response {
+   /**
+    * returns the legacy SDK response if it is a usable Authorize.Net XML response.
+    *
+    * @param \AuthorizeNetXMLResponse $response
+    * @throws \flat\cloud\authorize\no_response
+    */
+   public static function checked($response) {
+      if (!($response->xml instanceof \SimpleXMLElement) || (string) $response->getResultCode() === '') {
+         throw new self(
+            'no usable reply from Authorize.Net (a network failure, a timeout, an untrusted certificate or the service '
+            . 'being unavailable). This may be a temporary issue. The request may or may not have been processed: '
+            . 'check before repeating it'
+         );
+      }
+      return $response;
    }
 }

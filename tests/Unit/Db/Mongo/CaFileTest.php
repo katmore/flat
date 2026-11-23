@@ -51,7 +51,7 @@ class CaFileTest extends TestCase
         list($status,$out,$err) = $this->subprocess($body);
         $this->assertSame(0,$status); $this->assertSame('',$err);
         $this->assertStringContainsString('cafile',$out);
-        $this->assertFileNotExists($out);
+        $this->assertFileDoesNotExist($out);
     }
     public function testFailedFileWriteRaisesAnError()
     {

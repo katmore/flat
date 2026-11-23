@@ -34,6 +34,11 @@ namespace flat\cloud\authorize;
 
 use \flat\core\util\deepcopy;
 
+/**
+ * @deprecated since v1.73.1. Authorize.Net no longer supports the legacy SDK classes this is built on
+ *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see
+ *    docs/modernization/DEFERRED-V2.md, item 2.
+ */
 abstract class customer extends \flat\cloud\authorize
 implements 
    \flat\core\ccgateway\customer,
@@ -182,26 +187,99 @@ implements
       return $validationMode;
    }
    /**
-    * creates payment_profile object(s) as specified
-    * 
-    * @return \flat\cloud\authorize\customer\payment_profile
+    * builds the SDK payment profile (\AuthorizeNetPaymentProfile) from the 'payment' param, or returns null if
+    *    there is none.
+    *
+    * @return \AuthorizeNetPaymentProfile | null
+    *
+    * @throws \flat\cloud\authorize\bad_param
     */
    private static function _params_to_payment_profile(array $params) {
-      $payment_profile = null;
-      if (isset($params['payment'])) {
-         if (is_array($params['payment'])) {
-            $payment_profile = new customer\payment_profile($params['payment']);
-         } elseif (is_object($params['payment']) && ($params['payment'] instanceof customer\payment_profile)) {
-            $payment_profile = $params['payment'];
+      if (!isset($params['payment'])) {
+         return null;
+      }
+      $payment = $params['payment'];
+      if ($payment instanceof customer\payment_profile) {
+         $spec = ['billTo'=>$payment->billTo, 'payment'=>$payment->payment];
+         if (property_exists($payment, 'customerType')) {
+            $spec['customerType'] = $payment->customerType;
+         }
+      } elseif (is_array($payment)) {
+         $spec = $payment;
+      } else {
+         throw new bad_param(
+               "payment",
+               "must be assoc array or ".'\flat\cloud\authorize\customer\payment_profile object'
+         );
+      }
+      $profile = new \AuthorizeNetPaymentProfile();
+      if (isset($spec['customerType'])) {
+         $profile->customerType = $spec['customerType'];
+      }
+      if (isset($spec['billTo'])) {
+         self::_copy_fields($spec['billTo'], $profile->billTo, 'payment.billTo');
+      }
+      if (isset($spec['payment'])) {
+         self::_copy_payment($spec['payment'], $profile->payment);
+      }
+      if (!isset($spec['customerType']) && !isset($spec['billTo']) && !isset($spec['payment'])) {
+         throw new bad_param("payment","must specify at least one of: 'billTo','payment','customerType'");
+      }
+      return $profile;
+   }
+   /**
+    * copies the 'payment' part of a payment profile: a payment object, an assoc array with a 'creditCard' or
+    *    'bankAccount' element, or an assoc array of card or bank account fields.
+    *
+    * @throws \flat\cloud\authorize\bad_param
+    */
+   private static function _copy_payment($payment, \AuthorizeNetPayment $destination) {
+      if ($payment instanceof customer\payment) {
+         $type = $payment::get_data_type();
+         $fields = get_object_vars($payment);
+         unset($fields['type']); // flat's own marker of the payment type, not a field Authorize.Net defines
+      } elseif (is_array($payment)) {
+         if (isset($payment['creditCard']) && isset($payment['bankAccount'])) {
+            throw new bad_param('payment.payment', 'only one payment type can be specified');
+         }
+         if (isset($payment['creditCard'])) {
+            $type = 'creditCard'; $fields = $payment['creditCard'];
+         } elseif (isset($payment['bankAccount'])) {
+            $type = 'bankAccount'; $fields = $payment['bankAccount'];
+         } elseif (isset($payment['cardNumber'])) {
+            $type = 'creditCard'; $fields = $payment;
+         } elseif (isset($payment['accountNumber']) || isset($payment['routingNumber']) || isset($payment['accountType'])) {
+            $type = 'bankAccount'; $fields = $payment;
          } else {
-            throw new bad_param(
-                  "payment",
-                  "must be assoc array or ".'\flat\cloud\authorize\customer\payment_profile object'
-            );
+            throw new bad_param('payment.payment', "must specify creditCard or bankAccount payment");
+         }
+      } else {
+         throw new bad_param('payment.payment', "must be assoc array or ".'\flat\cloud\authorize\customer\payment object');
+      }
+      self::_copy_fields($fields, $destination->$type, "payment.payment.$type");
+   }
+   /**
+    * copies fields from an assoc array or flat data object onto an SDK object.
+    *
+    * @throws \flat\cloud\authorize\bad_param
+    */
+   private static function _copy_fields($fields, $destination, $name) {
+      if (is_object($fields)) {
+         $fields = get_object_vars($fields);
+      }
+      if (!is_array($fields)) {
+         throw new bad_param($name, "must be assoc array or object of fields");
+      }
+      foreach ($fields as $field=>$value) {
+         if (!property_exists($destination, $field)) {
+            throw new bad_param($name, "unknown field '$field'");
+         }
+         if ($value !== null) {
+            $destination->$field = $value;
          }
       }
-      return $payment_profile;
    }
+
    /**
     * creates a CIM customer. returns the customerProfileId.
     *
@@ -215,7 +293,8 @@ implements
     *       or (string) "liveMode". specifies "liveMode" validationMode. if 
     *       (bool) false or (string) "none" specifies no additional payment 
     *       processor validation should occur. if (string) "testMode", 
-    *       specifies "testMode" validationMode.
+    *       specifies "testMode" validationMode. it applies only when a 'payment'
+    *       is given; without one the mode is always "none".
     *    bool | string $params['validationMode'] (optional) alias of $params['validate'].
     *    int $params['merchantCustomerId'] (optional) if specified,
     *       updates the specified customerProfile 'merchantCustomerId' field to this value.
@@ -251,6 +330,9 @@ implements
       $payment_profile = self::_params_to_payment_profile($params);
       if ($payment_profile) {
          $customerProfile->paymentProfiles[] = $payment_profile;
+      } else {
+         // A validation mode only applies to a payment profile; Authorize.Net refuses one without it (E00013).
+         $validationMode = 'none';
       }
       
       /*
@@ -266,6 +348,16 @@ implements
    /**
     * adds a payment method to an existing CIM customer.
     *    returns the customerPaymentProfileId.
+    *
+    * @param array $params assoc array of parameters:
+    *    string $params['customerProfileId'] (required) the customer.
+    *    array | \flat\cloud\authorize\customer\payment_profile $params['payment'] (required) the payment profile:
+    *       array | \flat\cloud\authorize\customer\billTo $params['payment']['billTo'] (optional) billing name and address.
+    *       string $params['payment']['customerType'] (optional) 'individual' or 'business'.
+    *       $params['payment']['payment'] the payment details: an array with a 'creditCard' or 'bankAccount'
+    *          element, an array of card fields (cardNumber, expirationDate, cardCode) or bank account fields
+    *          (accountType, routingNumber, accountNumber, nameOnAccount, echeckType, bankName), or a
+    *          \flat\cloud\authorize\customer\payment_profile\creditCard or bankAccount object.
     *    
     * @return string
     * 
@@ -279,6 +371,9 @@ implements
          throw new missing_required_param('customerProfileId');
       }
       
+      if (!isset($params['payment'])) {
+         throw new missing_required_param('payment');
+      }
       $payment_profile = self::_params_to_payment_profile($params);
       
       $response = $this->_get_CIM()->createCustomerPaymentProfile($params['customerProfileId'], $payment_profile);
@@ -296,6 +391,12 @@ implements
    
    /**
     * edits a customer's existing payment method
+    *
+    * @param array $params assoc array of parameters:
+    *    string $params['customerProfileId'] (required) the customer.
+    *    string $params['customerPaymentProfileId'] (required) the payment method to change.
+    *    array | \flat\cloud\authorize\customer\payment_profile $params['payment'] (required) the new details,
+    *       as for create_paymethod().
     * 
     * @return void
     * 
@@ -308,6 +409,9 @@ implements
          if (empty($params[$key])) {
             throw new missing_required_param($key);
          }
+      }
+      if (!isset($params['payment'])) {
+         throw new missing_required_param('payment');
       }
       $payment_profile = self::_params_to_payment_profile($params);
       
@@ -367,11 +471,6 @@ implements
       throw new \BadMethodCallException("authorize customer authcapture() is not implemented; use create_transaction() with transactionType 'authcapture'");
    }
    
-   public function captureonly($customerProfileId,$customerPaymentProfileId,array $extra_params=NULL) {
-      // RETIRED by owner decision: never implemented (empty body returned null).
-      throw new \BadMethodCallException("authorize customer captureonly() is not implemented; use create_transaction() with transactionType 'captureonly'");
-   }
-   
    /**
     * creates a payment transaction.
     * 
@@ -379,13 +478,12 @@ implements
     *    array | \flat\cloud\authorize\customer\transaction $params['transaction'] customer transaction object OR
     *       assoc array of transaction specifications:
     *       string $params['transaction']['transactionType'] (required) transaction type. acceptable values are
-    *          'authcapture', 'authonly' and 'captureonly'.
+    *          'authcapture' and 'authonly'.
     *       string $params['transaction']['amount'] (required) amount.
     *       mixed $params['transaction'][(optional)] other transaction fields to specify.
     *    if $params['transaction'] is not specified then ONE of the following is required:
     *       array | \flat\cloud\authorize\customer\transaction\authonly $params['authonly'].
     *       array | \flat\cloud\authorize\customer\transaction\authonly $params['authcapture'].
-    *       array | \flat\cloud\authorize\customer\transaction\authonly $params['captureonly'].
     * 
     * @return \flat\cloud\authorize\customer\transaction\response\success | \flat\cloud\authorize\customer\transaction\response\failure
     * 
@@ -399,7 +497,6 @@ implements
       $transtypes = [
          'authcapture'=>'AuthCapture',
          'authonly'=>'AuthOnly',
-         'captureonly'=>'CaptureOnly',
       ];
       if (isset($params['transaction'])) {
          foreach ($transtypes as $key=>$type) {
@@ -462,7 +559,9 @@ implements
          throw new missing_required_param($transtypes);
       }
       
-      $response = $this->_get_CIM()->createCustomerProfileTransaction($transactionType, $transaction);
+      // The SDK needs its own transaction object: flat's adapter for this type checks the type and copies the fields.
+      $adapter = '\flat\cloud\authorize\customer\transaction'."\\$key\\AuthorizeNetTransaction";
+      $response = $this->_get_CIM()->createCustomerProfileTransaction($transactionType, new $adapter($transaction));
       if ($response->isError()) {
          throw new response_error($response->getMessageCode(), $response->getMessageText());
       }

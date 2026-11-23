@@ -30,20 +30,25 @@
  * @author     D. Bird <retran@gmail.com>
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
-namespace flat\cloud\authorize\customer\transaction\captureonly;
-
-use \flat\cloud\authorize\customer\transaction as data;
-
-class AuthorizeNetTransaction extends data\AuthorizeNetTransaction {
-   //public function __construct(captureonly $captureonly);
-   /**
-    * returns (bool) true if valid, returns (bool) false or (string) if invalid, if return value
-    *    is (string), the value is the error message. 
-    * 
-    * @return bool | string
+namespace flat\cloud\authorize;
+/**
+ * @deprecated since v1.73.1. Authorize.Net no longer supports the legacy SDK classes this is built on
+ *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see
+ *    docs/modernization/DEFERRED-V2.md, item 2.
+ */
+class AuthorizeNetARB extends \AuthorizeNetARB {
+   /*
+    * The SDK appends every call's data to one payload that nothing clears, so a second call on the same client
+    * would resend the first call's data. setRefId() is the SDK's only way to empty it: do that after each request.
     */
-   protected function _validate_transaction_type(data $transaction) {
-      if ($transaction instanceof data\captureonly) return true;
-      return "must be captureonly";
+   protected function _sendRequest() {
+      try {
+         return parent::_sendRequest();
+      } finally {
+         $this->setRefId(null);
+      }
+   }
+   protected function _handleResponse($response) {
+      return no_response::checked(parent::_handleResponse($response));
    }
 }

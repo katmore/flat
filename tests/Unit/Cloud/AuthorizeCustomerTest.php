@@ -89,17 +89,35 @@ class AuthorizeCustomerTest extends TestCase
         $this->assertSame('original', $dto->customerProfileId);
     }
 
+    public function testProfileFieldsReachTheSdkCustomer()
+    {
+        $profile = new authorize\customer\profile(['merchantCustomerId'=>'m-1', 'description'=>'a customer', 'email'=>'a@example.invalid']);
+        $dto = new authorize\customer\profile_Customer($profile);
+        $this->assertSame('m-1', $dto->merchantCustomerId);
+        $this->assertSame('a customer', $dto->description);
+        $this->assertSame('a@example.invalid', $dto->email);
+        $this->assertNull($dto->customerProfileId);
+    }
+
     /** @dataProvider createModes */
     public function testCreateForwardsValidationMode($options, $expected)
     {
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
         $customer = new CustomerFixture;
-        $this->assertSame('profile-42', $customer->create($options + ['email'=>'local@example.invalid']));
+        $this->assertSame('profile-42', $customer->create($options + ['email'=>'local@example.invalid', 'payment'=>['billTo'=>['firstName'=>'Local']]]));
         list($method, $arguments) = $customer->client->calls[0];
         $this->assertSame('createCustomerProfile', $method);
         $this->assertInstanceOf(\AuthorizeNetCustomer::class, $arguments[0]);
-        // Existing profile_Customer uses isset on null SDK fields and drops email.
-        $this->assertNull($arguments[0]->email);
+        $this->assertSame('local@example.invalid', $arguments[0]->email);
         $this->assertSame($expected, $arguments[1]);
+    }
+    /** @dataProvider createModes */
+    public function testWithoutAPaymentTheValidationModeIsAlwaysNone($options)
+    {
+        // Authorize.Net refuses any validation mode for a profile without payment profiles (E00013, seen on the sandbox).
+        $customer = new CustomerFixture;
+        $customer->create($options + ['email'=>'local@example.invalid']);
+        $this->assertSame('none', $customer->client->calls[0][1][1]);
     }
     public function createModes()
     {
@@ -108,11 +126,15 @@ class AuthorizeCustomerTest extends TestCase
             [['validationMode'=>'testMode'], 'testMode'], [['validate'=>123], 'liveMode']];
     }
 
-    public function testExplicitPaymentObjectIsForwarded()
+    public function testExplicitPaymentObjectIsConvertedForTheSdk()
     {
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
         $customer = new CustomerFixture; $payment = new PaymentProfileFixture;
+        $payment->billTo = new authorize\customer\billTo(['firstName'=>'Local']);
         $customer->create(['description'=>'local customer', 'payment'=>$payment]);
-        $this->assertSame($payment, $customer->client->calls[0][1][0]->paymentProfiles[0]);
+        $profile = $customer->client->calls[0][1][0]->paymentProfiles[0];
+        $this->assertInstanceOf(\AuthorizeNetPaymentProfile::class, $profile);
+        $this->assertSame('Local', $profile->billTo->firstName);
     }
 
     /** @dataProvider invalidRequests */
@@ -127,13 +149,18 @@ class AuthorizeCustomerTest extends TestCase
         }
         $this->fail('Expected validation failure');
     }
+    public function testCaptureOnlyIsGoneBecauseAuthorizeNetWithdrewIt()
+    {
+        $this->assertFalse(class_exists(authorize\customer\transaction::class.'\\captureonly'));
+        $this->assertFalse(method_exists(authorize\customer::class, 'captureonly'));
+    }
     public function invalidRequests()
     {
         $missing = authorize\missing_required_param::class; $bad = authorize\bad_param::class;
         return [['get', [], $missing], ['update', [], $missing], ['update', ['id'=>'42'], $bad],
             ['create', [], $bad], ['create', ['email'=>'a', 'validate'=>'invalid'], $bad],
             ['create', ['email'=>'a', 'payment'=>'invalid'], $bad],
-            ['create', ['email'=>'a', 'payment'=>[]], \Error::class],
+            ['create', ['email'=>'a', 'payment'=>[]], $bad],
             ['create_paymethod', [], $missing], ['update_paymethod', [], $missing],
             ['update_paymethod', ['customerPaymentProfileId'=>'7'], $missing],
             ['delete_paymethod', [], $missing], ['delete_paymethod', ['customerPaymentProfileId'=>'7'], $missing],
@@ -141,6 +168,8 @@ class AuthorizeCustomerTest extends TestCase
             ['create_transaction', ['transaction'=>'invalid'], $bad],
             ['create_transaction', ['transaction'=>[]], $missing],
             ['create_transaction', ['transaction'=>['transactionType'=>'unknown']], $bad],
+            ['create_transaction', ['transaction'=>['transactionType'=>'captureonly','amount'=>'1.00']], $bad],
+            ['create_transaction', ['captureonly'=>['amount'=>'1.00']], $missing],
             ['create_transaction', ['authonly'=>false], $bad]];
     }
 
@@ -150,7 +179,7 @@ class AuthorizeCustomerTest extends TestCase
         $customer = new CustomerFixture;
         $this->assertNull($customer->update($params + ['email'=>'updated@example.invalid']));
         $this->assertSame('42', $customer->client->calls[0][1][0]);
-        $this->assertNull($customer->client->calls[0][1][1]->email);
+        $this->assertSame('updated@example.invalid', $customer->client->calls[0][1][1]->email);
         $this->assertNull($customer->delete_paymethod(['customerProfileId'=>'42','customerPaymentProfileId'=>'7']));
         $this->assertSame(['deleteCustomerPaymentProfile', ['42','7']], $customer->client->calls[1]);
     }
@@ -191,38 +220,44 @@ class AuthorizeCustomerTest extends TestCase
             'get' => ['get_transaction', [[]], ''],
             'authonly' => ['authonly', ['42','7','1.00'], $useCreate('authonly')],
             'authcapture' => ['authcapture', ['42','7','1.00'], $useCreate('authcapture')],
-            'captureonly' => ['captureonly', ['42','7',['memo'=>'local']], $useCreate('captureonly')],
         ];
     }
     public function testPaymentMethodCreationAndUpdateForwardValidatedIds()
     {
-        $customer = new CustomerFixture; $payment = new PaymentProfileFixture;
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
+        $customer = new CustomerFixture; $payment = ['billTo'=>['firstName'=>'Local']];
         $customer->client->response->paymentIds = [new \SimpleXMLElement('<id>7</id>')];
         $this->assertSame('7',$customer->create_paymethod(['customerProfileId'=>'42','payment'=>$payment]));
-        $this->assertSame(['createCustomerPaymentProfile',['42',$payment]],$customer->client->calls[0]);
+        $this->assertSame('createCustomerPaymentProfile',$customer->client->calls[0][0]);
+        $this->assertSame('42',$customer->client->calls[0][1][0]);
+        $this->assertSame('Local',$customer->client->calls[0][1][1]->billTo->firstName);
         $this->assertSame(['//customerPaymentProfileId'],$customer->client->response->queries);
         $this->assertNull($customer->update_paymethod(['customerProfileId'=>'42','customerPaymentProfileId'=>'7','payment'=>$payment]));
-        $this->assertSame(['updateCustomerPaymentProfile',['42','7',$payment]],$customer->client->calls[1]);
+        $this->assertSame(['updateCustomerPaymentProfile','42','7'],[$customer->client->calls[1][0],$customer->client->calls[1][1][0],$customer->client->calls[1][1][1]]);
+        $this->assertSame('Local',$customer->client->calls[1][1][2]->billTo->firstName);
     }
     public function testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice()
     {
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
         $customer = new CustomerFixture;
         $previous = set_error_handler(function ($severity,$message,$file,$line) { throw new \ErrorException($message,0,$severity,$file,$line); });
         try {
             $this->expectException(authorize\unexpected_response::class);
-            $customer->create_paymethod(['customerProfileId'=>'42']);
+            $customer->create_paymethod(['customerProfileId'=>'42','payment'=>['billTo'=>['firstName'=>'Local']]]);
         } finally { restore_error_handler(); }
     }
     /** @dataProvider rejectedPaymentMethods */
     public function testPaymentMethodRejectionUsesExistingResponseError($method,$params)
     {
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
         $customer = new CustomerFixture; $customer->client->response->error = true;
         $this->expectException(authorize\response_error::class);
         $customer->$method($params);
     }
     public function rejectedPaymentMethods()
     {
-        return [['create_paymethod',['customerProfileId'=>'42']], ['update_paymethod',['customerProfileId'=>'42','customerPaymentProfileId'=>'7']]];
+        $payment = ['billTo'=>['firstName'=>'Local']];
+        return [['create_paymethod',['customerProfileId'=>'42','payment'=>$payment]], ['update_paymethod',['customerProfileId'=>'42','customerPaymentProfileId'=>'7','payment'=>$payment]]];
     }
     /** @dataProvider transactionSpecifications */
     public function testTransactionSpecificationsNormalizeAndReachTheClient($params,$label,$class)
@@ -236,12 +271,14 @@ class AuthorizeCustomerTest extends TestCase
         $this->assertSame('APPROVED',$response->status); $this->assertSame('local-auth',$response->authorization_code);
         $call = $customer->client->calls[0];
         $this->assertSame('createCustomerProfileTransaction',$call[0]); $this->assertSame($label,$call[1][0]);
-        $this->assertInstanceOf($class,$call[1][1]);
+        // The client gets the SDK's transaction object, built by flat's adapter for this kind (KD-105).
+        $this->assertInstanceOf($class.'\\AuthorizeNetTransaction',$call[1][1]);
+        $this->assertInstanceOf(\AuthorizeNetTransaction::class,$call[1][1]);
     }
     public function transactionSpecifications()
     {
         $rows = [];
-        foreach (['authcapture'=>'AuthCapture','authonly'=>'AuthOnly','captureonly'=>'CaptureOnly'] as $kind=>$label) {
+        foreach (['authcapture'=>'AuthCapture','authonly'=>'AuthOnly'] as $kind=>$label) {
             $class = authorize\customer\transaction::class.'\\'.$kind;
             $rows[] = [[$kind=>['amount'=>'1.00']],$label,$class];
             $rows[] = [[$kind=>new $class],$label,$class];

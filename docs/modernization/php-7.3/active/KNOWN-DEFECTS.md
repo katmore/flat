@@ -66,9 +66,188 @@ fixed at its cause; "behavior" says what a caller can see.
   scalars are escaped, and the checksum hashes `''` explicitly. The test now fails on any warning.
   Whether the checksum should cover something else is Q42. **Fixed (MOD-207).**
 
+### KD-89 - JShrink removes comment separators and changes quoted strings
+
+- Category: A. Adversarial finding 1. The global removal of empty comments joined tokens and
+  deleted literal text inside strings. Other block comments also lost their separating whitespace.
+- Fixed (MOD-218): parse empty comments normally, preserve token separators and comment
+  newlines, and keep adjacent plus/minus operators separate. String contents remain literal.
+- Tests: the minifier comment cases check output in PHPUnit and execute original/minified
+  programs with `docker/bin/test-javascript`. Both checks failed before the fix.
+
+### KD-90 - cURL and Markdown HTML parsing leak libxml error capture
+
+- Category: A. Adversarial finding 2. Both HTML parsers enabled global libxml error capture,
+  leaving later XML operations silent. cURL XPath error handling also depended on that leak.
+- Fixed (MOD-219): HTML parsing respects the caller's setting and buffered errors. XPath captures
+  diagnostics only for the query, reports failures through the existing `xpath_error`, and restores
+  the setting in `finally`. No errors are discarded by the parsers.
+- Regression checks cover both caller modes, existing buffered errors, invalid XPath and warning
+  propagation. The nested HTML5 Markdown fixture checks its two native parser warnings as well
+  as its rendered output; those warnings were previously hidden.
+
+### KD-91 - Form keys containing delimiters are sent incorrectly
+
+- Category: A. Finding 3, fixed (MOD-220): encode field names as well as values. Regression
+  checks decode reserved characters and UTF-8 keys back to their original fields.
+
+### KD-92 - URLs without a scheme raise undefined-index notices
+
+- Category: A. Finding 4, fixed (MOD-220): reject absent schemes through `bad_param` before
+  accessing the parsed scheme. Four missing-scheme URL cases now exercise the public constructor.
+
+### KD-93 - Nested form values reach urlencode as arrays
+
+- Category: B, resolved by the owner's Q45 decision. Fixed (MOD-227): reject nested arrays,
+  non-stringable objects and resources with `bad_param` before form encoding. Scalar, null and
+  stringable values retain their encoding; nested JSON bodies are unaffected.
+
+### KD-94 - flat-webapp's log check fails when the host user is not the container user
+
+- Category: A. Found while verifying the review fixes (not in the adversarial review). `docker/bin/test`
+  made the log copy with `mktemp` (0600); the container, running as 1000 on a root host, could not read
+  it, and the check reported "Usage". A green run failed. Fixed (MOD-240): the copy is readable and the
+  script names an unreadable file separately from a wrong argument count; a test covers both messages.
+- **Fixed.**
+
+### KD-95 - flat's Mongo update count cannot work on MongoDB 5.1 or later
+
+- Category: A (owner's Q46 decision). `get_affected_records()` asked the server for `getLastError`, removed
+  in MongoDB 5.1, so `update()` with `count` or `not_modified_exception` threw `not_modified` there.
+- Fixed (MOD-242): the driver keeps the acknowledged result of its own update and reads the matched
+  count from it (`n` = matched; an existing record counts as updated when any matched, even if nothing
+  changed, as `getLastError` did). `getLastError` is asked only when no update went through the driver.
+  Same answers on old servers; works on 5.1 and later (the test service is MongoDB 9.0).
+- **Fixed.**
+
+### KD-96 - flat's default RabbitMQ queue is rejected by RabbitMQ 4
+
+- Category: A (owner's Q47 decision). `publish()` declared its queue with the defaults (non-durable,
+  non-exclusive), which RabbitMQ 4 denies (`transient_nonexcl_queues`): the broker closed the connection.
+- Fixed (MOD-244): on a RabbitMQ 4 or later broker (read from the version it announces), a queue is declared
+  durable unless the caller chose `durable` or an exclusive queue itself. Older brokers get the same
+  declaration as before; the public API and the defaults in the signature are unchanged.
+- **Fixed.**
+
+### KD-97 - flat's RabbitMQ driver needs a class php-amqplib 3 removed
+
+- Category: A (owner's directive to keep dependencies current). The driver built its connection with
+  `AMQPConnection`, a deprecated alias class that php-amqplib 3 removed, so it failed with "Class not found" on
+  version 3.
+- Fixed (MOD-246): the driver uses `AMQPConnection` where it exists (php-amqplib 2: callers get the same
+  object as before) and `AMQPStreamConnection` otherwise. The documented return type is now the common base,
+  `AbstractConnection`. Works with 2.12.3 and 3.7.5 (the test lock is on 3.7.5).
+- **Fixed.**
+
+### KD-98 - The legacy Authorize.Net wrappers report no error when the request itself fails
+
+- Category: B, answered (owner, 2026-11-23: it should fail, with a message saying what happened and that it may
+  be temporary). Found by the sandbox tests (MOD-255). The legacy SDK classes flat wraps (`AuthorizeNetCIM`,
+  `AuthorizeNetARB`) return an empty response when the HTTPS request fails (no connection, a certificate the SDK
+  does not trust, a timeout). `isError()` was then `false` and the message code and text `false`, so
+  `flat\cloud\authorize\customer` and `subscription` handed the caller what looked like a success.
+- Fixed (MOD-259): flat's client classes (`AuthorizeNetCIM`, and a new `AuthorizeNetARB` that the subscription
+  wrapper now uses) throw the new `flat\cloud\authorize\no_response`, a subclass of `unexpected_response`, when
+  there is no reply or the reply is not an Authorize.Net XML response. A refused request (for example `E00007`)
+  is still a `response_error`.
+- **Fixed.**
+
+### KD-99 - Customer profile fields never reach the SDK object, so create and update send an empty profile
+
+- Category: A (clear bug; the intent is plain). `flat\cloud\authorize\customer\profile_Customer` copied a field
+  only when the SDK property `isset()`, and every property starts null, so `merchantCustomerId`, `description` and
+  `email` were never copied. `customer::create()` sent `<profile/>`; the real sandbox answers `E00041` ("One or more
+  fields in the profile must contain a value."). `update()` sent nothing to change. Noted in the php-7.2 phase
+  (`php-7.2/notes/PAYMENT-ALERT.md`, with a test that pinned it); the sandbox tests confirmed it (MOD-258).
+- Fixed (MOD-258): the field is copied when the property exists (`property_exists()`). The unit test asserts the
+  email arrives.
+- **Fixed.**
+
+### KD-101 - A subscription wrapper resends earlier calls' data with every later call
+
+- Category: A (clear bug). Found while writing the subscription sandbox tests (MOD-261). The legacy
+  `AuthorizeNetARB` client appends each call's data to one payload that nothing clears, and flat keeps one client
+  per wrapper object. So after `create()`, a `get_status()`, `cancel()` or update on the same object also carried
+  the whole create request, which Authorize.Net cannot accept as a status or cancel request.
+- Fixed (MOD-261): flat's client (`flat\cloud\authorize\AuthorizeNetARB`) empties the payload after every request.
+  The mock cannot show this one (it matches on the request's element names); the unit test does.
+- Test: `Cloud/AuthorizeSubscriptionSdkTest::testEachCallSendsOnlyItsOwnData` (fails without the fix).
+- **Fixed.**
+
+### KD-102 - `subscription::get_info()` looked for a list response element that does not exist
+
+- Category: A (the schema is the evidence; the owner's sandbox run will confirm). `get_info()` read
+  `/ARBGetSubscriptionListResponse/ARBGetSubscriptionListResult/totalNumInResultSet`. The schema
+  (`AnetApiSchema.xsd`) has `totalNumInResultSet` and `subscriptionDetails` directly under
+  `ARBGetSubscriptionListResponse`, with no `...Result` element (that was the old SOAP shape). Against the real
+  service it always threw `unexpected_response` ("'totalNumInResultSet' field not found"). The older tests' doubles
+  ignore the path, which is why nothing noticed.
+- Fixed (MOD-261): both paths follow the schema.
+- Tests: `Cloud/AuthorizeSubscriptionSdkTest::testGetInfoReadsTheListResponseTheSchemaDescribes` and
+  `testASubscriptionMissingFromTheListIsNotFound` (fail without the fix).
+- **Fixed.**
+
+### KD-100 - flat could not build a payment method Authorize.Net accepts
+
+- Category: C, answered (owner, 2026-11-23, Q50: make them work). Found while writing the payment-method sandbox
+  tests (MOD-260); no sandbox was needed to see it (the php-7.2 notes had listed it as a blocker,
+  `php-7.2/notes/PAYMENT-ALERT.md`). `create_paymethod()`, `update_paymethod()` and a `payment` given to
+  `create()` took an array that built an abstract class (a PHP `Error`), or a `customer\payment_profile` object
+  whose XML was invalid: elements without a name (flat's internal state leaking through the SDK's array cast), no
+  `<creditCard>` wrapper, and a field `<type>` Authorize.Net does not define.
+- Fixed (MOD-262): `payment` is converted into the SDK's own objects. The shapes it accepts are in the docblock of
+  `create_paymethod()`: an array (or `payment_profile` object) with `billTo`, `customerType` and `payment`, where
+  `payment` is an array with a `creditCard` or `bankAccount` element, an array of card or bank account fields, or a
+  `payment_profile\creditCard` / `bankAccount` object. Unknown fields, both types at once, an empty profile, or a
+  missing `payment` are `bad_param` or `missing_required_param`, before any request. The design follows the
+  subscription wrapper's.
+- Tests: `Cloud/AuthorizePaymentMethodTest` (the four ways to give a card, a bank account, update, create with a
+  payment, and the rejected shapes) and the sandbox test `PaymentMethodTest`.
+- **Fixed.**
+
+### KD-103 - `customer::create()` asked for payment validation even when it sent no payment profile
+
+- Category: A (clear bug), found by the owner's sandbox run after KD-99 (MOD-263). `create()` defaults to the
+  `liveMode` validation mode, and the SDK sends it. Authorize.Net answers a profile without payment profiles
+  with `E00013` ("Validation Mode is invalid without Payment Profiles."), so a plain
+  `create(['email'=>...])` could not succeed (KD-99 hid it: that call failed earlier, with `E00041`).
+- Fixed (MOD-263): without a `payment` the mode sent is `none`. With a `payment` the mode is as before (default
+  `liveMode`).
+- Tests: `Cloud/AuthorizeCustomerTest::testWithoutAPaymentTheValidationModeIsAlwaysNone`; the mode tests now
+  give a payment. The mock answers `E00013` as the sandbox did.
+- **Fixed.**
+
+### KD-104 - `subscription::get_info()` did not find a subscription just created, on the real sandbox
+
+- Category: not a flat defect; a service behavior, documented (MOD-264). The owner's first subscription run:
+  `create()` returned an id and `get_status()` said `active`, but `get_info()` threw `subscription\not_found`.
+  After the test was changed only to wait for the list (up to 10 seconds, with diagnostics), all ten sandbox tests
+  passed. flat's lookup code was unchanged between the two runs, so Authorize.Net's subscription list lags behind a
+  new subscription by some seconds. How long is not measured.
+  The owner confirmed it on a retry of the run (2026-11-23): the list lagged.
+- Done: the docblock of `get_info()`, the consumer-impact entry of KD-102 and the release notes say so; the sandbox
+  test waits for the list. No code change: a retry inside `get_info()` would be a guess about the service.
+- **Resolved.**
+
+### KD-105 - `customer::create_transaction()` sent invalid XML, and authonly and captureonly carried no fields
+
+- Category: A (clear bug; the same family as KD-100). Found while writing the transaction sandbox tests (MOD-265);
+  no sandbox was needed to see it. flat has an adapter class for each kind
+  (`customer\transaction\<kind>\AuthorizeNetTransaction`, an SDK subclass that checks the kind and copies the
+  fields), but `create_transaction()` handed the SDK flat's own data object. Through the SDK's array cast that
+  became an element without a name (`<>1</>`) and a field `<type>` Authorize.Net does not define. Also, the
+  `authonly` and `captureonly` classes declared no fields, so their amount and ids were dropped.
+- Fixed (MOD-265): `create_transaction()` wraps the transaction in the adapter for its kind. `authonly` has the
+  fields of `authcapture`; `captureonly` has the same plus `approvalCode`.
+- Tests: `Cloud/AuthorizeTransactionRequestTest` (the XML of each kind, an approved and a declined answer, the
+  adapter's kind check; fails without the fix) and the changed forwarding test in `AuthorizeCustomerTest`.
+- Not yet verified on the real sandbox (the owner's next run): approval of each kind, and what a decline looks like
+  (Authorize.Net documents `E00027` for a customer transaction, which flat raises as a `response_error`).
+- **Fixed.**
+
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; none is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 50 are answered; none is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -182,3 +361,74 @@ Each has a recommendation; "agree" is enough. Questions 37 to 44 are answered; n
     is `JSON_ERROR_NONE === json_last_error()`. A malformed JSON body now ends in that fatal error,
     and a valid JSON `false` body is accepted. The functional suite cannot include a malformed
     body, because its server-log check rejects any PHP fatal error.
+
+45. **Nested form values (follow-up to finding 3).** The existing form encoder accepts arrays
+    or objects of scalar values. Nested arrays reach `urlencode()` and raise a native warning.
+    Encoding reserved characters in keys is fixed independently. Should nested values be rejected
+    with `bad_param`, or encoded as bracketed form fields? Recommend rejecting nested values
+    explicitly; supporting nested form structures is a separate behavior choice. No nested-value
+    behavior was changed while fixing key encoding.
+
+    **Answered (owner):** reject nested form values explicitly. Done in MOD-227 (KD-93), with
+    regressions for array/object form containers, bracketed query strings, invalid field values
+    and preserved flat-value/JSON encoding.
+
+46. **flat's Mongo update count cannot work on MongoDB 5.1 or later.**
+    `flat\db\driver\mongo::get_affected_records()` sends the server the `getLastError` command
+    and reads `updatedExisting` and `n` from the answer. MongoDB removed that command in 5.1, so
+    after an update, `update()` with `count` or `not_modified_exception` throws `not_modified`
+    ("no update data found") on a 5.1 or newer server. Found when the test service moved to MongoDB 7.0
+    (`CrudTest::testUpdatedRecordCountUsesTheRealAdapterWriteResult` and one more fail there). The
+    adapter already computes the same fields client-side and returns them from `update()`; flat
+    discards that result. The test service is MongoDB 5.0, the newest where flat works. An
+    application on a newer server hits this today. Not changed (a library change, outside the tooling
+    step). Recommend: read `n` and `updatedExisting` from the `update()` result; same answers on
+    supported servers, and it works on 5.1 and later. Then raise the test service to 7.0.
+    **Answered (owner, 2026-11-23):** the consumer's version does not matter; make flat work on newer MongoDB and
+    move the test service to the newest the driver works with. Done: KD-95 (MOD-242) and MOD-243.
+
+47. **flat's default RabbitMQ queue is rejected by RabbitMQ 4.** The driver's defaults
+    (`src/flat/db/driver/rabbitmq.php`) are `durable` false, `exclusive` false, `auto_delete` true.
+    RabbitMQ 4.0 and later deny transient non-exclusive queues, so declaring a queue with those
+    defaults closes the connection (`INTERNAL_ERROR - Feature transient_nonexcl_queues is
+    deprecated`). Found when the test service moved to RabbitMQ 4.4; two `RabbitMqTest` tests fail
+    there. The test service is RabbitMQ 3.13.7, the newest where the unchanged library works.
+    A caller on a 4.x broker can pass `durable` or `exclusive` itself; the defaults cannot change in
+    v1.X (a changed default is a behavior change). Not changed.
+    Recommend: note it in the release notes, and decide the default at v2.X (`DEFERRED-V2.md`).
+    **Answered (owner, 2026-11-23):** the consumer's version does not matter; support the newest broker with a
+    compatible workaround (the API stays). Done: KD-96 (MOD-244) and MOD-245.
+
+48. **Authorize.Net SDK 2.x: the one dependency not moved (decision needed).** `authorizenet/authorizenet` is
+    held at 1.9.9 in the test lock; 2.0.4 installs on PHP 7.3 but deletes the classes flat is built on
+    (`AuthorizeNetAIM`, `AuthorizeNetCIM`, `AuthorizeNetARB`, `AuthorizeNetTransaction`, ...; only the
+    `net\authorize\api` namespace remains). flat's *public* API exposes those types:
+    `transaction\response::load(\AuthorizeNetAIM_Response ...)`, `customer` returns `\AuthorizeNetCIM`,
+    `subscription` returns `\AuthorizeNetARB`. Your directive (keep up; keep the public API compatible through
+    a workaround) means a port with compatibility classes for those types: 48 files, about 3,240 lines of
+    payment code, no live sandbox here. The SDK 1.x keeps working on PHP 7.3, and the approved exception for its
+    deprecation notice (Q41) stays until the port.
+    Recommend: do the port as its own task right after v1.73.1, and verify it without a sandbox by first recording
+    golden tests of every wrapper call against SDK 1.9.9, then requiring the ported wrappers to give identical
+    results on SDK 2.x. Alternative: start it now, inside v1.73.1. Which? 
+    **Answered (owner, 2026-11-23):** the wrappers are not ported. Authorize.Net does not support the old SDK
+    classes, so the wrappers are deprecated in v1.73.1 and removed in v2.X (`DEFERRED-V2.md` item 2). Done:
+    `@deprecated` on every wrapper class (MOD-253).
+
+49. **KD-98: should the legacy wrappers raise an error when the request itself fails?** Recommended leaving it.
+    **Answered (owner, 2026-11-23):** it should fail, with a message that says what happened and that it may be
+    temporary. Done as KD-98 (MOD-259).
+
+50. **KD-100: should flat's payment-method calls be made to work, or left as they are until v2.X?** Recommended
+    leaving them. **Answered (owner, 2026-11-23):** (a), make them work. Done as KD-100 (MOD-262).
+
+### KD-106 - Capture Only is a transaction type Authorize.Net no longer accepts
+
+- Category: A (owner decision, 2026-11-23). Found on the real sandbox (MOD-268): it refuses `captureonly` with `E00027`,
+  and Authorize.Net's "What are the transaction types that can be submitted?" article says the method is no longer
+  available. flat offered it in `create_transaction()`, as a class and as a method.
+- Fixed (MOD-270): removed the `captureonly` transaction class and its SDK adapter, `customer::captureonly()`, the
+  `captureonly` entry of `create_transaction()` and its mock stub and tests. See `active/CONSUMER-IMPACT.md`.
+- Tests: `AuthorizeCustomerTest::testCaptureOnlyIsGoneBecauseAuthorizeNetWithdrewIt` and the two rejected requests in
+  `invalidRequests` (fail without the fix, since the type was accepted).
+- **Fixed.**

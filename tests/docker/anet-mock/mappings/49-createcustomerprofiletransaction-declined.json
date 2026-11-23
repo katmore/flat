@@ -1,0 +1,29 @@
+{
+  "name": "createCustomerProfileTransaction declined",
+  "priority": 1,
+  "request": {
+    "method": "POST",
+    "url": "/xml/v1/request.api",
+    "bodyPatterns": [
+      {
+        "matchesXPath": "/*[local-name()='createCustomerProfileTransactionRequest']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='name' and text()='flatmock-login']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='transactionKey' and text()='flatmock-key-0001']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='customerPaymentProfileId' and text()='2002']"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/xml; charset=utf-8"
+    },
+    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<createCustomerProfileTransactionResponse xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Error</resultCode><message><code>E00027</code><text>The transaction was unsuccessful.</text></message></messages><directResponse>|2|,|1|,|2|,|This transaction has been declined.|,||,|Y|,|60000000001|,||,||,|5.00|,|CC|,|auth_capture|,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,|XXXX1111|,|Visa|,||,||,||</directResponse></createCustomerProfileTransactionResponse>"
+  }
+}

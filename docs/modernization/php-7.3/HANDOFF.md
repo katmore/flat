@@ -109,7 +109,8 @@ the `php-7.2` branch and the `v1.72.0` tag.
    `history/`; the test inventory is generated, not written.
 2. **Baseline first.** Before changing anything, run the full suite in the current 7.2
    environment and confirm 1,428 passing. Every later failure is then yours.
-3. **Change the environment to PHP 7.3 and nothing else:**
+3. **Change the environment to PHP 7.3 and nothing else:** (correction, 2026-11-23: "nothing else" meant no
+   behavior change; every tool and service is upgraded too, see `AGENTS.md`, "Keep everything current")
    - base image `php:7.3-cli` pinned by digest, at the newest 7.3 patch release (the owner chose
      the newest; expected 7.3.33, verify it) and record the exact patch, as 7.2.34 was recorded;
    - rebuild the extensions from pinned commits and check each supports 7.3 (the MongoDB
@@ -227,8 +228,10 @@ Environment:
 - A fresh container has no Docker daemon running: start it first, in the background, with its
   output in a log file. Builds need the sandbox's proxy CA: set `FLAT_TEST_CA_FILE` to the bundle
   the session documents and, for Compose builds, `BUILDX_BAKE_ENTITLEMENTS_FS=0`.
-- RabbitMQ sometimes exits at startup during a full run (`exited (0)`). It passes on a retry; the
-  cause is not diagnosed. Retry before you suspect your change.
+- RabbitMQ has been seen to exit at startup during a full run. `docker/bin/test` now retries the service
+  start itself (three attempts) and prints the failed attempt's state and logs; do not rerun by hand. If a run
+  still stops with "Starting the test services failed (attempt 3 of 3", the printed logs are the first real
+  evidence of the cause: record it in a note.
 - Never pipe a long Docker build into `head`: the pipe closes and kills the build half way. Log to
   a file and read the file.
 - The shell's safety check refuses `rm -rf` on a variable path. Do not work around it: use fresh
@@ -246,7 +249,8 @@ Editing:
   `@group known-defect` tag only while a test still asserts defective behavior.
 - The suite uses PHPUnit 8.5, which runs on PHP 7.3 too: keep it. Some assertion names differ in
   PHPUnit 9 (`assertRegExp` is the PHPUnit 8 name; 9 calls it `assertMatchesRegularExpression`),
-  so moving PHPUnit is a separate decision, not part of this step.
+  so moving PHPUnit is a separate decision, not part of this step. (Correction, 2026-11-23: it is part of
+  the step; PHPUnit moved to 9.6, see `AGENTS.md`, "Keep everything current".)
 
 GitHub and the session:
 - This session's git access cannot push tags, delete branches, or read Dependabot alerts

@@ -126,7 +126,7 @@ class CliTest extends TestCase
         finally { ob_end_clean(); }
         $this->assertStringStartsWith('text', $output);
         $this->assertSame(1, substr_count($output, 'int(42)'));
-        $this->assertRegExp('/int\\(42\\)\\n$/', $output);
+        $this->assertMatchesRegularExpression('/int\\(42\\)\\n$/', $output);
     }
     public function testLineAndErrorHandlers()
     {

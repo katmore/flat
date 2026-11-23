@@ -36,6 +36,9 @@ use \net\authorize\api\contract\v1\AnetApiResponseType;
 use \net\authorize\api\contract\v1\MessagesType;
 /**
  * Exception populated with details of an authorize.net response error
+ * @deprecated since v1.73.1. Authorize.Net no longer supports the legacy SDK classes this is built on
+ *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see
+ *    docs/modernization/DEFERRED-V2.md, item 2.
  */
 class response_error extends exception {
    /**

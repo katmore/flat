@@ -29,6 +29,12 @@ class AffectedDriver extends NoContextDriver
     public $reply;
     public function command(array $param=null) { return $this->reply; }
 }
+class UpdateResultDriver extends NoContextDriver
+{
+    public $commands = 0;
+    public function command(array $param=null) { $this->commands++; return []; }
+    public function remember($result) { $this->_last_update_result = $result; }
+}
 class InvalidCollectionDatabaseDouble
 {
     public function selectCollection($name) { return new \stdClass; }
@@ -118,6 +124,21 @@ class DriverTest extends TestCase
         $driver = new AffectedDriver; $driver->reply = ['updatedExisting'=>true,'n'=>'2'];
         $this->assertSame(2,$driver->get_affected_records());
     }
+    public function testAffectedRecordsComeFromThePreviousUpdateResultNotFromTheServer()
+    {
+        $driver = new UpdateResultDriver; $driver->remember(['ok'=>1.0,'n'=>2,'nModified'=>0]);
+        $this->assertSame(2,$driver->get_affected_records());
+        $this->assertSame(0,$driver->commands);
+    }
+    /** @dataProvider unmatchedUpdateResults */
+    public function testAnUpdateResultWithoutMatchesKeepsTheNotModifiedPolicy($result,$message)
+    {
+        $driver = new UpdateResultDriver; $driver->remember($result);
+        $this->expectException(mongo\record\not_modified::class); $this->expectExceptionMessage($message);
+        try { $driver->get_affected_records(); }
+        finally { $this->assertSame(0,$driver->commands); }
+    }
+    public function unmatchedUpdateResults() { return [[['ok'=>1.0,'n'=>0],'not updatedExisting'], [['ok'=>1.0],'no update data']]; }
     public function testInvalidCollectionNameFailsBeforeDatabaseAccess()
     {
         $this->expectException(mongo\collection\bad_param::class); (new NoContextDriver)->get_collection(42);

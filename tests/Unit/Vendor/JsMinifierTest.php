@@ -36,6 +36,32 @@ class JsMinifierTest extends TestCase
             ["x\n++y;", "x\n++y;"],
         ];
     }
+    /** @dataProvider commentPrograms */
+    public function testCommentsPreserveTokenBoundariesAndStringContents($source, $expected, $result)
+    {
+        $this->assertSame($expected, trim(minifier::minify($source)));
+    }
+    // The Docker JavaScript check also executes both versions and checks $result.
+    public function commentPrograms()
+    {
+        return [
+            ['var/**/result=1;', 'var result=1;', 1],
+            ['function f(){return/**/1;} var result=f();', 'function f(){return 1;}var result=f();', 1],
+            ['var x=1; var result=x+/**/+x;', 'var x=1;var result=x+ +x;', 2],
+            ['var x=3; var result=x-/**/-x;', 'var x=3;var result=x- -x;', 6],
+            ['var x=1; var result=x+/**/ /**/+x;', 'var x=1;var result=x+ +x;', 2],
+            ['var result=1+/**/2;', 'var result=1+2;', 3],
+            ['var result=1+/**/"x";', 'var result=1+"x";', '1x'],
+            ['var/* note */result=1;', 'var result=1;', 1],
+            ['var/**//**/result=1;', 'var result=1;', 1],
+            ["function f(){return/*\n*/1;} var result=f()===undefined;", "function f(){return\n1;}var result=f()===undefined;", true],
+            ["function f(){return/*\r\n*/1;} var result=f()===undefined;", "function f(){return\n1;}var result=f()===undefined;", true],
+            ['var result="/**/";', 'var result="/**/";', '/**/'],
+            ["var result='/**/';", "var result='/**/';", '/**/'],
+            ['var result=1;/**/', 'var result=1;', 1],
+            ['/**/var result=1;', 'var result=1;', 1],
+        ];
+    }
     /** @dataProvider brokenPrograms */
     public function testMalformedProgramsThrowAndRestoreOutputBuffer($source, $message)
     {

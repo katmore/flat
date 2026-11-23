@@ -1,0 +1,39 @@
+ Network flat-review-mutate_default  Creating
+ Network flat-review-mutate_default  Created
+ Container flat-review-mutate-rabbitmq-1  Creating
+ Container flat-review-mutate-mongo-1  Creating
+ Container flat-review-mutate-rabbitmq-1  Created
+ Container flat-review-mutate-mongo-1  Created
+ Container flat-review-mutate-mongo-1  Starting
+ Container flat-review-mutate-rabbitmq-1  Starting
+ Container flat-review-mutate-mongo-1  Started
+ Container flat-review-mutate-rabbitmq-1  Started
+ Container flat-review-mutate-mongo-1  Waiting
+ Container flat-review-mutate-rabbitmq-1  Waiting
+ Container flat-review-mutate-mongo-1  Healthy
+ Container flat-review-mutate-rabbitmq-1  Healthy
+baseline run...
+[1/12] killed   src/flat/core/mapper.php:142  false  ->  true
+[2/12] killed   src/flat/core/html/encode.php:229  &&  ->  ||
+[3/12] killed   src/flat/core/mapper.php:194  !==  ->  ===
+[4/12] killed   src/flat/core/html/encode.php:186  ===  ->  !==
+[5/12] killed   src/flat/core/html/encode.php:130  &&  ->  ||
+[6/12] killed   src/flat/core/curl/request.php:86  ==  ->  !=
+[7/12] killed   src/flat/core/curl/request.php:46  !  ->  (removed)
+[8/12] SURVIVED src/flat/core/mapper.php:14  false  ->  true
+[9/12] killed   src/flat/core/html/encode.php:195  ||  ->  &&
+[10/12] killed   src/flat/core/mapper.php:350  ||  ->  &&
+[11/12] killed   src/flat/core/html/encode.php:221  !  ->  (removed)
+[12/12] killed   src/flat/core/mapper.php:212  !  ->  (removed)
+# Mutation probe
+
+- Source files: 4; candidate mutants: 180; run: 12 (seed 731, limit 12, with services); invalid (did not compile): 0.
+- Killed: 11; timed out (counted as killed): 0; **survived: 1** of 12 valid mutants (91.7% caught).
+
+## Survivors
+
+Each needs triage: a missing assertion (add a test) or an equivalent change (no observable effect).
+
+| File | Line | Mutation | Source line |
+| --- | --- | --- | --- |
+| `src/flat/core/mapper.php` | 14 | `false` to `true` | `'get_protected_property'=>false,` |

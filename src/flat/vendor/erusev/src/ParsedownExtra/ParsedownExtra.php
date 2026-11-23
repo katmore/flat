@@ -444,9 +444,6 @@ class ParsedownExtra extends Parsedown
 
     protected function elementMarkup($elementMarkup) # recursive
     {
-        # http://stackoverflow.com/q/1148928/200145
-        libxml_use_internal_errors(true);
-
         $DOMDocument = new DOMDocument;
 
         # http://stackoverflow.com/q/11309194/200145

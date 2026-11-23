@@ -1,5 +1,6 @@
 <?php
 namespace flat\test\Unit\Db;
+require_once __DIR__.'/../../Support/PhpSubprocess.php';
 use PHPUnit\Framework\TestCase;
 use flat\db\driver\rabbitmq;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -15,6 +16,7 @@ class RabbitProvider extends RabbitFixture implements rabbitmq\connection_params
 }
 class RabbitMqTest extends TestCase
 {
+    use \flat\test\Support\PhpSubprocess;
     private $driver;
     private $params;
     private $queue;
@@ -56,7 +58,9 @@ class RabbitMqTest extends TestCase
     {
         $this->driver = new RabbitFixture($this->params);
         $connection = $this->driver->get_connection();
-        $this->assertInstanceOf(\PhpAmqpLib\Connection\AMQPConnection::class, $connection);
+        $this->assertInstanceOf(\PhpAmqpLib\Connection\AbstractConnection::class, $connection);
+        // php-amqplib 2 callers still get its legacy class; version 3 removed it
+        if (class_exists('\PhpAmqpLib\Connection\AMQPConnection')) $this->assertInstanceOf('\PhpAmqpLib\Connection\AMQPConnection', $connection);
         $this->assertSame($connection, $this->driver->get_connection());
         $channel = $this->driver->get_channel();
         $this->assertSame($channel, $this->driver->get_channel());
@@ -88,13 +92,75 @@ class RabbitMqTest extends TestCase
         $this->assertSame('world', $this->driver->get_channel()->basic_get($this->queue, true)->body);
     }
     /**
+     * php-amqplib 2 has the legacy AMQPConnection class; 3 removed it. Where it exists, callers keep getting it.
+     * Run in a fresh process, where the legacy class is defined before flat connects.
+     *
+     * @group services
+     * @group rabbitmq
+     */
+    public function testPhpAmqpLib2CallersStillGetTheLegacyConnectionClass()
+    {
+        $file = (new \ReflectionClass(\PhpAmqpLib\Connection\AMQPStreamConnection::class))->getFileName();
+        $child = <<<'CHILD'
+require %AUTOLOAD%;
+class LegacyAmqpConnection extends \PhpAmqpLib\Connection\AMQPStreamConnection {}
+class_alias('LegacyAmqpConnection', 'PhpAmqpLib\\Connection\\AMQPConnection');
+$driver = new class(%PARAMS%) extends \flat\db\driver\rabbitmq {};
+$connection = $driver->get_connection();
+echo get_class($connection);
+$connection->close();
+CHILD;
+        list($status, $out, $err) = $this->subprocess(str_replace(
+            ['%AUTOLOAD%', '%PARAMS%'],
+            [var_export(substr($file, 0, strpos($file, '/php-amqplib/')).'/autoload.php', true), var_export($this->params, true)],
+            $child
+        ));
+        $this->assertSame(0, $status, $err);
+        $this->assertSame('LegacyAmqpConnection', $out);
+    }
+    /**
+     * @group services
+     * @group rabbitmq
+     */
+    public function testTheDefaultQueueIsDurableOnRabbitMq4()
+    {
+        $this->driver->connect($this->params);
+        $this->assertSame('default', $this->driver->publish(['queue'=>$this->queue,'msg'=>'default']));
+        // Declaring it again as durable only works when flat declared it durable (RabbitMQ 4 denies transient ones).
+        $this->driver->get_channel()->queue_declare($this->queue, false, true, false, true);
+        $this->assertSame('default', $this->driver->get_channel()->basic_get($this->queue, true)->body);
+    }
+    /**
+     * @group services
+     * @group rabbitmq
+     */
+    public function testAnExplicitExclusiveQueueKeepsItsTransientDefault()
+    {
+        $this->driver->connect($this->params);
+        $this->assertSame('mine', $this->driver->publish(['queue'=>['queue'=>$this->queue,'exclusive'=>true],'msg'=>'mine']));
+        // Same attributes again: fails with PRECONDITION_FAILED if flat had made it durable.
+        $this->driver->get_channel()->queue_declare($this->queue, false, false, true, true);
+        $this->assertSame('mine', $this->driver->get_channel()->basic_get($this->queue, true)->body);
+    }
+    /**
+     * @group services
+     * @group rabbitmq
+     */
+    public function testAnExplicitDurableChoiceIsNeverOverridden()
+    {
+        $this->driver->connect($this->params);
+        $this->assertSame('kept', $this->driver->publish(['queue'=>['queue'=>$this->queue,'durable'=>false,'exclusive'=>true],'msg'=>'kept']));
+        $this->driver->get_channel()->queue_declare($this->queue, false, false, true, true);
+        $this->assertSame('kept', $this->driver->get_channel()->basic_get($this->queue, true)->body);
+    }
+    /**
      * @group services
      * @group rabbitmq
      */
     public function testExplicitRoutingMessageAndCommandPaths()
     {
         $this->driver->connect($this->params);
-        $this->driver->get_channel()->queue_declare($this->queue, false, false, false, true);
+        $this->driver->get_channel()->queue_declare($this->queue, false, true, false, true);
         $this->assertSame('direct', $this->driver->publish($this->queue, 'direct'));
         $this->assertSame('direct', $this->driver->get_channel()->basic_get($this->queue, true)->body);
         $this->assertSame('object', $this->driver->command(['publish'=>['routing_key'=>$this->queue,

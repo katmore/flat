@@ -1,0 +1,28 @@
+{
+  "name": "getCustomerPaymentProfile exists",
+  "priority": 2,
+  "request": {
+    "method": "POST",
+    "url": "/xml/v1/request.api",
+    "bodyPatterns": [
+      {
+        "matchesXPath": "/*[local-name()='getCustomerPaymentProfileRequest']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='name' and text()='flatmock-login']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='transactionKey' and text()='flatmock-key-0001']"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/xml; charset=utf-8"
+    },
+    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<getCustomerPaymentProfileResponse xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Ok</resultCode><message><code>I00001</code><text>Successful.</text></message></messages><paymentProfile><customerProfileId>1001</customerProfileId><customerPaymentProfileId>2001</customerPaymentProfileId><payment><creditCard><cardNumber>XXXX1111</cardNumber><expirationDate>XXXX</expirationDate></creditCard></payment></paymentProfile></getCustomerPaymentProfileResponse>"
+  },
+  "scenarioName": "payment-profile",
+  "requiredScenarioState": "Created"
+}

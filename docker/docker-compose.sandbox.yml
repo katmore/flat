@@ -1,0 +1,12 @@
+# Added by `docker/bin/test sandbox`: the PHP container needs the Internet (the normal test network
+# has none) and the sandbox credentials from your shell. No other service is started.
+services:
+  php:
+    environment:
+      FLAT_TEST_ANET_LOGIN_ID:
+      FLAT_TEST_ANET_TRANSACTION_KEY:
+      FLAT_TEST_ANET_SANDBOX: "1"
+    networks:
+      - internet
+networks:
+  internet: {}

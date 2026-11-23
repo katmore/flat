@@ -32,7 +32,6 @@
  */
 namespace flat\db\driver;
 
-use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class rabbitmq extends \flat\db implements 
@@ -128,6 +127,16 @@ class rabbitmq extends \flat\db implements
    }
    
    /**
+    * @return bool true when the broker is RabbitMQ 4 or later (it announces its version when connecting)
+    */
+   private function _broker_denies_transient_queues() {
+      $properties = $this->get_connection()->getServerProperties();
+      $version = isset($properties['version']) ? $properties['version'] : '';
+      if (is_array($version)) $version = isset($version[1]) ? $version[1] : '';
+      return is_string($version) && $version !== '' && version_compare($version, '4.0.0', '>=');
+   }
+   
+   /**
     * Publishes a message. Returns the message body that was used.
     * 
     * @param string|array $param queue name or assoc array of parameters: 
@@ -174,8 +183,18 @@ class rabbitmq extends \flat\db implements
          } else {
             if (is_array($param['queue'])) {
                $queue_param = self::_param_to_queue_param($param['queue']);
+               $queue_chosen = $param['queue'];
             } else {
                $queue_param = self::_param_to_queue_param(['queue'=>$param['queue']]);
+               $queue_chosen = [];
+            }
+            /*
+             * RabbitMQ 4 denies transient non-exclusive queues, which is what the defaults declare.
+             * There, unless the caller chose "durable" or an exclusive queue itself, declare it durable.
+             * Older brokers get the same declaration as before.
+             */
+            if (!isset($queue_chosen['durable']) && !$queue_param['exclusive'] && $this->_broker_denies_transient_queues()) {
+               $queue_param['durable'] = true;
             }
             $chan->queue_declare(
                $queue_param['queue'],
@@ -207,7 +226,7 @@ class rabbitmq extends \flat\db implements
     * provides a connection object based on previously obtained connection parameters.
     *    uses a cached connection, or establishes new connection as needed.
     *
-    * @return \PhpAmqpLib\Connection\AMQPConnection
+    * @return \PhpAmqpLib\Connection\AbstractConnection
     *
     *
     * @throws \flat\db\driver\rabbitmq\exception\missing_connection_params
@@ -220,7 +239,7 @@ class rabbitmq extends \flat\db implements
    private $_param;
    
    /**
-    * @var \PhpAmqpLib\Connection\AMQPConnection[] array of cached connection objects,
+    * @var \PhpAmqpLib\Connection\AbstractConnection[] array of cached connection objects,
     *    cached by hash of connection parameters
     */
    private static $_conn;
@@ -309,7 +328,14 @@ class rabbitmq extends \flat\db implements
        */
       if (isset(self::$_conn[$hash])) return self::$_conn[$hash];
       //var_dump($conn);die('db driver rabbitmq (die)');
-      $connection = self::$_conn[$hash] = new AMQPConnection(
+      /*
+       * php-amqplib 2 offered AMQPConnection (a deprecated AMQPStreamConnection); version 3 removed it.
+       * Use it where it exists so callers on version 2 get the same object as before.
+       */
+      $connection_class = class_exists('\PhpAmqpLib\Connection\AMQPConnection')
+         ? '\PhpAmqpLib\Connection\AMQPConnection'
+         : '\PhpAmqpLib\Connection\AMQPStreamConnection';
+      $connection = self::$_conn[$hash] = new $connection_class(
          $conn['host'],
          $conn['port'],
          $conn['user'],

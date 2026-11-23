@@ -205,7 +205,7 @@ class crud extends \flat\db\driver\mongo
             $find = $param['key'];
             if (!empty($param['record'])) {
                $record = $param['record'];
-               $col->update($find,$record);
+               $this->_set_last_update_result($col->update($find,$record));
                if (!empty($param['count']) || !empty($param['not_modified_exception'])) {
                   $count_only = true;
                   if (!empty($param['not_modified_exception'])) $count_only = false;
@@ -219,7 +219,7 @@ class crud extends \flat\db\driver\mongo
                      "data","must be array or object"
                   );
                }
-               $col->update($find,array('$set'=>$data));
+               $this->_set_last_update_result($col->update($find,array('$set'=>$data)));
                if (!empty($param['count']) || !empty($param['not_modified_exception'])) {
                   $count_only = true;
                   if (!empty($param['not_modified_exception'])) $count_only = false;
@@ -233,7 +233,7 @@ class crud extends \flat\db\driver\mongo
                      "op","must be array or object"
                   );
                }
-               $col->update($find,$op);
+               $this->_set_last_update_result($col->update($find,$op));
                if (!empty($param['count']) || !empty($param['not_modified_exception'])) {
                   $count_only = true;
                   if (!empty($param['not_modified_exception'])) $count_only = false;

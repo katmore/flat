@@ -192,10 +192,20 @@ class CrudTest extends TestCase
         $this->assertSame(1,$this->driver->update(['key'=>['number'=>1],'op'=>['$inc'=>['number'=>1]],'count'=>true]));
         $this->assertSame(1,$this->driver->update(['key'=>['name'=>'data'],'op'=>['$inc'=>['number'=>1]],'not_modified_exception'=>true]));
     }
+    public function testAnUpdateThatChangesNothingStillCountsTheMatchedRecord()
+    {
+        $this->assertSame(1,$this->driver->update(['key'=>['number'=>1],'data'=>['name'=>'alpha'],'count'=>true]));
+    }
+    public function testAnUpdateThatMatchesNothingIsNotModified()
+    {
+        $this->expectException(mongo\record\not_modified::class);
+        $this->driver->update(['key'=>['number'=>999],'data'=>['name'=>'none'],'not_modified_exception'=>true]);
+    }
     public function testInvalidDocumentWritePreservesTheDriverException()
     {
         $this->expectException(\MongoException::class);
-        $this->driver->create(['$invalid'=>'document']);
+        // An array _id is rejected by every MongoDB version (a '$'-prefixed field name is not since 5.0).
+        $this->driver->create(['_id'=>[1,2]]);
     }
     public function testLoadDefaultsAliasesAndStartWindow()
     {

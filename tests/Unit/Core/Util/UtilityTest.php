@@ -104,8 +104,8 @@ class UtilityTest extends TestCase
         $this->assertSame('1 hour ago', time_ago::str('2001-09-09T01:46:40+00:00', '2001-09-09T02:46:40+00:00'));
         $this->assertNull(time_ago::str(null));
         $this->assertNull(time_ago::str('not a timestamp'));
-        $this->assertRegExp('/^[0-9]+ years ago$/', time_ago::str(0));
-        $this->assertRegExp('/^[0-9]+ years ago$/', time_ago::str(0, 'invalid date'));
+        $this->assertMatchesRegularExpression('/^[0-9]+ years ago$/', time_ago::str(0));
+        $this->assertMatchesRegularExpression('/^[0-9]+ years ago$/', time_ago::str(0, 'invalid date'));
         $object = new time_ago('invalid date', 123);
         $this->assertNull($object->time_ago());
         $this->assertSame('', (string) $object);

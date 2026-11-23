@@ -31,10 +31,15 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\cloud\authorize\customer;
+/**
+ * @deprecated since v1.73.1. Authorize.Net no longer supports the legacy SDK classes this is built on
+ *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see
+ *    docs/modernization/DEFERRED-V2.md, item 2.
+ */
 class profile_Customer extends \AuthorizeNetCustomer {
    public function __construct(profile $profile) {
       foreach ($profile as $prop=>$val) {
-         if (isset($this->$prop)) $this->$prop = $val;
+         if (property_exists($this, $prop)) $this->$prop = $val;
       }
       if (!empty($profile->id) && empty($this->customerProfileId)) {
          $this->customerProfileId = $profile->id;

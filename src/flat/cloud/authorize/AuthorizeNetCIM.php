@@ -31,10 +31,18 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\cloud\authorize;
+/**
+ * @deprecated since v1.73.1. Authorize.Net no longer supports the legacy SDK classes this is built on
+ *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see
+ *    docs/modernization/DEFERRED-V2.md, item 2.
+ */
 class AuthorizeNetCIM extends \AuthorizeNetCIM {
    public function __construct($api_login_id = false, $transaction_key = false) {
       libxml_clear_errors();
       libxml_use_internal_errors(true);
       parent::__construct($api_login_id,$transaction_key);
+   }
+   protected function _handleResponse($response) {
+      return no_response::checked(parent::_handleResponse($response));
    }
 }

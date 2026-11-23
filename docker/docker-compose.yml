@@ -15,14 +15,14 @@ services:
       FLAT_TEST_MONGODB_URI: mongodb://mongo:27017
       FLAT_TEST_RABBITMQ_HOST: rabbitmq
   mongo:
-    image: mongo:4.0@sha256:4ca81c89ad08f4cfa9906005126112bffe8fb363800466ef5e50f6238f6f6af1
+    image: mongo:9.0@sha256:b0c835c26e5997413e985000f1013c275377cd9607761c1784d486f6dd620b7f
     healthcheck:
-      test: ["CMD", "mongo", "--quiet", "--eval", "quit(db.adminCommand('ping').ok ? 0 : 1)"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand('ping').ok ? 0 : 1)"]
       interval: 2s
       timeout: 5s
       retries: 30
   rabbitmq:
-    image: rabbitmq:3.8.34-alpine@sha256:711d76bc8d9822adf32fd9bdbe33f53645a77e2bbd0675f8011eed397919f7a4
+    image: rabbitmq:4.4-alpine@sha256:3dbd31cb9e4d45dac44de7b73cc45b848028494e98bcab71477386cbd4dc7f56
     environment:
       RABBITMQ_DEFAULT_USER: flatunit
       RABBITMQ_DEFAULT_PASS: flatunit-local-tests
