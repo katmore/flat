@@ -170,7 +170,8 @@ consumers saw before, what they see now, and what to search for in their code.
 - After: it reads the response as the schema defines it and returns the subscription's details, or throws
   `subscription\not_found`.
 - Search consumer code for: `get_info(`, `unexpected_response`, `not_found`, and any lookup you built to work around it.
-- Verified: against the schema and in tests; the real-sandbox confirmation is the owner's next run.
+- Verified: yes (unit tests, and the owner's real-sandbox run of 2026-11-23). A subscription created a moment ago may
+  not be in Authorize.Net's list yet: `get_info()` then throws `not_found`; try again after a few seconds.
 
 ### MOD-262 (KD-100) — Authorize.Net payment methods work
 
@@ -183,7 +184,7 @@ consumers saw before, what they see now, and what to search for in their code.
   request. The returned id and the other exceptions are unchanged.
 - Search consumer code for: `create_paymethod`, `update_paymethod`, `payment_profile` (a class of your own that extends
   it still works), `customer\payment_profile\creditCard`, and any workaround that calls the SDK directly.
-- Verified: yes (unit tests; sandbox tests ready for the owner's run).
+- Verified: yes (unit tests, and the owner's real-sandbox run of 2026-11-23: add, change, remove).
 
 ### MOD-263 (KD-103) — `customer::create()` works without a payment
 

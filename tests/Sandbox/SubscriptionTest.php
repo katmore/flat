@@ -54,8 +54,8 @@ class SubscriptionTest extends TestCase
     }
 
     /**
-     * get_info() reads the service's subscription list. If a new subscription is not in it at once, wait a little
-     * (up to 10 seconds) and say what the list held, so a failure shows whether the list lags or flat looks wrongly.
+     * get_info() reads the service's subscription list, which lags behind a new subscription by some seconds (seen
+     * on the sandbox, KD-104). Wait up to 10 seconds, and if it never shows up say what the list held.
      */
     private function listedInfo($id)
     {

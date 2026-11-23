@@ -14,3 +14,10 @@ Limits:
   namespaces first, as the real ones do: the old SDK's XPath handling depends on that order.
 
 A stub is one JSON file in `mappings/`; a request matches by the XML element names it contains.
+
+Known differences from the real sandbox (found by running both):
+
+- The real subscription list lags behind a new subscription by some seconds; the mock lists it at once.
+- The mock does not model every rule. What it does model was taken from real answers: an empty profile is `E00041`;
+  a validation mode without payment profiles is `E00013`.
+

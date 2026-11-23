@@ -36,7 +36,8 @@ Each has a "before, after, what to search for" entry in `docs/modernization/php-
 - **Authorize.Net payment methods (deprecated):** `create_paymethod()` and `update_paymethod()` now build requests
   Authorize.Net accepts (before: a PHP error for an array, invalid XML for an object); see the docblock for the shapes.
 - **Authorize.Net subscriptions (deprecated):** several calls on one `subscription` object no longer resend the
-  earlier calls' data, and `get_info()` works (it always threw before).
+  earlier calls' data, and `get_info()` works (it always threw before). A subscription created a moment ago may
+  not be in Authorize.Net's list for a few seconds, so `get_info()` can throw `not_found` right after `create()`.
 
 ## Tooling and services
 

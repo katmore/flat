@@ -734,3 +734,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test all --coverage`, 1,529 tests, 6,692 assertions, 100% (334 classes, 1,071 methods,
   8,466 statements), no PHP message.
 
+## MOD-264 — Third real-sandbox result: all ten pass; KD-104 resolved
+
+- Kind: documentation and a docblock. The owner's run passed all ten sandbox tests (customer profiles, payment
+  methods, subscriptions). That confirms KD-99, KD-100, KD-101, KD-102 and KD-103 against the real service.
+- KD-104 was the list lagging behind a new subscription (not a flat defect): documented in the `get_info()`
+  docblock, the consumer-impact entry of KD-102 and the release notes; the mock README lists its known differences
+  from the real sandbox.
+

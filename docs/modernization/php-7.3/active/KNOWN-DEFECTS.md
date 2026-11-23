@@ -219,14 +219,14 @@ fixed at its cause; "behavior" says what a caller can see.
 
 ### KD-104 - `subscription::get_info()` did not find a subscription just created, on the real sandbox
 
-- Category: B (needs data). The owner's run: `create()` returned id 9967677 and `get_status()` said `active`, but
-  `get_info()` threw `subscription\not_found` (KD-102 got it past the missing-element error). Unknown whether the
-  service's subscription list lags behind a new subscription, or flat looks in the wrong place (its search type
-  follows the status; paging is one page of 1,000, then more).
-- Next (MOD-263): the sandbox test waits up to 10 seconds for the list to show the subscription and, if it never
-  does, fails with what both lists held (result code, total, how many on the page, first and last ids; no secrets).
-  The owner's next run decides the fix.
-- **Open** (needs the next sandbox run).
+- Category: not a flat defect; a service behavior, documented (MOD-264). The owner's first subscription run:
+  `create()` returned an id and `get_status()` said `active`, but `get_info()` threw `subscription\not_found`.
+  After the test was changed only to wait for the list (up to 10 seconds, with diagnostics), all ten sandbox tests
+  passed. flat's lookup code was unchanged between the two runs, so Authorize.Net's subscription list lags behind a
+  new subscription by some seconds. How long is not measured.
+- Done: the docblock of `get_info()`, the consumer-impact entry of KD-102 and the release notes say so; the sandbox
+  test waits for the list. No code change: a retry inside `get_info()` would be a guess about the service.
+- **Resolved.**
 
 ## Owner questions
 

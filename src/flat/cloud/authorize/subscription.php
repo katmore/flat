@@ -308,6 +308,8 @@ abstract class subscription extends \flat\cloud\authorize
    const arb_search_result_ttl = 3600; //1 hour ttl
    /**
     * retrieves info for specified subscription.
+    *    Authorize.Net's subscription list can lag: a subscription created a moment ago may not be listed yet,
+    *    and this then throws \flat\cloud\authorize\subscription\not_found. Try again after a few seconds.
     *    if mongo_crud_cache is configured, will search there for
     *    subscriptionId, using that data if found and within
     *    arb_search_result_ttl.
