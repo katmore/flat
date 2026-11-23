@@ -293,3 +293,16 @@ Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; n
     **Answered (owner, 2026-11-23):** the consumer's version does not matter; support the newest broker with a
     compatible workaround (the API stays). Done: KD-96 (MOD-244) and MOD-245.
 
+48. **Authorize.Net SDK 2.x: the one dependency not moved (decision needed).** `authorizenet/authorizenet` is
+    held at 1.9.9 in the test lock; 2.0.4 installs on PHP 7.3 but deletes the classes flat is built on
+    (`AuthorizeNetAIM`, `AuthorizeNetCIM`, `AuthorizeNetARB`, `AuthorizeNetTransaction`, ...; only the
+    `net\authorize\api` namespace remains). flat's *public* API exposes those types:
+    `transaction\response::load(\AuthorizeNetAIM_Response ...)`, `customer` returns `\AuthorizeNetCIM`,
+    `subscription` returns `\AuthorizeNetARB`. Your directive (keep up; keep the public API compatible through
+    a workaround) means a port with compatibility classes for those types: 48 files, about 3,240 lines of
+    payment code, no live sandbox here. The SDK 1.x keeps working on PHP 7.3, and the approved exception for its
+    deprecation notice (Q41) stays until the port.
+    Recommend: do the port as its own task right after v1.73.1, and verify it without a sandbox by first recording
+    golden tests of every wrapper call against SDK 1.9.9, then requiring the ported wrappers to give identical
+    results on SDK 2.x. Alternative: start it now, inside v1.73.1. Which? **Open.**
+

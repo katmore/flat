@@ -596,3 +596,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: tooling, in flat-webapp. `composer.lock`: Guzzle 7.17.0 and psr7 2.13.6 (the only updates PHP 7.3.33
   allows within the constraints); the pinned flat release and the lock's `plugin-api-version` are unchanged.
   The test lock already had nothing newer. Verified: `docker/bin/test` in flat-webapp, 67 tests, clean log.
+
+## MOD-252 — Dependency sweep recorded; Authorize.Net SDK 2.x is Q48
+
+- Kind: documentation. Every tool, service and dependency of both repositories is now at the newest release
+  PHP 7.3.33 allows (see [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)), except `authorizenet/authorizenet`:
+  2.0.4 removes the classes flat's public API exposes. Q48 asks how to proceed; `DEFERRED-V2.md` item 2 now
+  says the port can ship in v1.X.

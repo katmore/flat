@@ -50,6 +50,10 @@ exception (`AGENTS.md`).
 **Plan for v2.X.** Port the wrappers to the SDK's current API. That changes flat's public API, so
 it cannot go into `v1.X`. Then remove the exception and the helper. (Q41, php-7.3.)
 
+**Update (owner, 2026-11-23).** The public API stays compatible through a workaround, so the port is no longer
+tied to v2.X: it can ship in v1.X with compatibility classes for the SDK types flat exposes. The plan and the
+open decision are Q48 in `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
+
 ## 3. What the checksum of an XML-encoded resource covers
 
 **Today (v1.73.0).** `flat\core\xml\encode::serialize($resource, ['checksum'=>['md5']])` writes
