@@ -162,6 +162,18 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
       $this->_col_name = $name;
    }
    /**
+    * @var array|null the acknowledged result of the previous update made through this driver
+    */
+   protected $_last_update_result = null;
+   /**
+    * @param mixed $result what \MongoCollection::update() returned; anything but an array
+    *    (an unacknowledged write answers true) is not kept
+    * @return void
+    */
+   protected function _set_last_update_result($result) {
+      $this->_last_update_result = is_array($result) ? $result : null;
+   }
+   /**
     * retrieve number of affected records from previous mongo collection update
     * 
     * @return int
@@ -171,7 +183,23 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
     *       throwing exceptions
     */
    public function get_affected_records(array $options=NULL) {
-      $doc = $this->command(array('data'=>array('getLastError'=>1)));
+      if (is_array($this->_last_update_result)) {
+         /*
+          * The update's own acknowledged result carries what getLastError used to: "n" is the number
+          * of matched records, and an existing record was updated when any matched (even if the update
+          * changed nothing). Asking the server no longer works since MongoDB 5.1 removed getLastError.
+          */
+         $doc = array();
+         if (isset($this->_last_update_result['n'])) {
+            $doc = array(
+               'n' => $this->_last_update_result['n'],
+               'updatedExisting' => $this->_last_update_result['n'] > 0,
+            );
+         }
+      } else {
+         // no update was made through this driver: ask the server (MongoDB before 5.1)
+         $doc = $this->command(array('data'=>array('getLastError'=>1)));
+      }
 
       if (!isset($doc['updatedExisting'])) {
          throw new \flat\db\driver\mongo\record\not_modified(

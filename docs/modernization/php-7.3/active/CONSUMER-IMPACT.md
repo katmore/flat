@@ -86,6 +86,19 @@ consumers saw before, what they see now, and what to search for in their code.
 - Verified: seven invalid-value cases raised native warnings before the fix; regressions now
   require the declared exception and preserve valid form/JSON output.
 
+### MOD-242 (KD-95) — Mongo update counts work on MongoDB 5.1 and later
+
+- Before: `update()` with `count` or `not_modified_exception`, and `get_affected_records()`, relied on the
+  server's `getLastError` command. On MongoDB 5.1 or later (it was removed) they threw `not_modified`
+  ("no update data found").
+- After: the count comes from the update's own result, so they work on every MongoDB version. Answers are
+  the same as before on old servers (matched records are counted, even when the update changed nothing; no
+  match is still "not updatedExisting"). One difference: `get_affected_records()` now reports the last update
+  made through that driver object, not whatever operation the connection ran last.
+- Search consumer code for: `get_affected_records`, `not_modified_exception`, `'count'=>true` in `update` calls.
+- Verified: yes (service tests on MongoDB 9.0 and 5.0; unit tests fail without the fix).
+
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

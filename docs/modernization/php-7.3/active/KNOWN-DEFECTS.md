@@ -110,6 +110,16 @@ fixed at its cause; "behavior" says what a caller can see.
   script names an unreadable file separately from a wrong argument count; a test covers both messages.
 - **Fixed.**
 
+### KD-95 - flat's Mongo update count cannot work on MongoDB 5.1 or later
+
+- Category: A (owner's Q46 decision). `get_affected_records()` asked the server for `getLastError`, removed
+  in MongoDB 5.1, so `update()` with `count` or `not_modified_exception` threw `not_modified` there.
+- Fixed (MOD-242): the driver keeps the acknowledged result of its own update and reads the matched
+  count from it (`n` = matched; an existing record counts as updated when any matched, even if nothing
+  changed, as `getLastError` did). `getLastError` is asked only when no update went through the driver.
+  Same answers on old servers; works on 5.1 and later (the test service is MongoDB 9.0).
+- **Fixed.**
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; none is open.
@@ -249,7 +259,8 @@ Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; n
     application on a newer server hits this today. Not changed (a library change, outside the tooling
     step). Recommend: read `n` and `updatedExisting` from the `update()` result; same answers on
     supported servers, and it works on 5.1 and later. Then raise the test service to 7.0.
-    Which MongoDB version does your consumer run? **Open.**
+    **Answered (owner, 2026-11-23):** the consumer's version does not matter; make flat work on newer MongoDB and
+    move the test service to the newest the driver works with. Done: KD-95 (MOD-242) and MOD-243.
 
 47. **flat's default RabbitMQ queue is rejected by RabbitMQ 4.** The driver's defaults
     (`src/flat/db/driver/rabbitmq.php`) are `durable` false, `exclusive` false, `auto_delete` true.

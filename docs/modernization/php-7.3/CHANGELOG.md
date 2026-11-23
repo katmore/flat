@@ -525,3 +525,13 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   workarounds. Now in `AGENTS.md` ("Keep everything current"), in the phase rules of
   `docs/modernization/README.md`, and in flat-webapp's `AGENTS.md`, so it applies to every later phase and
   release, not only v1.73.x. The handoff's "nothing else" and "PHPUnit is a separate decision" are corrected.
+
+## MOD-242 — Fix (KD-95): Mongo update counts work on MongoDB 5.1 and later (v1.73.1)
+
+- Kind: behavior change (bug fix), owner's decision on Q46 (2026-11-23). `src/flat/db/driver/mongo.php` and
+  `mongo/crud.php`: the driver keeps its update's acknowledged result and `get_affected_records()` reads the
+  matched count from it; the server's removed `getLastError` is asked only when no update went through the
+  driver. Tests: two service tests pin today's behavior on a real server (an update that changes nothing
+  still counts its match; no match is not modified), three unit tests prove the count does not call the
+  server; the unit ones fail without the fix. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Verified: `docker/bin/test all --coverage`, 1,476 tests, 100% (332 classes, 1,064 methods, 8,401 statements).
