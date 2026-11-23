@@ -1,0 +1,15 @@
+# Added by `docker/bin/test sandbox-mock`: a WireMock server that answers the Authorize.Net messages the sandbox
+# tests send, from the stubs in tests/docker/anet-mock. The answers follow Authorize.Net's documentation, not
+# recorded sandbox traffic. The credentials here are fake and only the mock accepts them.
+services:
+  anet-mock:
+    image: wiremock/wiremock:3.13.2@sha256:0d4ecb3e4dc8213fd7a4d37d6a78f6e6b553a6d2e15bd51b0999781282ac61b3
+    command: ["--disable-banner"]
+    volumes:
+      - ../tests/docker/anet-mock/mappings:/home/wiremock/mappings:ro
+  php:
+    environment:
+      FLAT_TEST_ANET_URL: http://anet-mock:8080
+      FLAT_TEST_ANET_LOGIN_ID: flatmock-login
+      FLAT_TEST_ANET_TRANSACTION_KEY: flatmock-key-0001
+      FLAT_TEST_ANET_RUN_ID: flat-mock0001

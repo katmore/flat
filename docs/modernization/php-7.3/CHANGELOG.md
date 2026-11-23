@@ -636,3 +636,13 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Found: KD-98 (legacy wrappers are silent when the request fails; Q49). Run without credentials: 3 pass, 3 fail as
   intended. The credentialed run waits for the owner's environment variables.
 
+## MOD-256 — Documentation-based mock for the sandbox tests
+
+- Kind: tests and tooling. `docker/bin/test sandbox-mock` starts WireMock 3.13.2 (pinned by digest;
+  `docker/docker-compose.anet-mock.yml`, stubs in `tests/docker/anet-mock/mappings`) and runs the `sandbox` suite
+  against it with fake credentials. The tests take the server from `FLAT_TEST_ANET_URL` and a fixed run id from
+  `FLAT_TEST_ANET_RUN_ID` when set; against the real sandbox nothing changes.
+- The stubs follow Authorize.Net's documentation, not recorded traffic (see the README beside them). Stand-in for
+  the credentialed run until it happens; the real sandbox stays the reference.
+- Verified: 6 tests pass offline; breaking one stub on purpose makes the update test fail.
+

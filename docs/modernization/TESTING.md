@@ -50,6 +50,9 @@ docker/bin/test sandbox
 - The container needs outbound HTTPS to `apitest.authorize.net`. Behind a TLS-intercepting proxy, also set
   `FLAT_TEST_CA_FILE` to the proxy's CA bundle. Certificate verification stays on: the test clients trust that
   bundle in place of the SDK's bundled one, which the SDK hard-codes.
+- `docker/bin/test sandbox-mock` runs the same tests offline against a WireMock stand-in with fake credentials
+  (no Internet, no keys). Its answers come from the documentation, not from the sandbox:
+  see `tests/docker/anet-mock/README.md`. A pass there is not a pass against the sandbox.
 - Tests clean up what they create (customer profiles are deleted in `tearDown`) and tag it `flat-<random>`.
 
 `docker/bin/test inventory` prints a Markdown inventory of every test to stdout,

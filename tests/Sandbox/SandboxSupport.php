@@ -23,11 +23,22 @@ trait SandboxSupport
         }
         return $value;
     }
-    /** A value that is unique per run, so tests never collide and leftovers are recognisable. */
+    /**
+     * A value that is unique per run, so tests never collide and leftovers are recognisable. The mock
+     * (docker/bin/test sandbox-mock) fixes it, because its answers are fixed.
+     */
     protected function sandboxRunId()
     {
-        return 'flat-' . bin2hex(random_bytes(5));
+        $fixed = getenv('FLAT_TEST_ANET_RUN_ID');
+        return ($fixed !== false && $fixed !== '') ? $fixed : 'flat-' . bin2hex(random_bytes(5));
     }
+}
+
+/** Where the tests send their requests: the real sandbox, or a stand-in named by FLAT_TEST_ANET_URL (no path). */
+function sandboxBaseUrl()
+{
+    $url = getenv('FLAT_TEST_ANET_URL');
+    return ($url !== false && $url !== '') ? rtrim($url, '/') : \net\authorize\api\constants\ANetEnvironment::SANDBOX;
 }
 
 /**
@@ -62,10 +73,11 @@ class SandboxApi extends \flat\cloud\authorize
     public function __construct($login, $key) { $this->login = $login; $this->key = $key; }
     protected function _get_login_id() { return $this->login; }
     protected function _get_transaction_key() { return $this->key; }
-    protected function _get_end_point() { return \net\authorize\api\constants\ANetEnvironment::SANDBOX; }
+    protected function _get_end_point() { return sandboxBaseUrl(); }
 
     private function run($controller)
     {
+        // The SDK's client is used untouched unless a proxy CA is named; it needs none for the mock (plain HTTP).
         if (($ca = getenv('FLAT_TEST_CA_BUNDLE')) !== false && $ca !== '') $controller->httpClient = new SandboxHttpClient($ca);
         return $this->_executeWithApiResponse($controller);
     }
@@ -92,12 +104,14 @@ class SandboxCim extends \flat\cloud\authorize\AuthorizeNetCIM
 {
     private $ca;
     public function __construct($login, $key, $ca) { $this->ca = $ca; parent::__construct($login, $key); }
+    protected function _getPostUrl() { return sandboxBaseUrl() . '/xml/v1/request.api'; }
     protected function _sendRequest()
     {
         $this->_setPostString();
         $curl = curl_init($this->_getPostUrl());
         curl_setopt_array($curl, [CURLOPT_POSTFIELDS=>$this->_post_string, CURLOPT_HEADER=>0, CURLOPT_TIMEOUT=>45, CURLOPT_RETURNTRANSFER=>1,
-            CURLOPT_SSL_VERIFYPEER=>true, CURLOPT_SSL_VERIFYHOST=>2, CURLOPT_CAINFO=>$this->ca, CURLOPT_HTTPHEADER=>['Content-Type: text/xml']]);
+            CURLOPT_SSL_VERIFYPEER=>true, CURLOPT_SSL_VERIFYHOST=>2, CURLOPT_HTTPHEADER=>['Content-Type: text/xml']]);
+        if ($this->ca) curl_setopt($curl, CURLOPT_CAINFO, $this->ca);
         $response = curl_exec($curl);
         if ($response === false) {
             $error = curl_error($curl); curl_close($curl);
@@ -118,12 +132,15 @@ class SandboxCustomer extends \flat\cloud\authorize\customer
     protected function _prepare_AuthorizeNetRequest($client) { return $client; }
     protected function _get_login_id() { return $this->login; }
     protected function _get_transaction_key() { return $this->key; }
-    protected function _get_end_point() { return \net\authorize\api\constants\ANetEnvironment::SANDBOX; }
+    protected function _get_end_point() { return sandboxBaseUrl(); }
     protected function _get_CIM()
     {
         if (!$this->cim) {
             $ca = getenv('FLAT_TEST_CA_BUNDLE');
-            $cim = ($ca !== false && $ca !== '') ? new SandboxCim($this->login, $this->key, $ca) : new \flat\cloud\authorize\AuthorizeNetCIM($this->login, $this->key);
+            $ca = ($ca !== false && $ca !== '') ? $ca : null;
+            $mock = getenv('FLAT_TEST_ANET_URL');
+            // The old SDK's own client is used untouched, unless a proxy CA or a stand-in server needs the subclass.
+            $cim = ($ca || ($mock !== false && $mock !== '')) ? new SandboxCim($this->login, $this->key, $ca) : new \flat\cloud\authorize\AuthorizeNetCIM($this->login, $this->key);
             $this->cim = $this->_prepare_AuthorizeNetRequest($cim);
         }
         return $this->cim;

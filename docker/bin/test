@@ -19,6 +19,7 @@ compose() {
         files="$files -f docker/docker-compose.sandbox.yml"
         if [ -n "${FLAT_TEST_CA_FILE:-}" ]; then files="$files -f tests/docker/compose.sandbox.ca.yaml"; fi
     fi
+    if [ "${test_mode:-all}" = sandbox-mock ]; then files="$files -f docker/docker-compose.anet-mock.yml"; fi
     if [ "${offline:-false}" != true ] && [ -n "${FLAT_TEST_CA_FILE:-}" ]; then
         # Newer Compose builds through Bake, which refuses a secret read from a
         # path outside the build context unless file-read entitlements are relaxed.
@@ -39,6 +40,8 @@ usage() {
     echo 'Examples: docker/bin/test unit --filter SshTest; docker/bin/test all --offline --coverage'
     echo 'Optional: docker/bin/test sandbox runs the tests against the real Authorize.Net sandbox (needs'
     echo 'FLAT_TEST_ANET_LOGIN_ID and FLAT_TEST_ANET_TRANSACTION_KEY in your shell; never part of all).'
+    echo 'docker/bin/test sandbox-mock runs the same tests offline against a WireMock stand-in whose answers'
+    echo 'follow the documentation (fake credentials, no Internet needed).'
     echo
     echo 'bin/test arguments:'
     bin/test --help | sed -n '1,/^  -h/p'
@@ -58,6 +61,7 @@ for arg do
             --down) action=down; continue ;;
             -h|--help) usage; exit ;;
             --) passthrough=false ;;
+            sandbox-mock) test_mode=sandbox-mock; arg=sandbox ;;
             all|unit|services|mongo|rabbitmq|sandbox) test_mode=$arg ;;
             inventory) inventory=true ;;
         esac
@@ -74,6 +78,7 @@ if ! "$inventory"; then
         all|services) service_names='mongo rabbitmq' ;;
         mongo) service_names=mongo ;;
         rabbitmq) service_names=rabbitmq ;;
+        sandbox-mock) service_names=anet-mock ;;
     esac
 fi
 if "$offline"; then
