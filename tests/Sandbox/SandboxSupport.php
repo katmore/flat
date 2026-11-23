@@ -38,7 +38,12 @@ trait SandboxSupport
 function sandboxBaseUrl()
 {
     $url = getenv('FLAT_TEST_ANET_URL');
-    return ($url !== false && $url !== '') ? rtrim($url, '/') : \net\authorize\api\constants\ANetEnvironment::SANDBOX;
+    if ($url !== false && $url !== '') return rtrim($url, '/');
+    // The real sandbox is contacted only when asked for: `docker/bin/test sandbox` (or `bin/test sandbox`) sets this.
+    if (getenv('FLAT_TEST_ANET_SANDBOX') !== '1') {
+        throw new \RuntimeException('These tests contact the real Authorize.Net sandbox only when you run `docker/bin/test sandbox` explicitly; otherwise they need FLAT_TEST_ANET_URL (docker/bin/test anet).');
+    }
+    return \net\authorize\api\constants\ANetEnvironment::SANDBOX;
 }
 
 /**

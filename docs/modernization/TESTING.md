@@ -43,7 +43,8 @@ Docker downloads that additional image on first use; no host Node installation i
   from the documentation, not from the sandbox (`tests/docker/anet-mock/README.md`), so a pass there is not a
   pass against the sandbox.
 - `docker/bin/test sandbox` runs the same tests against the real Authorize.Net sandbox. It is never part of
-  `unit`, `all` or CI, so a sandbox outage cannot block work. A test that needs credentials fails with a message
+  `unit`, `all` or CI, so a sandbox outage cannot block work, and the tests refuse to contact it unless that
+  command set the flag (keys in your shell do nothing on their own). A test that needs credentials fails with a message
   saying what to set; it does not skip.
 
 ```sh

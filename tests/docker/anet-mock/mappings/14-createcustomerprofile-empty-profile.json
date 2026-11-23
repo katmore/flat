@@ -1,0 +1,26 @@
+{
+  "name": "createCustomerProfile empty profile",
+  "priority": 5,
+  "request": {
+    "method": "POST",
+    "url": "/xml/v1/request.api",
+    "bodyPatterns": [
+      {
+        "matchesXPath": "/*[local-name()='createCustomerProfileRequest']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='name' and text()='flatmock-login']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='transactionKey' and text()='flatmock-key-0001']"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/xml; charset=utf-8"
+    },
+    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<createCustomerProfileResponse xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Error</resultCode><message><code>E00041</code><text>One or more fields in the profile must contain a value.</text></message></messages></createCustomerProfileResponse>"
+  }
+}

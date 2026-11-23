@@ -86,7 +86,11 @@ case "$test_mode" in
     mongo) set -- --group mongo "$@" ;;
     rabbitmq) set -- --group rabbitmq "$@" ;;
     anet) set -- --group anet "$@" ;;
-    sandbox) set -- --group sandbox "$@" ;;
+    sandbox)
+        # Only this mode talks to the real sandbox: the tests refuse to otherwise.
+        unset FLAT_TEST_ANET_URL
+        export FLAT_TEST_ANET_SANDBOX=1
+        set -- --group sandbox "$@" ;;
 esac
 if "$coverage"; then
     report_dir="build/tests/$test_mode"

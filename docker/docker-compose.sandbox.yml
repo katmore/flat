@@ -5,6 +5,7 @@ services:
     environment:
       FLAT_TEST_ANET_LOGIN_ID:
       FLAT_TEST_ANET_TRANSACTION_KEY:
+      FLAT_TEST_ANET_SANDBOX: "1"
     networks:
       - internet
 networks:

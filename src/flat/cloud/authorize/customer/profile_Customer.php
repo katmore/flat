@@ -39,7 +39,7 @@ namespace flat\cloud\authorize\customer;
 class profile_Customer extends \AuthorizeNetCustomer {
    public function __construct(profile $profile) {
       foreach ($profile as $prop=>$val) {
-         if (isset($this->$prop)) $this->$prop = $val;
+         if (property_exists($this, $prop)) $this->$prop = $val;
       }
       if (!empty($profile->id) && empty($this->customerProfileId)) {
          $this->customerProfileId = $profile->id;

@@ -89,6 +89,16 @@ class AuthorizeCustomerTest extends TestCase
         $this->assertSame('original', $dto->customerProfileId);
     }
 
+    public function testProfileFieldsReachTheSdkCustomer()
+    {
+        $profile = new authorize\customer\profile(['merchantCustomerId'=>'m-1', 'description'=>'a customer', 'email'=>'a@example.invalid']);
+        $dto = new authorize\customer\profile_Customer($profile);
+        $this->assertSame('m-1', $dto->merchantCustomerId);
+        $this->assertSame('a customer', $dto->description);
+        $this->assertSame('a@example.invalid', $dto->email);
+        $this->assertNull($dto->customerProfileId);
+    }
+
     /** @dataProvider createModes */
     public function testCreateForwardsValidationMode($options, $expected)
     {
@@ -97,8 +107,7 @@ class AuthorizeCustomerTest extends TestCase
         list($method, $arguments) = $customer->client->calls[0];
         $this->assertSame('createCustomerProfile', $method);
         $this->assertInstanceOf(\AuthorizeNetCustomer::class, $arguments[0]);
-        // Existing profile_Customer uses isset on null SDK fields and drops email.
-        $this->assertNull($arguments[0]->email);
+        $this->assertSame('local@example.invalid', $arguments[0]->email);
         $this->assertSame($expected, $arguments[1]);
     }
     public function createModes()
@@ -150,7 +159,7 @@ class AuthorizeCustomerTest extends TestCase
         $customer = new CustomerFixture;
         $this->assertNull($customer->update($params + ['email'=>'updated@example.invalid']));
         $this->assertSame('42', $customer->client->calls[0][1][0]);
-        $this->assertNull($customer->client->calls[0][1][1]->email);
+        $this->assertSame('updated@example.invalid', $customer->client->calls[0][1][1]->email);
         $this->assertNull($customer->delete_paymethod(['customerProfileId'=>'42','customerPaymentProfileId'=>'7']));
         $this->assertSame(['deleteCustomerPaymentProfile', ['42','7']], $customer->client->calls[1]);
     }

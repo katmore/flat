@@ -13,6 +13,9 @@
       },
       {
         "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='transactionKey' and text()='flatmock-key-0001']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='profile']/*"
       }
     ]
   },

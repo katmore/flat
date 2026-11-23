@@ -658,3 +658,14 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test all --coverage`, 1,487 tests, 6,556 assertions, 100% (332 classes, 1,065 methods,
   8,412 statements, unchanged), no PHP message. `unit` 1,424 tests; `anet` 6; `sandbox` without keys: 3 pass, 3 fail as intended.
 
+## MOD-258 — First real-sandbox result: KD-99 fixed; the real sandbox runs only on request
+
+- Kind: bug fix (KD-99) and tests. The owner's first run of `docker/bin/test sandbox` (5 of 6 passed) failed the
+  create test with `E00041`: `profile_Customer` dropped every field, so flat sent `<profile/>`. Fixed with
+  `property_exists()`; the unit test that pinned the bug now asserts the email arrives, and one test covers all
+  three fields. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- The mock now answers `E00041` to an empty profile, as the sandbox did (one stub, verified by that run).
+- The real sandbox is contacted only by an explicit `docker/bin/test sandbox` (or `bin/test sandbox`), which sets
+  `FLAT_TEST_ANET_SANDBOX=1`. Without that flag and without `FLAT_TEST_ANET_URL` the tests throw before any
+  request, so keys in a shell can never make `all` or `anet` reach the sandbox.
+

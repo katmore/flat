@@ -154,6 +154,17 @@ fixed at its cause; "behavior" says what a caller can see.
   the owner can say.
 - **Open** (Q49).
 
+### KD-99 - Customer profile fields never reach the SDK object, so create and update send an empty profile
+
+- Category: A (clear bug; the intent is plain). `flat\cloud\authorize\customer\profile_Customer` copied a field
+  only when the SDK property `isset()`, and every property starts null, so `merchantCustomerId`, `description` and
+  `email` were never copied. `customer::create()` sent `<profile/>`; the real sandbox answers `E00041` ("One or more
+  fields in the profile must contain a value."). `update()` sent nothing to change. Noted in the php-7.2 phase
+  (`php-7.2/notes/PAYMENT-ALERT.md`, with a test that pinned it); the sandbox tests confirmed it (MOD-258).
+- Fixed (MOD-258): the field is copied when the property exists (`property_exists()`). The unit test asserts the
+  email arrives.
+- **Fixed.**
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 48 are answered; Q49 is open.

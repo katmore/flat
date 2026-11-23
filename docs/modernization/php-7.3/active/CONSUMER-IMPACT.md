@@ -132,6 +132,16 @@ consumers saw before, what they see now, and what to search for in their code.
 - Verified: yes (a test fails if a wrapper class loses its tag).
 
 
+### MOD-258 (KD-99) — Authorize.Net customer profiles keep their fields
+
+- Before: `flat\cloud\authorize\customer::create()` sent an empty profile (the fields `merchantCustomerId`,
+  `description` and `email` were dropped), which Authorize.Net refuses with `E00041` (seen on the real sandbox);
+  `update()` changed nothing.
+- After: the fields are sent. `create()` returns the new profile id; `update()` changes the fields you pass.
+- Search consumer code for: `flat\cloud\authorize\customer`, `->create(`, `->update(` on a customer, `E00041`,
+  and any workaround that sets the profile fields another way.
+- Verified: yes (unit test fails without the fix; real-sandbox result from the owner).
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.
