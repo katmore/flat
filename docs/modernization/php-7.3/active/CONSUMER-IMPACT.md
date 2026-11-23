@@ -194,6 +194,17 @@ consumers saw before, what they see now, and what to search for in their code.
 - Search consumer code for: `customer`, `->create(` without `payment`, `validate`, `validationMode`, `E00013`.
 - Verified: yes (unit test fails without the fix; the error is the owner's real-sandbox result).
 
+### MOD-265 (KD-105) — Authorize.Net customer transactions send valid requests
+
+- Before: `customer::create_transaction()` sent a request with an empty element name and an extra `<type>` field,
+  which Authorize.Net refuses; and for `authonly` and `captureonly` the amount and the ids were dropped (those
+  classes had no fields).
+- After: each kind sends its own valid request. `authonly` takes the fields of `authcapture`; `captureonly` takes the
+  same plus `approvalCode`. A transaction object of another kind than the one named still throws `bad_param`.
+- Search consumer code for: `create_transaction`, `customer\transaction\authonly`, `customer\transaction\captureonly`,
+  `authcapture`, and any workaround that builds the SDK's `AuthorizeNetTransaction` itself.
+- Verified: unit tests (fail without the fix); the real-sandbox result is the owner's next run.
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

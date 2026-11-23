@@ -265,7 +265,9 @@ class AuthorizeCustomerTest extends TestCase
         $this->assertSame('APPROVED',$response->status); $this->assertSame('local-auth',$response->authorization_code);
         $call = $customer->client->calls[0];
         $this->assertSame('createCustomerProfileTransaction',$call[0]); $this->assertSame($label,$call[1][0]);
-        $this->assertInstanceOf($class,$call[1][1]);
+        // The client gets the SDK's transaction object, built by flat's adapter for this kind (KD-105).
+        $this->assertInstanceOf($class.'\\AuthorizeNetTransaction',$call[1][1]);
+        $this->assertInstanceOf(\AuthorizeNetTransaction::class,$call[1][1]);
     }
     public function transactionSpecifications()
     {

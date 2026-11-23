@@ -37,6 +37,18 @@ namespace flat\cloud\authorize\customer\transaction;
  *    docs/modernization/DEFERRED-V2.md, item 2.
  */
 class captureonly extends \flat\cloud\authorize\customer\transaction {
+   public $amount;
+   public $tax;
+   public $shipping;
+   public $duty;
+   public $lineItems=[];
+   public $customerProfileId;
+   public $customerPaymentProfileId;
+   public $customerShippingAddressId;
+   public $order;
+   public $taxExempt;
+   public $recurringBilling;
+   public $approvalCode;
    public static function get_data_type() {
       return 'captureonly';
    }

@@ -9,6 +9,9 @@ Limits:
 
 - One customer profile (id `1001`), with memory through a WireMock scenario: created, updated, deleted.
 - Fixed run id `flat-mock0001`, fixed fake login and key (`docker/docker-compose.anet-mock.yml`).
+- Customer transactions: approved for the three kinds (direct response of the real 55-field length, `|`-encapsulated
+  as the SDK asks); a payment method made with the billing ZIP code 46282 is declined, as Authorize.Net documents
+  (E00027 for a customer transaction; not yet checked against the sandbox).
 - Only the messages the sandbox tests send. Anything else gets WireMock's 404.
 - Real responses start with a byte-order mark; these do not. The root element carries the `xsi` and `xsd`
   namespaces first, as the real ones do: the old SDK's XPath handling depends on that order.

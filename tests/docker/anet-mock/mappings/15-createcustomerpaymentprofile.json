@@ -1,6 +1,6 @@
 {
   "name": "createCustomerPaymentProfile",
-  "priority": 1,
+  "priority": 2,
   "request": {
     "method": "POST",
     "url": "/xml/v1/request.api",
@@ -24,6 +24,5 @@
     "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<createCustomerPaymentProfileResponse xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Ok</resultCode><message><code>I00001</code><text>Successful.</text></message></messages><customerPaymentProfileId>2001</customerPaymentProfileId><validationDirectResponse /></createCustomerPaymentProfileResponse>"
   },
   "scenarioName": "payment-profile",
-  "requiredScenarioState": "Started",
   "newScenarioState": "Created"
 }

@@ -229,6 +229,22 @@ fixed at its cause; "behavior" says what a caller can see.
   test waits for the list. No code change: a retry inside `get_info()` would be a guess about the service.
 - **Resolved.**
 
+### KD-105 - `customer::create_transaction()` sent invalid XML, and authonly and captureonly carried no fields
+
+- Category: A (clear bug; the same family as KD-100). Found while writing the transaction sandbox tests (MOD-265);
+  no sandbox was needed to see it. flat has an adapter class for each kind
+  (`customer\transaction\<kind>\AuthorizeNetTransaction`, an SDK subclass that checks the kind and copies the
+  fields), but `create_transaction()` handed the SDK flat's own data object. Through the SDK's array cast that
+  became an element without a name (`<>1</>`) and a field `<type>` Authorize.Net does not define. Also, the
+  `authonly` and `captureonly` classes declared no fields, so their amount and ids were dropped.
+- Fixed (MOD-265): `create_transaction()` wraps the transaction in the adapter for its kind. `authonly` has the
+  fields of `authcapture`; `captureonly` has the same plus `approvalCode`.
+- Tests: `Cloud/AuthorizeTransactionRequestTest` (the XML of each kind, an approved and a declined answer, the
+  adapter's kind check; fails without the fix) and the changed forwarding test in `AuthorizeCustomerTest`.
+- Not yet verified on the real sandbox (the owner's next run): approval of each kind, and what a decline looks like
+  (Authorize.Net documents `E00027` for a customer transaction, which flat raises as a `response_error`).
+- **Fixed.**
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 50 are answered; none is open.

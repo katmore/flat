@@ -742,3 +742,15 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   docblock, the consumer-impact entry of KD-102 and the release notes; the mock README lists its known differences
   from the real sandbox.
 
+## MOD-265 — Transaction sandbox tests; KD-105 fixed
+
+- Kind: tests and a bug fix. `tests/Sandbox/TransactionTest.php` (same groups as the other sandbox tests): a saved
+  payment method is charged by `authcapture`, `authonly` and `captureonly` (approved), and the documented decline
+  ZIP code 46282 gives a `response_error`. The mock has the transaction messages and the decline.
+- Fixed: KD-105 (`create_transaction()` skipped flat's own SDK adapters, so the request was invalid; `authonly` and
+  `captureonly` had no fields). See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Open until the owner's run: that the sandbox approves each kind and how it declines (E00027 is from the
+  documentation). The mock cannot show either.
+- Verified: `docker/bin/test all --coverage`, 1,538 tests, 6,748 assertions, 100% (334 classes, 1,071 methods,
+  8,467 statements), no PHP message; the test inventory is regenerated.
+

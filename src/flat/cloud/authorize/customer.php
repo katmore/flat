@@ -566,7 +566,9 @@ implements
          throw new missing_required_param($transtypes);
       }
       
-      $response = $this->_get_CIM()->createCustomerProfileTransaction($transactionType, $transaction);
+      // The SDK needs its own transaction object: flat's adapter for this type checks the type and copies the fields.
+      $adapter = '\flat\cloud\authorize\customer\transaction'."\\$key\\AuthorizeNetTransaction";
+      $response = $this->_get_CIM()->createCustomerProfileTransaction($transactionType, new $adapter($transaction));
       if ($response->isError()) {
          throw new response_error($response->getMessageCode(), $response->getMessageText());
       }

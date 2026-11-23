@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 831 test methods in 102 files, running 1529 test cases.
-- 135 methods use a data provider (one case per data set).
+- 838 test methods in 104 files, running 1538 test cases.
+- 136 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -35,6 +35,13 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testASubscriptionCanBeCreatedChangedAndCancelled` (line 83): groups: sandbox, anet, services
 - `testAnUnknownSubscriptionIsAResponseError` (line 102): groups: sandbox, anet, services
+
+### `tests/Sandbox/TransactionTest.php` (4)
+
+- `testAnAuthorizationAndCaptureIsApproved` (line 64): groups: sandbox, anet, services
+- `testAnAuthorizationOnlyIsApproved` (line 73): groups: sandbox, anet, services
+- `testACaptureOnlyIsApproved` (line 81): groups: sandbox, anet, services
+- `testADeclinedTransactionIsAResponseError` (line 89): groups: sandbox, anet, services
 
 ### `tests/Unit/Api/ControllerTest.php` (16)
 
@@ -142,7 +149,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` (line 233)
 - `testPaymentMethodRejectionUsesExistingResponseError` (line 244): 2 data-provider cases
 - `testTransactionSpecificationsNormalizeAndReachTheClient` (line 257): 15 data-provider cases
-- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 283)
+- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 285)
 
 ### `tests/Unit/Cloud/AuthorizeDataTest.php` (13)
 
@@ -220,6 +227,12 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testControllerExceptionIsSummarizedAndKeptAsPrevious` (line 80)
 - `testResponseWithoutMessagesAndScalarErrors` (line 91)
 - `testParameterErrorsExposeDetails` (line 108)
+
+### `tests/Unit/Cloud/AuthorizeTransactionRequestTest.php` (3)
+
+- `testEachKindBecomesTheXmlAuthorizeNetDefines` (line 80): 3 data-provider cases
+- `testADeclinedAnswerIsAFailureWithItsReason` (line 100)
+- `testAnAmountIsRequiredByTheKindOfTransactionItself` (line 110)
 
 ### `tests/Unit/Cloud/AuthorizeTransactionTest.php` (6)
 
