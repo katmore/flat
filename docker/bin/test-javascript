@@ -16,5 +16,5 @@ docker run --rm --user "$test_uid:$test_gid" --network none --entrypoint php \
     tests/tools/minifier-cases.php > "$cases"
 docker run --rm -i --user "$test_uid:$test_gid" --network none \
     -v "$repo_dir/tests/tools/minifier-check.js:/check.js:ro" \
-    node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee \
+    node:26-slim@sha256:e6bedef217677b276c591795e169840edd9096dbf13f29df8ef8d1856b8820bc \
     node /check.js < "$cases"

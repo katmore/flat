@@ -579,3 +579,8 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: tooling. `tests/docker/runtime/composer.json`: `azuyalabs/yasumi` `^2.4` (was exactly 1.8.0); the lock
   resolves 2.4.0, the newest allowing PHP 7.3 (2.5 and later need a newer PHP). No flat change was needed.
 - Verified: `docker/bin/test all --coverage`, 1,480 tests, 100%, no PHP message.
+
+## MOD-249 — Tooling: Node 26 for the JavaScript execution checks
+
+- Kind: tooling. `docker/bin/test-javascript`: `node:26-slim` (Node 26.13.1, the current LTS) pinned by digest,
+  was Node 22. The 15 minifier programs still preserve their JavaScript results.
