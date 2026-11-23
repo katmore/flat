@@ -1,7 +1,7 @@
 # Tests in flat-webapp
 
 Run `docker/bin/test` in flat-webapp. It installs the tracked application lock, starts Apache
-on PHP 7.3.33, runs PHPUnit 8.5 tests and checks the server log. Docker is the only host
+on PHP 7.3.33, runs PHPUnit 9.6 tests and checks the server log. Docker is the only host
 requirement. The installed flat version and commit must match the locked published release.
 
 ## Coverage

@@ -502,3 +502,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   pinned by digest, was 2.2. Installs from the existing locks are unchanged.
 - Verified: `docker/bin/test` in flat-webapp, 66 tests, clean server log (run from a scratch copy; see the
   root-run log bug reported with the adversarial review fixes, not yet fixed).
+
+## MOD-239 — Tooling upgrade 9 of 9: flat-webapp's PHPUnit
+
+- Kind: tooling and two test lines, in flat-webapp. PHPUnit 9.6.39 (was 8.5.57) with the matching
+  `sebastian/*` packages, relocked on the 7.3.33 platform; `assertRegExp` became
+  `assertMatchesRegularExpression` (2, `tests/Unit/DependencyLockTest.php` there). No assertion changed otherwise.
+- Verified: `docker/bin/test` in flat-webapp, 66 tests, 196 assertions, clean server log.
