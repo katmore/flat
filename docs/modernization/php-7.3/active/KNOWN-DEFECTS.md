@@ -163,9 +163,27 @@ fixed at its cause; "behavior" says what a caller can see.
   email arrives.
 - **Fixed.**
 
+### KD-100 - flat cannot build a payment method Authorize.Net accepts
+
+- Category: C (unfinished; the php-7.2 notes listed it as a blocker, `php-7.2/notes/PAYMENT-ALERT.md`). Found
+  while writing the payment-method sandbox tests (MOD-260); no sandbox is needed to see it.
+  - `create_paymethod()` and `update_paymethod()` take `payment` as an array or a
+    `customer\payment_profile`. An array is built with `new payment_profile(...)`, an abstract class, so it is
+    a PHP `Error`. No concrete subclass exists in flat.
+  - With a hand-made subclass the request is invalid: elements without a name (`<>1</>`, flat's internal
+    state leaking through the SDK's array cast), the card fields without their `<creditCard>` wrapper, and a
+    field `<type>` that Authorize.Net does not define.
+  - `delete_paymethod()` is fine (the sandbox tests cover it); so is reading a payment method through the SDK.
+- Tests (they pin today's behavior):
+  - `Cloud/AuthorizePaymentMethodTest::testCurrentlyAPaymentArrayIsAPhpErrorNamingAnAbstractClass`
+  - `Cloud/AuthorizePaymentMethodTest::testCurrentlyAPaymentProfileObjectBecomesXmlAuthorizeNetCannotAccept`
+  - `Cloud/AuthorizePaymentMethodTest::testCurrentlyUpdatingAPaymentMethodSendsTheSameInvalidXml`
+- Options: see Q50.
+- **Open** (Q50).
+
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 49 are answered; none is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 49 are answered; Q50 is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -336,3 +354,13 @@ Each has a recommendation; "agree" is enough. Questions 37 to 49 are answered; n
 49. **KD-98: should the legacy wrappers raise an error when the request itself fails?** Recommended leaving it.
     **Answered (owner, 2026-11-23):** it should fail, with a message that says what happened and that it may be
     temporary. Done as KD-98 (MOD-259).
+
+50. **KD-100: should flat's payment-method calls be made to work, or left as they are until v2.X?**
+    - (a) Make them work: a concrete payment profile class and a conversion to the SDK's own objects
+      (`AuthorizeNetPaymentProfile` and `AuthorizeNetCreditCard`), so arrays and objects both build valid XML.
+      This adds behavior to deprecated code, and the design (what an array looks like) is yours to choose.
+    - (b) Leave them, mark the two methods `@deprecated` as unusable in the release notes, and remove all of it
+      in v2.X.
+    Recommend (b), unless the known consumer calls `create_paymethod()` or `update_paymethod()` (then it must do
+    so with its own class, and (a) needs to match that). Do you know whether it does?
+

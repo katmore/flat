@@ -24,7 +24,7 @@
     "headers": {
       "Content-Type": "text/xml; charset=utf-8"
     },
-    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<createCustomerProfileResponse xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Ok</resultCode><message><code>I00001</code><text>Successful.</text></message></messages><customerProfileId>1001</customerProfileId><customerPaymentProfileIdList /><customerShippingAddressIdList /><validationDirectResponseList /></createCustomerProfileResponse>"
+    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<createCustomerProfileResponse xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Ok</resultCode><message><code>I00001</code><text>Successful.</text></message></messages><customerProfileId>1001</customerProfileId><customerPaymentProfileIdList /><customerShippingAddressIdList /><validationDirectResponseList /></createCustomerProfileResponse>"
   },
   "scenarioName": "customer-profile",
   "requiredScenarioState": "Started",

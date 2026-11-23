@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 815 test methods in 98 files, running 1497 test cases.
+- 820 test methods in 100 files, running 1502 test cases.
 - 132 methods use a data provider (one case per data set).
-- 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
+- 3 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -25,6 +25,11 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testInvalidCredentialsComeBackThroughTheLegacyWrapperAsAResponseError` (line 38): groups: sandbox, anet, services
 - `testACustomerProfileCanBeCreatedReadAndUpdated` (line 49): groups: sandbox, anet, services
 - `testAnUnknownCustomerProfileIsAResponseError` (line 66): groups: sandbox, anet, services
+
+### `tests/Sandbox/PaymentMethodTest.php` (2)
+
+- `testAPaymentMethodCanBeRemoved` (line 68): groups: sandbox, anet, services
+- `testAnUnknownPaymentMethodIsAResponseError` (line 82): groups: sandbox, anet, services
 
 ### `tests/Unit/Api/ControllerTest.php` (16)
 
@@ -160,6 +165,12 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNoUsableReplyRaisesNoResponseThatSaysWhatHappened` (line 54): 5 data-provider cases
 - `testBothFlatClientsRaiseNoResponse` (line 71)
 - `testAWrapperCallRaisesInsteadOfLookingSuccessful` (line 82)
+
+### `tests/Unit/Cloud/AuthorizePaymentMethodTest.php` (3)
+
+- `testCurrentlyAPaymentArrayIsAPhpErrorNamingAnAbstractClass` (line 64): **known defect KD-100**
+- `testCurrentlyAPaymentProfileObjectBecomesXmlAuthorizeNetCannotAccept` (line 73): **known defect KD-100**
+- `testCurrentlyUpdatingAPaymentMethodSendsTheSameInvalidXml` (line 83): **known defect KD-100**
 
 ### `tests/Unit/Cloud/AuthorizeSubscriptionTest.php` (19)
 

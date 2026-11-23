@@ -10,6 +10,7 @@ Limits:
 - One customer profile (id `1001`), with memory through a WireMock scenario: created, updated, deleted.
 - Fixed run id `flat-mock0001`, fixed fake login and key (`docker/docker-compose.anet-mock.yml`).
 - Only the messages the sandbox tests send. Anything else gets WireMock's 404.
-- Real responses start with a byte-order mark; these do not.
+- Real responses start with a byte-order mark; these do not. The root element carries the `xsi` and `xsd`
+  namespaces first, as the real ones do: the old SDK's XPath handling depends on that order.
 
 A stub is one JSON file in `mappings/`; a request matches by the XML element names it contains.

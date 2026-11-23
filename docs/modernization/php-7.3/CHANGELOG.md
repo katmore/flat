@@ -681,3 +681,14 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test all --coverage`, 1,497 tests, 6,590 assertions, 100% (334 classes, 1,068 methods), no PHP
   message. The new test restores libxml's reporting mode, which flat's CIM constructor leaves switched to internal capture.
 
+## MOD-260 — Payment-method sandbox tests; KD-100 found (Q50)
+
+- Kind: tests and documentation, no code change. `tests/Sandbox/PaymentMethodTest.php` (same groups as the other
+  sandbox tests, so `all`, `services`, `anet` and `sandbox` run it): a payment method is made with the SDK's own
+  objects (flat cannot, KD-100), then flat's `delete_paymethod()` removes it, and an unknown one is a
+  `response_error`. The mock gained stubs for the three payment-profile messages (a scenario: none, exists, none).
+- The mock's response root now carries the `xsi` and `xsd` namespaces first, as real responses do; the SDK's XPath
+  handling depends on it (found when `create_paymethod()` could not read its id from a default-namespace-only reply).
+- Found: KD-100 (`create_paymethod()` and `update_paymethod()` cannot work; three tests pin today's behavior as
+  `@group known-defect`). Q50 asks whether to fix or leave them for v2.X.
+
