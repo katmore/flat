@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 820 test methods in 100 files, running 1502 test cases.
+- 825 test methods in 102 files, running 1507 test cases.
 - 132 methods use a data provider (one case per data set).
 - 3 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -30,6 +30,11 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testAPaymentMethodCanBeRemoved` (line 68): groups: sandbox, anet, services
 - `testAnUnknownPaymentMethodIsAResponseError` (line 82): groups: sandbox, anet, services
+
+### `tests/Sandbox/SubscriptionTest.php` (2)
+
+- `testASubscriptionCanBeCreatedChangedAndCancelled` (line 56): groups: sandbox, anet, services
+- `testAnUnknownSubscriptionIsAResponseError` (line 75): groups: sandbox, anet, services
 
 ### `tests/Unit/Api/ControllerTest.php` (16)
 
@@ -171,6 +176,12 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testCurrentlyAPaymentArrayIsAPhpErrorNamingAnAbstractClass` (line 64): **known defect KD-100**
 - `testCurrentlyAPaymentProfileObjectBecomesXmlAuthorizeNetCannotAccept` (line 73): **known defect KD-100**
 - `testCurrentlyUpdatingAPaymentMethodSendsTheSameInvalidXml` (line 83): **known defect KD-100**
+
+### `tests/Unit/Cloud/AuthorizeSubscriptionSdkTest.php` (3)
+
+- `testGetInfoReadsTheListResponseTheSchemaDescribes` (line 66)
+- `testASubscriptionMissingFromTheListIsNotFound` (line 76)
+- `testEachCallSendsOnlyItsOwnData` (line 86)
 
 ### `tests/Unit/Cloud/AuthorizeSubscriptionTest.php` (19)
 

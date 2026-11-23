@@ -37,6 +37,17 @@ namespace flat\cloud\authorize;
  *    docs/modernization/DEFERRED-V2.md, item 2.
  */
 class AuthorizeNetARB extends \AuthorizeNetARB {
+   /*
+    * The SDK appends every call's data to one payload that nothing clears, so a second call on the same client
+    * would resend the first call's data. setRefId() is the SDK's only way to empty it: do that after each request.
+    */
+   protected function _sendRequest() {
+      try {
+         return parent::_sendRequest();
+      } finally {
+         $this->setRefId(null);
+      }
+   }
    protected function _handleResponse($response) {
       return no_response::checked(parent::_handleResponse($response));
    }

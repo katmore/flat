@@ -154,6 +154,24 @@ consumers saw before, what they see now, and what to search for in their code.
   `response_error`; add a handler (retry, or check before repeating a payment-related call).
 - Verified: yes (unit tests fail without the fix; seen live on the sandbox with TLS failing).
 
+### MOD-261 (KD-101) — A subscription object sends each call on its own
+
+- Before: on one `flat\cloud\authorize\subscription` object, the second and later calls resent the data of every
+  earlier call (a status check, update or cancel after a `create()` carried the whole create request).
+- After: each call sends only its own data. A `setRefId()` set on the client applies to the next request only.
+- Search consumer code for: `flat\cloud\authorize\subscription`, code that makes several calls on one object,
+  `_prepare_AuthorizeNetRequest`, `setRefId`.
+- Verified: yes (unit test fails without the fix).
+
+### MOD-261 (KD-102) — `subscription::get_info()` works against the real service
+
+- Before: always threw `unexpected_response` ("'totalNumInResultSet' field not found"); it read an element the
+  response does not have.
+- After: it reads the response as the schema defines it and returns the subscription's details, or throws
+  `subscription\not_found`.
+- Search consumer code for: `get_info(`, `unexpected_response`, `not_found`, and any lookup you built to work around it.
+- Verified: against the schema and in tests; the real-sandbox confirmation is the owner's next run.
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

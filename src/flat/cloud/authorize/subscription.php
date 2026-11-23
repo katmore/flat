@@ -361,7 +361,7 @@ abstract class subscription extends \flat\cloud\authorize
              if ($response->isError()) {
               throw new authorize\response_error($response->getMessageCode(), $response->getMessageText());
       }
-      if (($totals = $response->xpath('/ARBGetSubscriptionListResponse/ARBGetSubscriptionListResult/totalNumInResultSet')) && isset($totals[0])) {
+      if (($totals = $response->xpath('/ARBGetSubscriptionListResponse/totalNumInResultSet')) && isset($totals[0])) {
       $total = (int)(string)$totals[0];
       
       } else {
@@ -369,7 +369,6 @@ abstract class subscription extends \flat\cloud\authorize
       }
       $subscriptionDetail = $response->xpath(
       '/ARBGetSubscriptionListResponse'.
-      '/ARBGetSubscriptionListResult'.
                      '/subscriptionDetails'.
                         '/subscriptionDetail'
       );

@@ -163,6 +163,30 @@ fixed at its cause; "behavior" says what a caller can see.
   email arrives.
 - **Fixed.**
 
+### KD-101 - A subscription wrapper resends earlier calls' data with every later call
+
+- Category: A (clear bug). Found while writing the subscription sandbox tests (MOD-261). The legacy
+  `AuthorizeNetARB` client appends each call's data to one payload that nothing clears, and flat keeps one client
+  per wrapper object. So after `create()`, a `get_status()`, `cancel()` or update on the same object also carried
+  the whole create request, which Authorize.Net cannot accept as a status or cancel request.
+- Fixed (MOD-261): flat's client (`flat\cloud\authorize\AuthorizeNetARB`) empties the payload after every request.
+  The mock cannot show this one (it matches on the request's element names); the unit test does.
+- Test: `Cloud/AuthorizeSubscriptionSdkTest::testEachCallSendsOnlyItsOwnData` (fails without the fix).
+- **Fixed.**
+
+### KD-102 - `subscription::get_info()` looked for a list response element that does not exist
+
+- Category: A (the schema is the evidence; the owner's sandbox run will confirm). `get_info()` read
+  `/ARBGetSubscriptionListResponse/ARBGetSubscriptionListResult/totalNumInResultSet`. The schema
+  (`AnetApiSchema.xsd`) has `totalNumInResultSet` and `subscriptionDetails` directly under
+  `ARBGetSubscriptionListResponse`, with no `...Result` element (that was the old SOAP shape). Against the real
+  service it always threw `unexpected_response` ("'totalNumInResultSet' field not found"). The older tests' doubles
+  ignore the path, which is why nothing noticed.
+- Fixed (MOD-261): both paths follow the schema.
+- Tests: `Cloud/AuthorizeSubscriptionSdkTest::testGetInfoReadsTheListResponseTheSchemaDescribes` and
+  `testASubscriptionMissingFromTheListIsNotFound` (fail without the fix).
+- **Fixed.**
+
 ### KD-100 - flat cannot build a payment method Authorize.Net accepts
 
 - Category: C (unfinished; the php-7.2 notes listed it as a blocker, `php-7.2/notes/PAYMENT-ALERT.md`). Found

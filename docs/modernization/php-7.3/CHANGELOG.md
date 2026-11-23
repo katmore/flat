@@ -692,3 +692,17 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Found: KD-100 (`create_paymethod()` and `update_paymethod()` cannot work; three tests pin today's behavior as
   `@group known-defect`). Q50 asks whether to fix or leave them for v2.X.
 
+## MOD-261 — Subscription sandbox tests; KD-101 and KD-102 fixed
+
+- Kind: tests and two bug fixes. `tests/Sandbox/SubscriptionTest.php` (same groups as the other sandbox tests):
+  one wrapper creates a subscription, reads its status and details, changes the amount and the card, cancels it,
+  and reports an unknown one. The mock has the ARB messages (a scenario: none, active, canceled); fixtures
+  `SandboxArb` and `SandboxSubscription` in `tests/Sandbox/SandboxSupport.php`.
+- Fixed: KD-101 (the legacy ARB client's payload accumulated across calls; flat's client now empties it after each
+  request) and KD-102 (`get_info()` read a list element the schema does not have). See
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). New `AuthorizeSubscriptionSdkTest` fails without both.
+- Limit: the mock matches on element names, so it cannot show KD-101; the unit test does. KD-102 is
+  schema-based: the owner's sandbox run is its confirmation.
+- Verified: `docker/bin/test all --coverage`, 1,507 tests, 6,625 assertions, 100% (334 classes, 1,069 methods,
+  8,422 statements), no PHP message; `sandbox` without keys: 5 pass, 5 fail as intended. The test inventory is regenerated.
+

@@ -148,3 +148,52 @@ class SandboxCustomer extends \flat\cloud\authorize\customer
     }
     public function client() { return $this->_get_CIM(); }
 }
+
+/** flat's legacy ARB (subscription) client with the same CA and server arrangement as SandboxCim. */
+class SandboxArb extends \flat\cloud\authorize\AuthorizeNetARB
+{
+    private $ca;
+    public function __construct($login, $key, $ca) { $this->ca = $ca; parent::__construct($login, $key); }
+    protected function _getPostUrl() { return sandboxBaseUrl() . '/xml/v1/request.api'; }
+    protected function _sendRequest()
+    {
+        $this->_setPostString();
+        $curl = curl_init($this->_getPostUrl());
+        curl_setopt_array($curl, [CURLOPT_POSTFIELDS=>$this->_post_string, CURLOPT_HEADER=>0, CURLOPT_TIMEOUT=>45, CURLOPT_RETURNTRANSFER=>1,
+            CURLOPT_SSL_VERIFYPEER=>true, CURLOPT_SSL_VERIFYHOST=>2, CURLOPT_HTTPHEADER=>['Content-Type: text/xml']]);
+        if ($this->ca) curl_setopt($curl, CURLOPT_CAINFO, $this->ca);
+        $response = curl_exec($curl);
+        curl_close($curl);
+        try { return $this->_handleResponse($response); }
+        finally { $this->setRefId(null); } // as flat's own client does (KD-101)
+    }
+}
+
+/** flat's subscription wrapper, pointed at the sandbox. */
+class SandboxSubscription extends \flat\cloud\authorize\subscription
+{
+    private $login;
+    private $key;
+    private $arb;
+    public function __construct($login, $key) { $this->login = $login; $this->key = $key; }
+    protected function _prepare_AuthorizeNetRequest($client) { return $client; }
+    protected function _get_login_id() { return $this->login; }
+    protected function _get_transaction_key() { return $this->key; }
+    protected function _get_end_point() { return sandboxBaseUrl(); }
+    protected function _get_ARB()
+    {
+        if (!$this->arb) {
+            $ca = getenv('FLAT_TEST_CA_BUNDLE');
+            $ca = ($ca !== false && $ca !== '') ? $ca : null;
+            $mock = getenv('FLAT_TEST_ANET_URL');
+            $arb = ($ca || ($mock !== false && $mock !== '')) ? new SandboxArb($this->login, $this->key, $ca) : new \flat\cloud\authorize\AuthorizeNetARB($this->login, $this->key);
+            $this->arb = $this->_prepare_AuthorizeNetRequest($arb);
+        }
+        return $this->arb;
+    }
+    public function client() { return $this->_get_ARB(); }
+    public function void_transaction(array $params) { throw new \BadMethodCallException('not used by the sandbox tests'); }
+    public function refund_transaction(array $params) { throw new \BadMethodCallException('not used by the sandbox tests'); }
+    public function create_transaction(array $params) { throw new \BadMethodCallException('not used by the sandbox tests'); }
+}
+
