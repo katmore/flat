@@ -30,6 +30,13 @@ docker/bin/test --down               # explicit cleanup after an interrupted hos
 docker/bin/test-javascript           # execute minifier regressions, after building the PHP image
 ```
 
+`docker/bin/test` starts only the services the selected tests need. Before it starts anything it asks
+`bin/test services-needed` (no test runs) which of MongoDB, RabbitMQ and the Authorize.Net mock the tests chosen by
+the mode, `--filter`, `--group` and `--exclude-group` use, and prints the answer ("Test services needed: ..."). So
+`docker/bin/test --filter AuthorizeCustomerTest` starts nothing, `--filter TransactionTest` starts the mock only, and
+`unit` starts no service. A test file or directory as an argument is not understood: every test is then assumed to be
+selected. If the question cannot be answered, the script says so and starts what the mode could use.
+
 If starting the services fails, `docker/bin/test` prints the state and logs of the failed attempt, removes the
 stack and tries again, up to three attempts. A run that needed a retry says so in its output; a third failure
 stops the run.

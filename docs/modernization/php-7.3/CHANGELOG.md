@@ -767,3 +767,20 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: the retry loop with a stubbed `compose` (fails twice then works; always fails, stops after three), and
   six real `docker/bin/test rabbitmq` runs.
 
+## MOD-267 — Start only the services the selected tests need
+
+- Kind: tooling (owner's request: a run that needs no RabbitMQ must not start it). `docker/bin/test` used to start
+  every service of its mode (`all`, the default, started MongoDB, RabbitMQ and the Authorize.Net mock even for
+  `--filter AuthorizeCustomerTest`). Now it asks the new `bin/test services-needed` (helper `tests/tools/services.php`,
+  which applies `--filter`, `--group` and `--exclude-group` to PHPUnit's test list, since `--list-tests-xml` ignores
+  them) and starts only the services those tests belong to by group (`mongo`, `rabbitmq`, `anet`). A test in `services`
+  without a specific group asks for all three; an argument the helper does not understand keeps every test (more
+  services, never fewer). The result is printed ("Test services needed: ...").
+- Mode `unit` and the real-sandbox mode `sandbox` start nothing, as before. `--offline` checks the images of the
+  services needed.
+- Verified: `docker/bin/test all --filter AuthorizeCustomerTest` started no service; `--filter TransactionTest` only
+  `anet-mock`; `--filter RabbitMqTest` only `rabbitmq`; `anet` only `anet-mock`; the full run starts all three. New
+  `ServicesToolTest` (16 cases). `all --coverage` passes.
+  Full run: `docker/bin/test all --coverage`, 1,554 tests, 6,812 assertions, 100% (334 classes, 1,071 methods,
+  8,467 statements); the test inventory is regenerated.
+

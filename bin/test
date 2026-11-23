@@ -13,6 +13,7 @@ phpunit="${FLAT_TEST_PHPUNIT:-vendor/bin/phpunit}"
 usage() {
     echo 'Usage: bin/test [all|unit|services|mongo|rabbitmq|anet|sandbox] [--coverage] [PHPUnit arguments]'
     echo '       bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md'
+    echo '       bin/test services-needed [mode] [PHPUnit arguments]'
     echo '  all (default): every test; MongoDB/RabbitMQ tests need those services reachable'
     echo '  unit:          tests that need no external services'
     echo '  services:      MongoDB-, RabbitMQ- and Authorize.Net-mock-dependent tests'
@@ -24,6 +25,8 @@ usage() {
     echo '                 credentials needed; not part of all). Set FLAT_TEST_ANET_LOGIN_ID and'
     echo '                 FLAT_TEST_ANET_TRANSACTION_KEY to a sandbox account (and leave'
     echo '                 FLAT_TEST_ANET_URL unset). They fail, not skip, without them.'
+    echo '  services-needed: print the test services (mongo rabbitmq anet-mock) the tests this run selects'
+    echo '                 need, nothing if none; docker/bin/test starts only those'
     echo '  inventory:     print a Markdown inventory of every test to stdout, from'
     echo "                 PHPUnit's test list; KD IDs are added from a given defects file"
     echo '  --coverage:    write reports under build/tests/<mode>/ (needs Xdebug)'
@@ -41,6 +44,7 @@ defects_file=
 while [ "$#" -gt 0 ]; do
     case "$1" in
         all|unit|services|mongo|rabbitmq|anet|sandbox) test_mode=$1 ;;
+        services-needed) action=services-needed ;;
         inventory)
             action=inventory
             if [ "$#" -gt 1 ] && [ "${2#-}" = "$2" ]; then defects_file=$2; shift; fi ;;
@@ -92,6 +96,13 @@ case "$test_mode" in
         export FLAT_TEST_ANET_SANDBOX=1
         set -- --group sandbox "$@" ;;
 esac
+if [ "$action" = services-needed ]; then
+    # Which services do the tests this run selects need? Only the list is made; no test runs.
+    list_dir=build/tests/services-needed
+    mkdir -p "$list_dir"
+    phpunit_cmd --list-tests-xml "$list_dir/tests.xml" >/dev/null
+    exec "$php_bin" tests/tools/services.php "$list_dir/tests.xml" "$@"
+fi
 if "$coverage"; then
     report_dir="build/tests/$test_mode"
     mkdir -p "$report_dir"
