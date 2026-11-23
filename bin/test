@@ -11,13 +11,17 @@ cd "$repo_dir"
 php_bin="${FLAT_TEST_PHP:-php}"
 phpunit="${FLAT_TEST_PHPUNIT:-vendor/bin/phpunit}"
 usage() {
-    echo 'Usage: bin/test [all|unit|services|mongo|rabbitmq] [--coverage] [PHPUnit arguments]'
+    echo 'Usage: bin/test [all|unit|services|mongo|rabbitmq|sandbox] [--coverage] [PHPUnit arguments]'
     echo '       bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md'
     echo '  all (default): every test; MongoDB/RabbitMQ tests need those services reachable'
     echo '  unit:          tests that need no external services'
     echo '  services:      MongoDB- and RabbitMQ-dependent tests'
     echo '  mongo:         MongoDB-dependent tests'
     echo '  rabbitmq:      RabbitMQ-dependent tests'
+    echo '  sandbox:       tests against the real Authorize.Net sandbox (Internet and credentials'
+    echo '                 needed; never part of all). Set FLAT_TEST_ANET_LOGIN_ID and'
+    echo '                 FLAT_TEST_ANET_TRANSACTION_KEY to a sandbox account. They fail, not skip,'
+    echo '                 without them.'
     echo '  inventory:     print a Markdown inventory of every test to stdout, from'
     echo "                 PHPUnit's test list; KD IDs are added from a given defects file"
     echo '  --coverage:    write reports under build/tests/<mode>/ (needs Xdebug)'
@@ -25,6 +29,7 @@ usage() {
     echo 'Environment: FLAT_TEST_PHP (default php), FLAT_TEST_PHPUNIT (default'
     echo '  vendor/bin/phpunit), FLAT_TEST_BOOTSTRAP (optional PHPUnit bootstrap),'
     echo '  FLAT_TEST_MONGODB_URI and FLAT_TEST_RABBITMQ_HOST for service tests.'
+    echo '  FLAT_TEST_CA_BUNDLE (optional CA file PHP trusts for the sandbox tests).'
     echo 'To run everything in Docker instead, use docker/bin/test with the same arguments.'
 }
 test_mode=all
@@ -33,7 +38,7 @@ action=run
 defects_file=
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        all|unit|services|mongo|rabbitmq) test_mode=$1 ;;
+        all|unit|services|mongo|rabbitmq|sandbox) test_mode=$1 ;;
         inventory)
             action=inventory
             if [ "$#" -gt 1 ] && [ "${2#-}" = "$2" ]; then defects_file=$2; shift; fi ;;
@@ -49,11 +54,16 @@ if [ ! -f "$phpunit" ]; then
     printf 'PHPUnit not found at %s. Run composer install, set FLAT_TEST_PHPUNIT,\nor use docker/bin/test.\n' "$phpunit" >&2
     exit 2
 fi
+suite=unit
+[ "$test_mode" = sandbox ] && suite=sandbox
+# An optional CA bundle for TLS (for example behind a proxy that re-signs traffic); PHP settings only.
+ca_flags=
+[ -n "${FLAT_TEST_CA_BUNDLE:-}" ] && ca_flags="-d curl.cainfo=$FLAT_TEST_CA_BUNDLE -d openssl.cafile=$FLAT_TEST_CA_BUNDLE"
 phpunit_cmd() {
     if [ -n "${FLAT_TEST_BOOTSTRAP:-}" ]; then
-        "$php_bin" "$phpunit" --bootstrap "$FLAT_TEST_BOOTSTRAP" --testsuite unit "$@"
+        "$php_bin" $ca_flags "$phpunit" --bootstrap "$FLAT_TEST_BOOTSTRAP" --testsuite "$suite" "$@"
     else
-        "$php_bin" "$phpunit" --testsuite unit "$@"
+        "$php_bin" $ca_flags "$phpunit" --testsuite "$suite" "$@"
     fi
 }
 if [ "$action" = inventory ]; then
@@ -74,6 +84,7 @@ case "$test_mode" in
     services) set -- --group services "$@" ;;
     mongo) set -- --group mongo "$@" ;;
     rabbitmq) set -- --group rabbitmq "$@" ;;
+    sandbox) set -- --group sandbox "$@" ;;
 esac
 if "$coverage"; then
     report_dir="build/tests/$test_mode"

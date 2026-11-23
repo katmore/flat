@@ -1,0 +1,7 @@
+# Added by `docker/bin/test sandbox` when FLAT_TEST_CA_FILE is set: PHP trusts that CA bundle at run time.
+services:
+  php:
+    environment:
+      FLAT_TEST_CA_BUNDLE: /etc/flat-test-ca.crt
+    volumes:
+      - ${FLAT_TEST_CA_FILE:?}:/etc/flat-test-ca.crt:ro

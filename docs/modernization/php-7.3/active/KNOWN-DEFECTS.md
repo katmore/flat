@@ -139,9 +139,24 @@ fixed at its cause; "behavior" says what a caller can see.
   `AbstractConnection`. Works with 2.12.3 and 3.7.5 (the test lock is on 3.7.5).
 - **Fixed.**
 
+### KD-98 - The legacy Authorize.Net wrappers report no error when the request itself fails
+
+- Category: B (intent needed). Found by the sandbox tests (MOD-255). The legacy SDK classes flat wraps
+  (`AuthorizeNetCIM`, `AuthorizeNetARB`) return an empty response when the HTTPS request fails (no connection,
+  a certificate the SDK does not trust, a timeout). `isError()` is then `false` and the message code and text
+  are `false`, so `flat\cloud\authorize\customer` and `subscription` hand the caller what looks like a
+  success. A refused request (for example `E00007`) does come back as a `response_error`.
+- Options:
+  - (a) Throw a `response_error`-style exception when there is no response. Callers get an error where they got
+    silence; this is a behavior change. Recommended if the wrappers are fixed at all.
+  - (b) Leave it: the wrappers are deprecated (MOD-253) and go in v2.X. Record it in the release notes.
+- Recommendation: (b) for v1.73.1, unless the known consumer can hit transport failures in production, which only
+  the owner can say.
+- **Open** (Q49).
+
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; none is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 48 are answered; Q49 is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -308,3 +323,6 @@ Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; n
     **Answered (owner, 2026-11-23):** the wrappers are not ported. Authorize.Net does not support the old SDK
     classes, so the wrappers are deprecated in v1.73.1 and removed in v2.X (`DEFERRED-V2.md` item 2). Done:
     `@deprecated` on every wrapper class (MOD-253).
+
+49. **KD-98: should the legacy wrappers raise an error when the request itself fails?** See KD-98. Recommend (b):
+    leave it, document it, remove the wrappers in v2.X.

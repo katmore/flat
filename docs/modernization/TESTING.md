@@ -34,6 +34,24 @@ The JavaScript check runs minification in the PHP 7.3 test image and executes bo
 and minified programs against expected results in a separate, digest-pinned Node container.
 Docker downloads that additional image on first use; no host Node installation is needed.
 
+## Optional Authorize.Net sandbox tests
+
+`tests/Sandbox` holds a separate suite (`sandbox`, group `sandbox`) that talks to the real Authorize.Net
+sandbox. It is never part of `unit`, `all` or CI, so a sandbox outage cannot block work. It is not optional in
+the sense of skipping: a test that needs credentials fails with a message saying what to set.
+
+```sh
+export FLAT_TEST_ANET_LOGIN_ID=...        # a SANDBOX account's API login ID
+export FLAT_TEST_ANET_TRANSACTION_KEY=... # its transaction key
+docker/bin/test sandbox
+```
+
+- Use sandbox keys only. Never commit them or paste them into a chat.
+- The container needs outbound HTTPS to `apitest.authorize.net`. Behind a TLS-intercepting proxy, also set
+  `FLAT_TEST_CA_FILE` to the proxy's CA bundle. Certificate verification stays on: the test clients trust that
+  bundle in place of the SDK's bundled one, which the SDK hard-codes.
+- Tests clean up what they create (customer profiles are deleted in `tearDown`) and tag it `flat-<random>`.
+
 `docker/bin/test inventory` prints a Markdown inventory of every test to stdout,
 built from PHPUnit's `--list-tests-xml` by `tests/tools/inventory.php`. It needs
 no service containers. Pass a known-defects file to label `@group known-defect`

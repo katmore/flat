@@ -13,13 +13,19 @@ export FLAT_TEST_UID="$(id -u)" FLAT_TEST_GID="$(id -g)"
 if [ "$FLAT_TEST_UID" = 0 ]; then export FLAT_TEST_UID=1000 FLAT_TEST_GID=1000; fi
 export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-flat-tests}"
 compose() {
+    files="-f docker/docker-compose.yml"
+    # The sandbox mode needs the Internet and no services (see docker/docker-compose.sandbox.yml).
+    if [ "${test_mode:-all}" = sandbox ]; then
+        files="$files -f docker/docker-compose.sandbox.yml"
+        if [ -n "${FLAT_TEST_CA_FILE:-}" ]; then files="$files -f tests/docker/compose.sandbox.ca.yaml"; fi
+    fi
     if [ "${offline:-false}" != true ] && [ -n "${FLAT_TEST_CA_FILE:-}" ]; then
         # Newer Compose builds through Bake, which refuses a secret read from a
         # path outside the build context unless file-read entitlements are relaxed.
         BUILDX_BAKE_ENTITLEMENTS_FS="${BUILDX_BAKE_ENTITLEMENTS_FS:-0}" \
-            docker compose -f docker/docker-compose.yml -f tests/docker/compose.ca.yaml "$@"
+            docker compose $files -f tests/docker/compose.ca.yaml "$@"
     else
-        docker compose -f docker/docker-compose.yml "$@"
+        docker compose $files "$@"
     fi
 }
 usage() {
@@ -31,6 +37,8 @@ usage() {
     echo '  --build:       build the test image only'
     echo '  --down:        remove this test stack (after an interrupted run)'
     echo 'Examples: docker/bin/test unit --filter SshTest; docker/bin/test all --offline --coverage'
+    echo 'Optional: docker/bin/test sandbox runs the tests against the real Authorize.Net sandbox (needs'
+    echo 'FLAT_TEST_ANET_LOGIN_ID and FLAT_TEST_ANET_TRANSACTION_KEY in your shell; never part of all).'
     echo
     echo 'bin/test arguments:'
     bin/test --help | sed -n '1,/^  -h/p'
@@ -50,7 +58,7 @@ for arg do
             --down) action=down; continue ;;
             -h|--help) usage; exit ;;
             --) passthrough=false ;;
-            all|unit|services|mongo|rabbitmq) test_mode=$arg ;;
+            all|unit|services|mongo|rabbitmq|sandbox) test_mode=$arg ;;
             inventory) inventory=true ;;
         esac
     fi

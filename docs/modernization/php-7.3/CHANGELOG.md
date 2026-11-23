@@ -622,3 +622,17 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: documentation. [RELEASE-NOTES-V1.73.1.md](RELEASE-NOTES-V1.73.1.md) covers the fixes (MOD-218 to MOD-220,
   MOD-227, MOD-242, MOD-244, MOD-246), the Authorize.Net deprecation (MOD-253) and the tooling upgrades
   (MOD-228 to MOD-251). The dependency audit was re-run: the same four advisories, which need PHP 8.1.
+
+## MOD-255 — Optional Authorize.Net sandbox tests
+
+- Kind: tests and tooling. New suite `sandbox` (`tests/Sandbox`, `phpunit.xml.dist`) and mode `docker/bin/test sandbox`
+  (`bin/test`, `docker/bin/test`, `docker/docker-compose.sandbox.yml`, `tests/docker/compose.sandbox.ca.yaml`).
+  Credentials come from `FLAT_TEST_ANET_LOGIN_ID` and `FLAT_TEST_ANET_TRANSACTION_KEY`; without them the tests that need
+  them fail with a message, they do not skip. TLS verification stays on; the test clients trust `FLAT_TEST_CA_FILE`.
+  The suite is outside `unit`, `all` and the inventory. See [TESTING.md](../TESTING.md).
+- Six tests: made-up credentials give `E00007` through the current API and through flat's legacy customer wrapper;
+  the legacy client targets the sandbox only; and, with credentials, authentication works and a customer profile can
+  be created, read, updated and deleted (an unknown profile is a response error).
+- Found: KD-98 (legacy wrappers are silent when the request fails; Q49). Run without credentials: 3 pass, 3 fail as
+  intended. The credentialed run waits for the owner's environment variables.
+
