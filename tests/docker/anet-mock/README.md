@@ -9,9 +9,10 @@ Limits:
 
 - One customer profile (id `1001`), with memory through a WireMock scenario: created, updated, deleted.
 - Fixed run id `flat-mock0001`, fixed fake login and key (`docker/docker-compose.anet-mock.yml`).
-- Customer transactions: approved for the three kinds (direct response of the real 55-field length, `|`-encapsulated
-  as the SDK asks); a payment method made with the billing ZIP code 46282 is declined, as Authorize.Net documents
-  (E00027 for a customer transaction; not yet checked against the sandbox).
+- Customer transactions: `authcapture` and `authonly` are approved (direct response of the real 55-field length,
+  `|`-encapsulated as the SDK asks); `captureonly` is refused with `E00027` "Capture Only transactions are not
+  allowed for this processor." as the sandbox does; a payment method made with the billing ZIP code 46282 is declined
+  with `E00027` (both confirmed on the sandbox, 2026-11-23).
 - Only the messages the sandbox tests send. Anything else gets WireMock's 404.
 - Real responses start with a byte-order mark; these do not. The root element carries the `xsi` and `xsd`
   namespaces first, as the real ones do: the old SDK's XPath handling depends on that order.
@@ -20,6 +21,8 @@ A stub is one JSON file in `mappings/`; a request matches by the XML element nam
 
 Known differences from the real sandbox (found by running both):
 
+- The real sandbox's processor refuses `captureonly`; the mock does the same (its refusal has no `directResponse`
+  element; the real one was not inspected, and flat does not read it for an error).
 - The real subscription list lags behind a new subscription by some seconds; the mock lists it at once.
 - The mock does not model every rule. What it does model was taken from real answers: an empty profile is `E00041`;
   a validation mode without payment profiles is `E00013`.

@@ -101,28 +101,6 @@ class SandboxApi extends \flat\cloud\authorize
     }
 }
 
-/**
- * flat's legacy CIM client with the same CA arrangement: the old SDK also trusts only its bundled CA file.
- * A failed request gives an empty response, which flat's client turns into a no_response exception (KD-98).
- */
-class SandboxCim extends \flat\cloud\authorize\AuthorizeNetCIM
-{
-    private $ca;
-    public function __construct($login, $key, $ca) { $this->ca = $ca; parent::__construct($login, $key); }
-    protected function _getPostUrl() { return sandboxBaseUrl() . '/xml/v1/request.api'; }
-    protected function _sendRequest()
-    {
-        $this->_setPostString();
-        $curl = curl_init($this->_getPostUrl());
-        curl_setopt_array($curl, [CURLOPT_POSTFIELDS=>$this->_post_string, CURLOPT_HEADER=>0, CURLOPT_TIMEOUT=>45, CURLOPT_RETURNTRANSFER=>1,
-            CURLOPT_SSL_VERIFYPEER=>true, CURLOPT_SSL_VERIFYHOST=>2, CURLOPT_HTTPHEADER=>['Content-Type: text/xml']]);
-        if ($this->ca) curl_setopt($curl, CURLOPT_CAINFO, $this->ca);
-        $response = curl_exec($curl);
-        curl_close($curl);
-        return $this->_handleResponse($response);
-    }
-}
-
 /** flat's legacy customer wrapper, pointed at the sandbox. */
 class SandboxCustomer extends \flat\cloud\authorize\customer
 {
@@ -141,32 +119,13 @@ class SandboxCustomer extends \flat\cloud\authorize\customer
             $ca = ($ca !== false && $ca !== '') ? $ca : null;
             $mock = getenv('FLAT_TEST_ANET_URL');
             // The old SDK's own client is used untouched, unless a proxy CA or a stand-in server needs the subclass.
+            if ($ca || ($mock !== false && $mock !== '')) require_once __DIR__.'/SandboxCim.php';
             $cim = ($ca || ($mock !== false && $mock !== '')) ? new SandboxCim($this->login, $this->key, $ca) : new \flat\cloud\authorize\AuthorizeNetCIM($this->login, $this->key);
             $this->cim = $this->_prepare_AuthorizeNetRequest($cim);
         }
         return $this->cim;
     }
     public function client() { return $this->_get_CIM(); }
-}
-
-/** flat's legacy ARB (subscription) client with the same CA and server arrangement as SandboxCim. */
-class SandboxArb extends \flat\cloud\authorize\AuthorizeNetARB
-{
-    private $ca;
-    public function __construct($login, $key, $ca) { $this->ca = $ca; parent::__construct($login, $key); }
-    protected function _getPostUrl() { return sandboxBaseUrl() . '/xml/v1/request.api'; }
-    protected function _sendRequest()
-    {
-        $this->_setPostString();
-        $curl = curl_init($this->_getPostUrl());
-        curl_setopt_array($curl, [CURLOPT_POSTFIELDS=>$this->_post_string, CURLOPT_HEADER=>0, CURLOPT_TIMEOUT=>45, CURLOPT_RETURNTRANSFER=>1,
-            CURLOPT_SSL_VERIFYPEER=>true, CURLOPT_SSL_VERIFYHOST=>2, CURLOPT_HTTPHEADER=>['Content-Type: text/xml']]);
-        if ($this->ca) curl_setopt($curl, CURLOPT_CAINFO, $this->ca);
-        $response = curl_exec($curl);
-        curl_close($curl);
-        try { return $this->_handleResponse($response); }
-        finally { $this->setRefId(null); } // as flat's own client does (KD-101)
-    }
 }
 
 /** flat's subscription wrapper, pointed at the sandbox. */
@@ -186,6 +145,7 @@ class SandboxSubscription extends \flat\cloud\authorize\subscription
             $ca = getenv('FLAT_TEST_CA_BUNDLE');
             $ca = ($ca !== false && $ca !== '') ? $ca : null;
             $mock = getenv('FLAT_TEST_ANET_URL');
+            if ($ca || ($mock !== false && $mock !== '')) require_once __DIR__.'/SandboxArb.php';
             $arb = ($ca || ($mock !== false && $mock !== '')) ? new SandboxArb($this->login, $this->key, $ca) : new \flat\cloud\authorize\AuthorizeNetARB($this->login, $this->key);
             $this->arb = $this->_prepare_AuthorizeNetRequest($arb);
         }

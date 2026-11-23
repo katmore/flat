@@ -78,12 +78,18 @@ class TransactionTest extends TestCase
         $this->assertSame('APPROVED', $response->status);
     }
 
-    public function testACaptureOnlyIsApproved()
+    public function testACaptureOnlyIsRefusedByTheProcessorAsAResponseError()
     {
+        // The sandbox account's processor does not allow Capture Only (checked 2026-11-23): E00027. The request
+        // itself is well formed (a malformed one would be a schema error), and flat raises the refusal as a response_error.
         list($customer, $profileId, $paymentId) = $this->customerWithACard();
-        $response = $customer->create_transaction($this->charge('captureonly', $profileId, $paymentId, ['approvalCode'=>'ABC123']));
-        $this->assertInstanceOf(success::class, $response);
-        $this->assertSame('APPROVED', $response->status);
+        try { $customer->create_transaction($this->charge('captureonly', $profileId, $paymentId, ['approvalCode'=>'ABC123'])); }
+        catch (response_error $refused) {
+            $this->assertSame('E00027', $refused->get_message_code());
+            $this->assertStringContainsString('Capture Only', $refused->getMessage());
+            return;
+        }
+        $this->fail('the processor should have refused Capture Only');
     }
 
     public function testADeclinedTransactionIsAResponseError()

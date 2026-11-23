@@ -784,3 +784,24 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   Full run: `docker/bin/test all --coverage`, 1,554 tests, 6,812 assertions, 100% (334 classes, 1,071 methods,
   8,467 statements); the test inventory is regenerated.
 
+
+## MOD-268 — First run of the Authorize.Net tests on the real sandbox: transactions
+
+- Kind: test and mock corrections; no change to flat's code, so no `CONSUMER-IMPACT.md` entry.
+- `docker/bin/test sandbox` (2026-11-23): 14 tests, 13 passed at first. This was the first real run of
+  `tests/Sandbox/TransactionTest.php`: `authcapture` and `authonly` are approved (transaction fields and the
+  direct response read correctly), and the documented decline (billing ZIP code 46282, `E00027`) is raised as a
+  `response_error`. The KD-105 fix is confirmed.
+- Difference found: the sandbox account's processor refuses `captureonly` with `E00027` "Capture Only transactions
+  are not allowed for this processor." The request is well formed (a malformed one is a schema error). That is
+  service behavior, not a flat bug. The test is now `testACaptureOnlyIsRefusedByTheProcessorAsAResponseError`, and the
+  mock stub `47-createcustomerprofiletransaction-captureonly.json` gives the same refusal (it approved before).
+  Listed in `tests/docker/anet-mock/README.md`.
+- Cause fixed: both runs printed the SDK's deprecation notices while PHPUnit loaded the test files. The classes
+  `SandboxCim` and `SandboxArb` extended the legacy SDK classes when `SandboxSupport.php` was included, before the
+  approved `LegacyAuthorizeSdk` helper could handle them. They moved to `tests/Sandbox/SandboxCim.php` and
+  `SandboxArb.php`, included when a test first needs them (after the helper has loaded the SDK class). No notice is
+  hidden or newly handled; the helper is unchanged.
+- Verified: `docker/bin/test sandbox` 14 of 14 (39 assertions); `anet` 14 of 14; `all --coverage` 1,554 tests,
+  6,812 assertions, 100% (334 classes, 1,071 methods, 8,467 statements), no deprecation output. The test inventory is
+  regenerated.

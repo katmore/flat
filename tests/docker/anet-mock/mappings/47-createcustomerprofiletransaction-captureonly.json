@@ -1,5 +1,5 @@
 {
-  "name": "createCustomerProfileTransaction captureonly",
+  "name": "createCustomerProfileTransaction captureonly (refused, as the sandbox does)",
   "priority": 2,
   "request": {
     "method": "POST",
@@ -24,6 +24,6 @@
     "headers": {
       "Content-Type": "text/xml; charset=utf-8"
     },
-    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<createCustomerProfileTransactionResponse xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Ok</resultCode><message><code>I00001</code><text>Successful.</text></message></messages><directResponse>|1|,|1|,|1|,|This transaction has been approved.|,|ABC123|,|Y|,|60000000001|,||,||,|5.00|,|CC|,|capture_only|,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,||,|XXXX1111|,|Visa|,||,||,||</directResponse></createCustomerProfileTransactionResponse>"
+    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<createCustomerProfileTransactionResponse xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Error</resultCode><message><code>E00027</code><text>Capture Only transactions are not allowed for this processor.</text></message></messages></createCustomerProfileTransactionResponse>"
   }
 }

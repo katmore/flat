@@ -40,8 +40,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testAnAuthorizationAndCaptureIsApproved` (line 64): groups: sandbox, anet, services
 - `testAnAuthorizationOnlyIsApproved` (line 73): groups: sandbox, anet, services
-- `testACaptureOnlyIsApproved` (line 81): groups: sandbox, anet, services
-- `testADeclinedTransactionIsAResponseError` (line 89): groups: sandbox, anet, services
+- `testACaptureOnlyIsRefusedByTheProcessorAsAResponseError` (line 81): groups: sandbox, anet, services
+- `testADeclinedTransactionIsAResponseError` (line 95): groups: sandbox, anet, services
 
 ### `tests/Unit/Api/ControllerTest.php` (16)
 
