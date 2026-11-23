@@ -108,9 +108,28 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
+# Starting the services can fail now and then (RabbitMQ has been seen to exit at startup; the cause was never
+# captured, because the container is removed with its log). So a failed start is retried, never silently: each
+# failure prints the services' state and their own logs first, and the third failure stops the run.
+start_services() {
+    attempt=1
+    while :; do
+        if "$offline"; then
+            if compose up -d --wait --pull never $service_names; then return 0; else status=$?; fi
+        else
+            if compose up -d --wait $service_names; then return 0; else status=$?; fi
+        fi
+        printf 'Starting the test services failed (attempt %s of 3, status %s). State and logs follow.\n' "$attempt" "$status" >&2
+        compose ps -a >&2 || true
+        compose logs --no-color --tail=80 $service_names >&2 || true
+        compose down --volumes --remove-orphans >&2 || true
+        if [ "$attempt" -ge 3 ]; then return "$status"; fi
+        attempt=$((attempt + 1))
+        printf 'Trying again (attempt %s of 3).\n' "$attempt" >&2
+    done
+}
 if [ -n "$service_names" ]; then
-    if "$offline"; then compose up -d --wait --pull never $service_names;
-    else compose up -d --wait $service_names; fi
+    start_services
 fi
 if "$inventory"; then
     # No TTY, so only bin/test's Markdown reaches stdout.

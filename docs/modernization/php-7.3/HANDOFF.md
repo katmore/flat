@@ -228,8 +228,10 @@ Environment:
 - A fresh container has no Docker daemon running: start it first, in the background, with its
   output in a log file. Builds need the sandbox's proxy CA: set `FLAT_TEST_CA_FILE` to the bundle
   the session documents and, for Compose builds, `BUILDX_BAKE_ENTITLEMENTS_FS=0`.
-- RabbitMQ sometimes exits at startup during a full run (`exited (0)`). It passes on a retry; the
-  cause is not diagnosed. Retry before you suspect your change.
+- RabbitMQ has been seen to exit at startup during a full run. `docker/bin/test` now retries the service
+  start itself (three attempts) and prints the failed attempt's state and logs; do not rerun by hand. If a run
+  still stops with "Starting the test services failed (attempt 3 of 3", the printed logs are the first real
+  evidence of the cause: record it in a note.
 - Never pipe a long Docker build into `head`: the pipe closes and kills the build half way. Log to
   a file and read the file.
 - The shell's safety check refuses `rm -rf` on a variable path. Do not work around it: use fresh

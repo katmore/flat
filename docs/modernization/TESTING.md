@@ -30,6 +30,10 @@ docker/bin/test --down               # explicit cleanup after an interrupted hos
 docker/bin/test-javascript           # execute minifier regressions, after building the PHP image
 ```
 
+If starting the services fails, `docker/bin/test` prints the state and logs of the failed attempt, removes the
+stack and tries again, up to three attempts. A run that needed a retry says so in its output; a third failure
+stops the run.
+
 The JavaScript check runs minification in the PHP 7.3 test image and executes both the original
 and minified programs against expected results in a separate, digest-pinned Node container.
 Docker downloads that additional image on first use; no host Node installation is needed.

@@ -754,3 +754,16 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test all --coverage`, 1,538 tests, 6,748 assertions, 100% (334 classes, 1,071 methods,
   8,467 statements), no PHP message; the test inventory is regenerated.
 
+## MOD-266 — The test script retries a failed service start
+
+- Kind: tooling (owner's request: no manual reruns). `docker/bin/test`: starting the services is retried, up to three
+  attempts; each failed attempt prints `compose ps -a` and the last 80 log lines of the services, then removes the stack
+  before the next try. A third failure stops the run with the logs shown. Nothing is hidden: a retry is visible in
+  the output.
+- Why not a fix of the cause: the failure (RabbitMQ exiting at startup, seen at the start of a full run after Docker
+  had been restarted) could not be reproduced: 30 clean starts on an idle machine and under CPU load, and 6 real
+  runs after the change. The logs were always lost with the removed container; the printed logs now keep them.
+  `HANDOFF.md` no longer tells agents to rerun by hand.
+- Verified: the retry loop with a stubbed `compose` (fails twice then works; always fails, stops after three), and
+  six real `docker/bin/test rabbitmq` runs.
+
