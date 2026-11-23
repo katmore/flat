@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=proxy_ca \
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/Imagick/imagick/tar.gz/42c07db5d0075b26471397fb6de8ffb4bd2692d8 -o /tmp/source.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/Imagick/imagick/tar.gz/70087bab33eab913e99ac77d64d04d1a2fd0b7b0 -o /tmp/source.tar.gz; \
     mkdir /tmp/imagick; tar -xzf /tmp/source.tar.gz -C /tmp/imagick --strip-components=1; \
     cd /tmp/imagick; phpize; ./configure; make -j2; make install; \
     docker-php-ext-enable imagick; rm -rf /tmp/imagick /tmp/source.tar.gz

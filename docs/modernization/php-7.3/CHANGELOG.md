@@ -427,3 +427,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   6.9.13-61, the newest 6.x (was 6.9.10-23). Same configure options. The imagick extension and the
   MongoDB extension layers rebuilt on top of it.
 - Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-231 — Tooling upgrade 4 of 7: the imagick extension
+
+- Kind: tooling. `docker/Dockerfile`: imagick is built from the pinned commit of release 3.8.1 (was an
+  unreleased snapshot that reported its version as `@PACKAGE_VERSION@`). It supports PHP 5.6 and later.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
