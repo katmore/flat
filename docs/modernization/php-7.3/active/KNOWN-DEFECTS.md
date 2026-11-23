@@ -102,6 +102,14 @@ fixed at its cause; "behavior" says what a caller can see.
   non-stringable objects and resources with `bad_param` before form encoding. Scalar, null and
   stringable values retain their encoding; nested JSON bodies are unaffected.
 
+### KD-94 - flat-webapp's log check fails when the host user is not the container user
+
+- Category: A. Found while verifying the review fixes (not in the adversarial review). `docker/bin/test`
+  made the log copy with `mktemp` (0600); the container, running as 1000 on a root host, could not read
+  it, and the check reported "Usage". A green run failed. Fixed (MOD-240): the copy is readable and the
+  script names an unreadable file separately from a wrong argument count; a test covers both messages.
+- **Fixed.**
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; none is open.

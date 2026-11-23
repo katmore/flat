@@ -509,3 +509,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   `sebastian/*` packages, relocked on the 7.3.33 platform; `assertRegExp` became
   `assertMatchesRegularExpression` (2, `tests/Unit/DependencyLockTest.php` there). No assertion changed otherwise.
 - Verified: `docker/bin/test` in flat-webapp, 66 tests, 196 assertions, clean server log.
+
+## MOD-240 — Fix (KD-94): flat-webapp's log check on a root host (v1.73.1)
+
+- Kind: tooling bug fix, in flat-webapp (its `docker/bin/test` and its log check script), owner's decision
+  (2026-11-23). `mktemp` made the log copy private, so a container running as another user could not read
+  it and the check failed with a misleading "Usage". The copy is now readable; an unreadable file and a
+  wrong argument count have separate messages; a test covers both. Shown failing before the fix and
+  passing after it from a root host with files owned by 1000, with no workaround.
