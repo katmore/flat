@@ -142,6 +142,18 @@ consumers saw before, what they see now, and what to search for in their code.
   and any workaround that sets the profile fields another way.
 - Verified: yes (unit test fails without the fix; real-sandbox result from the owner).
 
+### MOD-259 (KD-98) — Authorize.Net wrappers raise `no_response` when there is no usable answer
+
+- Before: when the request to Authorize.Net failed (no connection, a timeout, an untrusted certificate, a
+  non-XML reply), `customer` and `subscription` methods returned as if it had worked: `update()` and the delete
+  methods returned normally, `create()` returned no id, and no exception was raised.
+- After: they throw `flat\cloud\authorize\no_response` (a subclass of `unexpected_response`), whose message says
+  there was no usable reply, that it may be a temporary issue, and that the request may or may not have been
+  processed. An answer that is an error (`response_error`) is unchanged.
+- Search consumer code for: `flat\cloud\authorize\customer`, `flat\cloud\authorize\subscription`, `unexpected_response`,
+  `response_error`; add a handler (retry, or check before repeating a payment-related call).
+- Verified: yes (unit tests fail without the fix; seen live on the sandbox with TLS failing).
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

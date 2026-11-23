@@ -504,7 +504,7 @@ abstract class subscription extends \flat\cloud\authorize
     */
    protected function _get_ARB() {
       if (!$this->_ARB) {
-         $arb = new \AuthorizeNetARB(
+         $arb = new AuthorizeNetARB(
                $this->_get_login_id(),
                $this->_get_transaction_key()
          );

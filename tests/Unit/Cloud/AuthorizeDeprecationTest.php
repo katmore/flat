@@ -14,6 +14,6 @@ class AuthorizeDeprecationTest extends TestCase
             $declaring++;
             $this->assertStringContainsString('@deprecated since v1.73.1', $code, $file->getPathname().' must be marked deprecated');
         }
-        $this->assertSame(45, $declaring);
+        $this->assertSame(47, $declaring);
     }
 }

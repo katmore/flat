@@ -141,18 +141,16 @@ fixed at its cause; "behavior" says what a caller can see.
 
 ### KD-98 - The legacy Authorize.Net wrappers report no error when the request itself fails
 
-- Category: B (intent needed). Found by the sandbox tests (MOD-255). The legacy SDK classes flat wraps
-  (`AuthorizeNetCIM`, `AuthorizeNetARB`) return an empty response when the HTTPS request fails (no connection,
-  a certificate the SDK does not trust, a timeout). `isError()` is then `false` and the message code and text
-  are `false`, so `flat\cloud\authorize\customer` and `subscription` hand the caller what looks like a
-  success. A refused request (for example `E00007`) does come back as a `response_error`.
-- Options:
-  - (a) Throw a `response_error`-style exception when there is no response. Callers get an error where they got
-    silence; this is a behavior change. Recommended if the wrappers are fixed at all.
-  - (b) Leave it: the wrappers are deprecated (MOD-253) and go in v2.X. Record it in the release notes.
-- Recommendation: (b) for v1.73.1, unless the known consumer can hit transport failures in production, which only
-  the owner can say.
-- **Open** (Q49).
+- Category: B, answered (owner, 2026-11-23: it should fail, with a message saying what happened and that it may
+  be temporary). Found by the sandbox tests (MOD-255). The legacy SDK classes flat wraps (`AuthorizeNetCIM`,
+  `AuthorizeNetARB`) return an empty response when the HTTPS request fails (no connection, a certificate the SDK
+  does not trust, a timeout). `isError()` was then `false` and the message code and text `false`, so
+  `flat\cloud\authorize\customer` and `subscription` handed the caller what looked like a success.
+- Fixed (MOD-259): flat's client classes (`AuthorizeNetCIM`, and a new `AuthorizeNetARB` that the subscription
+  wrapper now uses) throw the new `flat\cloud\authorize\no_response`, a subclass of `unexpected_response`, when
+  there is no reply or the reply is not an Authorize.Net XML response. A refused request (for example `E00007`)
+  is still a `response_error`.
+- **Fixed.**
 
 ### KD-99 - Customer profile fields never reach the SDK object, so create and update send an empty profile
 
@@ -167,7 +165,7 @@ fixed at its cause; "behavior" says what a caller can see.
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough. Questions 37 to 48 are answered; Q49 is open.
+Each has a recommendation; "agree" is enough. Questions 37 to 49 are answered; none is open.
 
 37. **JShrink: what did `continue` in the regex branch mean?** In
     `src/flat/vendor/tedious/JShrink/minifier.php`, `loop()`, a `continue;` sits inside two
@@ -335,5 +333,6 @@ Each has a recommendation; "agree" is enough. Questions 37 to 48 are answered; Q
     classes, so the wrappers are deprecated in v1.73.1 and removed in v2.X (`DEFERRED-V2.md` item 2). Done:
     `@deprecated` on every wrapper class (MOD-253).
 
-49. **KD-98: should the legacy wrappers raise an error when the request itself fails?** See KD-98. Recommend (b):
-    leave it, document it, remove the wrappers in v2.X.
+49. **KD-98: should the legacy wrappers raise an error when the request itself fails?** Recommended leaving it.
+    **Answered (owner, 2026-11-23):** it should fail, with a message that says what happened and that it may be
+    temporary. Done as KD-98 (MOD-259).

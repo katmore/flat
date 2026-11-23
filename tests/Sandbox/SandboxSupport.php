@@ -103,7 +103,7 @@ class SandboxApi extends \flat\cloud\authorize
 
 /**
  * flat's legacy CIM client with the same CA arrangement: the old SDK also trusts only its bundled CA file.
- * It also throws when the request itself fails: the SDK would return an empty response that looks like no error.
+ * A failed request gives an empty response, which flat's client turns into a no_response exception (KD-98).
  */
 class SandboxCim extends \flat\cloud\authorize\AuthorizeNetCIM
 {
@@ -118,10 +118,6 @@ class SandboxCim extends \flat\cloud\authorize\AuthorizeNetCIM
             CURLOPT_SSL_VERIFYPEER=>true, CURLOPT_SSL_VERIFYHOST=>2, CURLOPT_HTTPHEADER=>['Content-Type: text/xml']]);
         if ($this->ca) curl_setopt($curl, CURLOPT_CAINFO, $this->ca);
         $response = curl_exec($curl);
-        if ($response === false) {
-            $error = curl_error($curl); curl_close($curl);
-            throw new \RuntimeException('Authorize.Net sandbox request failed: ' . $error);
-        }
         curl_close($curl);
         return $this->_handleResponse($response);
     }

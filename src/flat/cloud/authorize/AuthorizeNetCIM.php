@@ -42,4 +42,7 @@ class AuthorizeNetCIM extends \AuthorizeNetCIM {
       libxml_use_internal_errors(true);
       parent::__construct($api_login_id,$transaction_key);
    }
+   protected function _handleResponse($response) {
+      return no_response::checked(parent::_handleResponse($response));
+   }
 }

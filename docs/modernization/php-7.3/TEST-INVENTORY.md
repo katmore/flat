@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 810 test methods in 97 files, running 1488 test cases.
-- 131 methods use a data provider (one case per data set).
+- 815 test methods in 98 files, running 1497 test cases.
+- 132 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -152,6 +152,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 ### `tests/Unit/Cloud/AuthorizeDeprecationTest.php` (1)
 
 - `testEveryAuthorizeNetWrapperDeclarationIsMarkedDeprecated` (line 6)
+
+### `tests/Unit/Cloud/AuthorizeNoResponseTest.php` (5)
+
+- `testAnAuthorizeNetResponseIsReturnedUnchanged` (line 39)
+- `testAnAuthorizeNetErrorIsStillAnAnswerNotNoResponse` (line 45)
+- `testNoUsableReplyRaisesNoResponseThatSaysWhatHappened` (line 54): 5 data-provider cases
+- `testBothFlatClientsRaiseNoResponse` (line 71)
+- `testAWrapperCallRaisesInsteadOfLookingSuccessful` (line 82)
 
 ### `tests/Unit/Cloud/AuthorizeSubscriptionTest.php` (19)
 

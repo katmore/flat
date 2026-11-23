@@ -28,6 +28,10 @@ Each has a "before, after, what to search for" entry in `docs/modernization/php-
   MongoDB 5.1 and later. They relied on a server command that MongoDB removed.
 - **RabbitMQ:** the default queue works on RabbitMQ 4, where it is declared durable (an explicit `durable` or
   `exclusive` is never overridden); older brokers are unchanged. The driver works with php-amqplib 2 and 3.
+- **Authorize.Net wrappers (deprecated):** `customer::create()` and `update()` now send the profile fields
+  (`merchantCustomerId`, `description`, `email`); before, the profile was empty and the real service refused it
+  (`E00041`). When Authorize.Net gives no usable answer (no connection, timeout, untrusted certificate), the
+  wrappers throw `no_response`; before, the call returned as if it had worked.
 
 ## Tooling and services
 

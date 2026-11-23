@@ -669,3 +669,15 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   `FLAT_TEST_ANET_SANDBOX=1`. Without that flag and without `FLAT_TEST_ANET_URL` the tests throw before any
   request, so keys in a shell can never make `all` or `anet` reach the sandbox.
 
+## MOD-259 — KD-98 fixed: the Authorize.Net wrappers raise `no_response` (Q49 answered)
+
+- Kind: behavior change (owner's decision, 2026-11-23). New exception `flat\cloud\authorize\no_response`
+  (extends `unexpected_response`); `flat\cloud\authorize\AuthorizeNetCIM` checks every reply, and a new
+  `flat\cloud\authorize\AuthorizeNetARB` (used by `subscription` in place of the SDK's own class) does the same. See
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). Both new classes carry `@deprecated since v1.73.1`;
+  the deprecation test now expects 47 declarations. The sandbox test client no longer throws by itself.
+- Verified: new `AuthorizeNoResponseTest` fails without the fix; run live without the proxy CA, the sandbox test
+  shows the new message. The release notes mention both Authorize.Net fixes.
+- Verified: `docker/bin/test all --coverage`, 1,497 tests, 6,590 assertions, 100% (334 classes, 1,068 methods), no PHP
+  message. The new test restores libxml's reporting mode, which flat's CIM constructor leaves switched to internal capture.
+
