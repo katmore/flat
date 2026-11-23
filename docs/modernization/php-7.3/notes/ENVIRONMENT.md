@@ -23,7 +23,7 @@ Everything is defined in this repository (`docker/Dockerfile`, `docker/docker-co
 
 ## Extensions (built from the commits pinned in the Dockerfile, unchanged from 7.2)
 
-- xdebug 2.9.8, mongodb 1.16.2 (with libmongoc), imagick 3.8.1 (the release tag's commit; a build from Git reports its version as
+- xdebug 3.1.6 (mode `develop,coverage`), mongodb 1.16.2 (with libmongoc), imagick 3.8.1 (the release tag's commit; a build from Git reports its version as
   `@PACKAGE_VERSION@`) against ImageMagick 6.9.13-61 built from source, sockets. The image build checks the exact PHP version and that these extensions load.
 
 ## Services (unchanged)

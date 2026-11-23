@@ -440,3 +440,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   It is not: an extension built from a Git commit never fills in `@PACKAGE_VERSION@`, so
   `phpversion('imagick')` shows it for any release. The pin is the commit of the `3.8.1` tag
   (`70087bab33eab913e99ac77d64d04d1a2fd0b7b0`); that is how the version is known.
+
+## MOD-233 — Tooling upgrade 5 of 7: Xdebug
+
+- Kind: tooling. `docker/Dockerfile`: Xdebug 3.1.6 (the last release for PHP 7.3; 3.2 needs PHP 8.0) from
+  its pinned commit, was 2.9.8. Xdebug 3 needs its mode set: `xdebug.mode=develop,coverage` (develop
+  keeps the enhanced diagnostics 2.x had by default; coverage is what `--coverage` needs). No error
+  reporting setting is touched; the image still reports `E_ALL`.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.

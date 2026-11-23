@@ -17,10 +17,12 @@ FROM php:7.3-cli@sha256:bd6f2dc7a4e4537e927355c94a74c3022911aa504278f5f0fd94016c
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/xdebug/xdebug/tar.gz/3e09864af111d63b7eb486d88bfc6eb7d6429b85 -o /tmp/source.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/xdebug/xdebug/tar.gz/78ef02f7374db83e152751b4567b5a1bc9d9e86a -o /tmp/source.tar.gz; \
     mkdir /tmp/xdebug; tar -xzf /tmp/source.tar.gz -C /tmp/xdebug --strip-components=1; \
     cd /tmp/xdebug; phpize; ./configure --enable-xdebug; make -j2; make install; \
-    docker-php-ext-enable xdebug; rm -rf /tmp/xdebug /tmp/source.tar.gz
+    docker-php-ext-enable xdebug; \
+    echo 'xdebug.mode=develop,coverage' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    rm -rf /tmp/xdebug /tmp/source.tar.gz
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
