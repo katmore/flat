@@ -495,3 +495,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   tried first and failed: flat's default queue declaration (non-durable, non-exclusive) is denied by
   RabbitMQ 4 (Q47, open). 3.13 is the newest where the unchanged library works.
 - Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-238 — Tooling upgrade 8 of 9: flat-webapp's Composer image
+
+- Kind: tooling, in flat-webapp (`docker/compose.yml` and `docker/Dockerfile.test`): `composer:2.11`
+  pinned by digest, was 2.2. Installs from the existing locks are unchanged.
+- Verified: `docker/bin/test` in flat-webapp, 66 tests, clean server log (run from a scratch copy; see the
+  root-run log bug reported with the adversarial review fixes, not yet fixed).
