@@ -40,5 +40,6 @@ The test image is `flat-tests-php73` (it was `flat-tests-php72`).
 At the newest release PHP 7.3.33 allows: `php-amqplib` 3.7.5, `azuyalabs/yasumi` 2.4.0 (2.5 and later need a newer
 PHP), `aws/aws-sdk-php` 3.337.3 (3.368 and later need PHP 8.1), `mongodb/mongodb` 1.16.1 (1.17 and later need the
 1.17 extension, PHP 7.4), `alcaeus/mongo-php-adapter` 1.2.5 (the last 1.x), Guzzle 7.17.0 and the rest of the
-lock. Held: `authorizenet/authorizenet` 1.9.9 (2.x removes the classes flat is built on; Q48).
+lock. Held: `authorizenet/authorizenet` 1.9.9 (2.x removes the classes flat's Authorize.Net wrappers are built on; the
+wrappers are deprecated and go in v2.X, Q48).
 

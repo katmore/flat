@@ -33,6 +33,11 @@
 namespace flat\cloud\authorize;
 use \flat\cloud\authorize as authorize;
 
+/**
+ * @deprecated since v1.73.1. Authorize.Net no longer supports the legacy SDK classes this is built on
+ *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see
+ *    docs/modernization/DEFERRED-V2.md, item 2.
+ */
 abstract class subscription extends \flat\cloud\authorize
    implements 
       \flat\cloud\ccgateway\subscription,

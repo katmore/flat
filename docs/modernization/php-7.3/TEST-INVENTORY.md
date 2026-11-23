@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 794 test methods in 94 files, running 1471 test cases.
-- 130 methods use a data provider (one case per data set).
+- 803 test methods in 95 files, running 1481 test cases.
+- 131 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -135,6 +135,10 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testUnexpectedResponseRetainsOptionalDetails` (line 117)
 - `testFactoryMapsActualSdkCodesToResponseKindsAndStatus` (line 125): 4 data-provider cases
 - `testUnknownSdkResponseCodeStillReturnsNull` (line 137)
+
+### `tests/Unit/Cloud/AuthorizeDeprecationTest.php` (1)
+
+- `testEveryAuthorizeNetWrapperDeclarationIsMarkedDeprecated` (line 6)
 
 ### `tests/Unit/Cloud/AuthorizeSubscriptionTest.php` (19)
 
@@ -894,7 +898,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testFailedCachedPingEvictsTheActualClientAndRetriesAfterATransportOutage` (line 35): groups: services, mongo
 
-### `tests/Unit/Db/Mongo/CrudTest.php` (22)
+### `tests/Unit/Db/Mongo/CrudTest.php` (24)
 
 - `testNonDuplicateServerInsertFailureIsRethrownUnchanged` (line 24): groups: services, mongo
 - `testLegacyAndModernCollectionsUseTheSameDatabase` (line 58): groups: services, mongo
@@ -911,37 +915,41 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testReplacementOperatorAndNamespacedWrites` (line 170): groups: services, mongo
 - `testUpdatedRecordCountUsesTheRealAdapterWriteResult` (line 183): groups: services, mongo
 - `testUpdateCountModesForReplacementAndOperators` (line 187): groups: services, mongo
-- `testInvalidDocumentWritePreservesTheDriverException` (line 195): groups: services, mongo
-- `testLoadDefaultsAliasesAndStartWindow` (line 200): groups: services, mongo
-- `testLoadOptionsAreValidated` (line 215): 9 data-provider cases; groups: services, mongo
-- `testInvalidReadParametersFail` (line 225): 6 data-provider cases; groups: services, mongo
-- `testMissingRecordsThrow` (line 233): groups: services, mongo
-- `testMissingDeletesAndInvalidWriteParameters` (line 237): groups: services, mongo
-- `testWriteParameterValidation` (line 244): 5 data-provider cases; groups: services, mongo
+- `testAnUpdateThatChangesNothingStillCountsTheMatchedRecord` (line 195): groups: services, mongo
+- `testAnUpdateThatMatchesNothingIsNotModified` (line 199): groups: services, mongo
+- `testInvalidDocumentWritePreservesTheDriverException` (line 204): groups: services, mongo
+- `testLoadDefaultsAliasesAndStartWindow` (line 210): groups: services, mongo
+- `testLoadOptionsAreValidated` (line 225): 9 data-provider cases; groups: services, mongo
+- `testInvalidReadParametersFail` (line 235): 6 data-provider cases; groups: services, mongo
+- `testMissingRecordsThrow` (line 243): groups: services, mongo
+- `testMissingDeletesAndInvalidWriteParameters` (line 247): groups: services, mongo
+- `testWriteParameterValidation` (line 254): 5 data-provider cases; groups: services, mongo
 
-### `tests/Unit/Db/Mongo/DriverTest.php` (21)
+### `tests/Unit/Db/Mongo/DriverTest.php` (23)
 
-- `testUriAndOptionsDerivationDoesNotNeedADatabase` (line 51)
-- `testCollectionNamesAndDatabaseFallbacks` (line 66)
-- `testInvalidCollectionNamesFail` (line 75): 2 data-provider cases
-- `testCollectionNameMustBeAvailable` (line 80)
-- `testDatabaseMustBeAvailableWithoutInterfaceOrFallback` (line 84)
-- `testDatabaseNameMustHaveFallback` (line 88)
-- `testInvalidDatabaseProviderFailsWithAUsableException` (line 93): 2 data-provider cases
-- `testInvalidCommandsFailBeforeConnectionAccess` (line 99): 3 data-provider cases
-- `testAffectedRecordFailuresPreserveCurrentPolicy` (line 105): 4 data-provider cases
-- `testAffectedRecordCountIsAnInteger` (line 116)
-- `testInvalidCollectionNameFailsBeforeDatabaseAccess` (line 121)
-- `testExplicitLazyClientDefersNetworkFailureUntilTheFirstCommand` (line 125)
-- `testEagerConnectionRetriesRealNetworkFailuresAndDoesNotCacheThem` (line 133)
-- `testLazyClientsAreReusedWithoutRecordingASuccessfulPing` (line 143)
-- `testCollectionInterfaceRejectsManualNameChanges` (line 150)
-- `testShortnameInterfaceRejectsManualNameChanges` (line 154)
-- `testInvalidDatabaseCollectionFactoryIsRejected` (line 158)
-- `testClientLoadsWithoutOptionsAndWithoutWarnings` (line 167): groups: services, mongo
-- `testPingOffsetIsSanitizedAndStoredWithClientCache` (line 180): groups: services, mongo
-- `testPingTimestampWithoutAnOffsetIsNow` (line 194): groups: services, mongo
-- `testRefreshedPingKeepsTheConfiguredOffset` (line 208): groups: services, mongo
+- `testUriAndOptionsDerivationDoesNotNeedADatabase` (line 57)
+- `testCollectionNamesAndDatabaseFallbacks` (line 72)
+- `testInvalidCollectionNamesFail` (line 81): 2 data-provider cases
+- `testCollectionNameMustBeAvailable` (line 86)
+- `testDatabaseMustBeAvailableWithoutInterfaceOrFallback` (line 90)
+- `testDatabaseNameMustHaveFallback` (line 94)
+- `testInvalidDatabaseProviderFailsWithAUsableException` (line 99): 2 data-provider cases
+- `testInvalidCommandsFailBeforeConnectionAccess` (line 105): 3 data-provider cases
+- `testAffectedRecordFailuresPreserveCurrentPolicy` (line 111): 4 data-provider cases
+- `testAffectedRecordCountIsAnInteger` (line 122)
+- `testAffectedRecordsComeFromThePreviousUpdateResultNotFromTheServer` (line 127)
+- `testAnUpdateResultWithoutMatchesKeepsTheNotModifiedPolicy` (line 134): 2 data-provider cases
+- `testInvalidCollectionNameFailsBeforeDatabaseAccess` (line 142)
+- `testExplicitLazyClientDefersNetworkFailureUntilTheFirstCommand` (line 146)
+- `testEagerConnectionRetriesRealNetworkFailuresAndDoesNotCacheThem` (line 154)
+- `testLazyClientsAreReusedWithoutRecordingASuccessfulPing` (line 164)
+- `testCollectionInterfaceRejectsManualNameChanges` (line 171)
+- `testShortnameInterfaceRejectsManualNameChanges` (line 175)
+- `testInvalidDatabaseCollectionFactoryIsRejected` (line 179)
+- `testClientLoadsWithoutOptionsAndWithoutWarnings` (line 188): groups: services, mongo
+- `testPingOffsetIsSanitizedAndStoredWithClientCache` (line 201): groups: services, mongo
+- `testPingTimestampWithoutAnOffsetIsNow` (line 215): groups: services, mongo
+- `testRefreshedPingKeepsTheConfiguredOffset` (line 229): groups: services, mongo
 
 ### `tests/Unit/Db/Pdo/ConnectionTest.php` (7)
 
@@ -982,19 +990,23 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testDeclaredJoinClauseCannotContainAStatementSeparator` (line 145)
 - `testNotFoundMeansNoRowsWereFetched` (line 151)
 
-### `tests/Unit/Db/RabbitMqTest.php` (11)
+### `tests/Unit/Db/RabbitMqTest.php` (15)
 
-- `testInitialConnectionAndChannelAreReturnedAndReused` (line 55): groups: services, rabbitmq
-- `testChannelCanEstablishItsOwnConnection` (line 69): groups: services, rabbitmq
-- `testQueueDeclarationAndPublishUseDocumentedParameters` (line 79): groups: services, rabbitmq
-- `testExplicitRoutingMessageAndCommandPaths` (line 94): groups: services, rabbitmq
-- `testProviderOverridesDefaultsAndTrimsStringParameters` (line 109): groups: services, rabbitmq
-- `testMissingConnectionParametersAreRejected` (line 116): 2 data-provider cases
-- `testMissingHostIsRejectedBeforeNetworkConnection` (line 123)
-- `testEmptyMessageIsRejected` (line 128)
-- `testConnectionCacheKeyDependsOnTheConnectionParameters` (line 133)
-- `testMissingQueueIsRejected` (line 147): groups: services, rabbitmq
-- `testConfigNamespaceSuppliesPresentKeysAndKeepsDefaults` (line 153)
+- `testInitialConnectionAndChannelAreReturnedAndReused` (line 57): groups: services, rabbitmq
+- `testChannelCanEstablishItsOwnConnection` (line 73): groups: services, rabbitmq
+- `testQueueDeclarationAndPublishUseDocumentedParameters` (line 83): groups: services, rabbitmq
+- `testPhpAmqpLib2CallersStillGetTheLegacyConnectionClass` (line 101): groups: services, rabbitmq
+- `testTheDefaultQueueIsDurableOnRabbitMq4` (line 125): groups: services, rabbitmq
+- `testAnExplicitExclusiveQueueKeepsItsTransientDefault` (line 137): groups: services, rabbitmq
+- `testAnExplicitDurableChoiceIsNeverOverridden` (line 149): groups: services, rabbitmq
+- `testExplicitRoutingMessageAndCommandPaths` (line 160): groups: services, rabbitmq
+- `testProviderOverridesDefaultsAndTrimsStringParameters` (line 175): groups: services, rabbitmq
+- `testMissingConnectionParametersAreRejected` (line 182): 2 data-provider cases
+- `testMissingHostIsRejectedBeforeNetworkConnection` (line 189)
+- `testEmptyMessageIsRejected` (line 194)
+- `testConnectionCacheKeyDependsOnTheConnectionParameters` (line 199)
+- `testMissingQueueIsRejected` (line 213): groups: services, rabbitmq
+- `testConfigNamespaceSuppliesPresentKeysAndKeepsDefaults` (line 219)
 
 ### `tests/Unit/Input/MapTest.php` (6)
 

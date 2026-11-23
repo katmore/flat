@@ -603,3 +603,16 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   PHP 7.3.33 allows (see [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)), except `authorizenet/authorizenet`:
   2.0.4 removes the classes flat's public API exposes. Q48 asks how to proceed; `DEFERRED-V2.md` item 2 now
   says the port can ship in v1.X.
+
+## MOD-253 — Authorize.Net wrappers deprecated; removal in v2.X (Q48 answered)
+
+- Kind: documentation in code, owner's decision (2026-11-23): not ported (Authorize.Net does not support the legacy
+  SDK classes), deprecated now, removed in v2.X. All 45 class declarations under `src/flat/cloud/authorize` carry
+  `@deprecated since v1.73.1` (the 3 shim files only `require` another file); no runtime notice. New test
+  `AuthorizeDeprecationTest` fails if one loses its tag (shown failing). `DEFERRED-V2.md` item 2 is now "Remove the
+  Authorize.Net wrappers"; the approved-exception wording in `AGENTS.md` and in the test helper says "removed".
+  The API comparison was redone against re-dumps of v1.72.0 and v1.73.0 (see `notes/API-COMPARISON.md`).
+- Also: `TEST-INVENTORY.md` is regenerated. It had not been after the tests added in MOD-242, 244 and 246, which the
+  rule requires.
+- Verified: `docker/bin/test all --coverage`, 1,481 tests, 6,546 assertions, 100% (332 classes, 1,065 methods,
+  8,412 statements), no PHP message.

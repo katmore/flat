@@ -304,5 +304,7 @@ Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; n
     deprecation notice (Q41) stays until the port.
     Recommend: do the port as its own task right after v1.73.1, and verify it without a sandbox by first recording
     golden tests of every wrapper call against SDK 1.9.9, then requiring the ported wrappers to give identical
-    results on SDK 2.x. Alternative: start it now, inside v1.73.1. Which? **Open.**
-
+    results on SDK 2.x. Alternative: start it now, inside v1.73.1. Which? 
+    **Answered (owner, 2026-11-23):** the wrappers are not ported. Authorize.Net does not support the old SDK
+    classes, so the wrappers are deprecated in v1.73.1 and removed in v2.X (`DEFERRED-V2.md` item 2). Done:
+    `@deprecated` on every wrapper class (MOD-253).

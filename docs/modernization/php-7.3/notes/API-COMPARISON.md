@@ -29,3 +29,11 @@ php tests/tools/apidump.php compare ../php-7.2/notes/API-V1.72.0.json API-V1.73.
 MOD-221 and MOD-226 add return-reference metadata and require it in both inputs. Re-dump both
 versions with the current tool before making a new comparison; older JSON dumps remain the
 historical record and are rejected as incomplete rather than assumed to describe value returns.
+
+## v1.73.1 against v1.72.0 and v1.73.0
+
+Both tags were re-dumped with the current tool (it refuses old dumps without return-reference data), then
+compared with [API-V1.73.1.json](API-V1.73.1.json): 620 classes in each, and the same two differences against
+both: `flat\db\driver\mongo` gained the protected method `_set_last_update_result()` and the protected property
+`$_last_update_result` (MOD-242). Nothing was removed or changed. `API-V1.73.0.json` here is the re-dump.
+

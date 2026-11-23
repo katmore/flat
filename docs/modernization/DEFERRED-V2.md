@@ -39,20 +39,18 @@ out and then set aside:
 - Tests assert the status, the header and the override; the consumer-impact document records
   the status change back to 405.
 
-## 2. Port the Authorize.Net wrappers to the SDK's current API
+## 2. Remove the Authorize.Net wrappers
 
-**Today (v1.73.0).** flat's `flat\cloud\authorize` wrappers are built on the Authorize.Net SDK's
-classes under `lib/deprecated/` (`AuthorizeNetAIM`, `AuthorizeNetCIM`, `AuthorizeNetARB`, ...). The
-SDK raises an `E_USER_DEPRECATED` notice ("use AuthorizeNet::API instead") when they load, so
-applications that use the wrappers see it too. One test helper discards that notice, as an approved
-exception (`AGENTS.md`).
+**Today (v1.73.1).** flat's `flat\cloud\authorize` wrappers (48 files) are built on the Authorize.Net SDK's
+legacy classes (`AuthorizeNetAIM`, `AuthorizeNetCIM`, `AuthorizeNetARB`, ...). Authorize.Net deprecated those
+in 2018 and no longer supports them; SDK 2.x removed them. Every wrapper class is marked `@deprecated` (no
+runtime notice from flat); the SDK itself raises an `E_USER_DEPRECATED` notice when its legacy classes load, so
+applications using the wrappers see that. One test helper discards it, as an approved exception (`AGENTS.md`).
 
-**Plan for v2.X.** Port the wrappers to the SDK's current API. That changes flat's public API, so
-it cannot go into `v1.X`. Then remove the exception and the helper. (Q41, php-7.3.)
+**Decision (owner, 2026-11-23).** Not ported. Deprecated in v1.73.1, removed in v2.X.
 
-**Update (owner, 2026-11-23).** The public API stays compatible through a workaround, so the port is no longer
-tied to v2.X: it can ship in v1.X with compatibility classes for the SDK types flat exposes. The plan and the
-open decision are Q48 in `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
+**Plan for v2.X.** Remove the wrappers, their tests, the test helper and the approved exception, and stop
+requiring the SDK in the test environment. (Q41 and Q48, php-7.3.)
 
 ## 3. What the checksum of an XML-encoded resource covers
 

@@ -123,6 +123,15 @@ consumers saw before, what they see now, and what to search for in their code.
 - Verified: yes (rabbitmq tests pass on php-amqplib 2.12.3 and 3.7.5; the new test fails without the fix).
 
 
+### MOD-253 — Authorize.Net wrappers deprecated (no behavior change)
+
+- Before: `flat\cloud\authorize\*` were presented as current.
+- After: every class is marked `@deprecated since v1.73.1` (docblock only; flat raises no notice). Authorize.Net
+  no longer supports the SDK classes they wrap, and they will be removed in v2.X. Nothing changes until then.
+- Search consumer code for: `flat\cloud\authorize`, `AuthorizeNetCIM`, `AuthorizeNetARB`, `AuthorizeNetAIM_Response`.
+- Verified: yes (a test fails if a wrapper class loses its tag).
+
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.
