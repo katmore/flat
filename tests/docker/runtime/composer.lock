@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3bb77b1c9c4ffb9f8d010fed4051a73c",
+    "content-hash": "fd489cc5e43b81c08aa0200acf820099",
     "packages": [
         {
             "name": "alcaeus/mongo-php-adapter",
@@ -278,26 +278,33 @@
         },
         {
             "name": "azuyalabs/yasumi",
-            "version": "1.8.0",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azuyalabs/yasumi.git",
-                "reference": "115a3ccd53f45294d3d5f16ca85137cc9826953b"
+                "reference": "083a0d0579fee17e68d688d463bc01098ac2691f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://codeload.github.com/azuyalabs/yasumi/legacy.zip/115a3ccd53f45294d3d5f16ca85137cc9826953b",
-                "reference": "115a3ccd53f45294d3d5f16ca85137cc9826953b",
+                "url": "https://codeload.github.com/azuyalabs/yasumi/legacy.zip/083a0d0579fee17e68d688d463bc01098ac2691f",
+                "reference": "083a0d0579fee17e68d688d463bc01098ac2691f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6.0"
+                "ext-json": "*",
+                "php": ">=7.3"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.6",
-                "fzaninotto/faker": "~1.7",
-                "mikey179/vfsstream": "~1.6",
-                "phpunit/phpunit": "~5.7"
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "infection/infection": "^0.17 | ^0.22",
+                "mikey179/vfsstream": "^1.6",
+                "phan/phan": "^4.0",
+                "phpstan/phpstan": "^0.12.66",
+                "phpunit/phpunit": "^8.5 | ^9.4",
+                "vimeo/psalm": "^4"
+            },
+            "suggest": {
+                "ext-calendar": "For calculating the date of Easter"
             },
             "type": "library",
             "autoload": {
@@ -312,10 +319,12 @@
             "authors": [
                 {
                     "name": "Sacha Telgenhof",
-                    "email": "me@sachatelgenhof.nl"
+                    "email": "me@sachatelgenhof.com",
+                    "role": "Maintainer"
                 }
             ],
-            "description": "Yasumi is an easy PHP Library for calculating national holidays.",
+            "description": "The easy PHP Library for calculating holidays.",
+            "homepage": "https://www.yasumi.dev",
             "keywords": [
                 "Bank",
                 "calculation",
@@ -328,10 +337,18 @@
                 "time"
             ],
             "support": {
+                "docs": "https://www.yasumi.dev",
                 "issues": "https://github.com/azuyalabs/yasumi/issues",
-                "source": "https://github.com/azuyalabs/yasumi/tree/develop"
+                "source": "https://github.com/azuyalabs/yasumi"
             },
-            "time": "2018-02-21T05:23:52+00:00"
+            "funding": [
+                {
+                    "url": "https://www.buymeacoffee.com/sachatelgenhof",
+                    "type": "other"
+                }
+            ],
+            "time": "2021-05-09T09:03:34+00:00",
+            "published-time": "2021-05-09T09:07:34+00:00"
         },
         {
             "name": "doctrine/annotations",

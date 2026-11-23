@@ -573,3 +573,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: tooling. `tests/docker/runtime/composer.json`: `php-amqplib/php-amqplib` `^3.7` (was exactly 2.12.3);
   the lock resolves 3.7.5 (the newest allowing PHP 7.3). The other pins (`authorizenet`, `yasumi`) follow in
   their own entries.
+
+## MOD-248 — Dependency upgrade: yasumi 2.4.0 in the test runtime lock
+
+- Kind: tooling. `tests/docker/runtime/composer.json`: `azuyalabs/yasumi` `^2.4` (was exactly 1.8.0); the lock
+  resolves 2.4.0, the newest allowing PHP 7.3 (2.5 and later need a newer PHP). No flat change was needed.
+- Verified: `docker/bin/test all --coverage`, 1,480 tests, 100%, no PHP message.
