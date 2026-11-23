@@ -22,7 +22,7 @@ services:
       timeout: 5s
       retries: 30
   rabbitmq:
-    image: rabbitmq:3.13-alpine@sha256:d7af1c87c5f1eda13fcfca06db452bf3aeab6619fc3358b68535c0c02c4e52bc
+    image: rabbitmq:4.4-alpine@sha256:3dbd31cb9e4d45dac44de7b73cc45b848028494e98bcab71477386cbd4dc7f56
     environment:
       RABBITMQ_DEFAULT_USER: flatunit
       RABBITMQ_DEFAULT_PASS: flatunit-local-tests

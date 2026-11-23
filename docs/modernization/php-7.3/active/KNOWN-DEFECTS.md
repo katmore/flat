@@ -120,6 +120,15 @@ fixed at its cause; "behavior" says what a caller can see.
   Same answers on old servers; works on 5.1 and later (the test service is MongoDB 9.0).
 - **Fixed.**
 
+### KD-96 - flat's default RabbitMQ queue is rejected by RabbitMQ 4
+
+- Category: A (owner's Q47 decision). `publish()` declared its queue with the defaults (non-durable,
+  non-exclusive), which RabbitMQ 4 denies (`transient_nonexcl_queues`): the broker closed the connection.
+- Fixed (MOD-244): on a RabbitMQ 4 or later broker (read from the version it announces), a queue is declared
+  durable unless the caller chose `durable` or an exclusive queue itself. Older brokers get the same
+  declaration as before; the public API and the defaults in the signature are unchanged.
+- **Fixed.**
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; none is open.
@@ -271,5 +280,6 @@ Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; n
     A caller on a 4.x broker can pass `durable` or `exclusive` itself; the defaults cannot change in
     v1.X (a changed default is a behavior change). Not changed.
     Recommend: note it in the release notes, and decide the default at v2.X (`DEFERRED-V2.md`).
-    Which RabbitMQ version does your consumer run? **Open.**
+    **Answered (owner, 2026-11-23):** the consumer's version does not matter; support the newest broker with a
+    compatible workaround (the API stays). Done: KD-96 (MOD-244) and MOD-245.
 

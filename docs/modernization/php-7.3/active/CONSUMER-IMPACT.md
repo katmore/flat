@@ -99,6 +99,19 @@ consumers saw before, what they see now, and what to search for in their code.
 - Verified: yes (service tests on MongoDB 9.0 and 5.0; unit tests fail without the fix).
 
 
+### MOD-244 (KD-96) — Default queues work on RabbitMQ 4
+
+- Before: `publish()` with a queue name declared it non-durable and non-exclusive. RabbitMQ 4 denies that
+  and closed the connection (`transient_nonexcl_queues is deprecated`), so the default did not work there.
+- After: on a RabbitMQ 4 or later broker the default queue is declared durable (an explicit `durable` or
+  `exclusive` is never overridden). On older brokers nothing changes. A queue that a RabbitMQ 3 broker
+  already holds as non-durable is not affected by a 4.x broker; if an application moves a default queue
+  from a 3.x broker to a 4.x one, its old non-durable declaration does not exist there.
+- Search consumer code for: `publish(` with a queue name or `'queue'=>`, `queue_declare`, `durable`, and
+  anything that redeclares a queue flat declared (a redeclaration must now use `durable` true on RabbitMQ 4).
+- Verified: yes (service tests on RabbitMQ 4.4; on 3.13 the declaration stays non-durable).
+
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

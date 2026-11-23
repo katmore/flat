@@ -542,3 +542,19 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   from the newest down: 9.0 passes, so nothing older is needed. The PHP driver 1.16 (the last for PHP 7.3)
   documents support only up to MongoDB 7.0, but the whole suite passes on 9.0.
 - Verified: `docker/bin/test all --coverage`, 1,476 tests, 100%, no PHP message.
+
+## MOD-244 — Fix (KD-96): default RabbitMQ queues work on RabbitMQ 4 (v1.73.1)
+
+- Kind: behavior change (bug fix), owner's decision on Q47 (2026-11-23). `src/flat/db/driver/rabbitmq.php`:
+  `publish()` declares its queue durable on a RabbitMQ 4 or later broker unless the caller chose `durable` or an
+  exclusive queue; older brokers are unchanged. Tests: two service tests fail without the fix (the default
+  queue, and the documented-parameters test); two more pin that an explicit `exclusive` or `durable` choice is
+  kept. The test's own direct declaration became durable. Checked against 3.13 as well: flat still declares
+  non-durable there (the one test that assumes a 4.x broker fails with the broker's "inequivalent arg
+  'durable'" error). Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Verified: `docker/bin/test all --coverage`, 1,479 tests, 100% (332 classes, 1,065 methods, 8,409 statements).
+
+## MOD-245 — Tooling: the RabbitMQ test service moves to 4.4
+
+- Kind: tooling. `docker/docker-compose.yml`: RabbitMQ 4.4.1 (`4.4-alpine`) pinned by digest, was 3.13.7
+  (MOD-237); `latest` is the same release.
