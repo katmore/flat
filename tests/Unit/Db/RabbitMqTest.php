@@ -91,10 +91,45 @@ class RabbitMqTest extends TestCase
      * @group services
      * @group rabbitmq
      */
+    public function testTheDefaultQueueIsDurableOnRabbitMq4()
+    {
+        $this->driver->connect($this->params);
+        $this->assertSame('default', $this->driver->publish(['queue'=>$this->queue,'msg'=>'default']));
+        // Declaring it again as durable only works when flat declared it durable (RabbitMQ 4 denies transient ones).
+        $this->driver->get_channel()->queue_declare($this->queue, false, true, false, true);
+        $this->assertSame('default', $this->driver->get_channel()->basic_get($this->queue, true)->body);
+    }
+    /**
+     * @group services
+     * @group rabbitmq
+     */
+    public function testAnExplicitExclusiveQueueKeepsItsTransientDefault()
+    {
+        $this->driver->connect($this->params);
+        $this->assertSame('mine', $this->driver->publish(['queue'=>['queue'=>$this->queue,'exclusive'=>true],'msg'=>'mine']));
+        // Same attributes again: fails with PRECONDITION_FAILED if flat had made it durable.
+        $this->driver->get_channel()->queue_declare($this->queue, false, false, true, true);
+        $this->assertSame('mine', $this->driver->get_channel()->basic_get($this->queue, true)->body);
+    }
+    /**
+     * @group services
+     * @group rabbitmq
+     */
+    public function testAnExplicitDurableChoiceIsNeverOverridden()
+    {
+        $this->driver->connect($this->params);
+        $this->assertSame('kept', $this->driver->publish(['queue'=>['queue'=>$this->queue,'durable'=>false,'exclusive'=>true],'msg'=>'kept']));
+        $this->driver->get_channel()->queue_declare($this->queue, false, false, true, true);
+        $this->assertSame('kept', $this->driver->get_channel()->basic_get($this->queue, true)->body);
+    }
+    /**
+     * @group services
+     * @group rabbitmq
+     */
     public function testExplicitRoutingMessageAndCommandPaths()
     {
         $this->driver->connect($this->params);
-        $this->driver->get_channel()->queue_declare($this->queue, false, false, false, true);
+        $this->driver->get_channel()->queue_declare($this->queue, false, true, false, true);
         $this->assertSame('direct', $this->driver->publish($this->queue, 'direct'));
         $this->assertSame('direct', $this->driver->get_channel()->basic_get($this->queue, true)->body);
         $this->assertSame('object', $this->driver->command(['publish'=>['routing_key'=>$this->queue,
