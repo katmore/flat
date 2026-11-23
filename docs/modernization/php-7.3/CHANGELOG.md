@@ -535,3 +535,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   still counts its match; no match is not modified), three unit tests prove the count does not call the
   server; the unit ones fail without the fix. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
 - Verified: `docker/bin/test all --coverage`, 1,476 tests, 100% (332 classes, 1,064 methods, 8,401 statements).
+
+## MOD-243 — Tooling: the MongoDB test service moves to 9.0
+
+- Kind: tooling. `docker/docker-compose.yml`: MongoDB 9.0 (9.0.8) pinned by digest, was 5.0 (MOD-236). Tried
+  from the newest down: 9.0 passes, so nothing older is needed. The PHP driver 1.16 (the last for PHP 7.3)
+  documents support only up to MongoDB 7.0, but the whole suite passes on 9.0.
+- Verified: `docker/bin/test all --coverage`, 1,476 tests, 100%, no PHP message.

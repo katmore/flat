@@ -15,7 +15,7 @@ services:
       FLAT_TEST_MONGODB_URI: mongodb://mongo:27017
       FLAT_TEST_RABBITMQ_HOST: rabbitmq
   mongo:
-    image: mongo:5.0@sha256:41108d183e972dcbf98d09ed83f6cfc89a471a3f15d06f9d64a95e45d9db8dd2
+    image: mongo:9.0@sha256:b0c835c26e5997413e985000f1013c275377cd9607761c1784d486f6dd620b7f
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand('ping').ok ? 0 : 1)"]
       interval: 2s
