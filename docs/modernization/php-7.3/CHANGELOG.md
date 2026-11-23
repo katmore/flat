@@ -584,3 +584,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 
 - Kind: tooling. `docker/bin/test-javascript`: `node:26-slim` (Node 26.13.1, the current LTS) pinned by digest,
   was Node 22. The 15 minifier programs still preserve their JavaScript results.
+
+## MOD-250 — Tooling: ImageMagick 7
+
+- Kind: tooling. `docker/Dockerfile`: ImageMagick 7.1.2-36 (the `ImageMagick` repository's pinned commit; the 7.x line,
+  where 6.x is the legacy branch) replaces 6.9.13-61 (MOD-230). Same configure options; imagick 3.8.1 builds against it.
+- Verified: `docker/bin/test all --coverage`, 1,480 tests, 100%, no PHP message.
