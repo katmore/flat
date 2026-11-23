@@ -400,3 +400,15 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   JSON compatibility checks. Consumer impact recorded and inventory regenerated.
 - Validation: all 1,471 tests pass on PHP 7.3.33 (6,480 assertions, MongoDB/RabbitMQ included),
   with 100% reported class, method and line coverage.
+
+## MOD-228 — Tooling upgrade 1 of 7: test-lock packages (within their constraints)
+
+- Kind: tooling, owner's instruction (2026-11-23): upgrade every tool PHP 7.3 allows, one at a time
+  (the php-7.3 handoff had said "nothing else"; that applied to the PHP step only).
+- `tests/docker/tools/composer.lock`: PHPUnit 8.5.56 to 8.5.57. `tests/docker/runtime/composer.lock`:
+  Guzzle 7.17.0, `guzzlehttp/promises` 2.6.2, `guzzlehttp/psr7` 2.13.6, jmespath 2.10.0, phpseclib
+  3.0.59. `php-token-stream` stays at 3.1.3: Composer offered 4.0.4, a 2020 release of an abandoned
+  package that only sorts higher (it leaves with PHPUnit 9). Links and `plugin-api-version` keep the
+  old lock's form. Already the newest PHP 7.3 allows, so unchanged: `mongodb/mongodb` 1.16.1, the
+  AWS SDK 3.337.3, the MongoDB extension 1.16.2 (1.17 needs PHP 7.4).
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
