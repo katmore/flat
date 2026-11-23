@@ -21,7 +21,10 @@ trait PhpSubprocess
             if ($coverage !== null) {
                 $this->assertFileExists($report);
                 // Merge only genuine Xdebug execution data collected at child shutdown.
-                $coverage->append(unserialize(file_get_contents($report), ['allowed_classes'=>false]),$this);
+                $coverage->append(
+                    \SebastianBergmann\CodeCoverage\RawCodeCoverageData::fromXdebugWithoutPathCoverage(unserialize(file_get_contents($report), ['allowed_classes'=>false])),
+                    $this
+                );
             }
             return [$status,$out,$err];
         } finally {

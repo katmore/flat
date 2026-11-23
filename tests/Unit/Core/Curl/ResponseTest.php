@@ -69,7 +69,7 @@ namespace flat\test\Unit\Core\Curl {
             $copy = tempnam(sys_get_temp_dir(), 'flat-copy-');
             try { $this->assertSame($copy, $response->get_file($copy)); $this->assertSame(file_get_contents($file), file_get_contents($copy)); }
             finally { unlink($copy); }
-            unset($response); $this->assertFileNotExists($file);
+            unset($response); $this->assertFileDoesNotExist($file);
         }
         public function testCallerProvidedFilePersists()
         {
@@ -86,7 +86,7 @@ namespace flat\test\Unit\Core\Curl {
             $response = new response($this->config(), ['save','use_dom']);
             $file = $response->get_file(); $this->assertFileExists($file);
             $this->assertNull($response->get_response_data());
-            unset($response); $this->assertFileNotExists($file);
+            unset($response); $this->assertFileDoesNotExist($file);
             foreach (['save', 'save_file'] as $key) {
                 $path = tempnam(sys_get_temp_dir(), 'flat-save-');
                 try {
@@ -103,7 +103,7 @@ namespace flat\test\Unit\Core\Curl {
             $options = CurlDouble::$options[(int) end(CurlDouble::$handles)];
             $path = $options[CURLOPT_COOKIEJAR];
             $this->assertSame($path, $options[CURLOPT_COOKIEFILE]); $this->assertFileExists($path);
-            unset($response); $this->assertFileNotExists($path);
+            unset($response); $this->assertFileDoesNotExist($path);
             $path = tempnam(sys_get_temp_dir(), 'flat-cookie-');
             try { $response = new response($this->config(), ['accept_cookies'], $path); unset($response); $this->assertFileExists($path); }
             finally { unlink($path); }

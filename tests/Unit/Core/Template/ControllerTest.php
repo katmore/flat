@@ -113,7 +113,7 @@ class ControllerTest extends TestCase
                 tmpl::display('missing_design');
                 $this->fail('a design that does not exist must be rejected');
             } catch (\flat\core\controller\tmpl\exception\bad_design $e) {
-                $this->assertRegExp('#/app/Resources/design/tmpl/+missing_design\.php#',$e->getMessage());
+                $this->assertMatchesRegularExpression('#/app/Resources/design/tmpl/+missing_design\.php#',$e->getMessage());
                 $this->assertStringNotContainsString('/tmpl/tmpl',$e->getMessage());
             }
             foreach (['base_dir'=>$this->root,'searched'=>['design/root_dir'=>true],'value'=>['design/root_dir'=>$this->root]] as $name=>$value) {

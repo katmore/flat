@@ -14,9 +14,9 @@
             <directory>tests/Unit</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="false">
+    <coverage processUncoveredFiles="false">
+        <include>
             <directory suffix=".php">src/flat</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </coverage>
 </phpunit>

@@ -87,7 +87,7 @@ class SshTest extends TestCase
         $this->assertTrue(Boundary::$pubkeyCalls[0]['encrypted']);
         $this->assertSame(str_repeat('p',128),Boundary::$pubkeyCalls[0]['passphrase']);
         $this->assertSame('local-fingerprint',$client->get_auth()->fingerprint);
-        foreach (Boundary::$keyPaths as $path) $this->assertFileNotExists($path);
+        foreach (Boundary::$keyPaths as $path) $this->assertFileDoesNotExist($path);
     }
     public function passphrases() { return [[false],[true]]; }
     public function testProvidedFingerprintIsChecked()
@@ -101,7 +101,7 @@ class SshTest extends TestCase
         try { $client->connect(); $this->fail('expected a fingerprint mismatch'); }
         catch (ssh\exception\syserror $e) { $this->assertSame('system error: fingerprint mismatch',$e->getMessage()); }
         $this->assertNotEmpty(Boundary::$keyPaths);
-        foreach (Boundary::$keyPaths as $path) $this->assertFileNotExists($path);
+        foreach (Boundary::$keyPaths as $path) $this->assertFileDoesNotExist($path);
     }
     public function testPublicKeyAuthenticationFailureIsReported()
     {
@@ -120,7 +120,7 @@ class SshTest extends TestCase
         catch (ssh\exception\syserror $e) {}
         // No temporary key file outlives the failure.
         $this->assertNotEmpty(Boundary::$keyPaths);
-        foreach (Boundary::$keyPaths as $path) $this->assertFileNotExists($path);
+        foreach (Boundary::$keyPaths as $path) $this->assertFileDoesNotExist($path);
     }
     public function cryptoFailures() { return [['passphrase'],['process'],['stderr'],['empty']]; }
     /** @dataProvider connectedOperations */

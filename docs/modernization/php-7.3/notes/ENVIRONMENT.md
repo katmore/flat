@@ -11,7 +11,8 @@ Everything is defined in this repository (`docker/Dockerfile`, `docker/docker-co
 - PCRE library 10.32 (PCRE2). PHP 7.2.34 had PCRE 8.41.
 - `error_reporting` is `E_ALL`: the image uses PHP's `php.ini-development` and the build fails if it
   is not. PHPUnit fails on notices, warnings and deprecations (`phpunit.xml.dist`). MOD-200.
-- PHPUnit 8.5.56 (kept; moving PHPUnit is a separate decision).
+- PHPUnit 9.6.39 with php-code-coverage 9.2.32 (9.6 is the last line for PHP 7.3; PHPUnit 10 needs 8.1).
+  Coverage totals under it: 332 classes, 1,063 methods, 8,393 statements, all covered.
 - JavaScript execution checks: Node 22.23.5, separate `node:22-bookworm-slim` container pinned
   to `sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee` in
   `docker/bin/test-javascript`. PHP minification remains on PHP 7.3.33.

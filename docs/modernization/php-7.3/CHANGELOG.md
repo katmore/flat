@@ -448,3 +448,24 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   keeps the enhanced diagnostics 2.x had by default; coverage is what `--coverage` needs). No error
   reporting setting is touched; the image still reports `E_ALL`.
 - Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-234 — Tooling upgrade 6 of 7: PHPUnit 9.6
+
+- Kind: tooling and test code, no library change. PHPUnit 8.5 to 9.6.39 (the last line for PHP 7.3),
+  with php-code-coverage 9.2.32 and the other `sebastian/*` packages; `php-token-stream` leaves with
+  it. `tests/docker/tools/composer.json` and its lock were re-resolved on the 7.3.33 platform;
+  the root `composer.json` dev requirement follows.
+- `phpunit.xml.dist`: coverage settings moved to PHPUnit 9's `<coverage>` element with the same
+  meaning (`src/flat`, uncovered files not processed). The four convert-to-exception settings stay.
+- Tests: `assertFileNotExists` to `assertFileDoesNotExist` (7), `assertRegExp` to
+  `assertMatchesRegularExpression` (5). `assertObjectNotHasAttribute`, deprecated in 9.6 with a
+  replacement that only exists in PHPUnit 10, became `property_exists()` (3, `ResponseTest`).
+  `tests/Support/PhpSubprocess.php` hands the child's raw Xdebug coverage to php-code-coverage 9 as
+  `RawCodeCoverageData` (17 tests failed with a TypeError under `--coverage` until then).
+  No assertion was removed or loosened.
+- Coverage numbers changed, still 100%: classes 332 (was 331), methods 1,063 (1,062), statements
+  8,393 (8,061). Measured against 8.5 on the unit suite: php-code-coverage 9 counts executable lines
+  differently in 264 files (+328 statements net), and counts one class the old one did not:
+  `data/orm/driver/session/exception/bad_param.php` (a one-line constructor), now covered.
+- The inventory generator and the mutation probe work unchanged (inventory output is identical).
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 6,480 assertions, 100%, no PHP message.

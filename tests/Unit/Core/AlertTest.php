@@ -65,7 +65,7 @@ class AlertTest extends TestCase
         $this->assertSame(AlertFixture::class, $data->alert_type);
         $this->assertSame(['sub_collection'=>'subscription'], AlertFixture::$crud->calls[0][2]);
         $this->assertSame($data, AlertFixture::$crud->calls[0][1]);
-        $this->assertRegExp('/^[a-f0-9-]{36}$/', $data->uuid);
+        $this->assertMatchesRegularExpression('/^[a-f0-9-]{36}$/', $data->uuid);
         if ($finite) {
             $this->assertGreaterThanOrEqual($before + $ttl, $data->expires);
             $this->assertLessThanOrEqual(time() + $ttl, $data->expires);
