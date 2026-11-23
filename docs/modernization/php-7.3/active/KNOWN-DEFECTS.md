@@ -229,3 +229,17 @@ Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; n
     **Answered (owner):** reject nested form values explicitly. Done in MOD-227 (KD-93), with
     regressions for array/object form containers, bracketed query strings, invalid field values
     and preserved flat-value/JSON encoding.
+
+46. **flat's Mongo update count cannot work on MongoDB 5.1 or later.**
+    `flat\db\driver\mongo::get_affected_records()` sends the server the `getLastError` command
+    and reads `updatedExisting` and `n` from the answer. MongoDB removed that command in 5.1, so
+    after an update, `update()` with `count` or `not_modified_exception` throws `not_modified`
+    ("no update data found") on a 5.1 or newer server. Found when the test service moved to MongoDB 7.0
+    (`CrudTest::testUpdatedRecordCountUsesTheRealAdapterWriteResult` and one more fail there). The
+    adapter already computes the same fields client-side and returns them from `update()`; flat
+    discards that result. The test service is MongoDB 5.0, the newest where flat works. An
+    application on a newer server hits this today. Not changed (a library change, outside the tooling
+    step). Recommend: read `n` and `updatedExisting` from the `update()` result; same answers on
+    supported servers, and it works on 5.1 and later. Then raise the test service to 7.0.
+    Which MongoDB version does your consumer run? **Open.**
+

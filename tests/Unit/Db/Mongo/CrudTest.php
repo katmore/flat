@@ -195,7 +195,8 @@ class CrudTest extends TestCase
     public function testInvalidDocumentWritePreservesTheDriverException()
     {
         $this->expectException(\MongoException::class);
-        $this->driver->create(['$invalid'=>'document']);
+        // An array _id is rejected by every MongoDB version (a '$'-prefixed field name is not since 5.0).
+        $this->driver->create(['_id'=>[1,2]]);
     }
     public function testLoadDefaultsAliasesAndStartWindow()
     {

@@ -477,3 +477,14 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   classes, one per component. The old php-code-coverage reported 0 classes, methods and statements
   for it even while a test threw it; php-code-coverage 9 reports 1, 1 and 1, covered. Checked by
   running `SessionDriverTest` under both PHPUnit versions. A counting difference only.
+
+## MOD-236 — Tooling upgrade 7a of 7: the MongoDB test service
+
+- Kind: tooling and one test fixture. `docker/docker-compose.yml`: MongoDB 5.0 pinned by digest (was 4.0),
+  health check through `mongosh`. 7.0 (the newest the 1.16 driver supports) was tried first and
+  failed: flat's update count needs the `getLastError` command, removed in MongoDB 5.1 (Q46, open).
+  5.0 is the newest where the unchanged library works.
+- `CrudTest::testInvalidDocumentWritePreservesTheDriverException` used `['$invalid'=>'document']`,
+  which MongoDB 5.0 accepts, so it no longer raised the driver exception. It now writes an array
+  `_id`, which every MongoDB version rejects; same assertion. Passes on 4.0 and on 5.0.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
