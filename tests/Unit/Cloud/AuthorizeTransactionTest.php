@@ -23,7 +23,7 @@ class AuthorizeTransactionTest extends TestCase
         $this->assertSame($kind,$class::typed_name([]));
         $this->assertSame('\\'.$class,transaction::typed_class($kind));
     }
-    public function kinds() { return [['authonly'],['authcapture'],['captureonly']]; }
+    public function kinds() { return [['authonly'],['authcapture']]; }
     public function testLegacyClassNameHookStillUsesItsOriginalCustomerPrefix()
     {
         $this->assertSame('\\flat\\cloud\\authorize\\customer\\authcapture',TransactionClassProbe::legacyClassName('authcapture'));

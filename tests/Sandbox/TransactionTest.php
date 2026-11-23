@@ -78,21 +78,6 @@ class TransactionTest extends TestCase
         $this->assertSame('APPROVED', $response->status);
     }
 
-    public function testACaptureOnlyIsRefusedByTheProcessorAsAResponseError()
-    {
-        // Authorize.Net has withdrawn the Capture Only type (its transaction-types article: "no longer available"); the
-        // sandbox refuses it with E00027 (checked 2026-11-23). The request
-        // itself is well formed (a malformed one would be a schema error), and flat raises the refusal as a response_error.
-        list($customer, $profileId, $paymentId) = $this->customerWithACard();
-        try { $customer->create_transaction($this->charge('captureonly', $profileId, $paymentId, ['approvalCode'=>'ABC123'])); }
-        catch (response_error $refused) {
-            $this->assertSame('E00027', $refused->get_message_code());
-            $this->assertStringContainsString('Capture Only', $refused->getMessage());
-            return;
-        }
-        $this->fail('the processor should have refused Capture Only');
-    }
-
     public function testADeclinedTransactionIsAResponseError()
     {
         // For a customer transaction Authorize.Net documents E00027 ("The transaction was unsuccessful."), and

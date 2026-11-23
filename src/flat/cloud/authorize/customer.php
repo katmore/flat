@@ -471,11 +471,6 @@ implements
       throw new \BadMethodCallException("authorize customer authcapture() is not implemented; use create_transaction() with transactionType 'authcapture'");
    }
    
-   public function captureonly($customerProfileId,$customerPaymentProfileId,array $extra_params=NULL) {
-      // RETIRED by owner decision: never implemented (empty body returned null).
-      throw new \BadMethodCallException("authorize customer captureonly() is not implemented; use create_transaction() with transactionType 'captureonly'");
-   }
-   
    /**
     * creates a payment transaction.
     * 
@@ -483,13 +478,12 @@ implements
     *    array | \flat\cloud\authorize\customer\transaction $params['transaction'] customer transaction object OR
     *       assoc array of transaction specifications:
     *       string $params['transaction']['transactionType'] (required) transaction type. acceptable values are
-    *          'authcapture', 'authonly' and 'captureonly'.
+    *          'authcapture' and 'authonly'.
     *       string $params['transaction']['amount'] (required) amount.
     *       mixed $params['transaction'][(optional)] other transaction fields to specify.
     *    if $params['transaction'] is not specified then ONE of the following is required:
     *       array | \flat\cloud\authorize\customer\transaction\authonly $params['authonly'].
     *       array | \flat\cloud\authorize\customer\transaction\authonly $params['authcapture'].
-    *       array | \flat\cloud\authorize\customer\transaction\authonly $params['captureonly'].
     * 
     * @return \flat\cloud\authorize\customer\transaction\response\success | \flat\cloud\authorize\customer\transaction\response\failure
     * 
@@ -503,7 +497,6 @@ implements
       $transtypes = [
          'authcapture'=>'AuthCapture',
          'authonly'=>'AuthOnly',
-         'captureonly'=>'CaptureOnly',
       ];
       if (isset($params['transaction'])) {
          foreach ($transtypes as $key=>$type) {

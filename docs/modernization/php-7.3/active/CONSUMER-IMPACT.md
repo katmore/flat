@@ -205,6 +205,17 @@ consumers saw before, what they see now, and what to search for in their code.
   `authcapture`, and any workaround that builds the SDK's `AuthorizeNetTransaction` itself.
 - Verified: unit tests (fail without the fix); the real-sandbox result is the owner's next run.
 
+### MOD-270 (KD-106) — Capture Only is removed
+
+- Before: `customer\transaction\captureonly`, `customer::captureonly()` (it always threw `BadMethodCallException`) and
+  `captureonly` in `create_transaction()` existed. Authorize.Net refuses the transaction type (`E00027`: it has
+  withdrawn the method), so a request could never succeed.
+- After: they are gone. `create_transaction()` with `transactionType` `captureonly` throws `bad_param`, and with the
+  `captureonly` key throws `missing_required_param`. The class cannot be loaded and the method does not exist.
+- Search consumer code for: `captureonly`, `CaptureOnly`, `approvalCode`, `profileTransCaptureOnly`. Use `authcapture`,
+  or `authonly` followed by a capture, instead.
+- Verified: yes (unit test; the sandbox's refusal is the owner's run of 2026-11-23).
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

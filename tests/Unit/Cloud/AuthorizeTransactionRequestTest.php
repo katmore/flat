@@ -73,7 +73,7 @@ class AuthorizeTransactionRequestTest extends TestCase
 
     public function transactionKinds()
     {
-        return [['authcapture', 'profileTransAuthCapture'], ['authonly', 'profileTransAuthOnly'], ['captureonly', 'profileTransCaptureOnly']];
+        return [['authcapture', 'profileTransAuthCapture'], ['authonly', 'profileTransAuthOnly']];
     }
 
     /** @dataProvider transactionKinds */
@@ -81,7 +81,6 @@ class AuthorizeTransactionRequestTest extends TestCase
     {
         $customer = $this->customer($cim, self::direct('1', '1', 'This transaction has been approved.', 'ABC123', 'auth_capture'));
         $fields = ['amount'=>'5.00', 'customerProfileId'=>'1001', 'customerPaymentProfileId'=>'2001'];
-        if ($kind === 'captureonly') $fields['approvalCode'] = 'ABC123';
         $response = $customer->create_transaction(['transaction'=>['transactionType'=>$kind] + $fields]);
 
         $this->assertInstanceOf(authorize\customer\transaction\response\success::class, $response);
@@ -93,7 +92,7 @@ class AuthorizeTransactionRequestTest extends TestCase
         $this->assertSame('5.00', $q($base . '"amount"]'));
         $this->assertSame('1001', $q($base . '"customerProfileId"]'));
         $this->assertSame('2001', $q($base . '"customerPaymentProfileId"]'));
-        $this->assertSame($kind === 'captureonly' ? 'ABC123' : null, $q($base . '"approvalCode"]'));
+        $this->assertNull($q($base . '"approvalCode"]'));
         $this->assertNull($q('//*[local-name()="type"]'), 'no field Authorize.Net does not define');
     }
 
@@ -109,10 +108,10 @@ class AuthorizeTransactionRequestTest extends TestCase
 
     public function testAnAmountIsRequiredByTheKindOfTransactionItself()
     {
-        // The adapter checks the kind: a captureonly object cannot be sent as an authcapture.
+        // The adapter checks the kind: an authonly object cannot be sent as an authcapture.
         $adapter = new authorize\customer\transaction\authcapture\AuthorizeNetTransaction(new authorize\customer\transaction\authcapture(['amount'=>'1.00']));
         $this->assertSame('1.00', $adapter->amount);
         $this->expectException(authorize\bad_param::class);
-        new authorize\customer\transaction\authcapture\AuthorizeNetTransaction(new authorize\customer\transaction\captureonly());
+        new authorize\customer\transaction\authcapture\AuthorizeNetTransaction(new authorize\customer\transaction\authonly());
     }
 }

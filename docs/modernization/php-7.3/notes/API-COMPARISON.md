@@ -37,3 +37,15 @@ compared with [API-V1.73.1.json](API-V1.73.1.json): 620 classes in each, and the
 both: `flat\db\driver\mongo` gained the protected method `_set_last_update_result()` and the protected property
 `$_last_update_result` (MOD-242). Nothing was removed or changed. `API-V1.73.0.json` here is the re-dump.
 
+
+## v1.73.1 as released, against v1.73.0 (MOD-270)
+
+`API-V1.73.1.json` is re-dumped from the final code (620 classes in each; the earlier dump predated the Authorize.Net
+fixes). Differences against `v1.73.0`, all in Authorize.Net wrappers except the first:
+
+- Added: `flat\db\driver\mongo::_set_last_update_result()` and its property (MOD-242).
+- Added: `flat\cloud\authorize\no_response` (KD-98) and `flat\cloud\authorize\AuthorizeNetARB` (the subscription
+  client, KD-101).
+- Added: the fields of `customer\transaction\authonly` (KD-105).
+- **Removed:** `customer\transaction\captureonly`, `customer\transaction\captureonly\AuthorizeNetTransaction` and
+  `customer::captureonly()` (KD-106): the one removal, by owner decision, because Authorize.Net withdrew the method.

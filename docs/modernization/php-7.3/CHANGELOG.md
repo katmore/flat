@@ -813,3 +813,17 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   so it is neither an account setting nor a sandbox quirk. No code change.
 - Recorded in `DEFERRED-V2.md` (item 2), `RELEASE-NOTES-V1.73.1.md`, `tests/docker/anet-mock/README.md` and the comment
   of `TransactionTest`. The test and the mock stub stay as they were.
+
+## MOD-270 — Remove Capture Only (KD-106, owner decision)
+
+- Kind: removal of a public API, decided by the owner (2026-11-23): Authorize.Net withdrew Capture Only, so nothing
+  that uses it can work. This is the one removal in v1.73.1's API (see `notes/API-COMPARISON.md`).
+- Removed: `src/flat/cloud/authorize/customer/transaction/captureonly.php` and its `AuthorizeNetTransaction` adapter;
+  `customer::captureonly()`; the `captureonly` entry and docblock lines of `create_transaction()`; the mock stub
+  `47-createcustomerprofiletransaction-captureonly.json`; the sandbox test of the refusal; the `captureonly` rows of the
+  unit tests. Added a test that the class and method are gone and that `create_transaction()` rejects the type.
+- The deprecation test's count of declaring files is 45 (was 47). The API dump `notes/API-V1.73.1.json` is
+  regenerated (the old one predated KD-100 to KD-105). Documentation that said "refused" now says "removed"
+  (`DEFERRED-V2.md`, the release notes, the mock README); MOD-268 and MOD-269 stay as written.
+- Verified: `docker/bin/test sandbox` 13 of 13 on the real sandbox; `all --coverage` 1,547 tests, 6,760 assertions, 100%
+  (332 classes, 1,068 methods); `check-docs` 0 problems; the test inventory is regenerated.

@@ -2766,6 +2766,10 @@
             }
         }
     },
+    "flat\\cloud\\authorize\\AuthorizeNetARB": {
+        "unloadable": true,
+        "reason": "PHP Deprecated:  AuthorizeNetARB is deprecated, use AuthorizeNet::API instead. For ARB, see examples in https://github.com/AuthorizeNet/sample-code-php/tree/master/RecurringBilling . in /opt/flat-test/runtime/vendor/authorizenet/authorizenet/lib/deprecated/AuthorizeNetARB.php on line 10"
+    },
     "flat\\cloud\\authorize\\AuthorizeNetCIM": {
         "unloadable": true,
         "reason": "PHP Deprecated:  AuthorizeNetCIM is deprecated, use AuthorizeNet::API instead. For CIM, see examples in https://github.com/AuthorizeNet/sample-code-php/tree/master/CustomerProfiles . in /opt/flat-test/runtime/vendor/authorizenet/authorizenet/lib/deprecated/AuthorizeNetCIM.php on line 10"
@@ -2926,40 +2930,6 @@
                     },
                     {
                         "name": "amount",
-                        "type": null,
-                        "optional": false,
-                        "default": null,
-                        "byref": false,
-                        "variadic": false
-                    },
-                    {
-                        "name": "extra_params",
-                        "type": "?array",
-                        "optional": true,
-                        "default": "NULL",
-                        "byref": false,
-                        "variadic": false
-                    }
-                ],
-                "return": null
-            },
-            "captureonly": {
-                "visibility": "public",
-                "static": false,
-                "abstract": false,
-                "final": false,
-                "returns_reference": false,
-                "params": [
-                    {
-                        "name": "customerProfileId",
-                        "type": null,
-                        "optional": false,
-                        "default": null,
-                        "byref": false,
-                        "variadic": false
-                    },
-                    {
-                        "name": "customerPaymentProfileId",
                         "type": null,
                         "optional": false,
                         "default": null,
@@ -3734,7 +3704,68 @@
             "flat\\data\\typed\\explicit"
         ],
         "constants": [],
-        "properties": [],
+        "properties": {
+            "amount": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "cardCode": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "customerPaymentProfileId": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "customerProfileId": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "customerShippingAddressId": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "duty": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "lineItems": {
+                "visibility": "public",
+                "static": false,
+                "default": "array (\n)"
+            },
+            "order": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "recurringBilling": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "shipping": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "tax": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "taxExempt": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            }
+        },
         "methods": {
             "get_data_type": {
                 "visibility": "public",
@@ -3748,61 +3779,6 @@
         }
     },
     "flat\\cloud\\authorize\\customer\\transaction\\authonly\\AuthorizeNetTransaction": {
-        "kind": "class",
-        "abstract": false,
-        "final": false,
-        "parent": "flat\\cloud\\authorize\\customer\\transaction\\AuthorizeNetTransaction",
-        "interfaces": [],
-        "constants": [],
-        "properties": [],
-        "methods": {
-            "_validate_transaction_type": {
-                "visibility": "protected",
-                "static": false,
-                "abstract": false,
-                "final": false,
-                "returns_reference": false,
-                "params": [
-                    {
-                        "name": "transaction",
-                        "type": "flat\\cloud\\authorize\\customer\\transaction",
-                        "optional": false,
-                        "default": null,
-                        "byref": false,
-                        "variadic": false
-                    }
-                ],
-                "return": null
-            }
-        }
-    },
-    "flat\\cloud\\authorize\\customer\\transaction\\captureonly": {
-        "kind": "class",
-        "abstract": false,
-        "final": false,
-        "parent": "flat\\cloud\\authorize\\customer\\transaction",
-        "interfaces": [
-            "flat\\core\\app",
-            "flat\\core\\controller",
-            "flat\\core\\mappable\\property\\ignore_non_existing_set",
-            "flat\\data\\typed",
-            "flat\\data\\typed\\explicit"
-        ],
-        "constants": [],
-        "properties": [],
-        "methods": {
-            "get_data_type": {
-                "visibility": "public",
-                "static": true,
-                "abstract": false,
-                "final": false,
-                "returns_reference": false,
-                "params": [],
-                "return": null
-            }
-        }
-    },
-    "flat\\cloud\\authorize\\customer\\transaction\\captureonly\\AuthorizeNetTransaction": {
         "kind": "class",
         "abstract": false,
         "final": false,
@@ -4119,6 +4095,37 @@
             }
         },
         "methods": []
+    },
+    "flat\\cloud\\authorize\\no_response": {
+        "kind": "class",
+        "abstract": false,
+        "final": false,
+        "parent": "flat\\cloud\\authorize\\unexpected_response",
+        "interfaces": [
+            "Throwable"
+        ],
+        "constants": [],
+        "properties": [],
+        "methods": {
+            "checked": {
+                "visibility": "public",
+                "static": true,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [
+                    {
+                        "name": "response",
+                        "type": null,
+                        "optional": false,
+                        "default": null,
+                        "byref": false,
+                        "variadic": false
+                    }
+                ],
+                "return": null
+            }
+        }
     },
     "flat\\cloud\\authorize\\response_error": {
         "kind": "class",

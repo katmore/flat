@@ -149,6 +149,11 @@ class AuthorizeCustomerTest extends TestCase
         }
         $this->fail('Expected validation failure');
     }
+    public function testCaptureOnlyIsGoneBecauseAuthorizeNetWithdrewIt()
+    {
+        $this->assertFalse(class_exists(authorize\customer\transaction::class.'\\captureonly'));
+        $this->assertFalse(method_exists(authorize\customer::class, 'captureonly'));
+    }
     public function invalidRequests()
     {
         $missing = authorize\missing_required_param::class; $bad = authorize\bad_param::class;
@@ -163,6 +168,8 @@ class AuthorizeCustomerTest extends TestCase
             ['create_transaction', ['transaction'=>'invalid'], $bad],
             ['create_transaction', ['transaction'=>[]], $missing],
             ['create_transaction', ['transaction'=>['transactionType'=>'unknown']], $bad],
+            ['create_transaction', ['transaction'=>['transactionType'=>'captureonly','amount'=>'1.00']], $bad],
+            ['create_transaction', ['captureonly'=>['amount'=>'1.00']], $missing],
             ['create_transaction', ['authonly'=>false], $bad]];
     }
 
@@ -213,7 +220,6 @@ class AuthorizeCustomerTest extends TestCase
             'get' => ['get_transaction', [[]], ''],
             'authonly' => ['authonly', ['42','7','1.00'], $useCreate('authonly')],
             'authcapture' => ['authcapture', ['42','7','1.00'], $useCreate('authcapture')],
-            'captureonly' => ['captureonly', ['42','7',['memo'=>'local']], $useCreate('captureonly')],
         ];
     }
     public function testPaymentMethodCreationAndUpdateForwardValidatedIds()
@@ -272,7 +278,7 @@ class AuthorizeCustomerTest extends TestCase
     public function transactionSpecifications()
     {
         $rows = [];
-        foreach (['authcapture'=>'AuthCapture','authonly'=>'AuthOnly','captureonly'=>'CaptureOnly'] as $kind=>$label) {
+        foreach (['authcapture'=>'AuthCapture','authonly'=>'AuthOnly'] as $kind=>$label) {
             $class = authorize\customer\transaction::class.'\\'.$kind;
             $rows[] = [[$kind=>['amount'=>'1.00']],$label,$class];
             $rows[] = [[$kind=>new $class],$label,$class];

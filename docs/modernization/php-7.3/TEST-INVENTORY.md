@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 840 test methods in 105 files, running 1554 test cases.
+- 840 test methods in 105 files, running 1547 test cases.
 - 137 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -36,12 +36,11 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testASubscriptionCanBeCreatedChangedAndCancelled` (line 83): groups: sandbox, anet, services
 - `testAnUnknownSubscriptionIsAResponseError` (line 102): groups: sandbox, anet, services
 
-### `tests/Sandbox/TransactionTest.php` (4)
+### `tests/Sandbox/TransactionTest.php` (3)
 
 - `testAnAuthorizationAndCaptureIsApproved` (line 64): groups: sandbox, anet, services
 - `testAnAuthorizationOnlyIsApproved` (line 73): groups: sandbox, anet, services
-- `testACaptureOnlyIsRefusedByTheProcessorAsAResponseError` (line 81): groups: sandbox, anet, services
-- `testADeclinedTransactionIsAResponseError` (line 96): groups: sandbox, anet, services
+- `testADeclinedTransactionIsAResponseError` (line 81): groups: sandbox, anet, services
 
 ### `tests/Unit/Api/ControllerTest.php` (16)
 
@@ -132,7 +131,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testFlagsAreOnlyReadFromAnArrayOfFlags` (line 22)
 - `testOptionsReturnPresentValuesOrFallback` (line 30)
 
-### `tests/Unit/Cloud/AuthorizeCustomerTest.php` (16)
+### `tests/Unit/Cloud/AuthorizeCustomerTest.php` (17)
 
 - `testNativeLegacyClientIsPreparedAndCachedWhenSubclassProvidesTheHook` (line 62)
 - `testGetMapsProfileAndMissingProfileReturnsNull` (line 73)
@@ -141,15 +140,16 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testCreateForwardsValidationMode` (line 103): 7 data-provider cases
 - `testWithoutAPaymentTheValidationModeIsAlwaysNone` (line 115): 7 data-provider cases
 - `testExplicitPaymentObjectIsConvertedForTheSdk` (line 129)
-- `testInvalidRequestsStopBeforeClientCalls` (line 141): 18 data-provider cases
-- `testUpdateAndDeleteForwardIds` (line 170): 2 data-provider cases
-- `testClientRejectionBecomesResponseError` (line 182): 4 data-provider cases
-- `testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway` (line 196): 6 data-provider cases
-- `testPaymentMethodCreationAndUpdateForwardValidatedIds` (line 219)
-- `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` (line 233)
-- `testPaymentMethodRejectionUsesExistingResponseError` (line 244): 2 data-provider cases
-- `testTransactionSpecificationsNormalizeAndReachTheClient` (line 257): 15 data-provider cases
-- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 285)
+- `testInvalidRequestsStopBeforeClientCalls` (line 141): 20 data-provider cases
+- `testCaptureOnlyIsGoneBecauseAuthorizeNetWithdrewIt` (line 152)
+- `testUpdateAndDeleteForwardIds` (line 177): 2 data-provider cases
+- `testClientRejectionBecomesResponseError` (line 189): 4 data-provider cases
+- `testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway` (line 203): 5 data-provider cases
+- `testPaymentMethodCreationAndUpdateForwardValidatedIds` (line 225)
+- `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` (line 239)
+- `testPaymentMethodRejectionUsesExistingResponseError` (line 250): 2 data-provider cases
+- `testTransactionSpecificationsNormalizeAndReachTheClient` (line 263): 10 data-provider cases
+- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 291)
 
 ### `tests/Unit/Cloud/AuthorizeDataTest.php` (13)
 
@@ -230,15 +230,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Cloud/AuthorizeTransactionRequestTest.php` (3)
 
-- `testEachKindBecomesTheXmlAuthorizeNetDefines` (line 80): 3 data-provider cases
-- `testADeclinedAnswerIsAFailureWithItsReason` (line 100)
-- `testAnAmountIsRequiredByTheKindOfTransactionItself` (line 110)
+- `testEachKindBecomesTheXmlAuthorizeNetDefines` (line 80): 2 data-provider cases
+- `testADeclinedAnswerIsAFailureWithItsReason` (line 99)
+- `testAnAmountIsRequiredByTheKindOfTransactionItself` (line 109)
 
 ### `tests/Unit/Cloud/AuthorizeTransactionTest.php` (6)
 
-- `testTransactionKindsAreLoadableTypedData` (line 17): 3 data-provider cases
+- `testTransactionKindsAreLoadableTypedData` (line 17): 2 data-provider cases
 - `testLegacyClassNameHookStillUsesItsOriginalCustomerPrefix` (line 27)
-- `testSdkAdaptersAcceptOnlyTheirMatchingType` (line 32): 3 data-provider cases
+- `testSdkAdaptersAcceptOnlyTheirMatchingType` (line 32): 2 data-provider cases
 - `testAdapterMapsEveryDeclaredSdkField` (line 45)
 - `testOnlyTrueValidationPasses` (line 53)
 - `testLegacyPaymentTypeNamesAutoloadWithoutRenamingTheirImplementations` (line 65)

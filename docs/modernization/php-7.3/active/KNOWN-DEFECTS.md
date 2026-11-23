@@ -421,3 +421,14 @@ Each has a recommendation; "agree" is enough. Questions 37 to 50 are answered; n
 
 50. **KD-100: should flat's payment-method calls be made to work, or left as they are until v2.X?** Recommended
     leaving them. **Answered (owner, 2026-11-23):** (a), make them work. Done as KD-100 (MOD-262).
+
+### KD-106 - Capture Only is a transaction type Authorize.Net no longer accepts
+
+- Category: A (owner decision, 2026-11-23). Found on the real sandbox (MOD-268): it refuses `captureonly` with `E00027`,
+  and Authorize.Net's "What are the transaction types that can be submitted?" article says the method is no longer
+  available. flat offered it in `create_transaction()`, as a class and as a method.
+- Fixed (MOD-270): removed the `captureonly` transaction class and its SDK adapter, `customer::captureonly()`, the
+  `captureonly` entry of `create_transaction()` and its mock stub and tests. See `active/CONSUMER-IMPACT.md`.
+- Tests: `AuthorizeCustomerTest::testCaptureOnlyIsGoneBecauseAuthorizeNetWithdrewIt` and the two rejected requests in
+  `invalidRequests` (fail without the fix, since the type was accepted).
+- **Fixed.**
