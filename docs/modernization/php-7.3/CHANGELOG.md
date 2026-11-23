@@ -488,3 +488,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   which MongoDB 5.0 accepts, so it no longer raised the driver exception. It now writes an array
   `_id`, which every MongoDB version rejects; same assertion. Passes on 4.0 and on 5.0.
 - Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-237 — Tooling upgrade 7b of 7: the RabbitMQ test service
+
+- Kind: tooling. `docker/docker-compose.yml`: RabbitMQ 3.13.7 pinned by digest (was 3.8.34). 4.4 was
+  tried first and failed: flat's default queue declaration (non-durable, non-exclusive) is denied by
+  RabbitMQ 4 (Q47, open). 3.13 is the newest where the unchanged library works.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.

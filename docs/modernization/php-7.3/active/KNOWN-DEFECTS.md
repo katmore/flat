@@ -243,3 +243,14 @@ Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; n
     supported servers, and it works on 5.1 and later. Then raise the test service to 7.0.
     Which MongoDB version does your consumer run? **Open.**
 
+47. **flat's default RabbitMQ queue is rejected by RabbitMQ 4.** The driver's defaults
+    (`src/flat/db/driver/rabbitmq.php`) are `durable` false, `exclusive` false, `auto_delete` true.
+    RabbitMQ 4.0 and later deny transient non-exclusive queues, so declaring a queue with those
+    defaults closes the connection (`INTERNAL_ERROR - Feature transient_nonexcl_queues is
+    deprecated`). Found when the test service moved to RabbitMQ 4.4; two `RabbitMqTest` tests fail
+    there. The test service is RabbitMQ 3.13.7, the newest where the unchanged library works.
+    A caller on a 4.x broker can pass `durable` or `exclusive` itself; the defaults cannot change in
+    v1.X (a changed default is a behavior change). Not changed.
+    Recommend: note it in the release notes, and decide the default at v2.X (`DEFERRED-V2.md`).
+    Which RabbitMQ version does your consumer run? **Open.**
+

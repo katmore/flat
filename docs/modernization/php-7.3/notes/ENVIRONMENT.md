@@ -29,7 +29,7 @@ Everything is defined in this repository (`docker/Dockerfile`, `docker/docker-co
 
 ## Services (unchanged)
 
-- MongoDB 5.0 and RabbitMQ 3.8.34, both pinned by digest in `docker/docker-compose.yml`.
+- MongoDB 5.0 and RabbitMQ 3.13.7, both pinned by digest in `docker/docker-compose.yml`.
 
 ## Image name
 

@@ -109,7 +109,7 @@ on services in Compose, so unit mode needs only the PHP image.
 - PHP/PHPUnit: PHP 7.3 container (exact patch set in `docker/Dockerfile`), pinned official base digest
 - Error reporting: `E_ALL` (`php.ini-development`); PHPUnit fails on notices, warnings and deprecations
 - MongoDB integration: Separate pinned MongoDB 5.0 Compose service (5.0 is the newest flat's update-count API works against; see Q46 in the php-7.3 phase)
-- RabbitMQ integration: Separate pinned RabbitMQ 3.8.34 Compose service
+- RabbitMQ integration: Separate pinned RabbitMQ 3.13 Compose service (4.x rejects flat's default queue declaration; see Q47 in the php-7.3 phase)
 - PDO: Native SQLite inside the PHP container; no MySQL service is currently used
 - SSH/SFTP unit cases: Explicit transport/clock double with native local streams; no SFTP server is claimed
 - Native HTTP/session/process fixtures: Test-owned child PHP processes inside the PHP container
