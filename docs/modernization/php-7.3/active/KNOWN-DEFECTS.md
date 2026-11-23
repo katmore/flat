@@ -224,6 +224,7 @@ fixed at its cause; "behavior" says what a caller can see.
   After the test was changed only to wait for the list (up to 10 seconds, with diagnostics), all ten sandbox tests
   passed. flat's lookup code was unchanged between the two runs, so Authorize.Net's subscription list lags behind a
   new subscription by some seconds. How long is not measured.
+  The owner confirmed it on a retry of the run (2026-11-23): the list lagged.
 - Done: the docblock of `get_info()`, the consumer-impact entry of KD-102 and the release notes say so; the sandbox
   test waits for the list. No code change: a retry inside `get_info()` would be a guess about the service.
 - **Resolved.**
