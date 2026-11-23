@@ -32,7 +32,6 @@
  */
 namespace flat\db\driver;
 
-use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class rabbitmq extends \flat\db implements 
@@ -227,7 +226,7 @@ class rabbitmq extends \flat\db implements
     * provides a connection object based on previously obtained connection parameters.
     *    uses a cached connection, or establishes new connection as needed.
     *
-    * @return \PhpAmqpLib\Connection\AMQPConnection
+    * @return \PhpAmqpLib\Connection\AbstractConnection
     *
     *
     * @throws \flat\db\driver\rabbitmq\exception\missing_connection_params
@@ -240,7 +239,7 @@ class rabbitmq extends \flat\db implements
    private $_param;
    
    /**
-    * @var \PhpAmqpLib\Connection\AMQPConnection[] array of cached connection objects,
+    * @var \PhpAmqpLib\Connection\AbstractConnection[] array of cached connection objects,
     *    cached by hash of connection parameters
     */
    private static $_conn;
@@ -329,7 +328,14 @@ class rabbitmq extends \flat\db implements
        */
       if (isset(self::$_conn[$hash])) return self::$_conn[$hash];
       //var_dump($conn);die('db driver rabbitmq (die)');
-      $connection = self::$_conn[$hash] = new AMQPConnection(
+      /*
+       * php-amqplib 2 offered AMQPConnection (a deprecated AMQPStreamConnection); version 3 removed it.
+       * Use it where it exists so callers on version 2 get the same object as before.
+       */
+      $connection_class = class_exists('\PhpAmqpLib\Connection\AMQPConnection')
+         ? '\PhpAmqpLib\Connection\AMQPConnection'
+         : '\PhpAmqpLib\Connection\AMQPStreamConnection';
+      $connection = self::$_conn[$hash] = new $connection_class(
          $conn['host'],
          $conn['port'],
          $conn['user'],
