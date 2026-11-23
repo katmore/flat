@@ -293,7 +293,8 @@ implements
     *       or (string) "liveMode". specifies "liveMode" validationMode. if 
     *       (bool) false or (string) "none" specifies no additional payment 
     *       processor validation should occur. if (string) "testMode", 
-    *       specifies "testMode" validationMode.
+    *       specifies "testMode" validationMode. it applies only when a 'payment'
+    *       is given; without one the mode is always "none".
     *    bool | string $params['validationMode'] (optional) alias of $params['validate'].
     *    int $params['merchantCustomerId'] (optional) if specified,
     *       updates the specified customerProfile 'merchantCustomerId' field to this value.
@@ -329,6 +330,9 @@ implements
       $payment_profile = self::_params_to_payment_profile($params);
       if ($payment_profile) {
          $customerProfile->paymentProfiles[] = $payment_profile;
+      } else {
+         // A validation mode only applies to a payment profile; Authorize.Net refuses one without it (E00013).
+         $validationMode = 'none';
       }
       
       /*

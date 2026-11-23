@@ -185,6 +185,14 @@ consumers saw before, what they see now, and what to search for in their code.
   it still works), `customer\payment_profile\creditCard`, and any workaround that calls the SDK directly.
 - Verified: yes (unit tests; sandbox tests ready for the owner's run).
 
+### MOD-263 (KD-103) — `customer::create()` works without a payment
+
+- Before: `create()` without a `payment` always sent the `liveMode` validation mode (the default), which
+  Authorize.Net refuses for a profile without payment profiles (`E00013`).
+- After: without a `payment` the mode sent is `none`, whatever `validate` says. With a `payment` nothing changes.
+- Search consumer code for: `customer`, `->create(` without `payment`, `validate`, `validationMode`, `E00013`.
+- Verified: yes (unit test fails without the fix; the error is the owner's real-sandbox result).
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

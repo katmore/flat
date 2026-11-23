@@ -102,13 +102,22 @@ class AuthorizeCustomerTest extends TestCase
     /** @dataProvider createModes */
     public function testCreateForwardsValidationMode($options, $expected)
     {
+        $this->loadLegacyAuthorizeClass(\AuthorizeNetPaymentProfile::class);
         $customer = new CustomerFixture;
-        $this->assertSame('profile-42', $customer->create($options + ['email'=>'local@example.invalid']));
+        $this->assertSame('profile-42', $customer->create($options + ['email'=>'local@example.invalid', 'payment'=>['billTo'=>['firstName'=>'Local']]]));
         list($method, $arguments) = $customer->client->calls[0];
         $this->assertSame('createCustomerProfile', $method);
         $this->assertInstanceOf(\AuthorizeNetCustomer::class, $arguments[0]);
         $this->assertSame('local@example.invalid', $arguments[0]->email);
         $this->assertSame($expected, $arguments[1]);
+    }
+    /** @dataProvider createModes */
+    public function testWithoutAPaymentTheValidationModeIsAlwaysNone($options)
+    {
+        // Authorize.Net refuses any validation mode for a profile without payment profiles (E00013, seen on the sandbox).
+        $customer = new CustomerFixture;
+        $customer->create($options + ['email'=>'local@example.invalid']);
+        $this->assertSame('none', $customer->client->calls[0][1][1]);
     }
     public function createModes()
     {

@@ -721,3 +721,16 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   Lesson recorded: objects a test needs are built in the test, not in a data provider, because providers run outside
   code coverage.
 
+## MOD-263 — Second real-sandbox result: KD-103 fixed, KD-104 open
+
+- Kind: bug fix and tests. The owner's run (6 of 10 passed) failed three tests with `E00013`: `create()` asked for
+  `liveMode` validation without a payment profile (KD-103, fixed; see [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)),
+  and one with `subscription\not_found` from `get_info()` right after `create()` (KD-104, open).
+- The mock answers `E00013` for a validation mode without payment profiles, as the sandbox did: with the fix removed
+  the same three tests fail the same way, with it they pass. The subscription sandbox test now waits for the list
+  and reports what it held, so the next run explains KD-104.
+- What passed on the real sandbox: authentication, invalid credentials (current API and legacy wrapper), the
+  sandbox-only guard, `get_status()` (`active`), `is_updatable()`, and the unknown-profile error.
+- Verified: `docker/bin/test all --coverage`, 1,529 tests, 6,692 assertions, 100% (334 classes, 1,071 methods,
+  8,466 statements), no PHP message.
+

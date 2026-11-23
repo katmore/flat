@@ -1,6 +1,6 @@
 {
   "name": "createCustomerProfile",
-  "priority": 1,
+  "priority": 2,
   "request": {
     "method": "POST",
     "url": "/xml/v1/request.api",

@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 830 test methods in 102 files, running 1522 test cases.
-- 134 methods use a data provider (one case per data set).
+- 831 test methods in 102 files, running 1529 test cases.
+- 135 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -33,8 +33,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Sandbox/SubscriptionTest.php` (2)
 
-- `testASubscriptionCanBeCreatedChangedAndCancelled` (line 56): groups: sandbox, anet, services
-- `testAnUnknownSubscriptionIsAResponseError` (line 75): groups: sandbox, anet, services
+- `testASubscriptionCanBeCreatedChangedAndCancelled` (line 83): groups: sandbox, anet, services
+- `testAnUnknownSubscriptionIsAResponseError` (line 102): groups: sandbox, anet, services
 
 ### `tests/Unit/Api/ControllerTest.php` (16)
 
@@ -125,23 +125,24 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testFlagsAreOnlyReadFromAnArrayOfFlags` (line 22)
 - `testOptionsReturnPresentValuesOrFallback` (line 30)
 
-### `tests/Unit/Cloud/AuthorizeCustomerTest.php` (15)
+### `tests/Unit/Cloud/AuthorizeCustomerTest.php` (16)
 
 - `testNativeLegacyClientIsPreparedAndCachedWhenSubclassProvidesTheHook` (line 62)
 - `testGetMapsProfileAndMissingProfileReturnsNull` (line 73)
 - `testProfileAliasDoesNotReplaceExplicitId` (line 84)
 - `testProfileFieldsReachTheSdkCustomer` (line 92)
 - `testCreateForwardsValidationMode` (line 103): 7 data-provider cases
-- `testExplicitPaymentObjectIsConvertedForTheSdk` (line 120)
-- `testInvalidRequestsStopBeforeClientCalls` (line 132): 18 data-provider cases
-- `testUpdateAndDeleteForwardIds` (line 161): 2 data-provider cases
-- `testClientRejectionBecomesResponseError` (line 173): 4 data-provider cases
-- `testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway` (line 187): 6 data-provider cases
-- `testPaymentMethodCreationAndUpdateForwardValidatedIds` (line 210)
-- `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` (line 224)
-- `testPaymentMethodRejectionUsesExistingResponseError` (line 235): 2 data-provider cases
-- `testTransactionSpecificationsNormalizeAndReachTheClient` (line 248): 15 data-provider cases
-- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 274)
+- `testWithoutAPaymentTheValidationModeIsAlwaysNone` (line 115): 7 data-provider cases
+- `testExplicitPaymentObjectIsConvertedForTheSdk` (line 129)
+- `testInvalidRequestsStopBeforeClientCalls` (line 141): 18 data-provider cases
+- `testUpdateAndDeleteForwardIds` (line 170): 2 data-provider cases
+- `testClientRejectionBecomesResponseError` (line 182): 4 data-provider cases
+- `testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway` (line 196): 6 data-provider cases
+- `testPaymentMethodCreationAndUpdateForwardValidatedIds` (line 219)
+- `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` (line 233)
+- `testPaymentMethodRejectionUsesExistingResponseError` (line 244): 2 data-provider cases
+- `testTransactionSpecificationsNormalizeAndReachTheClient` (line 257): 15 data-provider cases
+- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 283)
 
 ### `tests/Unit/Cloud/AuthorizeDataTest.php` (13)
 

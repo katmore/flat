@@ -205,6 +205,29 @@ fixed at its cause; "behavior" says what a caller can see.
   payment, and the rejected shapes) and the sandbox test `PaymentMethodTest`.
 - **Fixed.**
 
+### KD-103 - `customer::create()` asked for payment validation even when it sent no payment profile
+
+- Category: A (clear bug), found by the owner's sandbox run after KD-99 (MOD-263). `create()` defaults to the
+  `liveMode` validation mode, and the SDK sends it. Authorize.Net answers a profile without payment profiles
+  with `E00013` ("Validation Mode is invalid without Payment Profiles."), so a plain
+  `create(['email'=>...])` could not succeed (KD-99 hid it: that call failed earlier, with `E00041`).
+- Fixed (MOD-263): without a `payment` the mode sent is `none`. With a `payment` the mode is as before (default
+  `liveMode`).
+- Tests: `Cloud/AuthorizeCustomerTest::testWithoutAPaymentTheValidationModeIsAlwaysNone`; the mode tests now
+  give a payment. The mock answers `E00013` as the sandbox did.
+- **Fixed.**
+
+### KD-104 - `subscription::get_info()` did not find a subscription just created, on the real sandbox
+
+- Category: B (needs data). The owner's run: `create()` returned id 9967677 and `get_status()` said `active`, but
+  `get_info()` threw `subscription\not_found` (KD-102 got it past the missing-element error). Unknown whether the
+  service's subscription list lags behind a new subscription, or flat looks in the wrong place (its search type
+  follows the status; paging is one page of 1,000, then more).
+- Next (MOD-263): the sandbox test waits up to 10 seconds for the list to show the subscription and, if it never
+  does, fails with what both lists held (result code, total, how many on the page, first and last ids; no secrets).
+  The owner's next run decides the fix.
+- **Open** (needs the next sandbox run).
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 50 are answered; none is open.

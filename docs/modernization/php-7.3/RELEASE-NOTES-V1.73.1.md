@@ -30,7 +30,8 @@ Each has a "before, after, what to search for" entry in `docs/modernization/php-
   `exclusive` is never overridden); older brokers are unchanged. The driver works with php-amqplib 2 and 3.
 - **Authorize.Net wrappers (deprecated):** `customer::create()` and `update()` now send the profile fields
   (`merchantCustomerId`, `description`, `email`); before, the profile was empty and the real service refused it
-  (`E00041`). When Authorize.Net gives no usable answer (no connection, timeout, untrusted certificate), the
+  (`E00041`). Without a `payment`, `create()` sends no validation mode (it always sent `liveMode`, which Authorize.Net
+  refuses with `E00013` for a profile without payment profiles). When Authorize.Net gives no usable answer (no connection, timeout, untrusted certificate), the
   wrappers throw `no_response`; before, the call returned as if it had worked.
 - **Authorize.Net payment methods (deprecated):** `create_paymethod()` and `update_paymethod()` now build requests
   Authorize.Net accepts (before: a PHP error for an array, invalid XML for an object); see the docblock for the shapes.

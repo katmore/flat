@@ -1,0 +1,26 @@
+{
+  "name": "createCustomerProfile validation mode without payment profiles",
+  "priority": 1,
+  "request": {
+    "method": "POST",
+    "url": "/xml/v1/request.api",
+    "bodyPatterns": [
+      {
+        "matchesXPath": "/*[local-name()='createCustomerProfileRequest'][*[local-name()='validationMode' and (text()='liveMode' or text()='testMode')]][not(*[local-name()='profile']/*[local-name()='paymentProfiles'])]"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='name' and text()='flatmock-login']"
+      },
+      {
+        "matchesXPath": "//*[local-name()='merchantAuthentication']/*[local-name()='transactionKey' and text()='flatmock-key-0001']"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/xml; charset=utf-8"
+    },
+    "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<createCustomerProfileResponse xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"AnetApi/xml/v1/schema/AnetApiSchema.xsd\"><messages><resultCode>Error</resultCode><message><code>E00013</code><text>Validation Mode is invalid without Payment Profiles.</text></message></messages></createCustomerProfileResponse>"
+  }
+}
