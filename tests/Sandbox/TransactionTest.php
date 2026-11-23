@@ -80,7 +80,8 @@ class TransactionTest extends TestCase
 
     public function testACaptureOnlyIsRefusedByTheProcessorAsAResponseError()
     {
-        // The sandbox account's processor does not allow Capture Only (checked 2026-11-23): E00027. The request
+        // Authorize.Net has withdrawn the Capture Only type (its transaction-types article: "no longer available"); the
+        // sandbox refuses it with E00027 (checked 2026-11-23). The request
         // itself is well formed (a malformed one would be a schema error), and flat raises the refusal as a response_error.
         list($customer, $profileId, $paymentId) = $this->customerWithACard();
         try { $customer->create_transaction($this->charge('captureonly', $profileId, $paymentId, ['approvalCode'=>'ABC123'])); }

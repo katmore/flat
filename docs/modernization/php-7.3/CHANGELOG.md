@@ -805,3 +805,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test sandbox` 14 of 14 (39 assertions); `anet` 14 of 14; `all --coverage` 1,554 tests,
   6,812 assertions, 100% (334 classes, 1,071 methods, 8,467 statements), no deprecation output. The test inventory is
   regenerated.
+
+## MOD-269 — Capture Only is withdrawn at Authorize.Net
+
+- Kind: documentation correction to MOD-268, which called the `captureonly` refusal processor behavior. Authorize.Net's
+  article "What are the transaction types that can be submitted?" says the Capture Only method is no longer available,
+  so it is neither an account setting nor a sandbox quirk. No code change.
+- Recorded in `DEFERRED-V2.md` (item 2), `RELEASE-NOTES-V1.73.1.md`, `tests/docker/anet-mock/README.md` and the comment
+  of `TransactionTest`. The test and the mock stub stay as they were.

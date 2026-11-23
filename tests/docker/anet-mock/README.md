@@ -21,7 +21,7 @@ A stub is one JSON file in `mappings/`; a request matches by the XML element nam
 
 Known differences from the real sandbox (found by running both):
 
-- The real sandbox's processor refuses `captureonly`; the mock does the same (its refusal has no `directResponse`
+- Authorize.Net has withdrawn Capture Only, and the real sandbox refuses `captureonly`; the mock does the same (its refusal has no `directResponse`
   element; the real one was not inspected, and flat does not read it for an error).
 - The real subscription list lags behind a new subscription by some seconds; the mock lists it at once.
 - The mock does not model every rule. What it does model was taken from real answers: an empty profile is `E00041`;

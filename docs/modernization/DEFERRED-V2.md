@@ -47,6 +47,10 @@ in 2018 and no longer supports them; SDK 2.x removed them. Every wrapper class i
 runtime notice from flat); the SDK itself raises an `E_USER_DEPRECATED` notice when its legacy classes load, so
 applications using the wrappers see that. One test helper discards it, as an approved exception (`AGENTS.md`).
 
+The Capture Only transaction type (`customer\transaction\captureonly`) no longer exists at Authorize.Net: the
+service refuses it with `E00027` (found on the sandbox, 2026-11-23; its transaction-types article says the method
+is "no longer available"). It goes with the wrappers.
+
 **Decision (owner, 2026-11-23).** Not ported. Deprecated in v1.73.1, removed in v2.X.
 
 **Plan for v2.X.** Remove the wrappers, their tests, the test helper and the approved exception, and stop
