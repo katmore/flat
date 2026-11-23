@@ -129,6 +129,16 @@ fixed at its cause; "behavior" says what a caller can see.
   declaration as before; the public API and the defaults in the signature are unchanged.
 - **Fixed.**
 
+### KD-97 - flat's RabbitMQ driver needs a class php-amqplib 3 removed
+
+- Category: A (owner's directive to keep dependencies current). The driver built its connection with
+  `AMQPConnection`, a deprecated alias class that php-amqplib 3 removed, so it failed with "Class not found" on
+  version 3.
+- Fixed (MOD-246): the driver uses `AMQPConnection` where it exists (php-amqplib 2: callers get the same
+  object as before) and `AMQPStreamConnection` otherwise. The documented return type is now the common base,
+  `AbstractConnection`. Works with 2.12.3 and 3.7.5 (the test lock is on 3.7.5).
+- **Fixed.**
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough. Questions 37 to 45 are answered; none is open.

@@ -558,3 +558,18 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 
 - Kind: tooling. `docker/docker-compose.yml`: RabbitMQ 4.4.1 (`4.4-alpine`) pinned by digest, was 3.13.7
   (MOD-237); `latest` is the same release.
+
+## MOD-246 — Fix (KD-97): the RabbitMQ driver works with php-amqplib 3 (v1.73.1)
+
+- Kind: compatibility fix, no change for php-amqplib 2 users. `src/flat/db/driver/rabbitmq.php` builds the connection
+  with `AMQPConnection` where it exists and `AMQPStreamConnection` otherwise (php-amqplib 3 removed the alias).
+  `RabbitMqTest` accepts the common base class and a new subprocess test, in which the legacy class is defined
+  first, proves version 2 callers still get it (it fails when that branch is disabled). Consumer impact:
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Verified: rabbitmq tests on php-amqplib 2.12.3 and 3.7.5; `docker/bin/test all --coverage`, 1,480 tests, 100%.
+
+## MOD-247 — Dependency upgrade: php-amqplib 3.7.5 in the test runtime lock
+
+- Kind: tooling. `tests/docker/runtime/composer.json`: `php-amqplib/php-amqplib` `^3.7` (was exactly 2.12.3);
+  the lock resolves 3.7.5 (the newest allowing PHP 7.3). The other pins (`authorizenet`, `yasumi`) follow in
+  their own entries.

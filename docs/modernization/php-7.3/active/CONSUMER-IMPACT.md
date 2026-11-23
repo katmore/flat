@@ -112,6 +112,17 @@ consumers saw before, what they see now, and what to search for in their code.
 - Verified: yes (service tests on RabbitMQ 4.4; on 3.13 the declaration stays non-durable).
 
 
+### MOD-246 (KD-97) — RabbitMQ driver works with php-amqplib 3
+
+- Before: with php-amqplib 3 installed, connecting failed (`Class 'PhpAmqpLib\Connection\AMQPConnection' not found`).
+- After: it works. With php-amqplib 2 nothing changes: the connection is still an `AMQPConnection`. With 3 it is an
+  `AMQPStreamConnection`. The documented return type of `get_connection()` is the common base,
+  `\PhpAmqpLib\Connection\AbstractConnection`.
+- Search consumer code for: `get_connection(`, `AMQPConnection` (type hints and `instanceof`; on version 3 use
+  `AbstractConnection` or `AMQPStreamConnection`).
+- Verified: yes (rabbitmq tests pass on php-amqplib 2.12.3 and 3.7.5; the new test fails without the fix).
+
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.
