@@ -433,3 +433,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: tooling. `docker/Dockerfile`: imagick is built from the pinned commit of release 3.8.1 (was an
   unreleased snapshot that reported its version as `@PACKAGE_VERSION@`). It supports PHP 5.6 and later.
 - Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-232 — Correction to MOD-231: imagick still reports `@PACKAGE_VERSION@`
+
+- Kind: documentation. MOD-231 implied the old snapshot's placeholder version was fixed by the upgrade.
+  It is not: an extension built from a Git commit never fills in `@PACKAGE_VERSION@`, so
+  `phpversion('imagick')` shows it for any release. The pin is the commit of the `3.8.1` tag
+  (`70087bab33eab913e99ac77d64d04d1a2fd0b7b0`); that is how the version is known.
