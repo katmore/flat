@@ -10,6 +10,8 @@ use flat\cloud\authorize\response_error;
  * the old SDK classes flat is built on.
  *
  * @group sandbox
+ * @group anet
+ * @group services
  */
 class CustomerProfileTest extends TestCase
 {

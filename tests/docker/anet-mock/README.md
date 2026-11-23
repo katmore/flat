@@ -1,7 +1,7 @@
 # Authorize.Net mock (WireMock)
 
-Stubs for `docker/bin/test sandbox-mock`: the sandbox tests in `tests/Sandbox`, run offline against a
-WireMock server with fake credentials. The answers follow Authorize.Net's documentation (message shapes from
+Stubs for the Authorize.Net tests in `tests/Sandbox`, run against a WireMock server with fake credentials. It is a
+test service like MongoDB and RabbitMQ: `docker/bin/test all`, `services` and `anet` start it. The answers follow Authorize.Net's documentation (message shapes from
 the XML schema, codes `I00001`, `E00007`, `E00040`). They are not recorded from the real sandbox, so a pass
 proves only that flat agrees with this reading of the documentation.
 

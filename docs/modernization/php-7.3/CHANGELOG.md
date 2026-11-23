@@ -646,3 +646,15 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   the credentialed run until it happens; the real sandbox stays the reference.
 - Verified: 6 tests pass offline; breaking one stub on purpose makes the update test fail.
 
+## MOD-257 — The Authorize.Net tests join the services category
+
+- Kind: tests and tooling (owner's request). WireMock (MOD-256) is a test service like MongoDB and RabbitMQ:
+  `docker/bin/test all` and `services` start it and run `tests/Sandbox` against it, and the new mode `anet` runs only
+  those tests. The tests carry `@group anet` and `@group services`; `unit` still excludes them. `sandbox-mock` (MOD-256)
+  is gone; the real sandbox stays `docker/bin/test sandbox` (group `sandbox`, never part of `all`).
+- `phpunit.xml.dist`: the `sandbox` test suite is removed; `tests/Sandbox` is part of the `unit` suite, as the
+  MongoDB and RabbitMQ tests are. The test inventory is regenerated (it now lists them).
+- Old-to-new: mode `sandbox-mock` is now `anet`; suite `sandbox` is now in suite `unit`.
+- Verified: `docker/bin/test all --coverage`, 1,487 tests, 6,556 assertions, 100% (332 classes, 1,065 methods,
+  8,412 statements, unchanged), no PHP message. `unit` 1,424 tests; `anet` 6; `sandbox` without keys: 3 pass, 3 fail as intended.
+

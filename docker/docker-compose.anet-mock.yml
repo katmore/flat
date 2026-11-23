@@ -1,4 +1,4 @@
-# Added by `docker/bin/test sandbox-mock`: a WireMock server that answers the Authorize.Net messages the sandbox
+# Added by `docker/bin/test` for the all, services and anet modes: a WireMock server that answers the Authorize.Net messages the sandbox
 # tests send, from the stubs in tests/docker/anet-mock. The answers follow Authorize.Net's documentation, not
 # recorded sandbox traffic. The credentials here are fake and only the mock accepts them.
 services:

@@ -6,13 +6,25 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 803 test methods in 95 files, running 1481 test cases.
+- 809 test methods in 97 files, running 1487 test cases.
 - 131 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
 ## Files
+
+### `tests/Sandbox/AuthenticationTest.php` (3)
+
+- `testInvalidCredentialsAreAnAuthorizeNetResponseError` (line 19): groups: sandbox, anet, services
+- `testTheSandboxAccountAuthenticatesThroughTheCurrentApi` (line 32): groups: sandbox, anet, services
+- `testTheLegacyClientTargetsTheSandboxOnly` (line 40): groups: sandbox, anet, services
+
+### `tests/Sandbox/CustomerProfileTest.php` (3)
+
+- `testInvalidCredentialsComeBackThroughTheLegacyWrapperAsAResponseError` (line 38): groups: sandbox, anet, services
+- `testACustomerProfileCanBeCreatedReadAndUpdated` (line 49): groups: sandbox, anet, services
+- `testAnUnknownCustomerProfileIsAResponseError` (line 66): groups: sandbox, anet, services
 
 ### `tests/Unit/Api/ControllerTest.php` (16)
 

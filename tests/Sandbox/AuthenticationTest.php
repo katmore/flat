@@ -7,6 +7,8 @@ use flat\cloud\authorize\response_error;
 
 /**
  * @group sandbox
+ * @group anet
+ * @group services
  */
 class AuthenticationTest extends TestCase
 {

@@ -34,11 +34,17 @@ The JavaScript check runs minification in the PHP 7.3 test image and executes bo
 and minified programs against expected results in a separate, digest-pinned Node container.
 Docker downloads that additional image on first use; no host Node installation is needed.
 
-## Optional Authorize.Net sandbox tests
+## Authorize.Net tests: mock and real sandbox
 
-`tests/Sandbox` holds a separate suite (`sandbox`, group `sandbox`) that talks to the real Authorize.Net
-sandbox. It is never part of `unit`, `all` or CI, so a sandbox outage cannot block work. It is not optional in
-the sense of skipping: a test that needs credentials fails with a message saying what to set.
+`tests/Sandbox` holds functional tests of flat's Authorize.Net wrappers. They run in two ways:
+
+- `docker/bin/test anet` (and `services` and `all`, which include it) runs them against a WireMock stand-in with
+  fake credentials: no Internet, no keys. WireMock is a test service like MongoDB and RabbitMQ. Its answers come
+  from the documentation, not from the sandbox (`tests/docker/anet-mock/README.md`), so a pass there is not a
+  pass against the sandbox.
+- `docker/bin/test sandbox` runs the same tests against the real Authorize.Net sandbox. It is never part of
+  `unit`, `all` or CI, so a sandbox outage cannot block work. A test that needs credentials fails with a message
+  saying what to set; it does not skip.
 
 ```sh
 export FLAT_TEST_ANET_LOGIN_ID=...        # a SANDBOX account's API login ID
@@ -50,9 +56,6 @@ docker/bin/test sandbox
 - The container needs outbound HTTPS to `apitest.authorize.net`. Behind a TLS-intercepting proxy, also set
   `FLAT_TEST_CA_FILE` to the proxy's CA bundle. Certificate verification stays on: the test clients trust that
   bundle in place of the SDK's bundled one, which the SDK hard-codes.
-- `docker/bin/test sandbox-mock` runs the same tests offline against a WireMock stand-in with fake credentials
-  (no Internet, no keys). Its answers come from the documentation, not from the sandbox:
-  see `tests/docker/anet-mock/README.md`. A pass there is not a pass against the sandbox.
 - Tests clean up what they create (customer profiles are deleted in `tearDown`) and tag it `flat-<random>`.
 
 `docker/bin/test inventory` prints a Markdown inventory of every test to stdout,

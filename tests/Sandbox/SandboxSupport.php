@@ -19,13 +19,13 @@ trait SandboxSupport
     {
         $value = getenv($name);
         if ($value === false || $value === '') {
-            $this->fail("Set $name to an Authorize.Net SANDBOX account's value (docker/bin/test sandbox). These tests do not skip.");
+            $this->fail("Set $name to an Authorize.Net SANDBOX account's value (docker/bin/test sandbox), or run them against the mock (docker/bin/test anet). These tests do not skip.");
         }
         return $value;
     }
     /**
      * A value that is unique per run, so tests never collide and leftovers are recognisable. The mock
-     * (docker/bin/test sandbox-mock) fixes it, because its answers are fixed.
+     * (docker/bin/test anet) fixes it, because its answers are fixed.
      */
     protected function sandboxRunId()
     {
