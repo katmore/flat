@@ -469,3 +469,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   `data/orm/driver/session/exception/bad_param.php` (a one-line constructor), now covered.
 - The inventory generator and the mutation probe work unchanged (inventory output is identical).
 - Verified: `docker/bin/test all --coverage`, 1,471 tests, 6,480 assertions, 100%, no PHP message.
+
+## MOD-235 — Clarification of MOD-234: the extra class in the coverage count is not new code
+
+- Kind: documentation. `flat\data\orm\driver\session\exception\bad_param` has been in the source since
+  2026-11-13 (php-7.2 phase, KD-19-23); no Codex-era commit touched it. It is one of 17 `bad_param`
+  classes, one per component. The old php-code-coverage reported 0 classes, methods and statements
+  for it even while a test threw it; php-code-coverage 9 reports 1, 1 and 1, covered. Checked by
+  running `SessionDriverTest` under both PHPUnit versions. A counting difference only.
