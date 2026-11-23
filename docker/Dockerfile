@@ -24,7 +24,7 @@ RUN --mount=type=secret,id=proxy_ca \
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/ImageMagick/ImageMagick6/tar.gz/e97831dfdfc064c5246cd7ba195ff6ecd4958f34 -o /tmp/source.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/ImageMagick/ImageMagick6/tar.gz/2b2f14a41ae3b22cf9acfb412098ba3b81eb9349 -o /tmp/source.tar.gz; \
     mkdir /tmp/magick; tar -xzf /tmp/source.tar.gz -C /tmp/magick --strip-components=1; \
     cd /tmp/magick; ./configure --prefix=/usr/local --without-perl --without-x --disable-openmp --disable-docs; \
     make -j2; make install; ldconfig; rm -rf /tmp/magick /tmp/source.tar.gz

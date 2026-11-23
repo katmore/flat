@@ -420,3 +420,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   check; it only warns that `doctrine/annotations` is abandoned). The locks were not regenerated.
   The Composer that runs the tests' packages is still the image's PHP 7.3.33 runtime.
 - Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-230 — Tooling upgrade 3 of 7: ImageMagick
+
+- Kind: tooling. `docker/Dockerfile`: ImageMagick 6 is built from the pinned commit of release
+  6.9.13-61, the newest 6.x (was 6.9.10-23). Same configure options. The imagick extension and the
+  MongoDB extension layers rebuilt on top of it.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
