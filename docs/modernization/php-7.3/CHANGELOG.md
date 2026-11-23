@@ -616,3 +616,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   rule requires.
 - Verified: `docker/bin/test all --coverage`, 1,481 tests, 6,546 assertions, 100% (332 classes, 1,065 methods,
   8,412 statements), no PHP message.
+
+## MOD-254 — Release notes drafted for v1.73.1
+
+- Kind: documentation. [RELEASE-NOTES-V1.73.1.md](RELEASE-NOTES-V1.73.1.md) covers the fixes (MOD-218 to MOD-220,
+  MOD-227, MOD-242, MOD-244, MOD-246), the Authorize.Net deprecation (MOD-253) and the tooling upgrades
+  (MOD-228 to MOD-251). The dependency audit was re-run: the same four advisories, which need PHP 8.1.
