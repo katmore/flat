@@ -412,3 +412,11 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   old lock's form. Already the newest PHP 7.3 allows, so unchanged: `mongodb/mongodb` 1.16.1, the
   AWS SDK 3.337.3, the MongoDB extension 1.16.2 (1.17 needs PHP 7.4).
 - Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
+
+## MOD-229 — Tooling upgrade 2 of 7: the Composer image
+
+- Kind: tooling. `docker/Dockerfile`: the dependency stage uses `composer:2.11` (2.11.2) pinned by
+  digest, was 2.2.31. It installs from the locks exactly as before (no blocking by the newer security
+  check; it only warns that `doctrine/annotations` is abandoned). The locks were not regenerated.
+  The Composer that runs the tests' packages is still the image's PHP 7.3.33 runtime.
+- Verified: `docker/bin/test all --coverage`, 1,471 tests, 100%, no PHP message.
