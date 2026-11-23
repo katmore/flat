@@ -590,3 +590,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: tooling. `docker/Dockerfile`: ImageMagick 7.1.2-36 (the `ImageMagick` repository's pinned commit; the 7.x line,
   where 6.x is the legacy branch) replaces 6.9.13-61 (MOD-230). Same configure options; imagick 3.8.1 builds against it.
 - Verified: `docker/bin/test all --coverage`, 1,480 tests, 100%, no PHP message.
+
+## MOD-251 — Dependency upgrade: flat-webapp's application lock
+
+- Kind: tooling, in flat-webapp. `composer.lock`: Guzzle 7.17.0 and psr7 2.13.6 (the only updates PHP 7.3.33
+  allows within the constraints); the pinned flat release and the lock's `plugin-api-version` are unchanged.
+  The test lock already had nothing newer. Verified: `docker/bin/test` in flat-webapp, 67 tests, clean log.
