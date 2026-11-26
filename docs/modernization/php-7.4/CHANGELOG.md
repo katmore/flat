@@ -133,3 +133,14 @@ continues from the php-7.3 phase.
 - Behavior: none for flat's code.
 - Verified: `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage.
 - Undo: revert the commit.
+
+## MOD-289 — `nikic/php-parser` 4.19.5 to 5.9.0 (tools lock)
+
+- Kind: environment (test tool). `tests/docker/tools/composer.lock`: `nikic/php-parser` v5.9.0, which needs
+  PHP 7.4. PHPUnit 9.6 and its `phpunit/php-code-coverage` 9.2 accept it (`^4.18 || ^5.0`); only coverage uses it.
+- Effect: the coverage report counts 8,824 executable lines instead of 8,821 (the new parser splits three
+  constructs differently); coverage is still 100%.
+- Behavior: none for flat's code.
+- Verified: `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% (332 classes,
+  1,099 methods, 8,824 lines).
+- Undo: revert the commit.
