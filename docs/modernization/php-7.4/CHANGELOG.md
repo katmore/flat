@@ -125,3 +125,11 @@ continues from the php-7.3 phase.
 - Verified: without the explicit requirement 39 tests error and 2 fail (all Authorize.Net); with it
   `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage.
 - Undo: revert the commit.
+
+## MOD-288 — `azuyalabs/yasumi` 2.4.0 to 2.6.0
+
+- Kind: environment (test dependency). `tests/docker/runtime/composer.lock`: `azuyalabs/yasumi` 2.6.0 (the
+  7.4 step unlocked it; the manifest constraint `^2.4` already allows it).
+- Behavior: none for flat's code.
+- Verified: `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage.
+- Undo: revert the commit.
