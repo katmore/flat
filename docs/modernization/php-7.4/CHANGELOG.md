@@ -55,3 +55,25 @@ continues from the php-7.3 phase.
 - Verified: the image rebuilds from the locks and `docker/bin/test all` passes with the same counts as MOD-282.
   `docker/bin/check-docs`.
 - Undo: revert the commit.
+
+## MOD-284 — flat on PHP 7.4.33: full verification and source review
+
+- Kind: verification; no file of `src` changed.
+- Run on 7.4.33 (the pins of MOD-283): `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all
+  pass, no notice, warning or deprecation; coverage 100% (332 classes, 1,099 methods, 8,821 lines), the same
+  as 7.3.33. (Without `--coverage` the count is 6,935: 19 assertions sit in tests that run only under
+  coverage.) `docker/bin/test-javascript`: 45 minifier programs preserve their JavaScript results.
+- Source review against the PHP manual's
+  [incompatible changes](https://www.php.net/manual/en/migration74.incompatible.php) and
+  [deprecations](https://www.php.net/manual/en/migration74.deprecated.php), for what the tests may not reach:
+  - every `array_key_exists()` and `key_exists()` call in `src` (`orm.php`, `asset.php`, `tmpl/data.php`,
+    `core/config.php`, `core/debug.php`, `core/controller/api.php`, `core/controller/asset/`,
+    `core/util/validate.php`, `core/util/validate/value.php`, `.../preg_error.php`) takes an array as its
+    second argument (type-hinted, guarded by `is_array`, or a literal), never an object;
+  - no use of `ReflectionType` as a string, `money_format`, `hebrevc`, `convert_cyr_string`, `ezmlm_hash`,
+    `restore_include_path`, `fgetss`, `get_magic_quotes_*`, `FILTER_SANITIZE_(STRING|STRIPPED)`, `(real)`,
+    `is_real`, `each`, `create_function`, Reflection `export()` or a legacy-order `implode()`;
+  - the one nested ternary, `tmpl/data.php:86`, is parenthesized;
+  - `php -l` on all tracked PHP files was clean (MOD-281).
+- Behavior: none.
+- Undo: nothing to undo.

@@ -6,11 +6,12 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 
 ## Status: in progress (started 2026-11-26)
 
-- The test image is PHP 7.4.33. The test tool `tests/tools/apidump.php` no longer uses a deprecated call
-  (MOD-282). `docker/bin/test all` passes on 7.4.33: 1,624 tests, 6,935 assertions.
-- The Composer platform pins are still 7.3.33.
+- The test image is PHP 7.4.33 and the Composer platform pins are 7.4.33.
+- `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage. The JavaScript
+  tests pass. The source review found nothing to change (MOD-284).
+- Next: bring each tool and dependency to its newest 7.4-compatible release, one at a time.
 - Open owner questions: Q51 and Q52 in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
-- flat-webapp has no `php-7.4` branch yet; its part of the phase waits for it.
+- flat-webapp's `php-7.4` branch exists; its part of the phase starts after flat's tools are current.
 
 ## Resume here
 

@@ -1,46 +1,40 @@
 # Session handoff, php-7.4
 
-Written 2026-11-26, to continue the phase in another session. The plan and rules are in
+Updated 2026-11-26, to continue the phase in another session. The plan and rules are in
 [../HANDOFF.md](../HANDOFF.md); this page only says where things stand. When it is used up, move it to
 `history/`.
 
 ## Branches
 
-- flat: the owner created `php-7.4` at `673df9f` (`master`, `v1.73.2`). All work so far is pushed there.
-- flat-webapp: the owner created `php-7.4` at `bcb91ec` (its `master`). Nothing has been changed on it.
+- flat: `php-7.4` (created at `673df9f`, `master`, `v1.73.2`). All work so far is pushed there.
+- flat-webapp: `php-7.4` at `bcb91ec` (its `master`). Nothing has been changed on it.
 
 ## Done
 
-- MOD-280: the phase folder; php-7.3 marked complete; phase pointers in `AGENTS.md`.
-- MOD-281: the test image is PHP 7.4.33.
-
-## Results
-
-- PHP 7.3.33, at `673df9f`, with coverage: 1,624 tests, 6,954 assertions, all pass; 100% (332 classes,
-  1,099 methods, 8,821 lines).
-- PHP 7.4.33: 1,624 tests, 6,902 assertions, 3 failures (all `Tools/ApiDumpTest`).
-- `php -l` on all 754 tracked PHP files under 7.4.33: no messages. This includes the vendored libraries, so no
-  compile-time deprecation (nested ternary, curly-brace offset) is left. Run-time deprecations show only where
-  a test reaches the code.
-- Both image digests in the handoff match `php:7.4-cli` and `php:7.4-apache`.
-- Not run on 7.4: coverage, `docker/bin/test-javascript`, `docker/bin/test sandbox`.
+- MOD-280 to MOD-281: the phase folder; the test image is PHP 7.4.33.
+- MOD-282: `tests/tools/apidump.php` no longer uses the deprecated `ReflectionType` string cast; its output
+  matches the 7.3 dump of `v1.73.2`.
+- MOD-283: both Composer platform pins are 7.4.33; no package moved.
+- MOD-284: full suite with coverage on 7.4.33 (1,624 tests, 6,954 assertions, 100%), the JavaScript tests,
+  and the source review against the 7.4 manual: nothing to change in `src`.
 
 ## Next
 
-1. Fix the one failure cause: `type_string()` in `tests/tools/apidump.php` casts a `ReflectionType` to string.
-   The new text must match what 7.3 produced, or the comparison with earlier dumps
-   (`docs/modernization/php-7.3/notes/API-V1.73.2.json`) will report false differences. Dump the same source
-   and compare to prove it.
-2. Move the platform pins in both `tests/docker/*/composer.json` to 7.4.33, re-lock, and update the lines in
-   [../../TESTING.md](../../TESTING.md) that say the locks are for PHP 7.3.
-3. Run `docker/bin/test all --coverage` and `docker/bin/test-javascript`.
-4. Check what tests may not reach. `array_key_exists()` on an object is deprecated: review its calls in
-   `src/flat` (`orm.php`, `core/debug.php`, `core/controller/api.php`, `core/util/validate.php`,
-   `core/util/validate/value.php`, and the others a search finds). Then read the PHP manual's
-   [incompatible changes](https://www.php.net/manual/en/migration74.incompatible.php) and
-   [deprecations](https://www.php.net/manual/en/migration74.deprecated.php) against `src`.
-5. Continue with step 4 of the plan (tools and dependencies, one at a time), then flat-webapp.
-6. Write `notes/ENVIRONMENT.md`.
+1. Bring tools and dependencies up to the newest release 7.4 allows, one at a time (full suite, one commit and
+   one change-log entry each). The list is "What the 7.4 step unlocks" in [../HANDOFF.md](../HANDOFF.md):
+   the `mongodb/mongodb`, `jms/serializer`, `azuyalabs/yasumi`, `doctrine/deprecations` and
+   `phpstan/phpdoc-parser` locks, `nikic/php-parser` in the tools lock, and ext-mongodb 1.21.1 (commit hash in
+   `docker/Dockerfile` and the `ext-mongodb` pin in `tests/docker/runtime/composer.json`). Also check the
+   other pinned tools, services and base images for newer releases.
+2. Write `notes/ENVIRONMENT.md`: what is at its newest and, for the rest, why not.
+3. flat-webapp: the same, then its tests and Docker image on 7.4.
+4. At the end: `composer audit --locked` on both locks, the dependency-alert note, the release preparation.
+
+## Working in a cloud session
+
+- Docker Hub can answer 429 on pulls; pull the service images one at a time, then use `--offline`.
+- Behind the cloud proxy, set `FLAT_TEST_CA_FILE=/root/.ccr/ca-bundle.crt` for builds.
+- `composer update --lock` rewrites some download URLs; keep the lock diff to real changes.
 
 ## Waiting for the owner
 
