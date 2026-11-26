@@ -848,3 +848,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - The retry stays as a safety net. `HANDOFF.md` is updated.
 - Verified: `docker/bin/test all --coverage`, 1,547 tests, 100%, no retry needed.
 
+## MOD-273 — Tooling: Composer 2.11.3
+
+- Kind: tooling. `docker/Dockerfile`: the `composer:2.11` image is pinned to the build of 2026-11-25 (Composer 2.11.3,
+  `sha256:0049ce90...`; was 2.11.2). It installs the test dependencies in the image build.
+- Verified: `docker/bin/test all --coverage`, 1,547 tests, 100% (332 classes, 1,068 methods, 8,462 statements).
+

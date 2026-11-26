@@ -16,8 +16,8 @@ Everything is defined in this repository (`docker/Dockerfile`, `docker/docker-co
 - JavaScript execution checks: Node 26.13.1, separate `node:26-slim` container pinned
   to `sha256:e6bedef217677b276c591795e169840edd9096dbf13f29df8ef8d1856b8820bc` in
   `docker/bin/test-javascript`. PHP minification remains on PHP 7.3.33.
-- Composer 2.11.2, image `composer:2.11` pinned
-  `sha256:50ea4d33fdcde1adb0f045547295faa1548b33872e5f789dae5b02ce2fb5de93`.
+- Composer 2.11.3, image `composer:2.11` pinned
+  `sha256:0049ce90b432795bf413a738b073963ada1a689e1a8708104684baafe94586ec`.
 - Composer platform pins, `tests/docker/tools/composer.json` and
   `tests/docker/runtime/composer.json`: `php` 7.3.33 (the runtime one also `ext-mongodb`
   1.16.2). Both locks carry the new content hash and platform.
