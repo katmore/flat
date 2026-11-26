@@ -907,3 +907,16 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test all --coverage`, 1,575 tests, 6,862 assertions, 100% (332 classes, 1,096 methods, 8,769
   statements); the test inventory is regenerated.
 
+## MOD-278 — Vendored library: JShrink 1.8.1
+
+- Kind: dependency, with fixes for modern JavaScript (see [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)).
+  `src/flat/vendor/tedious/JShrink/minifier.php` is upstream 1.8.1 (flat had 1.1.0 plus local fixes). Upstream 1.8.1
+  already contains the KD-80 fix (`continue 3`) and the PHP 7 guards, and handles template literals; it still has the KD-89
+  bugs, so those three fixes are re-applied and commented (`flat (KD-89)`; list in [notes/VENDORED.md](notes/VENDORED.md)).
+- Compared on 49 programs, run in Node before and after minifying: flat's old copy broke 4 (template literals, `//@cc_on`),
+  plain 1.8.1 broke 2 (`a++ + ++b`, `a-- - --b`), the patched 1.8.1 breaks none.
+- Tests: `JsMinifierTest` gains 30 modern programs (`modernPrograms()`, also executed by `docker/bin/test-javascript`, now 45
+  programs), cases for the paths of the new code, `peek()` at the end of input and an unclosed character class; five
+  expectations changed to the new, valid text. Nine of them fail on the old copy.
+- Verified: `docker/bin/test all --coverage`, 1,612 tests, 6,904 assertions, 100% (332 classes, 1,099 methods, 8,817
+  statements); `docker/bin/test-javascript`, 45 programs; the test inventory is regenerated.

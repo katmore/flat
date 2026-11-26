@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 857 test methods in 106 files, running 1575 test cases.
-- 139 methods use a data provider (one case per data set).
+- 859 test methods in 106 files, running 1612 test cases.
+- 140 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -1149,11 +1149,13 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testFixUtf8LeavesValuesThatAreNotTextAlone` (line 54)
 - `testVendoredSourceHasNoCurlyBraceStringOffsets` (line 62)
 
-### `tests/Unit/Vendor/JsMinifierTest.php` (3)
+### `tests/Unit/Vendor/JsMinifierTest.php` (5)
 
-- `testWhitespaceCommentsStringsAndRegexArePreservedAsNeeded` (line 8): 23 data-provider cases
-- `testCommentsPreserveTokenBoundariesAndStringContents` (line 40): 15 data-provider cases
-- `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 66): 3 data-provider cases
+- `testWhitespaceCommentsStringsAndRegexArePreservedAsNeeded` (line 8): 28 data-provider cases
+- `testPeekReturnsFalseAtTheEndOfTheInput` (line 47)
+- `testCommentsPreserveTokenBoundariesAndStringContents` (line 60): 15 data-provider cases
+- `testModernSyntaxKeepsItsMeaning` (line 90): 30 data-provider cases
+- `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 160): 4 data-provider cases
 
 ### `tests/Unit/Vendor/MarkdownTest.php` (8)
 

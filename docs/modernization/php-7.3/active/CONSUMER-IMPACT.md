@@ -246,6 +246,20 @@ consumers saw before, what they see now, and what to search for in their code.
   rendered HTML or tests that compare it; re-render and compare.
 - Verified: yes (the new tests fail on the old parser).
 
+### MOD-278 — JavaScript minifier: JShrink 1.8.1 (modern JavaScript no longer corrupted)
+
+- Before: flat bundled JShrink 1.1.0 (2013) with local fixes. It corrupted JavaScript written after 2015: inside a
+  template literal it dropped spaces (`` `n is ${n} and ${n + 1}` `` came out as `` `n is ${n}and ${n+1}` ``), cut a
+  template that contains `//`, and collapsed its newlines; and `//@cc_on` followed by code came out as
+  `//@cc_onvar x=1;`, which comments the code out.
+- After: JShrink 1.8.1 with flat's fixes re-applied. In 49 test programs (arrow functions, template literals, `?.`,
+  `??`, classes, generators, regex edge cases and more) the minified program gives the same result as the original,
+  checked by running both in Node; flat's old copy broke 4 of them. The output text changes a little: `return/x/`
+  (no space), `0??9`, and the IE-only `//@cc_on` comment is dropped.
+- Search consumer code for: `JShrink`, `minifier::minify`, `flat\deploy\minify`, and any stored minified assets
+  (re-minify them; the bytes differ, the behavior is the same or fixed).
+- Verified: yes (the new tests fail on the old copy; Node runs 45 programs before and after).
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.
