@@ -34,6 +34,8 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 - [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): Defects found in this phase and the owner questions.
 - [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md): Behavior changes applications may notice.
 
-[notes/](notes/): Lasting reference (nothing yet; `.gitkeep` keeps the folder in Git)
+[notes/](notes/): Lasting reference
+
+- [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md): The test environment on 7.4: what is newest and why the rest is held.
 
 [history/](history/): Finished or replaced documents (none yet; `.gitkeep` keeps the folder in Git)

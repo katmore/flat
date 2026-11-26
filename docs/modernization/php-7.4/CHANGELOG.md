@@ -144,3 +144,11 @@ continues from the php-7.3 phase.
 - Verified: `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% (332 classes,
   1,099 methods, 8,824 lines).
 - Undo: revert the commit.
+
+## MOD-290 — The environment note for PHP 7.4
+
+- Kind: documentation. `notes/ENVIRONMENT.md` records the test environment on 7.4: what is at its newest
+  release and, for each held tool, the reason. A check of the other pins found nothing newer that runs on 7.4:
+  ImageMagick 7.1.2-36 and imagick 3.8.1 are the newest releases, and Xdebug 3.1.6 is the last for PHP 7.4.
+- Behavior: none.
+- Undo: revert the commit.
