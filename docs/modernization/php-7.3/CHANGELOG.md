@@ -836,3 +836,15 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test all --coverage`, 1,547 tests, 6,760 assertions, 100% (332 classes, 1,068 methods,
   8,462 statements).
 
+## MOD-272 — RabbitMQ startup flake: cause found and fixed
+
+- Kind: tooling. The retry added in MOD-266 captured its first failure on 2026-11-26: RabbitMQ exited with `Error when
+  reading /var/lib/rabbitmq/.erlang.cookie: eacces`. Cause: the Compose health check (`rabbitmq-diagnostics`)
+  ran as root; when it started before the server had created the Erlang cookie (a slow start, as when three
+  services start together), it created the file owned by root, and the server, running as `rabbitmq`, could not read it.
+- Fix: `docker/docker-compose.yml` runs the health check as the `rabbitmq` user (`su-exec`, which the image has). With
+  the health check made 150 ms fast to widen the window, 12 of 12 starts failed before and 0 of 12 after.
+  (`RABBITMQ_ERLANG_COOKIE` does not help: this image's entrypoint ignores it.)
+- The retry stays as a safety net. `HANDOFF.md` is updated.
+- Verified: `docker/bin/test all --coverage`, 1,547 tests, 100%, no retry needed.
+

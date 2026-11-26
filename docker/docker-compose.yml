@@ -30,7 +30,10 @@ services:
     healthcheck:
       # `ping` succeeds once the Erlang node is up, seconds before the AMQP
       # listener accepts connections; require the listener ports instead.
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
+      # Run as the rabbitmq user: a root check that starts before the server
+      # creates /var/lib/rabbitmq/.erlang.cookie leaves it owned by root, and
+      # the server then fails to boot with "eacces" (the old startup flake).
+      test: ["CMD-SHELL", "su-exec rabbitmq rabbitmq-diagnostics -q check_port_connectivity"]
       interval: 2s
       timeout: 10s
       retries: 30
