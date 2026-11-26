@@ -22,7 +22,7 @@ $mode = isset($argv[1]) ? $argv[1] : '';
 
 function type_string($type) {
     if ($type === null) return null;
-    return ($type->allowsNull() ? '?' : '') . (string) $type;
+    return ($type->allowsNull() ? '?' : '') . $type->getName();
 }
 
 function describe_class($name) {

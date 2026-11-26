@@ -29,3 +29,17 @@ continues from the php-7.3 phase.
   754 tracked PHP files reports nothing (a sample with a nested ternary and a curly-brace offset does report).
   Coverage and `docker/bin/test-javascript` were not run on 7.4.
 - Undo: revert the commit.
+
+## MOD-282 — The API dump tool reads types without the deprecated string cast
+
+- Kind: runtime compatibility (test tooling). `type_string()` in `tests/tools/apidump.php` cast a
+  `ReflectionType` to a string, which PHP 7.4 deprecates. It now calls `ReflectionNamedType::getName()`, which
+  gives the same text on PHP 7.1 and newer (the leading `?` for a nullable type is still added by the tool).
+- Behavior: none for flat; the tool's output is unchanged.
+- Verified: under PHP 7.4.33 the fixed tool dumped `src` and `compare` against
+  `../php-7.3/notes/API-V1.73.2.json` (made on 7.3.33) reports no differences. The two files differ in one
+  stored message only: the fatal error text for `flat\core\util\validate\collection`, a class that cannot
+  load (already so in the 7.3 dump), which PHP 7.4 words "Uncaught Error: Interface ... not found". No
+  declaration differs. `docker/bin/test all` on 7.4.33: 1,624 tests, 6,935 assertions, all pass, no notice or deprecation. (7.3.33
+  counted 6,954 assertions; the 19 fewer are not explained yet and are listed in the session handoff.)
+- Undo: revert the commit.
