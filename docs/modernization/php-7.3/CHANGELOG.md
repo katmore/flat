@@ -885,3 +885,25 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test all --coverage`, 1,550 tests, 6,771 assertions, 100% (332 classes, 1,068 methods, 8,464
   statements); the test inventory is regenerated.
 
+## MOD-277 — Vendored libraries: Parsedown 1.8.0 and ParsedownExtra 0.9.0
+
+- Kind: dependency, with a security fix and rendering changes (see [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)).
+  `src/flat/vendor/erusev/src/Parsedown/Parsedown.php` is upstream 1.8.0 (flat had 1.5.0 plus two small patches);
+  `ParsedownExtra/ParsedownExtra.php` is 0.9.0 (flat had 0.6.x). The README, LICENSE and `composer.json` copies are
+  upstream's too. ParsedownExtra 0.9.0 requires Parsedown 1.8.0, so they move together.
+- flat's patches (each commented in the file; see [notes/VENDORED.md](notes/VENDORED.md)): the PHP 7 `{$Element['handler']}`
+  fix is in 1.8.0 itself; the disabled version guard stays disabled (it compares two constants and could never throw);
+  `libxml_use_internal_errors(true)` stays removed from `processTag()` (KD-90, MOD-219); and a new fix of an upstream bug:
+  `elementApplyRecursiveDepthFirst()` called the plural method for a single child and raised a TypeError.
+- The old and the new parser were run over 55 documents: 40 identical, 15 different. Four existing test rows changed to
+  the new rendering; new tests pin the other changes and the attribute-injection fix. All 12 fail on the old parser.
+- Process fixes found on the way: `check-docs` had been skipping `TEST-INVENTORY.md` for several runs (the file was
+  mode 0600 after a `mktemp`, so the container user could not read it; the path count fell from about 372 to about 281 and
+  I read only its last line). The file is readable again and the whole check passes; the documented inventory command
+  now ends with `chmod 644`.
+- Tests: the new `ParsedownApiTest` (16 tests) covers what flat's converter does not reach: the option setters, safe
+  mode, strict mode, `line()`, the subclass hooks and the block parser's edge cases, so the 28 new methods and 98 new
+  lines of Parsedown 1.8.0 are covered (the full suite is back to 100%).
+- Verified: `docker/bin/test all --coverage`, 1,575 tests, 6,862 assertions, 100% (332 classes, 1,096 methods, 8,769
+  statements); the test inventory is regenerated.
+

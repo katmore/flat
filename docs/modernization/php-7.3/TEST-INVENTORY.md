@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 843 test methods in 105 files, running 1550 test cases.
-- 137 methods use a data provider (one case per data set).
+- 857 test methods in 106 files, running 1575 test cases.
+- 139 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -1155,14 +1155,31 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testCommentsPreserveTokenBoundariesAndStringContents` (line 40): 15 data-provider cases
 - `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 66): 3 data-provider cases
 
-### `tests/Unit/Vendor/MarkdownTest.php` (6)
+### `tests/Unit/Vendor/MarkdownTest.php` (8)
 
 - `testQuoteHandlerRejectsANonmatchingExtensionMarker` (line 9)
 - `testBothBundledLoadersWorkInAFreshPhpRuntime` (line 18)
 - `testSupportedBlockAndInlineSyntax` (line 25): 47 data-provider cases
-- `testConfigurationAndRepeatedParserInstances` (line 82)
-- `testHtmlMarkupPreservesCallerLibxmlStateAndBufferedErrors` (line 96): 2 data-provider cases
-- `testNestedHtml5MarkupReportsParserWarningsAndStillRenders` (line 109)
+- `testRenderingThatChangedWithParsedown18` (line 35): 7 data-provider cases
+- `testAnImageAddressCannotBreakOutOfItsAttribute` (line 51)
+- `testConfigurationAndRepeatedParserInstances` (line 110)
+- `testHtmlMarkupPreservesCallerLibxmlStateAndBufferedErrors` (line 124): 2 data-provider cases
+- `testNestedHtml5MarkupReportsParserWarningsAndStillRenders` (line 137)
+
+### `tests/Unit/Vendor/ParsedownApiTest.php` (12)
+
+- `testTheOptionSettersReturnTheParserAndChangeTheOutput` (line 14)
+- `testLineRendersInlineMarkdownOnly` (line 32)
+- `testALinkInsideALinkIsNotNested` (line 40)
+- `testSafeModeNeutralisesActiveContent` (line 47): 6 data-provider cases
+- `testSafeModeKeepsOrdinaryLinksAndImages` (line 67)
+- `testSafeModeKeepsParsedownExtraIdAndClassAttributesAndDropsRawHtml` (line 76)
+- `testStrictModeRequiresASpaceAfterTheHeadingMarker` (line 84)
+- `testPlainParsedownHandlesHtmlBlocks` (line 91)
+- `testBlockParserEdgeCases` (line 100)
+- `testSubclassHooksStillWork` (line 125)
+- `testDefinitionListsWithBlankLines` (line 179)
+- `testBlockMarkupContinuesAcrossBlankLines` (line 189)
 
 ### `tests/Unit/Vendor/YasumiDateQueryTest.php` (5)
 

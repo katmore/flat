@@ -227,6 +227,25 @@ consumers saw before, what they see now, and what to search for in their code.
 - Search consumer code for: `flat\core\util\utf8`, `forceutf8\Encoding`, `fixUTF8`, `toISO8859`, `toLatin1`.
 - Verified: yes (the new tests fail on the old file).
 
+### MOD-277 — Markdown: Parsedown 1.8.0 and ParsedownExtra 0.9.0 (security fix, rendering changes)
+
+- Before: `flat\core\md\convert` rendered with Parsedown 1.5.0 (2015) and ParsedownExtra 0.6.x. One of its flaws: an
+  image whose address contains a quote broke out of the attribute, so `![a](x"onerror="alert(1))` produced
+  `<img src="x"onerror="alert(1)" ...>` (attribute injection).
+- After: Parsedown 1.8.0 and ParsedownExtra 0.9.0. The injection is fixed (the quote is escaped). In a set of 55
+  typical documents, 40 render identically; the rest differ as the newer parsers follow the Markdown rules more
+  closely:
+  - an ordered list starts at its first number (`<ol start="3">`), including a line such as `2015. A great year`;
+  - a different bullet (`*`, `+`, `-`) starts a new list, and a blank line between quotes makes two quotes;
+  - in a loose list every item is a paragraph; nested lists differ in whitespace (`<li>b<ul>`, no newline);
+  - a fenced block's first word is its language (`language-php`), and `{.class}` attributes work on it;
+  - quotes in text are not entity-encoded (`"` was `&quot;`); a lone `*` is an empty list; `a || b` rows with an
+    empty cell are no longer a table.
+- Not changed: raw HTML still passes through (flat does not use Parsedown's safe mode).
+- Search consumer code for: `flat\core\md\convert`, `string_to_html`, `parsedown\extra`, and stored or cached
+  rendered HTML or tests that compare it; re-render and compare.
+- Verified: yes (the new tests fail on the old parser).
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.
