@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs flat's PHPUnit suite natively, on a machine with PHP 7.3 and PHPUnit
+# Runs flat's PHPUnit suite natively, on a machine with PHP 7.4 and PHPUnit
 # installed (e.g. after `composer install`). docker/bin/test runs this same
 # script inside the repository's PHP container and starts any services it needs.
 set -eu

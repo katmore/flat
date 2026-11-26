@@ -1,6 +1,6 @@
 services:
   php:
-    image: flat-tests-php73
+    image: flat-tests-php74
     build:
       context: ..
       dockerfile: docker/Dockerfile

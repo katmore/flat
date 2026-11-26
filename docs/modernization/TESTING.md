@@ -2,7 +2,7 @@
 
 Two entry points take the same arguments. `bin/test` holds all test logic (modes,
 PHPUnit arguments, coverage reports, the inventory) and runs natively where PHP
-7.3 and PHPUnit are installed. `docker/bin/test` only handles Docker: it builds or
+7.4 and PHPUnit are installed. `docker/bin/test` only handles Docker: it builds or
 checks the image, starts the services a mode needs, runs `bin/test` inside the PHP
 container with the same arguments, and removes the containers afterwards. The
 rest of this page uses `docker/bin/test`, the supported way to run the suite.
@@ -41,7 +41,7 @@ If starting the services fails, `docker/bin/test` prints the state and logs of t
 stack and tries again, up to three attempts. A run that needed a retry says so in its output; a third failure
 stops the run.
 
-The JavaScript check runs minification in the PHP 7.3 test image and executes both the original
+The JavaScript check runs minification in the PHP 7.4 test image and executes both the original
 and minified programs against expected results in a separate, digest-pinned Node container.
 Docker downloads that additional image on first use; no host Node installation is needed.
 
@@ -130,7 +130,7 @@ docker/bin/test all --offline --coverage
 
 Offline mode checks that the selected local image refs exist, skips builds,
 and passes explicit no-pull flags. A missing image produces a clear error; it is not downloaded automatically. Cached base images or Composer
-archives alone are not sufficient: the built flat-tests-php73 image must exist.
+archives alone are not sufficient: the built flat-tests-php74 image must exist.
 Rebuild that image online after changing Dockerfile/test dependency inputs.
 The optional build CA input is not used by offline execution.
 
@@ -142,7 +142,7 @@ on services in Compose, so unit mode needs only the PHP image.
 
 ## What runs where
 
-- PHP/PHPUnit: PHP 7.3 container (exact patch set in `docker/Dockerfile`), pinned official base digest
+- PHP/PHPUnit: PHP 7.4 container (exact patch set in `docker/Dockerfile`), pinned official base digest
 - Error reporting: `E_ALL` (`php.ini-development`); PHPUnit fails on notices, warnings and deprecations
 - MongoDB integration: Separate pinned MongoDB 9.0 Compose service
 - RabbitMQ integration: Separate pinned RabbitMQ 4.4 Compose service
@@ -184,9 +184,9 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
 
 The Composer-only archive-fetch stage uses the official Composer image and the
 locked PHP-7.3 platform constraints; it does not execute framework/tests. The
-actual PHP runtime is pinned and validated as PHP 7.3 (the exact patch is set in `docker/Dockerfile`), with required extensions
+actual PHP runtime is pinned and validated as PHP 7.4 (the exact patch is set in `docker/Dockerfile`), with required extensions
 built/verified there. ext-sockets is ignored only by the archive-fetch stage and
-is actually compiled/enabled in the PHP 7.3 test runtime. GitHub archives use
+is actually compiled/enabled in the PHP 7.4 test runtime. GitHub archives use
 codeload URLs with the same locked source commits. Application composer.json and
 its dependency policy are unchanged by this isolated test setup.
 

@@ -1121,7 +1121,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/PhpVersionTest.php` (1)
 
-- `testSuiteRunsOnPhp73` (line 10)
+- `testSuiteRunsOnPhp74` (line 10)
 
 ### `tests/Unit/Tmpl/DataTest.php` (4)
 

@@ -10,8 +10,8 @@ RUN --mount=type=secret,id=proxy_ca \
     composer install --working-dir=tools --no-interaction --no-progress --prefer-dist --no-plugins --no-scripts && \
     composer install --working-dir=runtime --ignore-platform-req=ext-sockets --no-interaction --no-progress --prefer-dist --no-plugins --no-scripts
 
-FROM php:7.3-cli@sha256:bd6f2dc7a4e4537e927355c94a74c3022911aa504278f5f0fd94016c90dfaecc
-# The exact PHP 7.3.33 runtime used by the compatibility suite. No apt repositories
+FROM php:7.4-cli@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5
+# The exact PHP 7.4.33 runtime used by the compatibility suite. No apt repositories
 # or private prebuilt images are needed. Optional session CA trust is mounted,
 # never copied into an image layer.
 RUN --mount=type=secret,id=proxy_ca \
@@ -53,6 +53,6 @@ RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
 COPY --from=dependencies /opt/flat-test /opt/flat-test
 COPY tests/docker/bootstrap.php /opt/flat-test/bootstrap.php
 RUN chmod -R a+rX /opt/flat-test
-RUN php -r 'if (PHP_VERSION !== "7.3.33") { throw new RuntimeException("Unexpected PHP version"); } if (error_reporting() !== E_ALL) { throw new RuntimeException("error_reporting is not E_ALL"); } foreach (["curl","dom","imagick","mongodb","pdo_sqlite","sockets","xdebug"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: ".$extension); } } require "/opt/flat-test/tools/vendor/autoload.php"; require "/opt/flat-test/runtime/vendor/autoload.php"; echo "Verified PHP ".PHP_VERSION." and locked test dependencies\n";'
+RUN php -r 'if (PHP_VERSION !== "7.4.33") { throw new RuntimeException("Unexpected PHP version"); } if (error_reporting() !== E_ALL) { throw new RuntimeException("error_reporting is not E_ALL"); } foreach (["curl","dom","imagick","mongodb","pdo_sqlite","sockets","xdebug"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: ".$extension); } } require "/opt/flat-test/tools/vendor/autoload.php"; require "/opt/flat-test/runtime/vendor/autoload.php"; echo "Verified PHP ".PHP_VERSION." and locked test dependencies\n";'
 WORKDIR /app
 ENTRYPOINT ["php", "/opt/flat-test/tools/vendor/bin/phpunit", "--bootstrap", "/opt/flat-test/bootstrap.php"]
