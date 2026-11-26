@@ -77,3 +77,22 @@ continues from the php-7.3 phase.
   - `php -l` on all tracked PHP files was clean (MOD-281).
 - Behavior: none.
 - Undo: nothing to undo.
+
+## MOD-285 — The MongoDB extension moves to 1.19.4
+
+- Kind: environment. `docker/Dockerfile` builds ext-mongodb 1.19.4 (commit
+  `bcb0a495a568243b331692443a04cdcc9cc9c205`, with libmongoc `32898b16f8236470ad5610bf0f0b0071bee6a1b4`) in place
+  of 1.16.2; the `ext-mongodb` pin in `tests/docker/runtime/composer.json` is `1.19.4` and the lock is
+  refreshed (hash and platform only).
+- Correction to the phase brief ([../php-7.4/HANDOFF.md](HANDOFF.md)): it says 1.21.1 runs on PHP 7.4. It does
+  not: from 1.21.0 the extension's `config.m4` requires PHP 8.1 (the build stops with "Need a PHP version
+  >= 8.1.0"). The newest release that builds on 7.4 is 1.20.1.
+- Why not 1.20.1: from 1.20.0 the extension deprecates an integer `ReadPreference` mode and
+  `ReadPreference::getMode()`. `alcaeus/mongo-php-adapter` 1.2.5 (newest, archived) uses both in every
+  database object it creates. With 1.20.1, 47 tests error and 1 fails on those deprecations (all in
+  `Db/Mongo`). The cause is outside flat and cannot be fixed there; nothing is hidden. See Q53 in
+  [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+- Behavior: none for flat's code.
+- Verified: `docker/bin/test all --coverage` on the 1.19.4 image: 1,624 tests, 6,954 assertions, all pass;
+  100% coverage (332 classes, 1,099 methods, 8,821 lines). With 1.20.1 the same run: 47 errors, 1 failure.
+- Undo: revert the commit.

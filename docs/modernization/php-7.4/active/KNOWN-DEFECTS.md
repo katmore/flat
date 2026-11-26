@@ -19,3 +19,12 @@ Each has a recommendation; "agree" is enough.
 
 52. **Release numbering: `v1.74.0` and then patch releases, tagged by the owner, with flat-webapp's lock
     moved to the published release after the tag?** Recommend yes. **Open.**
+
+53. **The MongoDB extension stays at 1.19.4 (not 1.20.1, the newest that runs on PHP 7.4). Agree?** From
+    1.20.0 the extension deprecates `ReadPreference` with an integer mode and `ReadPreference::getMode()`.
+    The third-party `alcaeus/mongo-php-adapter` 1.2.5 (its newest release, and archived) does both for
+    every database object, so 47 tests fail on a deprecation that flat cannot fix and must not hide. flat's
+    legacy `Mongo` driver (`src/flat/db/driver/mongo.php`) is built on that adapter. Recommend: keep 1.19.4
+    until the adapter is replaced or patched, and decide that with the legacy driver's future (v2.X). In
+    flat-webapp the question does not arise: its image has no MongoDB extension. Whichever way, a consumer on PHP 7.4
+    with extension 1.20 or newer sees these deprecations from the adapter. **Open.**

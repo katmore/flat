@@ -10,7 +10,7 @@
   "config": {
     "platform": {
       "php": "7.4.33",
-      "ext-mongodb": "1.16.2"
+      "ext-mongodb": "1.19.4"
     },
     "preferred-install": "source"
   }

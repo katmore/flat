@@ -10,7 +10,7 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 - `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage. The JavaScript
   tests pass. The source review found nothing to change (MOD-284).
 - Next: bring each tool and dependency to its newest 7.4-compatible release, one at a time.
-- Open owner questions: Q51 and Q52 in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+- Open owner questions: Q51, Q52 and Q53 in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
 - flat-webapp's `php-7.4` branch exists; its part of the phase starts after flat's tools are current.
 
 ## Resume here
