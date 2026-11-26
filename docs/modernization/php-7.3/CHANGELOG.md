@@ -827,3 +827,12 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   (`DEFERRED-V2.md`, the release notes, the mock README); MOD-268 and MOD-269 stay as written.
 - Verified: `docker/bin/test sandbox` 13 of 13 on the real sandbox; `all --coverage` 1,547 tests, 6,760 assertions, 100%
   (332 classes, 1,068 methods); `check-docs` 0 problems; the test inventory is regenerated.
+
+## MOD-271 — Dependency: symfony/yaml 5.4.57
+
+- Kind: tooling. `tests/docker/runtime/composer.lock`: `symfony/yaml` v5.4.57 (was v5.4.56), a patch release of
+  2026-11-25. It was the only package of either lock with a newer release that PHP 7.3.33 allows (checked with
+  `composer update --dry-run -W` and `composer outdated -a` on both locks). Only that package moved.
+- Verified: `docker/bin/test all --coverage`, 1,547 tests, 6,760 assertions, 100% (332 classes, 1,068 methods,
+  8,462 statements).
+
