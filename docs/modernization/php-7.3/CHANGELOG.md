@@ -860,3 +860,10 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   (`sha256:bba4266e...`). RabbitMQ is the same release, 4.4.1; the image was rebuilt on Alpine 3.24.4.
 - Verified: `docker/bin/test all --coverage`, 1,547 tests, 100% (332 classes, 1,068 methods, 8,462 statements).
 
+## MOD-275 — Tooling: Node 26.13.1 on the newest build
+
+- Kind: tooling. `docker/bin/test-javascript`: `node:26-slim` is pinned to the build of 2026-11-24
+  (`sha256:abe7e5a8...`). Node is the same release, 26.13.1; the image was rebuilt on a newer base.
+- Verified: `docker/bin/test-javascript` (15 minifier programs preserve their results) and
+  `docker/bin/test all --coverage`, 1,547 tests, 100%.
+

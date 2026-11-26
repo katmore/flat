@@ -14,7 +14,7 @@ Everything is defined in this repository (`docker/Dockerfile`, `docker/docker-co
 - PHPUnit 9.6.39 with php-code-coverage 9.2.32 (9.6 is the last line for PHP 7.3; PHPUnit 10 needs 8.1).
   Coverage totals under it: 332 classes, 1,065 methods, 8,412 statements, all covered.
 - JavaScript execution checks: Node 26.13.1, separate `node:26-slim` container pinned
-  to `sha256:e6bedef217677b276c591795e169840edd9096dbf13f29df8ef8d1856b8820bc` in
+  to `sha256:abe7e5a82b61a8ef67b315b85497c9e65173387ccf2f4a029248184b8e020be5` in
   `docker/bin/test-javascript`. PHP minification remains on PHP 7.3.33.
 - Composer 2.11.3, image `composer:2.11` pinned
   `sha256:0049ce90b432795bf413a738b073963ada1a689e1a8708104684baafe94586ec`.
