@@ -33,15 +33,16 @@ namespace flat\core\md\convert;
 class file extends \flat\core\md\convert {
    /**
     * @param string $source path to markdown file
+    * @param array $options as for \flat\core\md\convert::string_to_html()
     */
-   public function __construct($source) {
+   public function __construct($source, array $options = []) {
       if (false ===($text = file_get_contents($source))) {
          throw new \flat\core\md\convert\exception\invalid_source(
             "path '$source' could not be read"
          );
       }
       //var_dump($text);die('flat core md convert file die');
-      parent::__construct($text);
+      parent::__construct($text, $options);
    }
 }
 

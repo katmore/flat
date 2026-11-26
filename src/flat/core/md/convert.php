@@ -38,12 +38,25 @@ class convert {
    /**
     * converts text into html
     * 
+    * By default the text is treated as untrusted: raw HTML in it is escaped (shown as text), links and images with
+    * unsafe addresses (javascript:, data:, vbscript:) lose them, and on* attributes are dropped (Parsedown's safe
+    * mode). Pass ['safe' => false] only for text you wrote yourself, to let raw HTML through.
+    * 
     * @return string
     * 
     * @param string $text markdown text
+    * @param array $options optional: 'safe' (bool, default true) escapes raw HTML and unsafe addresses
+    * 
+    * @throws \InvalidArgumentException for an option that does not exist
     */
-   public static function string_to_html($text) {
+   public static function string_to_html($text, array $options = []) {
+      foreach (array_keys($options) as $name) {
+         if ($name !== 'safe') {
+            throw new \InvalidArgumentException("unknown option '$name'");
+         }
+      }
       $parse= new parsedown\extra();
+      $parse->setSafeMode(!isset($options['safe']) || (bool) $options['safe']);
       return $parse->text($text);
    }
    /**
@@ -70,14 +83,15 @@ class convert {
    }
    /**
     * @param string $text markdown text to convert
+    * @param array $options as for string_to_html()
     * @uses string_to_html()
     */
-   public function __construct($text) {
+   public function __construct($text, array $options = []) {
       if (!is_string($text)) throw new convert\exception\invalid_source(
          "source must be string"
       );
       //var_dump($text);die('flat core md convert die');
-      $this->_html= self::string_to_html($text);
+      $this->_html= self::string_to_html($text, $options);
       //var_dump($html);die('flat core md convert die');
    }
 }

@@ -49,3 +49,10 @@ fixes). Differences against `v1.73.0`, all in Authorize.Net wrappers except the 
 - Added: the fields of `customer\transaction\authonly` (KD-105).
 - **Removed:** `customer\transaction\captureonly`, `customer\transaction\captureonly\AuthorizeNetTransaction` and
   `customer::captureonly()` (KD-106): the one removal, by owner decision, because Authorize.Net withdrew the method.
+
+
+## v1.73.2 against v1.73.1
+
+Compared with [API-V1.73.2.json](API-V1.73.2.json) (the code after MOD-279; 620 classes in each). Three differences, all an
+added optional parameter: `flat\core\md\convert::__construct()`, `convert::string_to_html()` and
+`flat\core\md\convert\file::__construct()` take `array $options = []` (MOD-279). Nothing was removed or changed.

@@ -920,3 +920,19 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   expectations changed to the new, valid text. Nine of them fail on the old copy.
 - Verified: `docker/bin/test all --coverage`, 1,612 tests, 6,904 assertions, 100% (332 classes, 1,099 methods, 8,817
   statements); `docker/bin/test-javascript`, 45 programs; the test inventory is regenerated.
+
+
+## MOD-279 — Markdown: raw HTML is escaped by default (owner's decision)
+
+- Kind: behavior change (owner's decision, 2026-11-26: letting raw HTML through "seems weird"). `flat\core\md\convert`
+  now uses Parsedown's safe mode by default, and takes an optional `array $options` (`['safe' => false]` restores the old
+  behavior for trusted text) in `string_to_html()`, `convert::__construct()` and `convert\file::__construct()`. An unknown option throws
+  `InvalidArgumentException`. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- `flat\core\controller\tmpl` passes `['safe' => false]`: template files are the developer's own.
+- Safe mode shows typed entities literally (`&copy;`), which is Parsedown's behavior; tested and documented.
+- The API comparison against v1.73.1 shows only the three added optional parameters
+  ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
+- Release notes for v1.73.2 are drafted in [RELEASE-NOTES-V1.73.2.md](RELEASE-NOTES-V1.73.2.md) (MOD-271 to MOD-279).
+- Verified: `docker/bin/test all --coverage`, 1,624 tests, 6,954 assertions, 100% (332 classes, 1,099 methods, 8,821
+  statements); the test inventory is regenerated.
+

@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 859 test methods in 106 files, running 1612 test cases.
-- 140 methods use a data provider (one case per data set).
+- 865 test methods in 106 files, running 1624 test cases.
+- 141 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -560,12 +560,17 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testPrivateVisitIsIgnoredEvenWithObsoleteFlags` (line 207)
 - `testMissingVisitThrowsCannotGetProperty` (line 214)
 
-### `tests/Unit/Core/Md/ConvertTest.php` (4)
+### `tests/Unit/Core/Md/ConvertTest.php` (9)
 
 - `testMarkdownStringInstanceAndFileProduceEquivalentHtml` (line 7)
 - `testMarkdownExtraTablesAndFencedCode` (line 22)
-- `testNonStringSourceIsRejected` (line 29)
-- `testMissingFileRaisesInvalidSource` (line 34)
+- `testRawHtmlAndUnsafeAddressesAreNeutralisedByDefault` (line 30): 7 data-provider cases
+- `testOrdinaryMarkdownAndMarkdownExtraAreUnchangedBySafeMode` (line 50)
+- `testCharacterEntitiesAreShownLiterallyInSafeMode` (line 60)
+- `testTrustedTextCanLetRawHtmlThrough` (line 66)
+- `testAnUnknownOptionIsRejected` (line 81)
+- `testNonStringSourceIsRejected` (line 87)
+- `testMissingFileRaisesInvalidSource` (line 92)
 
 ### `tests/Unit/Core/RandStrTest.php` (10)
 
@@ -683,7 +688,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNativeReadsHandleShortEmptyAndZeroBodies` (line 257): 5 data-provider cases
 - `testCallbackFailureStillClosesTheLocalAndRemoteStreams` (line 271)
 
-### `tests/Unit/Core/Template/ControllerTest.php` (16)
+### `tests/Unit/Core/Template/ControllerTest.php` (17)
 
 - `testFailingTemplatesCloseTheirOutputBuffers` (line 90)
 - `testDesignRootUsesConfigurationOrItsDocumentedFallback` (line 102)
@@ -693,14 +698,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` (line 154)
 - `testUnusablePhpDesignsFallBackToHtml` (line 170)
 - `testCheckingADesignNeverPrintsIt` (line 182)
-- `testMarkdownAndGeneratedMarkdownFiles` (line 190)
-- `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` (line 206)
-- `testInvalidDesignsAreRejected` (line 220): 4 data-provider cases
-- `testDesignBasesPrefixesAndSeparators` (line 226)
-- `testFormattingFlagsReplacementsAndOutput` (line 234)
-- `testLoggerWritesDesignKindAndNormalizedName` (line 243)
-- `testConstructorAndPreparedInterfacesControlDisplayTiming` (line 254)
-- `testDefaultDisplayCallbackDelegatesToTemplateRendering` (line 273)
+- `testTemplatesWrittenByTheDeveloperKeepTheirRawHtml` (line 190)
+- `testMarkdownAndGeneratedMarkdownFiles` (line 198)
+- `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` (line 214)
+- `testInvalidDesignsAreRejected` (line 228): 4 data-provider cases
+- `testDesignBasesPrefixesAndSeparators` (line 234)
+- `testFormattingFlagsReplacementsAndOutput` (line 242)
+- `testLoggerWritesDesignKindAndNormalizedName` (line 251)
+- `testConstructorAndPreparedInterfacesControlDisplayTiming` (line 262)
+- `testDefaultDisplayCallbackDelegatesToTemplateRendering` (line 281)
 
 ### `tests/Unit/Core/Template/ValidateControllerTest.php` (3)
 

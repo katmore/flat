@@ -241,7 +241,7 @@ consumers saw before, what they see now, and what to search for in their code.
   - a fenced block's first word is its language (`language-php`), and `{.class}` attributes work on it;
   - quotes in text are not entity-encoded (`"` was `&quot;`); a lone `*` is an empty list; `a || b` rows with an
     empty cell are no longer a table.
-- Not changed: raw HTML still passes through (flat does not use Parsedown's safe mode).
+- Raw HTML is no longer passed through by default: see MOD-279 below.
 - Search consumer code for: `flat\core\md\convert`, `string_to_html`, `parsedown\extra`, and stored or cached
   rendered HTML or tests that compare it; re-render and compare.
 - Verified: yes (the new tests fail on the old parser).
@@ -259,6 +259,23 @@ consumers saw before, what they see now, and what to search for in their code.
 - Search consumer code for: `JShrink`, `minifier::minify`, `flat\deploy\minify`, and any stored minified assets
   (re-minify them; the bytes differ, the behavior is the same or fixed).
 - Verified: yes (the new tests fail on the old copy; Node runs 45 programs before and after).
+
+### MOD-279 — Markdown: raw HTML and unsafe addresses are escaped by default
+
+- Before: `flat\core\md\convert` let raw HTML in the Markdown through untouched, so `<script>alert(1)</script>`,
+  `<iframe>` or `<b onclick="...">` in user text reached the page, and `[x](javascript:alert(1))` kept its address.
+- After: by default the text is treated as untrusted (Parsedown's safe mode). Raw HTML is shown as text
+  (`&lt;script&gt;`), `javascript:`, `data:` and `vbscript:` addresses are removed from links and images, and `on*`
+  attributes are dropped. Ordinary Markdown and Markdown Extra (tables, footnotes, `{#id .class}`) render as before.
+  Typed character entities are shown literally (`&copy;` appears as the text `&copy;`).
+- To let raw HTML through for text you wrote yourself, pass `['safe' => false]`:
+  `convert::string_to_html($text, ['safe' => false])`, `new convert($text, ['safe' => false])`,
+  `new convert\file($path, ['safe' => false])`. An unknown option throws `InvalidArgumentException`.
+- Not changed: flat's template controller still renders `.md`, `.txt`, `.md.php` and `.txt.php` templates with raw
+  HTML allowed, because they are written by the developer.
+- Search consumer code for: `flat\core\md\convert`, `string_to_html`, `convert\file`, and Markdown that holds HTML
+  you want kept (add `['safe' => false]` if the text is trusted).
+- Verified: yes (nine of the new tests fail on the old converter).
 
 ## No behavior change
 
