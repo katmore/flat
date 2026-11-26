@@ -216,6 +216,67 @@ consumers saw before, what they see now, and what to search for in their code.
   or `authonly` followed by a capture, instead.
 - Verified: yes (unit test; the sandbox's refusal is the owner's run of 2026-11-23).
 
+### MOD-276 — forceutf8 updated from 2.0 to 2.0.4
+
+- Before: flat bundled an old copy of forceutf8 2.0 that used the `$text{$i}` string-offset syntax (deprecated in PHP
+  7.4, removed in 8.0) and loose comparisons.
+- After: upstream 2.0.4, with only the namespace changed. Conversions give the same results for everything the tests
+  cover. Two differences: `fixUTF8()` of a number, boolean or null now returns it unchanged (before, `42` became
+  `'42'`, and `null` and `false` became `''`); and `toISO8859()` and `toLatin1()` now accept the iconv option, as
+  `toWin1252()` already did.
+- Search consumer code for: `flat\core\util\utf8`, `forceutf8\Encoding`, `fixUTF8`, `toISO8859`, `toLatin1`.
+- Verified: yes (the new tests fail on the old file).
+
+### MOD-277 — Markdown: Parsedown 1.8.0 and ParsedownExtra 0.9.0 (security fix, rendering changes)
+
+- Before: `flat\core\md\convert` rendered with Parsedown 1.5.0 (2015) and ParsedownExtra 0.6.x. One of its flaws: an
+  image whose address contains a quote broke out of the attribute, so `![a](x"onerror="alert(1))` produced
+  `<img src="x"onerror="alert(1)" ...>` (attribute injection).
+- After: Parsedown 1.8.0 and ParsedownExtra 0.9.0. The injection is fixed (the quote is escaped). In a set of 55
+  typical documents, 40 render identically; the rest differ as the newer parsers follow the Markdown rules more
+  closely:
+  - an ordered list starts at its first number (`<ol start="3">`), including a line such as `2015. A great year`;
+  - a different bullet (`*`, `+`, `-`) starts a new list, and a blank line between quotes makes two quotes;
+  - in a loose list every item is a paragraph; nested lists differ in whitespace (`<li>b<ul>`, no newline);
+  - a fenced block's first word is its language (`language-php`), and `{.class}` attributes work on it;
+  - quotes in text are not entity-encoded (`"` was `&quot;`); a lone `*` is an empty list; `a || b` rows with an
+    empty cell are no longer a table.
+- Raw HTML is no longer passed through by default: see MOD-279 below.
+- Search consumer code for: `flat\core\md\convert`, `string_to_html`, `parsedown\extra`, and stored or cached
+  rendered HTML or tests that compare it; re-render and compare.
+- Verified: yes (the new tests fail on the old parser).
+
+### MOD-278 — JavaScript minifier: JShrink 1.8.1 (modern JavaScript no longer corrupted)
+
+- Before: flat bundled JShrink 1.1.0 (2013) with local fixes. It corrupted JavaScript written after 2015: inside a
+  template literal it dropped spaces (`` `n is ${n} and ${n + 1}` `` came out as `` `n is ${n}and ${n+1}` ``), cut a
+  template that contains `//`, and collapsed its newlines; and `//@cc_on` followed by code came out as
+  `//@cc_onvar x=1;`, which comments the code out.
+- After: JShrink 1.8.1 with flat's fixes re-applied. In 49 test programs (arrow functions, template literals, `?.`,
+  `??`, classes, generators, regex edge cases and more) the minified program gives the same result as the original,
+  checked by running both in Node; flat's old copy broke 4 of them. The output text changes a little: `return/x/`
+  (no space), `0??9`, and the IE-only `//@cc_on` comment is dropped.
+- Search consumer code for: `JShrink`, `minifier::minify`, `flat\deploy\minify`, and any stored minified assets
+  (re-minify them; the bytes differ, the behavior is the same or fixed).
+- Verified: yes (the new tests fail on the old copy; Node runs 45 programs before and after).
+
+### MOD-279 — Markdown: raw HTML and unsafe addresses are escaped by default
+
+- Before: `flat\core\md\convert` let raw HTML in the Markdown through untouched, so `<script>alert(1)</script>`,
+  `<iframe>` or `<b onclick="...">` in user text reached the page, and `[x](javascript:alert(1))` kept its address.
+- After: by default the text is treated as untrusted (Parsedown's safe mode). Raw HTML is shown as text
+  (`&lt;script&gt;`), `javascript:`, `data:` and `vbscript:` addresses are removed from links and images, and `on*`
+  attributes are dropped. Ordinary Markdown and Markdown Extra (tables, footnotes, `{#id .class}`) render as before.
+  Typed character entities are shown literally (`&copy;` appears as the text `&copy;`).
+- To let raw HTML through for text you wrote yourself, pass `['safe' => false]`:
+  `convert::string_to_html($text, ['safe' => false])`, `new convert($text, ['safe' => false])`,
+  `new convert\file($path, ['safe' => false])`. An unknown option throws `InvalidArgumentException`.
+- Not changed: flat's template controller still renders `.md`, `.txt`, `.md.php` and `.txt.php` templates with raw
+  HTML allowed, because they are written by the developer.
+- Search consumer code for: `flat\core\md\convert`, `string_to_html`, `convert\file`, and Markdown that holds HTML
+  you want kept (add `['safe' => false]` if the text is trusted).
+- Verified: yes (nine of the new tests fail on the old converter).
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

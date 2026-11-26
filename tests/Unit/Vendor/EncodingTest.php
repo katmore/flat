@@ -43,4 +43,26 @@ class EncodingTest extends TestCase
         }
         $this->assertSame('',Encoding::toWin1252('😀',Encoding::ICONV_IGNORE));
     }
+    public function testLatin1ConversionsAcceptTheIconvOptionToo()
+    {
+        // forceutf8 2.0.2 and later: toISO8859() and toLatin1() pass the option on to toWin1252().
+        foreach (['toISO8859','toLatin1'] as $method) {
+            $this->assertSame("caf\xe9",Encoding::$method('café',Encoding::ICONV_TRANSLIT));
+            $this->assertSame('',Encoding::$method('😀',Encoding::ICONV_IGNORE));
+        }
+    }
+    public function testFixUtf8LeavesValuesThatAreNotTextAlone()
+    {
+        // forceutf8 2.0.2 and later. Before, 42 became '42', and null and false became ''.
+        foreach ([42, 1.5, true, false, null] as $value) {
+            $this->assertSame($value, Encoding::fixUTF8($value));
+        }
+        $this->assertSame(['a'=>42, 'b'=>null, 'c'=>'café'], Encoding::fixUTF8(['a'=>42, 'b'=>null, 'c'=>'cafÃ©']));
+    }
+    public function testVendoredSourceHasNoCurlyBraceStringOffsets()
+    {
+        // `$text{$i}` is deprecated in PHP 7.4 and removed in 8.0; forceutf8 2.0.4 uses `$text[$i]`.
+        $source = file_get_contents((new \ReflectionClass(Encoding::class))->getFileName());
+        $this->assertSame(0, preg_match('/\$[A-Za-z_]\w*\{[^}]*\}/', preg_replace('/"[^"\n]*"|\'[^\'\n]*\'|\/\/.*|\/\*.*?\*\//s', '', $source)));
+    }
 }

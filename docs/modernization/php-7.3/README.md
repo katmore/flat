@@ -21,7 +21,7 @@ project plan, branch model and the rules every phase follows are in
    cause (prime directive 2). Commit runtime fixes, behavior changes and modernizations
    separately, each with its change-log entry.
 4. After tests change, regenerate the inventory:
-   `tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.3/active/KNOWN-DEFECTS.md > "$tmp" && mv "$tmp" docs/modernization/php-7.3/TEST-INVENTORY.md`
+   `tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.3/active/KNOWN-DEFECTS.md > "$tmp" && chmod 644 "$tmp" && mv "$tmp" docs/modernization/php-7.3/TEST-INVENTORY.md`
 5. Run `docker/bin/check-docs` after every documentation change.
 
 ## Contents

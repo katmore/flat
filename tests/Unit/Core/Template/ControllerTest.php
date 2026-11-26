@@ -187,6 +187,14 @@ class ControllerTest extends TestCase
         $this->assertSame('',$printed);
         $this->assertSame('loud output',$this->render('loud'));
     }
+    public function testTemplatesWrittenByTheDeveloperKeepTheirRawHtml()
+    {
+        // Markdown from users is escaped by default (convert::string_to_html); a template file is the developer's own.
+        $this->file('tmpl/page.md', "# Title\n\n<div class=\"box\">raw <b>html</b></div>");
+        $this->assertSame("<h1>Title</h1>\n<div class=\"box\">raw <b>html</b></div>", $this->render('page'));
+        $this->file('tmpl/generated.md.php', '<?php echo "<span class=\\"x\\">generated</span>";');
+        $this->assertSame('<p><span class="x">generated</span></p>', $this->render('generated'));
+    }
     public function testMarkdownAndGeneratedMarkdownFiles()
     {
         $this->file('tmpl/readme.md', '# Readme');

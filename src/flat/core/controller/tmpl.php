@@ -466,7 +466,8 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
             $file = $file_base . ".$ext";
             if (is_file($file) && is_readable($file)) {
                 try {
-                    $md = new md\convert\file($file);
+                    // template files are written by the developer: they may contain raw HTML
+                    $md = new md\convert\file($file, ['safe' => false]);
                     if ($check_only) return;
 
                     static::design_log('path', "$design.$ext");
@@ -510,7 +511,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
                         static::design_log('path', $design);
 
                         $text = ob_get_clean();
-                        echo md\convert::string_to_html($text);
+                        echo md\convert::string_to_html($text, ['safe' => false]); // the developer's own template
                         return;
                     } catch (\Exception $e) {
                         // A failing generated template prints nothing, and its

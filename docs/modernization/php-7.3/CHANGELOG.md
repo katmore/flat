@@ -827,3 +827,112 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   (`DEFERRED-V2.md`, the release notes, the mock README); MOD-268 and MOD-269 stay as written.
 - Verified: `docker/bin/test sandbox` 13 of 13 on the real sandbox; `all --coverage` 1,547 tests, 6,760 assertions, 100%
   (332 classes, 1,068 methods); `check-docs` 0 problems; the test inventory is regenerated.
+
+## MOD-271 — Dependency: symfony/yaml 5.4.57
+
+- Kind: tooling. `tests/docker/runtime/composer.lock`: `symfony/yaml` v5.4.57 (was v5.4.56), a patch release of
+  2026-11-25. It was the only package of either lock with a newer release that PHP 7.3.33 allows (checked with
+  `composer update --dry-run -W` and `composer outdated -a` on both locks). Only that package moved.
+- Verified: `docker/bin/test all --coverage`, 1,547 tests, 6,760 assertions, 100% (332 classes, 1,068 methods,
+  8,462 statements).
+
+## MOD-272 — RabbitMQ startup flake: cause found and fixed
+
+- Kind: tooling. The retry added in MOD-266 captured its first failure on 2026-11-26: RabbitMQ exited with `Error when
+  reading /var/lib/rabbitmq/.erlang.cookie: eacces`. Cause: the Compose health check (`rabbitmq-diagnostics`)
+  ran as root; when it started before the server had created the Erlang cookie (a slow start, as when three
+  services start together), it created the file owned by root, and the server, running as `rabbitmq`, could not read it.
+- Fix: `docker/docker-compose.yml` runs the health check as the `rabbitmq` user (`su-exec`, which the image has). With
+  the health check made 150 ms fast to widen the window, 12 of 12 starts failed before and 0 of 12 after.
+  (`RABBITMQ_ERLANG_COOKIE` does not help: this image's entrypoint ignores it.)
+- The retry stays as a safety net. `HANDOFF.md` is updated.
+- Verified: `docker/bin/test all --coverage`, 1,547 tests, 100%, no retry needed.
+
+## MOD-273 — Tooling: Composer 2.11.3
+
+- Kind: tooling. `docker/Dockerfile`: the `composer:2.11` image is pinned to the build of 2026-11-25 (Composer 2.11.3,
+  `sha256:0049ce90...`; was 2.11.2). It installs the test dependencies in the image build.
+- Verified: `docker/bin/test all --coverage`, 1,547 tests, 100% (332 classes, 1,068 methods, 8,462 statements).
+
+## MOD-274 — Tooling: RabbitMQ 4.4.1 on the newest Alpine build
+
+- Kind: tooling. `docker/docker-compose.yml`: `rabbitmq:4.4-alpine` is pinned to the build of 2026-11-24
+  (`sha256:bba4266e...`). RabbitMQ is the same release, 4.4.1; the image was rebuilt on Alpine 3.24.4.
+- Verified: `docker/bin/test all --coverage`, 1,547 tests, 100% (332 classes, 1,068 methods, 8,462 statements).
+
+## MOD-275 — Tooling: Node 26.13.1 on the newest build
+
+- Kind: tooling. `docker/bin/test-javascript`: `node:26-slim` is pinned to the build of 2026-11-24
+  (`sha256:abe7e5a8...`). Node is the same release, 26.13.1; the image was rebuilt on a newer base.
+- Verified: `docker/bin/test-javascript` (15 minifier programs preserve their results) and
+  `docker/bin/test all --coverage`, 1,547 tests, 100%.
+
+
+
+## MOD-276 — Vendored library: forceutf8 2.0.4
+
+- Kind: dependency. The audit of 2026-11-26 found that the four third-party libraries bundled in `src/flat/vendor`
+  (forceutf8, Parsedown, ParsedownExtra, JShrink) were never part of the "keep everything current" sweeps, which covered
+  Composer packages, images and extensions only. They are now brought up one at a time, MOD-276 onward.
+- `src/flat/vendor/neitanod/forceutf8/Encoding.php` is upstream forceutf8 v2.0.4 (flat's copy was 2.0 with 3-space
+  indentation), with one change: `namespace flat\vendor\neitanod\forceutf8;`. It removes the `$text{$i}` string
+  offsets that PHP 7.4 deprecates (no other occurrence exists in `src`).
+- Behavior: `fixUTF8()` of a number, boolean or null now returns it unchanged (it returned `'42'`, `''`, `''`); found
+  when the coverage of the new file dropped.
+- Tests: three new `EncodingTest` cases (the iconv option on `toISO8859()` and `toLatin1()`, `fixUTF8()` of non-text, and
+  no curly-brace string offsets); they fail on the old file. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+\n
+- Verified: `docker/bin/test all --coverage`, 1,550 tests, 6,771 assertions, 100% (332 classes, 1,068 methods, 8,464
+  statements); the test inventory is regenerated.
+
+## MOD-277 — Vendored libraries: Parsedown 1.8.0 and ParsedownExtra 0.9.0
+
+- Kind: dependency, with a security fix and rendering changes (see [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)).
+  `src/flat/vendor/erusev/src/Parsedown/Parsedown.php` is upstream 1.8.0 (flat had 1.5.0 plus two small patches);
+  `ParsedownExtra/ParsedownExtra.php` is 0.9.0 (flat had 0.6.x). The README, LICENSE and `composer.json` copies are
+  upstream's too. ParsedownExtra 0.9.0 requires Parsedown 1.8.0, so they move together.
+- flat's patches (each commented in the file; see [notes/VENDORED.md](notes/VENDORED.md)): the PHP 7 `{$Element['handler']}`
+  fix is in 1.8.0 itself; the disabled version guard stays disabled (it compares two constants and could never throw);
+  `libxml_use_internal_errors(true)` stays removed from `processTag()` (KD-90, MOD-219); and a new fix of an upstream bug:
+  `elementApplyRecursiveDepthFirst()` called the plural method for a single child and raised a TypeError.
+- The old and the new parser were run over 55 documents: 40 identical, 15 different. Four existing test rows changed to
+  the new rendering; new tests pin the other changes and the attribute-injection fix. All 12 fail on the old parser.
+- Process fixes found on the way: `check-docs` had been skipping `TEST-INVENTORY.md` for several runs (the file was
+  mode 0600 after a `mktemp`, so the container user could not read it; the path count fell from about 372 to about 281 and
+  I read only its last line). The file is readable again and the whole check passes; the documented inventory command
+  now ends with `chmod 644`.
+- Tests: the new `ParsedownApiTest` (16 tests) covers what flat's converter does not reach: the option setters, safe
+  mode, strict mode, `line()`, the subclass hooks and the block parser's edge cases, so the 28 new methods and 98 new
+  lines of Parsedown 1.8.0 are covered (the full suite is back to 100%).
+- Verified: `docker/bin/test all --coverage`, 1,575 tests, 6,862 assertions, 100% (332 classes, 1,096 methods, 8,769
+  statements); the test inventory is regenerated.
+
+## MOD-278 — Vendored library: JShrink 1.8.1
+
+- Kind: dependency, with fixes for modern JavaScript (see [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)).
+  `src/flat/vendor/tedious/JShrink/minifier.php` is upstream 1.8.1 (flat had 1.1.0 plus local fixes). Upstream 1.8.1
+  already contains the KD-80 fix (`continue 3`) and the PHP 7 guards, and handles template literals; it still has the KD-89
+  bugs, so those three fixes are re-applied and commented (`flat (KD-89)`; list in [notes/VENDORED.md](notes/VENDORED.md)).
+- Compared on 49 programs, run in Node before and after minifying: flat's old copy broke 4 (template literals, `//@cc_on`),
+  plain 1.8.1 broke 2 (`a++ + ++b`, `a-- - --b`), the patched 1.8.1 breaks none.
+- Tests: `JsMinifierTest` gains 30 modern programs (`modernPrograms()`, also executed by `docker/bin/test-javascript`, now 45
+  programs), cases for the paths of the new code, `peek()` at the end of input and an unclosed character class; five
+  expectations changed to the new, valid text. Nine of them fail on the old copy.
+- Verified: `docker/bin/test all --coverage`, 1,612 tests, 6,904 assertions, 100% (332 classes, 1,099 methods, 8,817
+  statements); `docker/bin/test-javascript`, 45 programs; the test inventory is regenerated.
+
+
+## MOD-279 — Markdown: raw HTML is escaped by default (owner's decision)
+
+- Kind: behavior change (owner's decision, 2026-11-26: letting raw HTML through "seems weird"). `flat\core\md\convert`
+  now uses Parsedown's safe mode by default, and takes an optional `array $options` (`['safe' => false]` restores the old
+  behavior for trusted text) in `string_to_html()`, `convert::__construct()` and `convert\file::__construct()`. An unknown option throws
+  `InvalidArgumentException`. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- `flat\core\controller\tmpl` passes `['safe' => false]`: template files are the developer's own.
+- Safe mode shows typed entities literally (`&copy;`), which is Parsedown's behavior; tested and documented.
+- The API comparison against v1.73.1 shows only the three added optional parameters
+  ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
+- Release notes for v1.73.2 are drafted in [RELEASE-NOTES-V1.73.2.md](RELEASE-NOTES-V1.73.2.md) (MOD-271 to MOD-279).
+- Verified: `docker/bin/test all --coverage`, 1,624 tests, 6,954 assertions, 100% (332 classes, 1,099 methods, 8,821
+  statements); the test inventory is regenerated.
+

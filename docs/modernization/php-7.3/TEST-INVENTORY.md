@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 840 test methods in 105 files, running 1547 test cases.
-- 137 methods use a data provider (one case per data set).
+- 865 test methods in 106 files, running 1624 test cases.
+- 141 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -560,12 +560,17 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testPrivateVisitIsIgnoredEvenWithObsoleteFlags` (line 207)
 - `testMissingVisitThrowsCannotGetProperty` (line 214)
 
-### `tests/Unit/Core/Md/ConvertTest.php` (4)
+### `tests/Unit/Core/Md/ConvertTest.php` (9)
 
 - `testMarkdownStringInstanceAndFileProduceEquivalentHtml` (line 7)
 - `testMarkdownExtraTablesAndFencedCode` (line 22)
-- `testNonStringSourceIsRejected` (line 29)
-- `testMissingFileRaisesInvalidSource` (line 34)
+- `testRawHtmlAndUnsafeAddressesAreNeutralisedByDefault` (line 30): 7 data-provider cases
+- `testOrdinaryMarkdownAndMarkdownExtraAreUnchangedBySafeMode` (line 50)
+- `testCharacterEntitiesAreShownLiterallyInSafeMode` (line 60)
+- `testTrustedTextCanLetRawHtmlThrough` (line 66)
+- `testAnUnknownOptionIsRejected` (line 81)
+- `testNonStringSourceIsRejected` (line 87)
+- `testMissingFileRaisesInvalidSource` (line 92)
 
 ### `tests/Unit/Core/RandStrTest.php` (10)
 
@@ -683,7 +688,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNativeReadsHandleShortEmptyAndZeroBodies` (line 257): 5 data-provider cases
 - `testCallbackFailureStillClosesTheLocalAndRemoteStreams` (line 271)
 
-### `tests/Unit/Core/Template/ControllerTest.php` (16)
+### `tests/Unit/Core/Template/ControllerTest.php` (17)
 
 - `testFailingTemplatesCloseTheirOutputBuffers` (line 90)
 - `testDesignRootUsesConfigurationOrItsDocumentedFallback` (line 102)
@@ -693,14 +698,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` (line 154)
 - `testUnusablePhpDesignsFallBackToHtml` (line 170)
 - `testCheckingADesignNeverPrintsIt` (line 182)
-- `testMarkdownAndGeneratedMarkdownFiles` (line 190)
-- `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` (line 206)
-- `testInvalidDesignsAreRejected` (line 220): 4 data-provider cases
-- `testDesignBasesPrefixesAndSeparators` (line 226)
-- `testFormattingFlagsReplacementsAndOutput` (line 234)
-- `testLoggerWritesDesignKindAndNormalizedName` (line 243)
-- `testConstructorAndPreparedInterfacesControlDisplayTiming` (line 254)
-- `testDefaultDisplayCallbackDelegatesToTemplateRendering` (line 273)
+- `testTemplatesWrittenByTheDeveloperKeepTheirRawHtml` (line 190)
+- `testMarkdownAndGeneratedMarkdownFiles` (line 198)
+- `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` (line 214)
+- `testInvalidDesignsAreRejected` (line 228): 4 data-provider cases
+- `testDesignBasesPrefixesAndSeparators` (line 234)
+- `testFormattingFlagsReplacementsAndOutput` (line 242)
+- `testLoggerWritesDesignKindAndNormalizedName` (line 251)
+- `testConstructorAndPreparedInterfacesControlDisplayTiming` (line 262)
+- `testDefaultDisplayCallbackDelegatesToTemplateRendering` (line 281)
 
 ### `tests/Unit/Core/Template/ValidateControllerTest.php` (3)
 
@@ -1139,27 +1145,49 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testItNamesTheServicesTheSelectedTestsNeed` (line 79): 15 data-provider cases
 - `testAMissingListIsAUsageError` (line 84)
 
-### `tests/Unit/Vendor/EncodingTest.php` (4)
+### `tests/Unit/Vendor/EncodingTest.php` (7)
 
 - `testConversionPreservesValidUtf8AndRepairsLegacyBytes` (line 8): 13 data-provider cases
 - `testNestedArraysAndWindowsEncodingAliases` (line 18)
 - `testBomRemovalAndEncodingLabels` (line 27)
 - `testIconvOptionsUseTheActualExtension` (line 39)
+- `testLatin1ConversionsAcceptTheIconvOptionToo` (line 46)
+- `testFixUtf8LeavesValuesThatAreNotTextAlone` (line 54)
+- `testVendoredSourceHasNoCurlyBraceStringOffsets` (line 62)
 
-### `tests/Unit/Vendor/JsMinifierTest.php` (3)
+### `tests/Unit/Vendor/JsMinifierTest.php` (5)
 
-- `testWhitespaceCommentsStringsAndRegexArePreservedAsNeeded` (line 8): 23 data-provider cases
-- `testCommentsPreserveTokenBoundariesAndStringContents` (line 40): 15 data-provider cases
-- `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 66): 3 data-provider cases
+- `testWhitespaceCommentsStringsAndRegexArePreservedAsNeeded` (line 8): 28 data-provider cases
+- `testPeekReturnsFalseAtTheEndOfTheInput` (line 47)
+- `testCommentsPreserveTokenBoundariesAndStringContents` (line 60): 15 data-provider cases
+- `testModernSyntaxKeepsItsMeaning` (line 90): 30 data-provider cases
+- `testMalformedProgramsThrowAndRestoreOutputBuffer` (line 160): 4 data-provider cases
 
-### `tests/Unit/Vendor/MarkdownTest.php` (6)
+### `tests/Unit/Vendor/MarkdownTest.php` (8)
 
 - `testQuoteHandlerRejectsANonmatchingExtensionMarker` (line 9)
 - `testBothBundledLoadersWorkInAFreshPhpRuntime` (line 18)
 - `testSupportedBlockAndInlineSyntax` (line 25): 47 data-provider cases
-- `testConfigurationAndRepeatedParserInstances` (line 82)
-- `testHtmlMarkupPreservesCallerLibxmlStateAndBufferedErrors` (line 96): 2 data-provider cases
-- `testNestedHtml5MarkupReportsParserWarningsAndStillRenders` (line 109)
+- `testRenderingThatChangedWithParsedown18` (line 35): 7 data-provider cases
+- `testAnImageAddressCannotBreakOutOfItsAttribute` (line 51)
+- `testConfigurationAndRepeatedParserInstances` (line 110)
+- `testHtmlMarkupPreservesCallerLibxmlStateAndBufferedErrors` (line 124): 2 data-provider cases
+- `testNestedHtml5MarkupReportsParserWarningsAndStillRenders` (line 137)
+
+### `tests/Unit/Vendor/ParsedownApiTest.php` (12)
+
+- `testTheOptionSettersReturnTheParserAndChangeTheOutput` (line 14)
+- `testLineRendersInlineMarkdownOnly` (line 32)
+- `testALinkInsideALinkIsNotNested` (line 40)
+- `testSafeModeNeutralisesActiveContent` (line 47): 6 data-provider cases
+- `testSafeModeKeepsOrdinaryLinksAndImages` (line 67)
+- `testSafeModeKeepsParsedownExtraIdAndClassAttributesAndDropsRawHtml` (line 76)
+- `testStrictModeRequiresASpaceAfterTheHeadingMarker` (line 84)
+- `testPlainParsedownHandlesHtmlBlocks` (line 91)
+- `testBlockParserEdgeCases` (line 100)
+- `testSubclassHooksStillWork` (line 125)
+- `testDefinitionListsWithBlankLines` (line 179)
+- `testBlockMarkupContinuesAcrossBlankLines` (line 189)
 
 ### `tests/Unit/Vendor/YasumiDateQueryTest.php` (5)
 

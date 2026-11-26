@@ -22,7 +22,7 @@ services:
       timeout: 5s
       retries: 30
   rabbitmq:
-    image: rabbitmq:4.4-alpine@sha256:3dbd31cb9e4d45dac44de7b73cc45b848028494e98bcab71477386cbd4dc7f56
+    image: rabbitmq:4.4-alpine@sha256:bba4266e0129b9e5c4b5eb985d8e488c77689eaf73399b34b5d176eb8a5d29e7
     environment:
       RABBITMQ_DEFAULT_USER: flatunit
       RABBITMQ_DEFAULT_PASS: flatunit-local-tests
@@ -30,7 +30,10 @@ services:
     healthcheck:
       # `ping` succeeds once the Erlang node is up, seconds before the AMQP
       # listener accepts connections; require the listener ports instead.
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
+      # Run as the rabbitmq user: a root check that starts before the server
+      # creates /var/lib/rabbitmq/.erlang.cookie leaves it owned by root, and
+      # the server then fails to boot with "eacces" (the old startup flake).
+      test: ["CMD-SHELL", "su-exec rabbitmq rabbitmq-diagnostics -q check_port_connectivity"]
       interval: 2s
       timeout: 10s
       retries: 30
