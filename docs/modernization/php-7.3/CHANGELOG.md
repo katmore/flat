@@ -854,3 +854,9 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   `sha256:0049ce90...`; was 2.11.2). It installs the test dependencies in the image build.
 - Verified: `docker/bin/test all --coverage`, 1,547 tests, 100% (332 classes, 1,068 methods, 8,462 statements).
 
+## MOD-274 — Tooling: RabbitMQ 4.4.1 on the newest Alpine build
+
+- Kind: tooling. `docker/docker-compose.yml`: `rabbitmq:4.4-alpine` is pinned to the build of 2026-11-24
+  (`sha256:bba4266e...`). RabbitMQ is the same release, 4.4.1; the image was rebuilt on Alpine 3.24.4.
+- Verified: `docker/bin/test all --coverage`, 1,547 tests, 100% (332 classes, 1,068 methods, 8,462 statements).
+
