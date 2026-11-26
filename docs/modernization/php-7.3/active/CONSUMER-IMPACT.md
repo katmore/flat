@@ -216,6 +216,17 @@ consumers saw before, what they see now, and what to search for in their code.
   or `authonly` followed by a capture, instead.
 - Verified: yes (unit test; the sandbox's refusal is the owner's run of 2026-11-23).
 
+### MOD-276 — forceutf8 updated from 2.0 to 2.0.4
+
+- Before: flat bundled an old copy of forceutf8 2.0 that used the `$text{$i}` string-offset syntax (deprecated in PHP
+  7.4, removed in 8.0) and loose comparisons.
+- After: upstream 2.0.4, with only the namespace changed. Conversions give the same results for everything the tests
+  cover. Two differences: `fixUTF8()` of a number, boolean or null now returns it unchanged (before, `42` became
+  `'42'`, and `null` and `false` became `''`); and `toISO8859()` and `toLatin1()` now accept the iconv option, as
+  `toWin1252()` already did.
+- Search consumer code for: `flat\core\util\utf8`, `forceutf8\Encoding`, `fixUTF8`, `toISO8859`, `toLatin1`.
+- Verified: yes (the new tests fail on the old file).
+
 ## No behavior change
 
 - MOD-189 (environment) changes no behavior a caller can see.

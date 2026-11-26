@@ -867,3 +867,21 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Verified: `docker/bin/test-javascript` (15 minifier programs preserve their results) and
   `docker/bin/test all --coverage`, 1,547 tests, 100%.
 
+
+
+## MOD-276 — Vendored library: forceutf8 2.0.4
+
+- Kind: dependency. The audit of 2026-11-26 found that the four third-party libraries bundled in `src/flat/vendor`
+  (forceutf8, Parsedown, ParsedownExtra, JShrink) were never part of the "keep everything current" sweeps, which covered
+  Composer packages, images and extensions only. They are now brought up one at a time, MOD-276 onward.
+- `src/flat/vendor/neitanod/forceutf8/Encoding.php` is upstream forceutf8 v2.0.4 (flat's copy was 2.0 with 3-space
+  indentation), with one change: `namespace flat\vendor\neitanod\forceutf8;`. It removes the `$text{$i}` string
+  offsets that PHP 7.4 deprecates (no other occurrence exists in `src`).
+- Behavior: `fixUTF8()` of a number, boolean or null now returns it unchanged (it returned `'42'`, `''`, `''`); found
+  when the coverage of the new file dropped.
+- Tests: three new `EncodingTest` cases (the iconv option on `toISO8859()` and `toLatin1()`, `fixUTF8()` of non-text, and
+  no curly-brace string offsets); they fail on the old file. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+\n
+- Verified: `docker/bin/test all --coverage`, 1,550 tests, 6,771 assertions, 100% (332 classes, 1,068 methods, 8,464
+  statements); the test inventory is regenerated.
+

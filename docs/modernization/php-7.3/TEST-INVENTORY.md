@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 840 test methods in 105 files, running 1547 test cases.
+- 843 test methods in 105 files, running 1550 test cases.
 - 137 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -1139,12 +1139,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testItNamesTheServicesTheSelectedTestsNeed` (line 79): 15 data-provider cases
 - `testAMissingListIsAUsageError` (line 84)
 
-### `tests/Unit/Vendor/EncodingTest.php` (4)
+### `tests/Unit/Vendor/EncodingTest.php` (7)
 
 - `testConversionPreservesValidUtf8AndRepairsLegacyBytes` (line 8): 13 data-provider cases
 - `testNestedArraysAndWindowsEncodingAliases` (line 18)
 - `testBomRemovalAndEncodingLabels` (line 27)
 - `testIconvOptionsUseTheActualExtension` (line 39)
+- `testLatin1ConversionsAcceptTheIconvOptionToo` (line 46)
+- `testFixUtf8LeavesValuesThatAreNotTextAlone` (line 54)
+- `testVendoredSourceHasNoCurlyBraceStringOffsets` (line 62)
 
 ### `tests/Unit/Vendor/JsMinifierTest.php` (3)
 
