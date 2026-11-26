@@ -43,3 +43,15 @@ continues from the php-7.3 phase.
   declaration differs. `docker/bin/test all` on 7.4.33: 1,624 tests, 6,935 assertions, all pass, no notice or deprecation. (7.3.33
   counted 6,954 assertions; the 19 fewer are not explained yet and are listed in the session handoff.)
 - Undo: revert the commit.
+
+## MOD-283 — The Composer platform pins move to PHP 7.4.33
+
+- Kind: environment. `config.platform.php` is `7.4.33` in `tests/docker/tools/composer.json` and
+  `tests/docker/runtime/composer.json`; both locks were refreshed with `composer update --lock`, which changes
+  only the content hash, the recorded platform and Composer's plugin API version. No package moved: the
+  newer releases that 7.4 allows come in the next entries, one at a time. The `TESTING.md` lines that said
+  the locks were for PHP 7.3 now say 7.4.
+- Behavior: none.
+- Verified: the image rebuilds from the locks and `docker/bin/test all` passes with the same counts as MOD-282.
+  `docker/bin/check-docs`.
+- Undo: revert the commit.
