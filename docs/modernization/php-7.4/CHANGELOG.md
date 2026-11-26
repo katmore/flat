@@ -111,3 +111,17 @@ continues from the php-7.3 phase.
 - Behavior: none for flat's code.
 - Verified: `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage.
 - Undo: revert the commit.
+
+## MOD-287 — `jms/serializer` 3.32.9 and its dependencies
+
+- Kind: environment (test dependency). `tests/docker/runtime/composer.lock`: `jms/serializer` 3.29.1 to
+  3.32.9, `doctrine/deprecations` 1.1.6 to 1.2.0 and `phpstan/phpdoc-parser` 1.33.0 to 2.4.2 (the 7.4 step
+  unlocked them). `doctrine/annotations` 2.0.2 and `psr/cache` stay locked as before.
+- The new `jms/serializer` no longer requires `doctrine/annotations`; on PHP below 8.0 it throws
+  "either ... the doctrine/annotations package installed, or use PHP 8.0 or later" (the Authorize.Net SDK
+  builds a serializer). So `tests/docker/runtime/composer.json` now lists `doctrine/annotations ^2.0`
+  explicitly. The package is marked abandoned on Packagist, as it was before.
+- Behavior: none for flat's code.
+- Verified: without the explicit requirement 39 tests error and 2 fail (all Authorize.Net); with it
+  `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage.
+- Undo: revert the commit.
