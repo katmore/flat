@@ -28,3 +28,12 @@ Each has a recommendation; "agree" is enough.
     until the adapter is replaced or patched, and decide that with the legacy driver's future (v2.X). In
     flat-webapp the question does not arise: its image has no MongoDB extension. Whichever way, a consumer on PHP 7.4
     with extension 1.20 or newer sees these deprecations from the adapter. **Open.**
+
+54. **Should flat's root `composer.json` require `doctrine/annotations` (`^2.0`) for PHP below 8.0?** flat
+    requires `authorizenet/authorizenet ^1.9`, which pulls in `jms/serializer` (any of `^1|^2|^3`). From
+    `jms/serializer` 3.32 that package no longer requires `doctrine/annotations`, and on PHP below 8.0 it
+    throws when the SDK builds its serializer (found in MOD-287: 39 errors until the test manifest required
+    it). A consumer who runs a fresh `composer update` on PHP 7.4 gets the new serializer and a broken
+    Authorize.Net SDK; one who keeps an existing lock (flat-webapp locks 3.29.1) does not. Recommend yes,
+    in the same step as Q51, so the root `composer.json` changes once. Until then flat-webapp's application
+    lock keeps its packages. **Open.**

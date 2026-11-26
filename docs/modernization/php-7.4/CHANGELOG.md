@@ -152,3 +152,15 @@ continues from the php-7.3 phase.
   ImageMagick 7.1.2-36 and imagick 3.8.1 are the newest releases, and Xdebug 3.1.6 is the last for PHP 7.4.
 - Behavior: none.
 - Undo: revert the commit.
+
+## MOD-291 — flat-webapp on PHP 7.4.33; Q54 found on the way
+
+- Kind: environment, in flat-webapp (its own `CHANGELOG.md`, section "PHP 7.4 changes"). The web and test images
+  are `php:7.4-apache` and `php:7.4-cli`, pinned by digest to 7.4.33; the platform pins and both locks follow
+  (hash and platform only). The application code is unchanged. 67 tests and 203 assertions pass; the server
+  log has no PHP message.
+- Found: a fresh resolution on PHP 7.4 drops `doctrine/annotations`, which flat's Authorize.Net wrappers need
+  below PHP 8.0 (see MOD-287). It is Q54 in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md). flat-webapp's
+  application lock is therefore left as it is.
+- Behavior: none.
+- Undo: revert flat-webapp's commit.

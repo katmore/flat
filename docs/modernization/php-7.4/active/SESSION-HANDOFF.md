@@ -21,14 +21,15 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
   deprecates what `alcaeus/mongo-php-adapter` does (Q53).
 - MOD-286 to MOD-289: `mongodb/mongodb` 1.19.1, `jms/serializer` 3.32.9 (with its dependencies; it needs
   `doctrine/annotations` required explicitly), `azuyalabs/yasumi` 2.6.0, `nikic/php-parser` 5.9.0.
+- flat-webapp: images and platform pins on 7.4.33; 67 tests pass.
 - MOD-290: [../notes/ENVIRONMENT.md](../notes/ENVIRONMENT.md). flat's own tools and dependencies are at their
   newest 7.4-compatible releases.
 
 ## Next
 
-1. flat-webapp (`php-7.4` branch, untouched): move its Docker image and test setup to 7.4.33, bring its tools
-   and dependencies to the newest 7.4 releases one at a time, and run its tests (67 at the start). Its lock
-   still pins flat `v1.73.2`; the release of flat 7.4 comes later. Follow its `AGENTS.md`.
+1. flat-webapp is on 7.4.33 (see its `CHANGELOG.md`; nothing else changed). Its application lock still holds
+   flat `v1.73.2`, `jms/serializer` 3.29.1 and `mongodb/mongodb` 1.16.1: move it when flat's 7.4 release is
+   published and Q54 is answered (a fresh lock would drop `doctrine/annotations`).
 2. At the end of the phase: `composer audit --locked` on both flat locks and flat-webapp's, the
    dependency-alert note, and the release preparation (Q51 and Q52 first).
 
@@ -40,5 +41,6 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 
 ## Waiting for the owner
 
-Q51 (the `php` requirement), Q52 (release numbering) and Q53 (MongoDB extension held at 1.19.4) in [KNOWN-DEFECTS.md](KNOWN-DEFECTS.md). Neither
+Q51 (the `php` requirement), Q52 (release numbering), Q53 (MongoDB extension held at 1.19.4) and Q54
+(`doctrine/annotations` for PHP below 8.0) in [KNOWN-DEFECTS.md](KNOWN-DEFECTS.md). Neither
 blocks the next steps. Leave the root `composer.json` alone until Q51 is answered.
