@@ -96,3 +96,18 @@ continues from the php-7.3 phase.
 - Verified: `docker/bin/test all --coverage` on the 1.19.4 image: 1,624 tests, 6,954 assertions, all pass;
   100% coverage (332 classes, 1,099 methods, 8,821 lines). With 1.20.1 the same run: 47 errors, 1 failure.
 - Undo: revert the commit.
+
+## MOD-286 — `mongodb/mongodb` 1.16.1 to 1.19.1
+
+- Kind: environment (test dependency). `tests/docker/runtime/composer.lock`: `mongodb/mongodb` 1.19.1, the
+  newest release that accepts PHP 7.4 and the installed extension 1.19.4 (1.20 needs extension 1.20 or
+  newer, MOD-285). `jean85/pretty-package-versions` and `symfony/polyfill-php73` left the lock because the
+  library no longer needs them; `psr/log` 1.1.4 entered it.
+- Composer 2.11 refuses releases that have security advisories. Every `mongodb/mongodb` release that runs on
+  PHP 7.4 has them (the fixed 1.21.5 needs PHP 8.1), as does the 1.16.1 it replaces. The lock was resolved
+  with `composer update --no-security-blocking` on the command line; no ignore entry is committed. These are
+  the advisories the owner dismissed as "risk tolerable" (php-7.3 dependency-alert note). The library is a
+  test dependency.
+- Behavior: none for flat's code.
+- Verified: `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage.
+- Undo: revert the commit.
