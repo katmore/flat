@@ -303,3 +303,15 @@ continues from the php-7.3 phase.
 - Behavior: none for any code that could run. The API dump and comparison are regenerated in a later entry.
 - Verified: nothing in `src` or the tests references the class. `docker/bin/test all --coverage`: all pass; 100%.
 - Undo: revert the commit.
+
+## MOD-303 — The MongoDB SSL classes are renamed to match their paths (KD-107, Q55)
+
+- Kind: bug fix with a rename, decided by the owner on 2026-11-27: correct the declarations and references, no `class_alias`.
+  Seven files under `src/flat/db/driver/mongo/` (`ssl.php` and six classes) now declare `flat\db\driver\mongo\ssl...` in place
+  of `flat\db\mongo\ssl...`; the `extends` references of the four child files follow. `tests/Unit/Db/Mongo/CaFileTest.php` uses
+  the new names and no longer includes files by hand. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: the classes behave as before; only their names change, and they now load by name. The old names no longer exist.
+- Verified: new test `testEverySslClassLoadsByNameWithoutIncludingFiles` (a clean process loads all seven and finds no old
+  name). `docker/bin/test all --coverage`: 1,638 tests, 7,225 assertions, all pass; 100% (333 classes, 1,105 methods,
+  8,880 lines). The API dump and comparison are regenerated in the next entry.
+- Undo: revert the commit.

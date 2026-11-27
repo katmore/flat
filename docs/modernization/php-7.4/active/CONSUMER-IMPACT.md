@@ -50,3 +50,14 @@ before, what they see now, and what to search for in their code.
 - After: the file is gone. `class_exists('flat\\core\\util\\validate\\collection')` is `false` instead of a fatal error.
 - Search consumer code for: `util\validate\collection`.
 - Verified: yes. Nothing in flat's code or tests referenced it.
+
+### MOD-303 (KD-107) — The MongoDB SSL classes are renamed to match their paths
+
+- Before: the seven files under `src/flat/db/driver/mongo/ssl*` declared `flat\db\mongo\ssl...`. Composer could not find
+  any of them by name; they worked only when a file was included by hand and the old name used.
+- After: they declare `flat\db\driver\mongo\ssl...` (`ssl`, `ssl\cafile`, `ssl\cafile\base64`, `ssl\cafile\file`,
+  `ssl\localcert`, `ssl\localcert\base64`, `ssl\localcert\file`) and load by name. **The old names no longer exist; no alias
+  is kept.** Code that extended or checked the old names (`extends \flat\db\mongo\ssl\cafile\base64`, `instanceof
+  \flat\db\mongo\ssl`) must use the new names and no longer needs to include the files by hand. flat itself used none of them.
+- Search consumer code for: `db\mongo\ssl`, `mongo\ssl\cafile`, `mongo\ssl\localcert`, `get_cafile`, `get_localcert`.
+- Verified: yes. A clean PHP process loads all seven by name and finds none of the old names.

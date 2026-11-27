@@ -25,6 +25,9 @@ coverage, and no PHP notice, warning or deprecation is raised.
   `docs/modernization/php-7.4/active/CONSUMER-IMPACT.md`.
 - **One unusable class is removed.** `flat\core\util\validate\collection` was an empty class that implemented an
   interface that never existed, so it could not be loaded; the file is gone. Nothing could have used it.
+- **The MongoDB SSL classes are renamed to match their paths (breaking rename, no alias).** Seven classes declared
+  `flat\db\mongo\ssl...` in files under `db/driver/mongo/ssl*`, so they could not be autoloaded. They are now
+  `flat\db\driver\mongo\ssl...`. flat did not use them; code that extended the old names must use the new ones.
 - Nothing else in `src` changed.
 
 Every entry has what you saw before, what you see now, and what to search for in

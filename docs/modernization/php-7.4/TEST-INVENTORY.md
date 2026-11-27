@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 874 test methods in 107 files, running 1637 test cases.
+- 875 test methods in 107 files, running 1638 test cases.
 - 142 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -955,12 +955,13 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testDriverConstructionConnectsWithItsSuppliedParameters` (line 22)
 - `testStaticReadUsesTheCalledClass` (line 28)
 
-### `tests/Unit/Db/Mongo/CaFileTest.php` (4)
+### `tests/Unit/Db/Mongo/CaFileTest.php` (5)
 
-- `testFileAdapterCallsItsDeclaredPathHook` (line 22)
-- `testLiteralContentUsesRequestedPathAndReusesWrittenFile` (line 33)
-- `testTemporaryCertificateIsRemovedAtNativePhpShutdown` (line 47)
-- `testFailedFileWriteRaisesAnError` (line 56)
+- `testFileAdapterCallsItsDeclaredPathHook` (line 17)
+- `testLiteralContentUsesRequestedPathAndReusesWrittenFile` (line 28)
+- `testTemporaryCertificateIsRemovedAtNativePhpShutdown` (line 42)
+- `testFailedFileWriteRaisesAnError` (line 50)
+- `testEverySslClassLoadsByNameWithoutIncludingFiles` (line 66)
 
 ### `tests/Unit/Db/Mongo/CachedClientFailureTest.php` (1)
 

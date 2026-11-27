@@ -20,10 +20,14 @@ the php-7.2 phase and written down there as "untested and unusable", but never r
   `tests/Unit/Db/Mongo/CaFileTest.php` does (its comment calls autoload "a follow-up").
 - Nothing in flat uses them: the interface `flat\db\mongo\ssl` ("indicate to controller that mongo connection is
   ssl") is not checked by the MongoDB driver (`src/flat/db/driver/mongo.php` has no reference to SSL).
-- The project already fixes such mismatches with `class_alias` (`subscription\canceled`, `ssh ... bad_param`, the
-  session driver). Fix: declare the path-correct names and keep the old names with `class_alias`, so code that
-  includes the file by hand and extends the old name keeps working.
-- Not fixed yet; see Q55.
+- The owner decided on 2026-11-27 (Q55): fix the declarations and every reference directly, with no `class_alias`: a
+  rename, not a shim.
+- Fixed (MOD-303): the seven files declare `flat\db\driver\mongo\ssl...` (and the interface `flat\db\driver\mongo\ssl`),
+  `CaFileTest` no longer includes files by hand, and a clean-process test checks that all seven load by name and that the
+  old names are gone.
+- Seen and not changed: `localcert\base64` and `localcert\file` extend the `cafile` classes, not `localcert`, so the
+  abstract `_get_passphrase()` of `localcert` is never required of them.
+- **Fixed.**
 
 ### KD-108 - `util\validate\collection` implements an interface that does not exist
 
@@ -80,10 +84,8 @@ Each has a recommendation; "agree" is enough.
     in the same step as Q51, so the root `composer.json` changes once. Until then flat-webapp's application
     lock keeps its packages. **Answered 2026-11-27: yes (MOD-292).**
 
-55. **Fix KD-107 (the MongoDB SSL classes' namespace) now, as a separate commit of this phase, with `class_alias` for
-    the old names?** It is a clear bug and the fix keeps every old name working. The rule is to fix a phase's defects
-    before its PHP version step; this phase's step is already taken, so this is your call. Recommend yes, then rebuild
-    the release notes. **Open.**
+55. **Fix KD-107 (the MongoDB SSL classes' namespace) now, as a separate commit of this phase?** **Answered 2026-11-27:
+    yes, by correcting the declarations and references, with no `class_alias`** (MOD-303).
 
 56. **What was `flat\core\util\validate\collection` meant to be (KD-108)?** **Answered 2026-11-27: remove it** (MOD-302).
 
@@ -91,3 +93,13 @@ Each has a recommendation; "agree" is enough.
     (`flat\orm\invalid_field` or `invalid_param`) (KD-109)?** Recommend: the path names, with `class_alias` for the
     declared names, as for `canceled`; for `fsm` that also means saying whether this alpha stub is still wanted.
     **Open.**
+
+58. **Remove the five `class_alias` calls already in flat?** The owner dislikes them (2026-11-27). Each needs one
+    canonical name chosen and its references updated, which renames public classes:
+    - `subscription\canceled` / `cancelled`: `canceled.php` declares `cancelled`; a test uses `canceled`.
+    - `ssh\exception\input_error\bad_param` / `badParam`: `core/ssh.php` uses `bad_param`.
+    - `data\session\driver\session` / `data\orm\driver\session`: a whole subtree uses the second name.
+    - `data\session\driver` / `data\orm\driver`: a forwarding file.
+    - `core\util\validate\factory\exception\not_match_interface` / `core\util\factory\exception\...`: an older namespace.
+    Recommend: yes, one at a time, keeping the name the code and the file path already use, and listing each rename in
+    the consumer impact. Say which of the five, or all. **Open.**

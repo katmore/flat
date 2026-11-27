@@ -9,5 +9,5 @@
  * @package flat/db/mongo
  * @link http://php.net/manual/en/mongo.connecting.ssl.php
  */
-namespace flat\db\mongo\ssl\localcert;
-abstract class base64 extends \flat\db\mongo\ssl\cafile\base64 {}
+namespace flat\db\driver\mongo\ssl\localcert;
+abstract class base64 extends \flat\db\driver\mongo\ssl\cafile\base64 {}
