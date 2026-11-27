@@ -42,8 +42,9 @@ The sample app passed with the modified framework mounted into its containers.
 
 ## Next
 
-1. The owner decides whether to publish the php-7.4 fixes as a patch release.
-2. The next phase (PHP 8.0) needs the owner's go-ahead.
+1. Repair KD-128 (mutation runner), then complete the closeout in [../notes/EXIT-REVIEW.md](../notes/EXIT-REVIEW.md).
+2. The owner decides whether to publish the patch; notes: [../RELEASE-NOTES-V1.74.1.md](../RELEASE-NOTES-V1.74.1.md).
+3. The next phase (PHP 8.0) needs the owner's go-ahead.
 
 ## Working in a cloud session
 

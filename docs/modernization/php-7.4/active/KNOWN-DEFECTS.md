@@ -119,6 +119,16 @@ while reviewing `php-7.4`; the status of each is listed below. Reproductions, pr
 - **Fixed MOD-335 — KD-126 (P2):** Explicit SSH disconnect leaves the transport connected and usable.
 - **Fixed MOD-335 — KD-127 (P1, Category B / Q62):** Password SSH authentication does not verify host identity.
 
+## Phase exit tooling defect
+
+### KD-128 — Mutation checkout omits files and service fixtures required by the current suite
+
+- Category: A, **open**. `docker/bin/mutate` copies src/tests and two root configuration files, but CodingRulesTest now scans bin/docker too.
+  Its unmutated baseline fails before any mutation: missing /app/bin (296 tests reached, one error).
+- By inspection, `--services` also starts only MongoDB/RabbitMQ and omits the newer HTTP, SSH and S3 services and their environment inputs.
+- Reproduction and closeout context: [../notes/EXIT-REVIEW.md](../notes/EXIT-REVIEW.md).
+- Required fix: complete the throwaway checkout and service setup, then verify both mutation baselines and a small probe without skipping tests.
+
 ## Owner questions
 
 51. **Should the root `composer.json` require `php >=7.4.0` (it requires `>=7.3.0`)?** A PHP 7.3 host would

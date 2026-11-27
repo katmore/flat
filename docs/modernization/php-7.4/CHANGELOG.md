@@ -684,3 +684,14 @@ continues from the php-7.3 phase.
   100% coverage (332 classes, 1,105 methods, 8,877 lines). The sample app passed 67 tests / 203 assertions plus its server-log check with this modified
   framework mounted into both containers. All 45 JavaScript programs passed. Documentation checked before committing. No release or PHP version step.
 - Undo: revert the commit.
+
+## MOD-336 — Check PHP 7.4 exit readiness and draft v1.74.1 notes
+
+- Kind: review/documentation, no production or test behavior changed. [notes/EXIT-REVIEW.md](notes/EXIT-REVIEW.md) records release/consumer closeout,
+  branch ancestry, deferred work and PHP 8.0 handoff considerations. [RELEASE-NOTES-V1.74.1.md](RELEASE-NOTES-V1.74.1.md) is a draft; no release published.
+- Found KD-128: the mutation wrapper's copied checkout omits bin/docker, so the unmutated suite fails at CodingRulesTest before a mutant runs.
+  Its service mode also omits the newer HTTP/SSH/S3 setup by inspection. This remains open, with a concrete reproduction and required validation.
+- Verified: four locked Composer audits rerun in Docker; four unchanged runtime advisories, no tool advisories. GitHub alert-state reads returned
+  integration HTTP 403, recorded explicitly. Existing unchanged-source evidence remains 1,703 passing tests and 100% coverage, plus patched-app tests.
+  Documentation checked before committing. Neither master branch, PHP runtime, release tag nor alert state was changed.
+- Undo: revert this documentation commit.

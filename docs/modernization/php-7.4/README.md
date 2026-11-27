@@ -14,6 +14,8 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
   comparison, consumer check and dependency audit are in this folder.
 - All eleven defects from the adversarial review are fixed (MOD-333 to MOD-335):
   [active/ADVERSARIAL-REVIEW.md](active/ADVERSARIAL-REVIEW.md).
+- Exit check: one open mutation-runner defect (KD-128), plus release closeout:
+  [notes/EXIT-REVIEW.md](notes/EXIT-REVIEW.md).
 - Q51 to Q62 are answered ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
 - flat-webapp runs on PHP 7.4.33 and locks flat `v1.74.0`; its locks are at the newest releases PHP 7.4 allows
   (67 tests pass).
