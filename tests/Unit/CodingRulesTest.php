@@ -60,13 +60,37 @@ class CodingRulesTest extends TestCase
         }
     }
 
+    private static function hasClassAlias($source)
+    {
+        foreach (token_get_all($source) as $token) {
+            if (!is_array($token) || !in_array($token[0], [T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED], true)) continue;
+            $parts = explode('\\', $token[1]);
+            if (strtolower(end($parts)) === 'class_alias') return true;
+        }
+        return false;
+    }
+
+    /** @dataProvider aliasSyntax */
+    public function testAliasGuardHandlesPhp80NameTokens($source, $expected)
+    {
+        $this->assertSame($expected, self::hasClassAlias($source));
+    }
+    public function aliasSyntax()
+    {
+        return [
+            ['<?php class_alias("A", "B");', true],
+            ['<?php \\class_alias("A", "B");', true],
+            ['<?php custom\\class_alias("A", "B");', true],
+            ['<?php // class_alias("A", "B");', false],
+            ['<?php $text = "class_alias";', false],
+        ];
+    }
+
     public function testClassAliasIsNeverUsed()
     {
         $found = [];
         foreach (array_merge(self::phpFiles('src'), self::phpFiles('tests'), self::phpFiles('bin'), self::phpFiles('docker')) as $file) {
-            foreach (token_get_all(file_get_contents(dirname(__DIR__, 2).'/'.$file)) as $token) {
-                if (is_array($token) && $token[0] === T_STRING && strtolower($token[1]) === 'class_alias') { $found[] = $file; break; }
-            }
+            if (self::hasClassAlias(file_get_contents(dirname(__DIR__, 2).'/'.$file))) $found[] = $file;
         }
         $this->assertSame([], $found, 'class_alias is forbidden (AGENTS.md)');
     }

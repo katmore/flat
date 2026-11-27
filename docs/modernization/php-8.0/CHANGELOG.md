@@ -137,3 +137,10 @@ Pinned upstream e5d1333605d58805ea317f4349458201786dd1ca. This release requires
 PHP 8.0 and retains the existing libssh2 1.11.1/OpenSSL 3.6.5 builds. Full Docker
 suite passes 1,712 tests and 8,094 assertions with 100% coverage. Password and
 key logins, host pins, failed sessions, SFTP, process checks and cleanup pass.
+
+## MOD-352 — Preserve the alias guard under PHP 8 tokenization (2026-11-27)
+
+PHP 8 represents qualified names as single tokens. Extend the existing no-alias
+rule to recognize qualified and fully qualified calls, retaining its previous
+meaning. Five cases cover plain, absolute and qualified names, comments and
+string literals. Coding-rule tests: 9 tests, 610 assertions, all pass.

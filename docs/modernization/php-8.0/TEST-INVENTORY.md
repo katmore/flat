@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 917 test methods in 110 files, running 1712 test cases.
-- 147 methods use a data provider (one case per data set).
+- 918 test methods in 110 files, running 1717 test cases.
+- 148 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-8.0/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -282,12 +282,13 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testKnownFieldsAreMappedAndExcludedFromExtraFields` (line 6)
 - `testFieldsAddedAfterConstructionReturnNamesOrValues` (line 14)
 
-### `tests/Unit/CodingRulesTest.php` (4)
+### `tests/Unit/CodingRulesTest.php` (5)
 
 - `testEverySourceFileParsesOnThisPhpRuntime` (line 51)
-- `testClassAliasIsNeverUsed` (line 63)
-- `testEveryClassIsDeclaredWhereItsPathSays` (line 74)
-- `testClassesAreLoadedByTheAutoloaderNeverByInclude` (line 86)
+- `testAliasGuardHandlesPhp80NameTokens` (line 74): 5 data-provider cases
+- `testClassAliasIsNeverUsed` (line 89)
+- `testEveryClassIsDeclaredWhereItsPathSays` (line 98)
+- `testClassesAreLoadedByTheAutoloaderNeverByInclude` (line 110)
 
 ### `tests/Unit/Core/AlertDefaultsTest.php` (2)
 
