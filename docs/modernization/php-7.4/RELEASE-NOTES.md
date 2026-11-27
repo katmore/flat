@@ -1,8 +1,8 @@
 # flat v1.74.0
 
-The PHP 7.4 release of the flat modernization (`v1.<PHP major><PHP minor>.0`). The public API is the same as `v1.73.2`:
-every class, method, property and constant was compared with PHP's Reflection and nothing differs
-(`docs/modernization/php-7.4/notes/API-COMPARISON.md`). 1,637 tests pass on PHP 7.4.33 with 100% class, method and line
+The PHP 7.4 release of the flat modernization (`v1.<PHP major><PHP minor>.0`). The public API is the same as `v1.73.2` except
+two changes to classes that could not be loaded: one is removed and seven are renamed (below). Every class, method, property
+and constant was compared with PHP's Reflection (`docs/modernization/php-7.4/notes/API-COMPARISON.md`). 1,637 tests pass on PHP 7.4.33 with 100% class, method and line
 coverage, and no PHP notice, warning or deprecation is raised.
 
 ## The requirements changed
@@ -49,4 +49,7 @@ Every entry has what you saw before, what you see now, and what to search for in
 - The four open dependency advisories (`mongodb/mongodb`, `aws/aws-sdk-php`; test environment only) need PHP 8.1 for
   their fixes (`docs/modernization/php-7.4/notes/DEPENDENCY-ALERTS.md`). An application on PHP 8.1 or newer can already
   install the fixed releases; flat's constraints allow them.
-- Seven classes cannot be loaded by the API tool (`docs/modernization/php-7.4/notes/API-COMPARISON.md`).
+- Two classes cannot be loaded by the API tool: the Authorize.Net wrappers `AuthorizeNetARB` and `AuthorizeNetCIM`, which print
+  the SDK's deprecation notice (`docs/modernization/php-7.4/notes/API-COMPARISON.md`).
+- Six files declare a class under another name than their path and load under neither (`docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`,
+  KD-109); the owner has been asked what names were intended.

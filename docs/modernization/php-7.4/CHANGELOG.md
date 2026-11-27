@@ -323,3 +323,13 @@ continues from the php-7.3 phase.
   Written for the owner, who dislikes the pattern (Q58). No code changed.
 - Behavior: none.
 - Undo: revert the commit.
+
+## MOD-305 — The API dump and comparison after MOD-302 and MOD-303
+
+- Kind: documentation (generated dump, regenerated with the tool and copied). `notes/API-V1.74.0.json` is made again; the
+  comparison with the `v1.73.2` dump shows exactly two changes, both to classes that could not be loaded: `validate\collection`
+  removed (619 entries instead of 620) and seven MongoDB SSL entries that now load. Nothing else differs. The unloadable
+  classes are now two (the Authorize.Net wrappers). [notes/API-COMPARISON.md](notes/API-COMPARISON.md) and
+  [RELEASE-NOTES.md](RELEASE-NOTES.md) say so; the entries that "declare nothing" were counted one by one.
+- Behavior: none.
+- Undo: nothing to undo.

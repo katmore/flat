@@ -19461,10 +19461,6 @@
             }
         }
     },
-    "flat\\core\\util\\validate\\collection": {
-        "unloadable": true,
-        "reason": "PHP Fatal error:  Uncaught Error: Interface 'flat\\core\\collection\\validator' not found in /app/src/flat/core/util/validate/collection.php:34"
-    },
     "flat\\core\\util\\validate\\collector": {
         "kind": "interface",
         "abstract": false,
@@ -25568,30 +25564,171 @@
         }
     },
     "flat\\db\\driver\\mongo\\ssl": {
-        "nodeclaration": true
+        "kind": "interface",
+        "abstract": false,
+        "final": false,
+        "parent": null,
+        "interfaces": [],
+        "constants": [],
+        "properties": [],
+        "methods": {
+            "get_cafile": {
+                "visibility": "public",
+                "static": false,
+                "abstract": true,
+                "final": false,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            },
+            "get_localcert": {
+                "visibility": "public",
+                "static": false,
+                "abstract": true,
+                "final": false,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            }
+        }
     },
     "flat\\db\\driver\\mongo\\ssl\\cafile": {
-        "nodeclaration": true
+        "kind": "class",
+        "abstract": true,
+        "final": false,
+        "parent": null,
+        "interfaces": [],
+        "constants": [],
+        "properties": {
+            "ca": {
+                "visibility": "public",
+                "static": false,
+                "default": "NULL"
+            },
+            "file": {
+                "visibility": "protected",
+                "static": false,
+                "default": "NULL"
+            }
+        },
+        "methods": {
+            "get_file": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [
+                    {
+                        "name": "param",
+                        "type": "?array",
+                        "optional": true,
+                        "default": "NULL",
+                        "byref": false,
+                        "variadic": false
+                    }
+                ],
+                "return": null
+            }
+        }
     },
     "flat\\db\\driver\\mongo\\ssl\\cafile\\base64": {
-        "unloadable": true,
-        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile' not found in /app/src/flat/db/driver/mongo/ssl/cafile/base64.php:13"
+        "kind": "class",
+        "abstract": true,
+        "final": false,
+        "parent": "flat\\db\\driver\\mongo\\ssl\\cafile",
+        "interfaces": [],
+        "constants": [],
+        "properties": [],
+        "methods": {
+            "__construct": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": true,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            },
+            "_get_cafile_base64": {
+                "visibility": "protected",
+                "static": false,
+                "abstract": true,
+                "final": false,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            }
+        }
     },
     "flat\\db\\driver\\mongo\\ssl\\cafile\\file": {
-        "unloadable": true,
-        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile' not found in /app/src/flat/db/driver/mongo/ssl/cafile/file.php:13"
+        "kind": "class",
+        "abstract": true,
+        "final": false,
+        "parent": "flat\\db\\driver\\mongo\\ssl\\cafile",
+        "interfaces": [],
+        "constants": [],
+        "properties": [],
+        "methods": {
+            "__construct": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": true,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            },
+            "_get_cafile_path": {
+                "visibility": "protected",
+                "static": false,
+                "abstract": true,
+                "final": false,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            }
+        }
     },
     "flat\\db\\driver\\mongo\\ssl\\localcert": {
-        "unloadable": true,
-        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile' not found in /app/src/flat/db/driver/mongo/ssl/localcert.php:13"
+        "kind": "class",
+        "abstract": true,
+        "final": false,
+        "parent": "flat\\db\\driver\\mongo\\ssl\\cafile",
+        "interfaces": [],
+        "constants": [],
+        "properties": [],
+        "methods": {
+            "_get_passphrase": {
+                "visibility": "protected",
+                "static": false,
+                "abstract": true,
+                "final": false,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            }
+        }
     },
     "flat\\db\\driver\\mongo\\ssl\\localcert\\base64": {
-        "unloadable": true,
-        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile\\base64' not found in /app/src/flat/db/driver/mongo/ssl/localcert/base64.php:13"
+        "kind": "class",
+        "abstract": true,
+        "final": false,
+        "parent": "flat\\db\\driver\\mongo\\ssl\\cafile\\base64",
+        "interfaces": [],
+        "constants": [],
+        "properties": [],
+        "methods": []
     },
     "flat\\db\\driver\\mongo\\ssl\\localcert\\file": {
-        "unloadable": true,
-        "reason": "PHP Fatal error:  Uncaught Error: Class 'flat\\db\\mongo\\ssl\\cafile\\file' not found in /app/src/flat/db/driver/mongo/ssl/localcert/file.php:13"
+        "kind": "class",
+        "abstract": true,
+        "final": false,
+        "parent": "flat\\db\\driver\\mongo\\ssl\\cafile\\file",
+        "interfaces": [],
+        "constants": [],
+        "properties": [],
+        "methods": []
     },
     "flat\\db\\driver\\pdo": {
         "kind": "class",
