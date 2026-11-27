@@ -4,9 +4,6 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
 
 ## Defects found in this phase
 
-Found on 2026-11-27 by looking into the eight classes the API tool reports as "cannot be loaded". Both were seen in
-the php-7.2 phase and written down there as "untested and unusable", but never recorded as defects or put to the owner.
-
 ### KD-107 - The MongoDB SSL classes declare the wrong namespace and cannot be autoloaded
 
 - Category: A in effect. Seven files in `src/flat/db/driver/mongo/` (six classes and the interface `ssl.php`:
