@@ -41,7 +41,9 @@ Flat's master at 2812136 is the merge commit of PR 6. Its tree is identical to
 its php-7.4 parent da6427f, but the phase branch continued from that parent and
 does not contain the merge commit itself. At the check, php-7.4 was six commits
 ahead and one behind. This is ancestry, not a missing code fix or a rewritten
-branch. It can be reconciled through the owner's normal phase/release workflow.
+branch. After this check, the owner requested merging master back into php-7.4.
+That merge includes 2812136 without changing the phase's file contents; the branch
+is no longer behind master. Master itself remains at 2812136.
 
 ## Evidence already complete
 

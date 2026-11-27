@@ -695,3 +695,12 @@ continues from the php-7.3 phase.
   integration HTTP 403, recorded explicitly. Existing unchanged-source evidence remains 1,703 passing tests and 100% coverage, plus patched-app tests.
   Documentation checked before committing. Neither master branch, PHP runtime, release tag nor alert state was changed.
 - Undo: revert this documentation commit.
+
+## MOD-337 — Merge master back into php-7.4 on the owner's instruction
+
+- Kind: branch synchronization. Merged origin/master at 2812136 into php-7.4 after the owner explicitly requested it.
+  The merge brings in the PR 6 merge commit that GitHub counted as one commit behind; it changes no file contents compared with its first parent.
+- Behavior: none. Master remains at 2812136; no release, runtime step, reset, rebase or force push.
+- Verified: merge tree equals its first parent's tree; master is an ancestor of php-7.4. Documentation check passes.
+  Updated [notes/EXIT-REVIEW.md](notes/EXIT-REVIEW.md) to distinguish the original ancestry finding from the completed synchronization.
+- Undo: no undo required for runtime behavior; this is additive history only.
