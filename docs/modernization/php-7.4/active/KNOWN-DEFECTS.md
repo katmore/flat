@@ -1,9 +1,6 @@
 # Known defects and owner questions, php-7.4 phase
 
-KD-01 to KD-106 are all resolved; the records are
-[php-7.2](../../php-7.2/active/KNOWN-DEFECTS.md) and [php-7.3](../../php-7.3/active/KNOWN-DEFECTS.md). A
-defect found in this phase starts here as KD-107 and follows "How each fix lands" in the php-7.2 file.
-Questions continue the same numbering.
+Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS.md): defects start at KD-107, questions at Q51.
 
 ## Defects found in this phase
 
