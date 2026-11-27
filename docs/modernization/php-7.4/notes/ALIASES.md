@@ -51,7 +51,7 @@ alias was added in this phase, and the MongoDB SSL classes were renamed without 
 
 - Where: `src/flat/core/util/validate/factory/exception/not_match_interface.php`, line 52.
 - What: the class lives in `flat\core\util\validate\factory\exception`. The alias adds the same name without `validate`,
-  an older namespace; `src/flat/core/util/factory/exception/not_match_interface.php` is a forwarding file for it.
+  an older namespace; src/flat/core/util/factory/exception/not_match_interface.php is a forwarding file for it.
 - Used: `tests/Unit/Core/Util/ValidationTest.php` (both names); nothing in `src`.
 - Written up: MOD-097 ("retain the historical declared name via alias/forwarding file").
 - Removal: delete the alias and the forwarding file; update the test. Code that used the old namespace would break.

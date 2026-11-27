@@ -91,3 +91,12 @@ before, what they see now, and what to search for in their code.
   handler classes already used the `orm` name.
 - Search consumer code for: `data\session\driver`, `session\driver\session`.
 - Verified: yes (the suite and a real native session across separate processes use the one name).
+
+### MOD-309 (Q58) — `core\util\factory\exception\not_match_interface` is removed
+
+- Before: the class lives in `flat\core\util\validate\factory\exception`; a `class_alias` and a forwarding file made the same class
+  also answer to `flat\core\util\factory\exception\not_match_interface` (an older namespace without `validate`).
+- After: only `flat\core\util\validate\factory\exception\not_match_interface` exists, which also matches its file. The alias and the
+  forwarding file are gone. Nothing in flat used the old name.
+- Search consumer code for: `util\factory\exception`, `not_match_interface`.
+- Verified: yes (the fresh-process test loads the one name).

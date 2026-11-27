@@ -781,17 +781,17 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testOnlyStrictTruePassesAndStoredStringsAreAvailable` (line 27)
 - `testValidationOptions` (line 39)
 - `testExplicitRegexConstructorKeepsItsExistingArrayPayload` (line 52)
-- `testFactoryInterfaceFailureLoadsThroughBothNames` (line 57)
-- `testHistoricalFactoryExceptionAutoloadsInAFreshProcess` (line 64)
-- `testRegexMatchingAndMultiplePatterns` (line 70)
-- `testRegexConfigurationFailures` (line 79): 4 data-provider cases
-- `testInvalidRegexSyntaxProducesItsDescriptiveException` (line 89)
-- `testPcreExecutionErrorRaisesPregError` (line 103)
-- `testPcreExceptionExplainsNativeEngineErrors` (line 113): 5 data-provider cases
-- `testInvalidPatternExceptionIncludesPatternAndNativeCodeName` (line 142)
-- `testHostnameDefinerSuppliesAValidPatternWithoutChangingItsRawConstant` (line 150): 8 data-provider cases
-- `testSupportedFilterIdsConstructSuccessfully` (line 161)
-- `testInvalidFilterUsesItsConcreteException` (line 167)
+- `testFactoryInterfaceFailureHasItsMessage` (line 57)
+- `testFactoryExceptionAutoloadsInAFreshProcess` (line 63)
+- `testRegexMatchingAndMultiplePatterns` (line 69)
+- `testRegexConfigurationFailures` (line 78): 4 data-provider cases
+- `testInvalidRegexSyntaxProducesItsDescriptiveException` (line 88)
+- `testPcreExecutionErrorRaisesPregError` (line 102)
+- `testPcreExceptionExplainsNativeEngineErrors` (line 112): 5 data-provider cases
+- `testInvalidPatternExceptionIncludesPatternAndNativeCodeName` (line 141)
+- `testHostnameDefinerSuppliesAValidPatternWithoutChangingItsRawConstant` (line 149): 8 data-provider cases
+- `testSupportedFilterIdsConstructSuccessfully` (line 160)
+- `testInvalidFilterUsesItsConcreteException` (line 166)
 
 ### `tests/Unit/Core/Util/ValueTest.php` (4)
 
@@ -1077,17 +1077,17 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testChannelCanEstablishItsOwnConnection` (line 73): groups: services, rabbitmq
 - `testQueueDeclarationAndPublishUseDocumentedParameters` (line 83): groups: services, rabbitmq
 - `testPhpAmqpLib2CallersStillGetTheLegacyConnectionClass` (line 101): groups: services, rabbitmq
-- `testTheDefaultQueueIsDurableOnRabbitMq4` (line 125): groups: services, rabbitmq
-- `testAnExplicitExclusiveQueueKeepsItsTransientDefault` (line 137): groups: services, rabbitmq
-- `testAnExplicitDurableChoiceIsNeverOverridden` (line 149): groups: services, rabbitmq
-- `testExplicitRoutingMessageAndCommandPaths` (line 160): groups: services, rabbitmq
-- `testProviderOverridesDefaultsAndTrimsStringParameters` (line 175): groups: services, rabbitmq
-- `testMissingConnectionParametersAreRejected` (line 182): 2 data-provider cases
-- `testMissingHostIsRejectedBeforeNetworkConnection` (line 189)
-- `testEmptyMessageIsRejected` (line 194)
-- `testConnectionCacheKeyDependsOnTheConnectionParameters` (line 199)
-- `testMissingQueueIsRejected` (line 213): groups: services, rabbitmq
-- `testConfigNamespaceSuppliesPresentKeysAndKeepsDefaults` (line 219)
+- `testTheDefaultQueueIsDurableOnRabbitMq4` (line 124): groups: services, rabbitmq
+- `testAnExplicitExclusiveQueueKeepsItsTransientDefault` (line 136): groups: services, rabbitmq
+- `testAnExplicitDurableChoiceIsNeverOverridden` (line 148): groups: services, rabbitmq
+- `testExplicitRoutingMessageAndCommandPaths` (line 159): groups: services, rabbitmq
+- `testProviderOverridesDefaultsAndTrimsStringParameters` (line 174): groups: services, rabbitmq
+- `testMissingConnectionParametersAreRejected` (line 181): 2 data-provider cases
+- `testMissingHostIsRejectedBeforeNetworkConnection` (line 188)
+- `testEmptyMessageIsRejected` (line 193)
+- `testConnectionCacheKeyDependsOnTheConnectionParameters` (line 198)
+- `testMissingQueueIsRejected` (line 212): groups: services, rabbitmq
+- `testConfigNamespaceSuppliesPresentKeysAndKeepsDefaults` (line 218)
 
 ### `tests/Unit/Input/MapTest.php` (6)
 

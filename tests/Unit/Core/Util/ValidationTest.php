@@ -54,16 +54,15 @@ class ValidationTest extends TestCase
         $rule = new RegexConstructorProbe(['regexp'=>'/a/']);
         $this->assertSame(['regexp'=>'/a/'],$rule->get_value());
     }
-    public function testFactoryInterfaceFailureLoadsThroughBothNames()
+    public function testFactoryInterfaceFailureHasItsMessage()
     {
         $error = new validate\factory\exception\not_match_interface(new \stdClass);
         $this->assertSame("match rule 'stdClass' in factory is not a match_interface",$error->getMessage());
-        $this->assertInstanceOf(\flat\core\util\factory\exception\not_match_interface::class,$error);
         $this->assertInstanceOf(validate\factory\exception::class,$error);
     }
-    public function testHistoricalFactoryExceptionAutoloadsInAFreshProcess()
+    public function testFactoryExceptionAutoloadsInAFreshProcess()
     {
-        list($status,$out,$err)=$this->subprocess('echo (new \flat\core\util\factory\exception\not_match_interface(new \stdClass))->getMessage();');
+        list($status,$out,$err)=$this->subprocess('echo (new \flat\core\util\validate\factory\exception\not_match_interface(new \stdClass))->getMessage();');
         $this->assertSame(0,$status,$err); $this->assertSame('',$err);
         $this->assertSame("match rule 'stdClass' in factory is not a match_interface",$out);
     }

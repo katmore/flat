@@ -103,20 +103,19 @@ class RabbitMqTest extends TestCase
         $file = (new \ReflectionClass(\PhpAmqpLib\Connection\AMQPStreamConnection::class))->getFileName();
         $child = <<<'CHILD'
 require %AUTOLOAD%;
-class LegacyAmqpConnection extends \PhpAmqpLib\Connection\AMQPStreamConnection {}
-class_alias('LegacyAmqpConnection', 'PhpAmqpLib\\Connection\\AMQPConnection');
+require %LEGACY%;
 $driver = new class(%PARAMS%) extends \flat\db\driver\rabbitmq {};
 $connection = $driver->get_connection();
 echo get_class($connection);
 $connection->close();
 CHILD;
         list($status, $out, $err) = $this->subprocess(str_replace(
-            ['%AUTOLOAD%', '%PARAMS%'],
-            [var_export(substr($file, 0, strpos($file, '/php-amqplib/')).'/autoload.php', true), var_export($this->params, true)],
+            ['%AUTOLOAD%', '%LEGACY%', '%PARAMS%'],
+            [var_export(substr($file, 0, strpos($file, '/php-amqplib/')).'/autoload.php', true), var_export(dirname(__DIR__, 2).'/Support/LegacyAmqpConnection.php', true), var_export($this->params, true)],
             $child
         ));
         $this->assertSame(0, $status, $err);
-        $this->assertSame('LegacyAmqpConnection', $out);
+        $this->assertSame('PhpAmqpLib\\Connection\\AMQPConnection', $out);
     }
     /**
      * @group services

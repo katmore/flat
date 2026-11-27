@@ -359,3 +359,15 @@ continues from the php-7.3 phase.
 - Behavior: the names `flat\data\session\driver` and `flat\data\session\driver\session` no longer exist. See
   [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
 - Undo: revert the commit.
+
+## MOD-309 — `not_match_interface` has one name; the last `class_alias` in `src` and the one in the tests are removed (Q58, item 5)
+
+- Kind: rename and test change, decided by the owner on 2026-11-27: no alias. `src/flat/core/util/validate/factory/exception/not_match_interface.php`
+  already matched its own file; its `class_alias` for the older namespace `flat\core\util\factory\exception` is removed, and so is the
+  forwarding file `src/flat/core/util/factory/exception/not_match_interface.php`. `ValidationTest` loads the one name.
+- Also removed: the only `class_alias` in the tests. `RabbitMqTest::testPhpAmqpLib2CallersStillGetTheLegacyConnectionClass` aliased a test
+  class as `PhpAmqpLib\Connection\AMQPConnection`, the class php-amqplib 3 removed; it now requires `tests/Support/LegacyAmqpConnection.php`,
+  which declares that class under its real name, and checks that name.
+- Behavior: the old name `flat\core\util\factory\exception\not_match_interface` no longer exists. See
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Undo: revert the commit.
