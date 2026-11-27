@@ -168,3 +168,9 @@ flag survived. Add an unrelated boolean option to the existing line-handler
 contract test, requiring error=false. Source behavior stays unchanged. The
 three mutants at that line are now all killed, with no invalid mutants or
 timeouts. The full compact-harness run includes the tightened assertion.
+
+## MOD-355 — Upgrade azuyalabs/yasumi (2026-11-27)
+
+2.6.0 → 2.7.0, resolved against PHP 8.0.30. No other
+package version changes in this checkpoint. Full Docker suite: 1717 tests,
+8116 assertions, no errors/failures/skips; 100% method and line coverage.
