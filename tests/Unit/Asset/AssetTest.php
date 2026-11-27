@@ -346,10 +346,13 @@ class AssetTest extends TestCase
     }
     public function testStringConversionReportsUrlFailureAsNotice()
     {
-        $message = null;
-        set_error_handler(function ($level,$text) use (&$message) { $message = $text; return true; });
+        $messages = [];
+        set_error_handler(function ($level,$text) use (&$messages) { $messages[] = [$level,$text]; return true; });
         try { $this->assertSame('', (string) new BrokenUrlAsset); }
         finally { restore_error_handler(); }
-        $this->assertStringContainsString('broken url', $message);
+        // Exactly one message, the notice: nothing else may be raised on the way.
+        $this->assertCount(1, $messages);
+        $this->assertSame(E_USER_NOTICE, $messages[0][0]);
+        $this->assertStringContainsString('broken url', $messages[0][1]);
     }
 }

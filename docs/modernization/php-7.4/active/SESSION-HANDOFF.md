@@ -11,36 +11,26 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 
 ## Done
 
-- MOD-280 to MOD-281: the phase folder; the test image is PHP 7.4.33.
-- MOD-282: `tests/tools/apidump.php` no longer uses the deprecated `ReflectionType` string cast; its output
-  matches the 7.3 dump of `v1.73.2`.
-- MOD-283: both Composer platform pins are 7.4.33.
-- MOD-284: full suite with coverage on 7.4.33, the JavaScript tests, and the source review against the 7.4
-  manual: nothing to change in `src`.
-- MOD-285: ext-mongodb 1.19.4. The brief's 1.21.1 needs PHP 8.1; 1.20.1 is the newest that builds, but it
-  deprecates what `alcaeus/mongo-php-adapter` does (Q53).
-- MOD-286 to MOD-289: `mongodb/mongodb` 1.19.1, `jms/serializer` 3.32.9 (with its dependencies; it needs
-  `doctrine/annotations` required explicitly), `azuyalabs/yasumi` 2.6.0, `nikic/php-parser` 5.9.0.
-- flat-webapp: images and platform pins on 7.4.33; 67 tests pass.
-- MOD-290: [../notes/ENVIRONMENT.md](../notes/ENVIRONMENT.md). flat's own tools and dependencies are at their
-  newest 7.4-compatible releases.
+- MOD-280 to MOD-284: the phase folder; the test image on PHP 7.4.33; `tests/tools/apidump.php` fixed; platform pins;
+  full verification and source review.
+- MOD-285 to MOD-289, MOD-294: tools and dependencies at their newest 7.4-compatible releases; see
+  [../notes/ENVIRONMENT.md](../notes/ENVIRONMENT.md). The service audit of 2026-11-27 found every other pin current.
+- MOD-292, MOD-293: the owner answered Q51, Q52 and Q54 "yes": the root `composer.json` requires `php >=7.4.0` and
+  `doctrine/annotations ^2.0`.
+- MOD-295 to MOD-297 (Q53, "fix it now"): a corrected copy of the Mongo adapter's read-preference trait, ext-mongodb
+  1.20.1 and `mongodb/mongodb` 1.20.0.
+- MOD-291: flat-webapp on 7.4.33. MOD-298: review of every PHP message under 7.4 (none left).
 
 ## Next
 
-1. flat-webapp is on 7.4.33 (see its `CHANGELOG.md`; nothing else changed). Its application lock still holds
-   flat `v1.73.2`, `jms/serializer` 3.29.1 and `mongodb/mongodb` 1.16.1: move it when flat's 7.4 release is
-   published and Q54 is answered (a fresh lock would drop `doctrine/annotations`).
-2. At the end of the phase: `composer audit --locked` on both flat locks and flat-webapp's, the
-   dependency-alert note, and the release preparation (Q51 and Q52 first).
-
-## Working in a cloud session
-
-- Docker Hub can answer 429 on pulls; pull the service images one at a time, then use `--offline`.
-- Behind the cloud proxy, set `FLAT_TEST_CA_FILE=/root/.ccr/ca-bundle.crt` for builds.
-- `composer update --lock` rewrites some download URLs; keep the lock diff to real changes.
+1. Release preparation, like php-7.3: release notes for `v1.74.0` (the owner tags; Q52), the consumer check, and a note
+   on the "Ambiguous class resolution" warning that optimized autoloaders print (see MOD-295 in
+   [CONSUMER-IMPACT.md](CONSUMER-IMPACT.md)).
+2. End of the phase: `composer audit --locked` on both flat locks and flat-webapp's, and the dependency-alert note
+   (the same four advisories are expected: their fixes need PHP 8.1).
+3. After the tag: move flat-webapp's application lock to the published release and bring its packages to the newest
+   7.4 releases, one at a time (its lock still holds `jms/serializer` 3.29.1 and `mongodb/mongodb` 1.16.1).
 
 ## Waiting for the owner
 
-Q51 (the `php` requirement), Q52 (release numbering), Q53 (MongoDB extension held at 1.19.4) and Q54
-(`doctrine/annotations` for PHP below 8.0) in [KNOWN-DEFECTS.md](KNOWN-DEFECTS.md). Neither
-blocks the next steps. Leave the root `composer.json` alone until Q51 is answered.
+Nothing. Q51 to Q54 are answered. The owner tags the release.

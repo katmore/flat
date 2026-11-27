@@ -7,10 +7,11 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 ## Status: in progress (started 2026-11-26)
 
 - The test image is PHP 7.4.33 and the Composer platform pins are 7.4.33.
-- `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage. The JavaScript
-  tests pass. The source review found nothing to change (MOD-284).
-- Next: bring each tool and dependency to its newest 7.4-compatible release, one at a time.
-- Open owner questions: Q51 to Q54 in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+- `docker/bin/test all --coverage`: 1,637 tests, 7,209 assertions, all pass; 100% coverage; no PHP message anywhere
+  (MOD-298). flat's test tools and dependencies are at their newest 7.4-compatible releases
+  ([notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)).
+- Next: the end-of-phase work (see [active/SESSION-HANDOFF.md](active/SESSION-HANDOFF.md)).
+- No open owner questions: Q51 to Q54 are answered ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
 - flat-webapp runs on PHP 7.4.33 (images and platform pins moved; 67 tests pass). Its application lock still
   holds flat `v1.73.2` and the packages that go with it.
 

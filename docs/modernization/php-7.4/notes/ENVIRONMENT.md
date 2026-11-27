@@ -41,5 +41,5 @@ The test image is `flat-tests-php74` (it was `flat-tests-php73`).
 
 ## Results
 
-`docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; coverage 100% (332 classes, 1,099
-methods, 8,824 lines).
+`docker/bin/test all --coverage`: 1,637 tests, 7,209 assertions, all pass; coverage 100% (333 classes, 1,105
+methods, 8,880 lines).

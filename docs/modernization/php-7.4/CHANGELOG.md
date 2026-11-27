@@ -240,3 +240,22 @@ continues from the php-7.3 phase.
 - Verified: `docker/bin/test all --coverage` (with the MongoDB service): 1,637 tests, 7,010 assertions, all pass, no
   PHP message; 100% coverage.
 - Undo: revert the commit.
+
+## MOD-298 — Review of every PHP message under 7.4; two tests made exact
+
+- Kind: verification and test hardening; no file of `src` changed. Asked by the owner on 2026-11-27: look over
+  everything for deprecation notices and warnings that appear only because the suite runs on PHP 7.4.
+- Found and fixed earlier in the phase: the `ReflectionType` string cast in `tests/tools/apidump.php` (MOD-282) and the
+  Mongo adapter's use of what ext-mongodb 1.20 deprecates (MOD-295, MOD-296). Nothing else appears.
+- Checked: the whole output of `docker/bin/test all --coverage` (no deprecation, warning, notice, risky or skipped
+  test); the output and error stream of every child PHP process the tests start (temporary logging, then reverted:
+  nothing PHP-related); `php -l` on every tracked PHP file (MOD-281); the mutation probe and `bin/consumer-check`
+  on 7.4 (both run clean); flat-webapp's server log check (clean).
+- Reviewed every test that installs its own error handler. Most assert an exact list or pass other messages on to
+  PHPUnit. Two were loose and are now exact: `SessionTest::testFailedStorageRetriesAndReturnsNoId` asserts the
+  200 messages (100 attempts, each the open failure and the read failure) and `AssetTest::testStringConversionReportsUrlFailureAsNotice`
+  asserts the single `E_USER_NOTICE`. A new message from a newer PHP would now fail them.
+- Behavior: none.
+- Verified: `docker/bin/test all --coverage`: 1,637 tests, 7,209 assertions, all pass; 100% (333 classes, 1,105
+  methods, 8,880 lines).
+- Undo: revert the commit.
