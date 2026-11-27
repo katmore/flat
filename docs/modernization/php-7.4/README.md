@@ -6,8 +6,8 @@
   100% class, method and line coverage. Environment: [notes](notes/ENVIRONMENT.md).
 - All eleven adversarial-review defects are fixed. The [review](history/ADVERSARIAL-REVIEW.md)
   and [resolved registry](history/KNOWN-DEFECTS.md) are archived.
-- **KD-128 remains open:** the mutation runner. Current work is in the
-  [defect list](active/KNOWN-DEFECTS.md) and [handoff](active/SESSION-HANDOFF.md).
+- **KD-128 is fixed:** both mutation modes work; [verification record](history/MUTATION-RUNNER.md).
+  No confirmed defects are open. Remaining work is in the [handoff](active/SESSION-HANDOFF.md).
 - Published release: v1.74.0. The v1.74.1 patch is pending; its notes are a draft.
   flat-webapp still locks v1.74.0; its tests also passed against the patched source.
 - No open owner questions. Publishing releases, changing master and starting
@@ -27,7 +27,7 @@ tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.4/active/KNO
 
 ## Active work
 
-- [Open defects](active/KNOWN-DEFECTS.md): KD-128 only.
+- [Defect index](active/KNOWN-DEFECTS.md): Current status and where to add new findings.
 - [Current handoff](active/SESSION-HANDOFF.md): Next actions and unresolved follow-ups.
 - [Pending consumer impact](active/CONSUMER-IMPACT.md): v1.74.1 changes to check before release.
 

@@ -749,3 +749,26 @@ continues from the php-7.3 phase.
 - `docs/modernization/php-7.4/active/CONSUMER-IMPACT.md` → `docs/modernization/php-7.4/history/CONSUMER-IMPACT.md`
 - `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md` → `docs/modernization/php-7.4/history/KNOWN-DEFECTS.md`
 - `docs/modernization/php-7.4/active/SESSION-HANDOFF.md` → `docs/modernization/php-7.4/history/SESSION-HANDOFF.md`
+
+## MOD-339 — Repair both mutation-runner modes (KD-128)
+
+- Kind: test-tool fix. The temporary checkout includes bin/docker as required by CodingRulesTest. Service mode loads the current HTTP/Authorize.Net,
+  SSH and S3 Compose fragments alongside MongoDB/RabbitMQ, supplying all environment/volume inputs. PHP runs as the host UID/GID (1000:1000 for root
+  hosts). Startup failures print diagnostics and cleanup failures propagate instead of being discarded. No production source or mutation algorithm changed.
+- Verified in Docker: unit-only and full-service baselines pass; each targeted one-mutant probe catches the removed rand type guard, with one valid
+  mutant killed, zero timeouts and zero survivors. Invalid arguments exit 2 after cleanup. Temporary copies were removed and source stayed unchanged.
+  Commands and results: [history/MUTATION-RUNNER.md](history/MUTATION-RUNNER.md). No test was skipped or diagnostic suppressed.
+- Archive: `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md` snapshot moved to
+  `docs/modernization/php-7.4/history/MUTATION-RUNNER.md`; the active file is now a short current-status index with no open defects.
+  Updated handoff, overview, testing workflow and exit review. Test cases did not change, so the existing generated inventory remains valid.
+- Undo: revert the commit.
+
+## MOD-340 — Make completion-time archiving mandatory for future agents
+
+- Kind: agent/documentation instructions, requested by the owner. Root AGENTS.md makes archiving a completion/commit/handoff requirement;
+  docs/modernization/README.md holds the detailed workflow. Active folders retain unfinished work and pending release checks only;
+  closed-phase active folders contain only their placeholder. Unresolved follow-ups must be carried forward before old reports are archived.
+- Records retain their narrative, labels and printed paths; Markdown link destinations follow moved files. Raw evidence and generated inventory
+  bodies are preserved. The completion check includes navigation, the change-log path map and the full Docker documentation-check output.
+- Verified: current active folders audited against the rule and documentation checked before committing. No runtime behavior or test cases changed.
+- Undo: revert the instruction update.

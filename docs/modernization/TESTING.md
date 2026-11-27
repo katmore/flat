@@ -124,6 +124,14 @@ docker/bin/mutate --list                          # candidate mutants per file
 docker/bin/mutate --limit=200 --seed=1 src/flat/core > build/tests/mutate-core.md
 ```
 
+The default probe runs the unit suite without service containers. Add
+`--services` to run the full suite with MongoDB, RabbitMQ, WireMock (HTTP and
+Authorize.Net), OpenSSH and S3Mock. Prepare their repository-defined images
+with `docker/bin/test all` first; the mutation wrapper uses cached images and
+never pulls service images. It copies src, tests, bin, docker and the root test
+configuration into its temporary checkout, runs PHP unprivileged, and removes
+the copy and its Compose stack on exit. Startup and cleanup errors fail the run.
+
 Every mutant that is not caught is listed with its file, line and change. Use
 a different `--seed` for a different sample; the same seed gives the same one.
 

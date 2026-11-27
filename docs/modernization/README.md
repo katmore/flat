@@ -52,9 +52,27 @@ The major version follows semantic versioning. It stays at 1 while the public AP
 
 ### Archiving phase work
 
-Closed phases have empty active folders. Completed work and frozen test
-inventories move to history; source facts and generated inventory bodies are
-preserved under an archive banner. Current-phase active folders contain only
-open work and pending consumer-impact checks. Carry unresolved follow-ups into
-the current handoff before archiving their old reports. Historical wording and
-printed paths stay intact; link destinations follow moved documents.
+Archiving is part of finishing work, including a partial-phase task or session
+handoff. The mandatory agent check is in [AGENTS.md](../../AGENTS.md#archive-completed-work-before-handing-off).
+Do it in the same change as the completion/status update; do not wait for a
+phase release or an owner reminder.
+
+- `active/` holds only unfinished work, a concise current handoff/status index,
+  and pending release or consumer-impact checks. Completed reviews, plans,
+  resolved defect detail and replaced handoffs move to `history/`.
+- Before moving a report with unresolved follow-ups, put those follow-ups in the
+  current work list or handoff and link back to the archived evidence. A move
+  does not close a defect or prove a test gap resolved.
+- Start archived Markdown with a banner identifying its checkpoint and linking
+  to the current status or replacement. Preserve historical narrative, labels
+  and printed paths. Link destinations may be repaired for moved documents.
+- Preserve raw evidence byte-for-byte. Closed-phase generated inventories are
+  frozen snapshots: move them to history without regenerating them from newer
+  tests or editing their generated body. An archive banner goes outside that body.
+- In the same change, repair navigation and tool inputs, record the old-to-new
+  path map in the current phase change log, and run `docker/bin/check-docs`.
+  Read its entire output, not just the final problem count.
+- Before committing or ending a session, inspect every phase's `active/`:
+  closed phases contain only `.gitkeep`; the current phase has no completed
+  reports or old handoffs mixed into its remaining work. README files describe
+  current status; completed-session chronology belongs in history or the change log.

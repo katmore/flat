@@ -3,21 +3,13 @@
 Checked 2026-11-27 against flat `986d3cc` and flat-webapp `9e6fb73`.
 No PHP version switch, merge, rebase, release tag or master update was made by this review.
 
-## Repair before the PHP step
+## Mutation-runner issue resolved
 
-**KD-128: the mutation runner cannot establish a clean baseline.**
-
-`docker/bin/mutate --limit=1 --seed=74 src/flat/core/mapper.php` exits before
-running a mutant. Its throwaway checkout copies src and tests but omits bin and
-docker, which CodingRulesTest now scans. The first error is a missing /app/bin
-directory (296 tests reached, one error). The ordinary repository suite passes;
-this is a broken test-tool checkout, not a new failure in framework behavior.
-
-The same wrapper's service mode starts only MongoDB and RabbitMQ. By inspection,
-it also lacks the WireMock, SSH and S3 services and environment inputs now needed
-by the service-group tests. Repair both modes and prove their baselines pass;
-do not skip the coding-rules or service tests to obtain a result. No mutation
-adequacy claim is made from this failed probe.
+This check found KD-128: the mutation copy omitted bin/docker, and service mode
+had only the older database/broker setup. MOD-339 repairs both modes. Each now
+passes its unmodified baseline and catches a known planted mutation, with no
+timeouts and no source changes left behind. Full reproduction and verification:
+[archived repair record](../history/MUTATION-RUNNER.md).
 
 ## Release closeout
 
@@ -65,7 +57,7 @@ No GitHub alert was changed.
 
 ## Carry forward, without expanding the PHP step
 
-- Revisit the older untriaged mutation survivors after repairing the runner.
+- Revisit the older untriaged mutation survivors with the repaired runner.
   They are leads about test strength, not eight proven application bugs:
   [archived mutation sample](../../php-7.3/history/MUTATION-PROBE.md).
 - The Mongo localcert subclasses' inheritance/passphrase oddity is already

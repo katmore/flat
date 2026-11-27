@@ -5,15 +5,14 @@ Work and push only on php-7.4. Phase rules: [AGENTS.md](../../../../AGENTS.md),
 
 ## Next actions
 
-1. Fix [KD-128](KNOWN-DEFECTS.md), the still-unfixed mutation-runner defect.
-2. Revisit the [eight older mutation survivors](../../php-7.3/history/MUTATION-PROBE.md)
-   after the runner works; triage them as test gaps or equivalent changes.
-3. Complete [release closeout](../notes/EXIT-REVIEW.md), including the published
+1. Revisit the [eight older mutation survivors](../../php-7.3/history/MUTATION-PROBE.md)
+   and triage them as test gaps or equivalent changes.
+2. Complete [release closeout](../notes/EXIT-REVIEW.md), including the published
    patch and flat-webapp lock update on the owner's instruction. Draft:
    [v1.74.1 release notes](../RELEASE-NOTES-V1.74.1.md).
-4. The private consumer scan and live Authorize.Net approval/decline checks need the
+3. The private consumer scan and live Authorize.Net approval/decline checks need the
    owner's environment and timing. The ordinary suite uses the documented mock.
-5. Start PHP 8.0 only after the owner declares this phase complete and approves
+4. Start PHP 8.0 only after the owner declares this phase complete and approves
    the step. Do not change master or publish a release without their instruction.
 
 ## Validation
