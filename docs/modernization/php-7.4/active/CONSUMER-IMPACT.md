@@ -187,3 +187,11 @@ before, what they see now, and what to search for in their code.
   Nothing changes for code that does not override it.
 - Search consumer code for: `ipinfodb`.
 - Verified: yes.
+
+### MOD-323 (Q59) — `flat\core\curl\exception\missing_curlinfo` is removed
+
+- Before: `response.php` threw `missing_curlinfo` ("curl_getinfo returned no transfer information") when `curl_getinfo()` returned `false` for a
+  finished transfer. With a real transfer it never does, so nothing could have seen this exception.
+- After: the check and the class are gone; `$response->info` is what `curl_getinfo()` returns.
+- Search consumer code for: `missing_curlinfo`.
+- Verified: yes (nothing in flat referenced it; the suite passes at 100% coverage).

@@ -522,3 +522,15 @@ continues from the php-7.3 phase.
 - Verified (MOD-320 to MOD-322): `docker/bin/test all --coverage`: 1,663 tests, 7,303 assertions, all pass; 100% (333 classes, 1,106
   methods, 8,872 lines); no PHP message; `docker/bin/test unit`: 1,538 tests pass.
 - Undo: revert the commit.
+
+## MOD-323 — The dead `missing_curlinfo` check is removed (Q59)
+
+- Kind: removal of unreachable code, decided by the owner on 2026-11-27. `src/flat/core/curl/response.php` no longer tests
+  `curl_getinfo($ch)` for `false` (it cannot be false for a finished transfer), and the class `flat\core\curl\exception\missing_curlinfo` is
+  deleted. With them go the last override of a cURL function, `tests/Support/CurlInfoFailure.php`, and its test
+  `ResponseTransferInfoTest`. There is no PHP function override for cURL left in the tests. Consumer impact:
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: the exception class no longer exists; nothing could throw it.
+- Verified: `docker/bin/test all --coverage`: all pass; 100% coverage. The API dump is regenerated (one more name gone;
+  [notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
+- Undo: revert the commit.

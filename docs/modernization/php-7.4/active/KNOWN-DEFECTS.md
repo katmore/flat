@@ -107,9 +107,7 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
     `data\orm\driver` directly) and `core\util\validate\factory\exception\not_match_interface`. `AGENTS.md` now forbids
     `class_alias` (MOD-310).
 
-59. **`missing_curlinfo` (curl_getinfo returning false) cannot happen with a real transfer. Remove it?** `response.php` throws
-    `flat\core\curl\exception\missing_curlinfo` when `curl_getinfo($ch)` returns `false`, but libcurl answers an array for any finished
-    transfer, so the branch and the exception class are unreachable in practice. The test for it needs a PHP function override
-    (`tests/Support/CurlInfoFailure.php`, run in a fresh process) just to reach the line. Recommend: remove the check and the class
-    (nothing else uses it; it is a removal from flat's API list, like `validate\collection`), and with them the last override of a cURL
-    function. **Open.**
+59. **`missing_curlinfo` (curl_getinfo returning false) cannot happen with a real transfer. Remove it?** `response.php` threw
+    `flat\core\curl\exception\missing_curlinfo` when `curl_getinfo($ch)` returned `false`, but libcurl answers an array for any finished
+    transfer, so the branch and the exception class were unreachable in practice, and testing them needed a PHP function override
+    of a cURL function. **Answered 2026-11-27: remove them** (MOD-323).

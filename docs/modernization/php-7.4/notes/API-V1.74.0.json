@@ -12046,28 +12046,6 @@
             }
         }
     },
-    "flat\\core\\curl\\exception\\missing_curlinfo": {
-        "kind": "class",
-        "abstract": false,
-        "final": false,
-        "parent": "flat\\core\\curl\\exception",
-        "interfaces": [
-            "Throwable"
-        ],
-        "constants": [],
-        "properties": [],
-        "methods": {
-            "__construct": {
-                "visibility": "public",
-                "static": false,
-                "abstract": false,
-                "final": false,
-                "returns_reference": false,
-                "params": [],
-                "return": null
-            }
-        }
-    },
     "flat\\core\\curl\\exception\\missing_param": {
         "kind": "class",
         "abstract": false,

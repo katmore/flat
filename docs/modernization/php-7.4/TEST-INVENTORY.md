@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 890 test methods in 110 files, running 1663 test cases.
+- 889 test methods in 109 files, running 1662 test cases.
 - 144 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -435,10 +435,6 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 339): groups: services, http
 - `testFalsyTextBodyInitializesDomOnDemand` (line 347): groups: services, http
 - `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 354): groups: services, http
-
-### `tests/Unit/Core/Curl/ResponseTransferInfoTest.php` (1)
-
-- `testMissingTransferInfoRaisesItsDeclaredException` (line 21): groups: services, http
 
 ### `tests/Unit/Core/DebugTest.php` (13)
 

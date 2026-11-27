@@ -364,9 +364,7 @@ class response {
       if (curl_errno($ch)!=0) {
          throw new exception\curlexec_error($ch,$request->url_string);
       }
-      if (false === ($this->info = curl_getinfo($ch))) {
-         throw new exception\missing_curlinfo();
-      }
+      $this->info = curl_getinfo($ch);
       $this->status_code = $this->info['http_code'];
       
       /*
