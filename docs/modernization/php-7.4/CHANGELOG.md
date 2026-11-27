@@ -631,3 +631,17 @@ continues from the php-7.3 phase.
 - Verified: repository images built online, then `docker/bin/test all --offline --coverage`: 1,673 tests, 7,415 assertions, all pass;
   100% class, method and line coverage. Docker-only PHP 7.4.33 execution, with the injected proxy settings still enabled.
 - Undo: revert the commit.
+
+## MOD-332 — Adversarial review records eleven inherited defects
+
+- Kind: review and documentation. [active/ADVERSARIAL-REVIEW.md](active/ADVERSARIAL-REVIEW.md) records eleven findings (KD-117 to KD-127),
+  with native PHP 7.4.33 Docker reproductions, impacts, test gaps and recommendations. Four are P1: three PDO data errors and SSH password
+  authentication without server identity verification. Seven are P2: joins, cURL methods/bodies/DOM/robots, negative limits and SSH disconnect.
+- Behavior: no production source fix or existing test assertion changed. The defects stay open in
+  [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md); Q62 asks for the host verification policy before a security compatibility change.
+  README and session handoff point to the findings. The separate MOD-331 fixes only test-container networking.
+- Verified: full suite 1,673 tests / 7,415 assertions / 100% coverage; flat-webapp 67 tests / 203 assertions with a clean PHP server log;
+  45 JavaScript programs; fresh API dump (602 entries, no differences); consumer scan (41 files, 24 impact entries, no hits);
+  both locked dependency audits (four known runtime advisories, none in tools); documentation check with no problems.
+  All PHP and Composer execution was in Docker. The live Authorize.Net sandbox was not run; the full suite uses its documented mock.
+- Undo: revert this documentation commit; the recorded defects remain in the source until separately fixed.

@@ -12,7 +12,9 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
   ([notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)).
 - Released: the owner tagged `v1.74.0` (the merge of this branch into `master`) on 2026-11-27. The release notes, API
   comparison, consumer check and dependency audit are in this folder.
-- No open owner questions: Q51 to Q61 are answered ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
+- Eleven open defects from the adversarial review (KD-117 to KD-127):
+  [active/ADVERSARIAL-REVIEW.md](active/ADVERSARIAL-REVIEW.md).
+- Q62 (SSH host identity) is open; Q51 to Q61 are answered ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
 - flat-webapp runs on PHP 7.4.33 and locks flat `v1.74.0`; its locks are at the newest releases PHP 7.4 allows
   (67 tests pass).
 
@@ -35,6 +37,7 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 [active/](active/): Work in progress
 
 - [active/SESSION-HANDOFF.md](active/SESSION-HANDOFF.md): Where the last session stopped and what is next.
+- [active/ADVERSARIAL-REVIEW.md](active/ADVERSARIAL-REVIEW.md): Findings and validation from the independent review.
 - [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md): Defects found in this phase and the owner questions.
 - [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md): Behavior changes applications may notice.
 

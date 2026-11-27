@@ -36,7 +36,9 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 
 ## Next
 
-1. The next phase (PHP 8.0) needs the owner's go-ahead.
+1. Review and resolve KD-117 to KD-127 in [KNOWN-DEFECTS.md](KNOWN-DEFECTS.md).
+   Reproductions and recommendations: [ADVERSARIAL-REVIEW.md](ADVERSARIAL-REVIEW.md).
+2. The next phase (PHP 8.0) needs the owner's go-ahead.
 
 ## Working in a cloud session
 
@@ -49,4 +51,5 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 
 ## Waiting for the owner
 
-Nothing. Q51 to Q61 are answered. The owner tags the release.
+Q62: the SSH host verification policy for password authentication (KD-127).
+Q51 to Q61 are answered. The owner tags the release.
