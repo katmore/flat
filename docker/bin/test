@@ -20,7 +20,7 @@ compose() {
         if [ -n "${FLAT_TEST_CA_FILE:-}" ]; then files="$files -f tests/docker/compose.sandbox.ca.yaml"; fi
     fi
     case "${test_mode:-all}" in all|services|anet) files="$files -f docker/docker-compose.anet-mock.yml" ;; esac
-    case "${test_mode:-all}" in all|services) files="$files -f docker/docker-compose.ssh.yml" ;; esac
+    case "${test_mode:-all}" in all|services) files="$files -f docker/docker-compose.ssh.yml -f docker/docker-compose.s3.yml" ;; esac
     if [ "${offline:-false}" != true ] && [ -n "${FLAT_TEST_CA_FILE:-}" ]; then
         # Newer Compose builds through Bake, which refuses a secret read from a
         # path outside the build context unless file-read entitlements are relaxed.
@@ -76,7 +76,7 @@ fi
 candidates=
 if ! "$inventory"; then
     case "$test_mode" in
-        all|services) candidates='mongo rabbitmq anet-mock sshd' ;;
+        all|services) candidates='mongo rabbitmq anet-mock sshd s3mock' ;;
         mongo) candidates=mongo ;;
         rabbitmq) candidates=rabbitmq ;;
         anet) candidates=anet-mock ;;

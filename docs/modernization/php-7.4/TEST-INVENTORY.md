@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 901 test methods in 110 files, running 1667 test cases.
+- 902 test methods in 110 files, running 1670 test cases.
 - 142 methods use a data provider (one case per data set).
-- 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
+- 2 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -248,16 +248,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testS3ClientConfigurationUsesRealSdkWithoutMakingRequests` (line 26)
 
-### `tests/Unit/Cloud/AwsTest.php` (8)
+### `tests/Unit/Cloud/AwsTest.php` (6)
 
-- `testExplicitClientIsCheckedAndCached` (line 41)
-- `testProviderClientIsResolvedOnce` (line 47)
-- `testMissingClientReportsUnavailable` (line 53)
-- `testBodyUploadCanonicalizesKeysAndWaitsForTheUploadedObject` (line 58): 5 data-provider cases
-- `testSmallFileUploadUsesFileAndOptionalContentType` (line 65)
-- `testFileUploadRejectsInvalidPathsBeforeClientCalls` (line 76): 3 data-provider cases
-- `testS3ParameterMappingUrlsAndBodySetterUsingAnExplicitClientBoundary` (line 88)
-- `testConstructorUploadAndFileSetterUseTheSameBoundary` (line 101)
+- `testExplicitClientIsCheckedAndCached` (line 30)
+- `testProviderClientIsResolvedOnce` (line 36)
+- `testMissingClientReportsUnavailable` (line 42)
+- `testFileUploadRejectsInvalidPathsBeforeAnyRequest` (line 47): 3 data-provider cases
+- `testS3UrlsAndTheStandardClientClass` (line 60)
+- `testAParameterLeftOutTakesTheValueAtItsPosition` (line 73): **known defect KD-115**
 
 ### `tests/Unit/Cloud/IpInfoDbTest.php` (7)
 
@@ -269,12 +267,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testTheApiBaseUrlDefaultsToTheRealApi` (line 132): groups: services, http
 - `testRetiredStaticLoadFailsClearlyWithoutTouchingTheCache` (line 139): groups: services, http
 
-### `tests/Unit/Cloud/S3MultipartTest.php` (4)
+### `tests/Unit/Cloud/S3MultipartTest.php` (7)
 
-- `testThresholdRoutesToRealSdkMultipartWorkflow` (line 56)
-- `testMultipartUploadKeepsTheContentTypeAndThresholdStaysBelowTheSinglePutLimit` (line 66)
-- `testPartFailureAbortsTheStartedUploadAndWrapsSdkFailure` (line 75)
-- `testInitiationFailureDoesNotAttemptAbortWithoutAnUploadId` (line 88)
+- `testBodyUploadCanonicalizesKeysAndWaitsForTheUploadedObject` (line 66): 5 data-provider cases; groups: services, s3
+- `testSmallFileUploadUsesFileAndOptionalContentType` (line 75): groups: services, s3
+- `testS3ObjectMapsItsParametersAndUploadsThroughTheExplicitClient` (line 84): groups: services, s3
+- `testThresholdFileIsUploadedInPartsAndKeepsTheContentType` (line 97): groups: services, s3
+- `testInitiationFailureDoesNotAttemptAbortWithoutAnUploadId` (line 109): groups: services, s3
+- `testPartFailureAbortsTheStartedUploadAndWrapsSdkFailure` (line 121): groups: services, s3
+- `testAFailedAbortReplacesTheUploadFailure` (line 145): groups: services, s3; **known defect KD-116**
 
 ### `tests/Unit/Cloud/TwitterUserInfoTest.php` (2)
 
@@ -1190,8 +1191,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Tools/ServicesToolTest.php` (2)
 
-- `testItNamesTheServicesTheSelectedTestsNeed` (line 90): 20 data-provider cases
-- `testAMissingListIsAUsageError` (line 95)
+- `testItNamesTheServicesTheSelectedTestsNeed` (line 95): 22 data-provider cases
+- `testAMissingListIsAUsageError` (line 100)
 
 ### `tests/Unit/Vendor/EncodingTest.php` (7)
 

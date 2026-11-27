@@ -8,9 +8,9 @@
  * than needed is safe, fewer is not.
  *
  * A test needs the service of its group: mongo, rabbitmq, anet (the Authorize.Net mock; Compose service
- * anet-mock) http (the same WireMock server, used by the cURL tests as a plain HTTP server) or ssh (the OpenSSH server, Compose service sshd). A test in `services` with none of those groups does not say what it needs, so it asks for all three.
+ * anet-mock) http (the same WireMock server, used by the cURL tests as a plain HTTP server) ssh (the OpenSSH server, Compose service sshd) or s3 (the S3 emulator, Compose service s3mock). A test in `services` with none of those groups does not say what it needs, so it asks for all of them.
  */
-$services = ['mongo' => 'mongo', 'rabbitmq' => 'rabbitmq', 'anet' => 'anet-mock', 'http' => 'anet-mock', 'ssh' => 'sshd'];
+$services = ['mongo' => 'mongo', 'rabbitmq' => 'rabbitmq', 'anet' => 'anet-mock', 'http' => 'anet-mock', 'ssh' => 'sshd', 's3' => 's3mock'];
 $document = new DOMDocument();
 if (!isset($argv[1]) || !is_file($argv[1]) || !$document->load($argv[1])) {
     fwrite(STDERR, "usage: php tests/tools/services.php tests.xml [--filter X] [--group a,b] [--exclude-group a,b]\n");

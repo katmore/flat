@@ -34,6 +34,9 @@ class ServicesToolTest extends TestCase
  <testCaseClass name="flat\test\Unit\Core\SshThing">
   <testCaseMethod name="testConnects" groups="default,ssh,services"/>
  </testCaseClass>
+ <testCaseClass name="flat\test\Unit\Cloud\S3Thing">
+  <testCaseMethod name="testUploads" groups="default,s3,services"/>
+ </testCaseClass>
  <testCaseClass name="flat\test\Unit\Vague">
   <testCaseMethod name="testNeedsSomething" groups="default,services"/>
  </testCaseClass>
@@ -63,7 +66,7 @@ XML
     public function selections()
     {
         return [
-            'every test, so every service' => [[], 'mongo rabbitmq anet-mock sshd'],
+            'every test, so every service' => [[], 'mongo rabbitmq anet-mock sshd s3mock'],
             'the http group needs the mock server, named once' => [['--group', 'http'], 'anet-mock'],
             'http and anet together name the mock once' => [['--group', 'http,anet'], 'anet-mock'],
             'a filter on the http test' => [['--filter', 'HttpThing'], 'anet-mock'],
@@ -76,13 +79,15 @@ XML
             'a filter that matches nothing' => [['--filter', 'NoSuchTest'], ''],
             'a group' => [['--group', 'rabbitmq'], 'rabbitmq'],
             'two groups' => [['--group', 'mongo,anet'], 'mongo anet-mock'],
-            'services only' => [['--group', 'services'], 'mongo rabbitmq anet-mock sshd'],
+            'services only' => [['--group', 'services'], 'mongo rabbitmq anet-mock sshd s3mock'],
             'the ssh group needs the ssh server' => [['--group', 'ssh'], 'sshd'],
             'a filter on the ssh test' => [['--filter', 'SshThing'], 'sshd'],
+            'the s3 group needs the S3 emulator' => [['--group', 's3'], 's3mock'],
+            'a filter on the s3 test' => [['--filter', 'S3Thing'], 's3mock'],
             'unit, which excludes services' => [['--exclude-group', 'services'], ''],
             'a group and a filter together' => [['--group', 'services', '--filter', 'Charge'], 'anet-mock'],
-            'a test in services that names no service asks for all' => [['--filter', 'Vague'], 'mongo rabbitmq anet-mock sshd'],
-            'an argument it does not understand keeps every test' => [['some/path/Test.php'], 'mongo rabbitmq anet-mock sshd'],
+            'a test in services that names no service asks for all' => [['--filter', 'Vague'], 'mongo rabbitmq anet-mock sshd s3mock'],
+            'an argument it does not understand keeps every test' => [['some/path/Test.php'], 'mongo rabbitmq anet-mock sshd s3mock'],
         ];
     }
 

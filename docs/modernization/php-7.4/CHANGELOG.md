@@ -583,3 +583,19 @@ continues from the php-7.3 phase.
 - Behavior: none for flat.
 - Verified: `docker/bin/test all --coverage`: 1,667 tests, 7,375 assertions, all pass; 100% (332 classes, 1,105 methods, 8,870 lines); no PHP message.
 - Undo: revert the commit.
+
+## MOD-328 — The S3 tests use a real S3 emulator; the fake AWS client is removed
+
+- Kind: test change, decided by the owner on 2026-11-27. `AwsTest` ran `flat\cloud\aws\s3` against `ClientDouble`, a class that recorded the calls
+  it was given, and `S3MultipartTest` replaced `filesize()` by a namespaced function and gave the SDK a `MockHandler` with scripted replies.
+  Now: the new service `s3mock` (Adobe S3Mock 5.2.3, image pinned by digest, `docker/docker-compose.s3.yml`, group `s3`, mapped in
+  `tests/tools/services.php`; `docker/bin/test` and `bin/test` know it) and `tests/Support/S3Mock.php` (a real SDK client, a bucket per test).
+  `S3MultipartTest` has 11 tests against it: every key form, files, the object parameters, a real multipart upload of a 100 MB sparse file, an
+  initiation failure (`NoSuchBucket`), a part failure the emulator refuses (a part number above 10,000) with the abort taking effect, and a failed abort.
+  `AwsTest` tests the generic client handling with a plain PHP class (`ArrayObject`) and needs no server. The `filesize()` override and `ClientDouble` are gone.
+  Two cases of the old tests are gone because the emulator cannot produce what they scripted: an `AccessDenied` answer to a part and to the initiation.
+- Found: two defects, both waiting for the owner: KD-115 and KD-116 (Q60, Q61), each with a `@group known-defect` test.
+- Behavior: none for flat.
+- Verified: `docker/bin/test all --coverage`: 1,670 tests, 7,394 assertions, all pass; 100% (332 classes, 1,105 methods, 8,870 lines); no PHP message;
+  `docker/bin/test unit`: 1,485 tests, all pass without any service.
+- Undo: revert the commit.

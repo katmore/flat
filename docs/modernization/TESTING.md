@@ -64,6 +64,15 @@ in `/shared/host_key.pub`. A second port (2222) logs in but refuses every sessio
 `docker/bin/test unit` leaves them out; `all`, `services` and a `--filter` that selects them start it. `tests/Unit/Core/SshTest.php` holds
 the checks that need no server. There is no PHP function override for ssh2 any more.
 
+## S3 tests: a real S3 emulator
+
+`tests/Unit/Cloud/S3MultipartTest.php` tests `flat\cloud\aws\s3` with the real AWS SDK against Adobe's S3Mock (group `s3`, service `s3mock`,
+image pinned by digest in `docker/docker-compose.s3.yml`; address in `FLAT_TEST_S3_ENDPOINT`). `tests/Support/S3Mock.php` makes a client and
+creates a bucket with a random name per test, and removes the buckets afterwards. Single uploads with every key form, uploads of a file, the
+multipart upload of a 100 MB file (a sparse file, so it takes no disk), and the failures the emulator itself reports are all real. The image has no
+shell, so the stack has no health check and `S3Mock` waits until the server answers. `docker/bin/test unit` leaves these tests out. `AwsTest`
+tests the generic client handling with a plain PHP class and needs no server. There is no PHP function override and no stand-in client for S3 any more.
+
 ## Authorize.Net tests: mock and real sandbox
 
 `tests/Sandbox` holds functional tests of flat's Authorize.Net wrappers. They run in two ways:

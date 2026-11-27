@@ -1,0 +1,9 @@
+# Added by `docker/bin/test` for the all and services modes: Adobe's S3Mock, an S3 emulator, for the tests of flat\cloud\aws\s3 (group `s3`).
+# It stores objects in memory and on its own disk and is removed with the stack. The image has no shell or client, so it has no health check:
+# the tests wait for it themselves (tests/Support/S3Mock.php). Fake credentials, local use only.
+services:
+  s3mock:
+    image: adobe/s3mock:5.2.3@sha256:ab01a6946750f451ca215a47e91030695b260e4003b8a5a6201d25029b8fca92
+  php:
+    environment:
+      FLAT_TEST_S3_ENDPOINT: http://s3mock:9090

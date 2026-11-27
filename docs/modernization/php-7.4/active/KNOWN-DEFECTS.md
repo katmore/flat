@@ -84,6 +84,20 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
   `__destruct()` (which disconnects) did not run until the PHP process ended. A long-running script that opened many connections never closed them.
   Fix: the callback is `static`.
 
+### KD-115 - A named argument left out takes the value at its position
+
+- Category: B, needs the owner (Q60). Found by the S3 tests against a real emulator (MOD-328). `flat\core\mapper::args_to_properties()`, which maps the
+  arguments of many constructors (for example `flat\cloud\aws\s3`), gives a parameter that is missing from an array of named arguments the value found at
+  the same position of that array. `new s3(['key'=>'k','file'=>'f','operation'=>'upload'])` puts `upload` in `prefix` (the third parameter), and
+  `['key'=>…,'file'=>…,'operation'=>…,'bucket'=>…,'client'=>…]` puts the client in `contentType` (the fifth), so the upload fails in the SDK.
+  The old test used a stand-in client and never noticed. Test: `AwsTest::testAParameterLeftOutTakesTheValueAtItsPosition` (`@group known-defect`).
+
+### KD-116 - A failed abort replaces the upload failure
+
+- Category: B, needs the owner (Q61). Found by the S3 tests (MOD-328). When a multipart upload fails, `s3::file_upload()` aborts it and throws
+  `upload_failure`. If the abort itself fails (for example the upload no longer exists), the SDK's exception from the abort leaves `file_upload()` and
+  the original failure is lost. Test: `S3MultipartTest::testAFailedAbortReplacesTheUploadFailure` (`@group known-defect`).
+
 ## Owner questions
 
 51. **Should the root `composer.json` require `php >=7.4.0` (it requires `>=7.3.0`)?** A PHP 7.3 host would
@@ -125,3 +139,10 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
     `flat\core\curl\exception\missing_curlinfo` when `curl_getinfo($ch)` returned `false`, but libcurl answers an array for any finished
     transfer, so the branch and the exception class were unreachable in practice, and testing them needed a PHP function override
     of a cURL function. **Answered 2026-11-27: remove them** (MOD-323).
+
+60. **Should a parameter left out of an array of named arguments be empty (KD-115)?** Today it takes the value at its position in the array.
+    Positions only make sense for positional arguments. Recommend: when the arguments are named, a missing name keeps its default; positional
+    calls are unchanged. This changes what a consumer gets only if it relies on the accident.
+
+61. **When the abort of a failed upload fails too, what should `file_upload()` throw (KD-116)?** Recommend: still `upload_failure`, holding the
+    original exception, and the abort failure is not thrown. Today the abort's exception is thrown and the original is lost.
