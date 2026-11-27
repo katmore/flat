@@ -48,6 +48,13 @@ abstract class ipinfodb {
     * @return \flat\db\driver\mongo\crud
     */
    abstract protected function _get_mongo_crud();
+   /**
+    * the base URL of the API; override to ask another server (a test server, for example)
+    * @return string defaults to ipinfodb::api_base_url
+    */
+   protected function _get_api_base_url() {
+      return self::api_base_url;
+   }
    
    const api_base_url = 'https://api.ipinfodb.com/v3/ip-city';
    /**
@@ -70,7 +77,7 @@ abstract class ipinfodb {
     */
    private function _iplookup($ip_addr) {
       //https://api.ipinfodb.com/v3/ip-city/?key=%3Cyour_api_key%3E&ip=192.241.224.96
-      $url = self::api_base_url . "?" . http_build_query([
+      $url = $this->_get_api_base_url() . "?" . http_build_query([
          'key'=>$this->_get_api_key(),
          'ip'=>$ip_addr,
       ]);

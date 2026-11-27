@@ -31,7 +31,8 @@ differences at all.
 - **Fifteen entries now load that did not:** the seven MongoDB SSL classes (MOD-303), `flat\fsm` and `flat\orm\invalid_field`
   (MOD-312, MOD-313), the four renamed classes above (MOD-314), which are now declared at their own path, and the two Authorize.Net
   wrappers `AuthorizeNetARB` and `AuthorizeNetCIM` (MOD-316).
-- **Six methods and one constant "added"**, on `subscription\canceled`, `ssh\...\input_error\bad_param` and `data\orm\driver\session`
+- **One protected method added** (MOD-322): `flat\cloud\ipinfodb::_get_api_base_url()`, a hook next to `_get_api_key()` and `_get_mongo_crud()`.
+- **Six more methods and one constant "added"**, on `subscription\canceled`, `ssh\...\input_error\bad_param` and `data\orm\driver\session`
   (its constructor, `get_data()`, `set_data()` and `fallback_handler`). They are not new: the tool records only what a class declares
   under the name its path gives, so while these were aliases of another class their entries looked empty and the members were
   recorded under the old names.

@@ -58,6 +58,24 @@ the php-7.2 phase and written down there as "untested and unusable", but never r
   four "stray duplicates whose real classes load from their own files" and offered to delete them. That was backwards: the files at
   the declared names were the stubs and the code lived in the oddly named files. Nothing was deleted on that basis.
 
+### KD-110 - A cURL request with data never sent its body
+
+- Category: A, **fixed (MOD-321)**. Found by real-HTTP tests (MOD-320). `flat\core\curl\response` set the request method and the headers
+  `Content-Type` and `Content-Length: N` for a request with data, but never `CURLOPT_POSTFIELDS`. A real server therefore waited for
+  N bytes that never came: the request hung until the server gave up (30 seconds against WireMock; the configured timeout is 300).
+  The old test only looked at the options the fake recorded, so it passed. Fix: the body is set.
+
+### KD-111 - The `filetime` of a cURL response was always -1
+
+- Category: A, **fixed (MOD-321)**. The class read `CURLINFO_FILETIME` into its public `filetime` but never set `CURLOPT_FILETIME`, so
+  libcurl answered -1 whatever the server sent. The old fake returned an invented 123. Fix: the option is set; `filetime` is the
+  server's `Last-Modified` time, or -1 when the server sends none.
+
+### KD-112 - The robots.txt of a server on another port was fetched from the wrong place
+
+- Category: A, **fixed (MOD-321)**. `is_robots_allowed()` fetched `scheme://host/robots.txt` and dropped the port, so a site served
+  on a port other than 80 or 443 had its robots rules read from a different server (or none). Fix: the port is kept.
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough.
@@ -96,3 +114,10 @@ Each has a recommendation; "agree" is enough.
     reference fixed** (MOD-306 to MOD-309). The names kept are `canceled`, `bad_param`, `data\orm\driver\session` (extending
     `data\orm\driver` directly) and `core\util\validate\factory\exception\not_match_interface`. `AGENTS.md` now forbids
     `class_alias` (MOD-310).
+
+59. **`missing_curlinfo` (curl_getinfo returning false) cannot happen with a real transfer. Remove it?** `response.php` throws
+    `flat\core\curl\exception\missing_curlinfo` when `curl_getinfo($ch)` returns `false`, but libcurl answers an array for any finished
+    transfer, so the branch and the exception class are unreachable in practice. The test for it needs a PHP function override
+    (`tests/Support/CurlInfoFailure.php`, run in a fresh process) just to reach the line. Recommend: remove the check and the class
+    (nothing else uses it; it is a removal from flat's API list, like `validate\collection`), and with them the last override of a cURL
+    function. **Open.**

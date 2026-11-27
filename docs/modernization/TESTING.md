@@ -45,6 +45,15 @@ The JavaScript check runs minification in the PHP 7.4 test image and executes bo
 and minified programs against expected results in a separate, digest-pinned Node container.
 Docker downloads that additional image on first use; no host Node installation is needed.
 
+## cURL tests: a real HTTP server
+
+The tests of `flat\core\curl` and of the IP lookup (`tests/Unit/Core/Curl`, `tests/Unit/Cloud/IpInfoDbTest.php`) send real
+requests with real cURL to the same WireMock server as the Authorize.Net mock (`FLAT_TEST_HTTP_URL`, group `http`). Each test
+adds its own stubs through WireMock's admin API (`tests/Support/HttpMock.php`) under a random path prefix, reads back what the
+server received, and removes the stubs. They need the server, so `docker/bin/test unit` leaves them out; `all`, `services` and
+a `--filter` that selects them start it. Failures are real ones: a closed port (errno 7), a reset (56), an empty reply (52).
+There are no PHP function overrides for cURL any more.
+
 ## Authorize.Net tests: mock and real sandbox
 
 `tests/Sandbox` holds functional tests of flat's Authorize.Net wrappers. They run in two ways:

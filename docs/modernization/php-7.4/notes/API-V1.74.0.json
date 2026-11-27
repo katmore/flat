@@ -6158,6 +6158,15 @@
                 ],
                 "return": null
             },
+            "_get_api_base_url": {
+                "visibility": "protected",
+                "static": false,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            },
             "_get_api_key": {
                 "visibility": "protected",
                 "static": false,

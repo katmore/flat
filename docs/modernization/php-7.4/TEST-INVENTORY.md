@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 881 test methods in 109 files, running 1644 test cases.
-- 142 methods use a data provider (one case per data set).
+- 890 test methods in 110 files, running 1663 test cases.
+- 144 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -258,14 +258,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testS3ParameterMappingUrlsAndBodySetterUsingAnExplicitClientBoundary` (line 88)
 - `testConstructorUploadAndFileSetterUseTheSameBoundary` (line 101)
 
-### `tests/Unit/Cloud/IpInfoDbTest.php` (6)
+### `tests/Unit/Cloud/IpInfoDbTest.php` (7)
 
-- `testCacheHitUsesStoredRecordWithoutHttp` (line 40)
-- `testCachedRecordExpiresExactlyAtItsTimeToLive` (line 52)
-- `testMissingOrExpiredCacheFetchesMapsAndStoresResponse` (line 72): 3 data-provider cases
-- `testHttpFailureCarriesStatusContext` (line 92)
-- `testTransportFailureCarriesCurlContext` (line 104)
-- `testRetiredStaticLoadFailsClearlyWithoutTouchingTheCache` (line 117)
+- `testCacheHitUsesStoredRecordWithoutHttp` (line 53): groups: services, http
+- `testCachedRecordExpiresExactlyAtItsTimeToLive` (line 65): groups: services, http
+- `testMissingOrExpiredCacheFetchesMapsAndStoresResponse` (line 85): 3 data-provider cases; groups: services, http
+- `testHttpFailureCarriesStatusContext` (line 107): groups: services, http
+- `testTransportFailureCarriesCurlContext` (line 119): groups: services, http
+- `testTheApiBaseUrlDefaultsToTheRealApi` (line 132): groups: services, http
+- `testRetiredStaticLoadFailsClearlyWithoutTouchingTheCache` (line 139): groups: services, http
 
 ### `tests/Unit/Cloud/S3MultipartTest.php` (4)
 
@@ -402,31 +403,42 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` (line 147)
 - `testEmptyUrlencodedQueryStringIsRejected` (line 155)
 
-### `tests/Unit/Core/Curl/ResponseTest.php` (23)
+### `tests/Unit/Core/Curl/ResponseTest.php` (30)
 
-- `testDefaultRequestsSendTheFlatUserAgentAndKeepCurlsMethodChoice` (line 23)
-- `testFacadeAcceptsUrlsAndConfigurationObjects` (line 32)
-- `testResponseDataStatusesAndTransferOptions` (line 41)
-- `testArrayConfigurationAndScalarUrl` (line 55)
-- `testFilesAndTemporaryCleanup` (line 64)
-- `testCallerProvidedFilePersists` (line 74)
-- `testSaveFlagsAndArraySavePaths` (line 84)
-- `testCookieOptionsAndAutomaticCookieCleanup` (line 100)
-- `testInvalidCookieFile` (line 112): 2 data-provider cases
-- `testDomAndXPathResults` (line 118)
-- `testInvalidXPathReportsQuery` (line 127)
-- `testDomAndXPathPreserveCallerLibxmlStateAndBufferedErrors` (line 136): 2 data-provider cases
-- `testXPathArgumentWarningRestoresCallerLibxmlState` (line 158): 2 data-provider cases
-- `testHtmlParserWarningReachesCallerAndLeavesReportingEnabled` (line 174)
-- `testTransferFailureRetainsErrorDetails` (line 190)
-- `testErrorAfterFileTransferStillFails` (line 200)
-- `testRobotsRules` (line 210): 6 data-provider cases
-- `testRobotsCheckCanDenyOrAllowConstructor` (line 223)
-- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 231)
-- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 238)
-- `testFalsyTextBodyInitializesDomOnDemand` (line 247)
-- `testMissingTransferInfoRaisesItsDeclaredException` (line 254)
-- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 261)
+- `testDefaultRequestsSendTheFlatUserAgent` (line 38): groups: services, http
+- `testFacadeAcceptsUrlsAndConfigurationObjects` (line 48): groups: services, http
+- `testResponseDataAndTheUserAgentOfTheConfiguration` (line 59): groups: services, http
+- `testTheServersStatusDecidesWhetherTheResponseIsOk` (line 71): 6 data-provider cases; groups: services, http
+- `testStatusZeroIsNotOk` (line 78): groups: services, http
+- `testScalarUrlConfiguration` (line 85): groups: services, http
+- `testRequestDataIsSentAsTheBody` (line 90): groups: services, http
+- `testJsonRequestDataIsSentWithItsContentTypeAndMethod` (line 102): groups: services, http
+- `testFiletimeIsTheServersLastModifiedTimeOrMinusOne` (line 113): groups: services, http
+- `testRedirectsAreFollowed` (line 120): groups: services, http
+- `testFilesAndTemporaryCleanup` (line 128): groups: services, http
+- `testCallerProvidedFilePersists` (line 139): groups: services, http
+- `testSaveFlagsAndArraySavePaths` (line 150): groups: services, http
+- `testCookiesTheServerSetsAreSavedAndThoseInTheFileAreSent` (line 168): groups: services, http
+- `testAutomaticCookieFileIsRemovedWithTheResponse` (line 181): groups: services, http
+- `testInvalidCookieFile` (line 192): 2 data-provider cases; groups: services, http
+- `testDomAndXPathResults` (line 198): groups: services, http
+- `testInvalidXPathReportsQuery` (line 208): groups: services, http
+- `testDomAndXPathPreserveCallerLibxmlStateAndBufferedErrors` (line 218): 2 data-provider cases; groups: services, http
+- `testXPathArgumentWarningRestoresCallerLibxmlState` (line 241): 2 data-provider cases; groups: services, http
+- `testHtmlParserWarningReachesCallerAndLeavesReportingEnabled` (line 258): groups: services, http
+- `testAServerThatIsNotListeningIsAConnectError` (line 274): groups: services, http
+- `testTransferFailureRetainsErrorDetails` (line 289): 3 data-provider cases; groups: services, http
+- `testErrorAfterFileTransferStillFails` (line 299): groups: services, http
+- `testRobotsRules` (line 309): 6 data-provider cases; groups: services, http
+- `testRobotsCheckCanDenyOrAllowConstructor` (line 323): groups: services, http
+- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 332): groups: services, http
+- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 339): groups: services, http
+- `testFalsyTextBodyInitializesDomOnDemand` (line 347): groups: services, http
+- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 354): groups: services, http
+
+### `tests/Unit/Core/Curl/ResponseTransferInfoTest.php` (1)
+
+- `testMissingTransferInfoRaisesItsDeclaredException` (line 21): groups: services, http
 
 ### `tests/Unit/Core/DebugTest.php` (13)
 
@@ -1167,8 +1179,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Tools/ServicesToolTest.php` (2)
 
-- `testItNamesTheServicesTheSelectedTestsNeed` (line 79): 15 data-provider cases
-- `testAMissingListIsAUsageError` (line 84)
+- `testItNamesTheServicesTheSelectedTestsNeed` (line 85): 18 data-provider cases
+- `testAMissingListIsAUsageError` (line 90)
 
 ### `tests/Unit/Vendor/EncodingTest.php` (7)
 

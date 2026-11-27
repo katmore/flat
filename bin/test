@@ -16,7 +16,7 @@ usage() {
     echo '       bin/test services-needed [mode] [PHPUnit arguments]'
     echo '  all (default): every test; MongoDB/RabbitMQ tests need those services reachable'
     echo '  unit:          tests that need no external services'
-    echo '  services:      MongoDB-, RabbitMQ- and Authorize.Net-mock-dependent tests'
+    echo '  services:      MongoDB-, RabbitMQ-, Authorize.Net-mock- and HTTP-mock-dependent tests (the cURL tests)'
     echo '  mongo:         MongoDB-dependent tests'
     echo '  rabbitmq:      RabbitMQ-dependent tests'
     echo '  anet:          the Authorize.Net tests, against a WireMock stand-in (FLAT_TEST_ANET_URL,'

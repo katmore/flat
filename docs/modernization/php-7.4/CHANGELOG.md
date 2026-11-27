@@ -487,3 +487,38 @@ continues from the php-7.3 phase.
 - Verified: `docker/bin/test all --coverage`: 1,644 tests, 7,248 assertions, all pass; 100% coverage; no PHP message. The test inventory is
   regenerated (the removed lines moved the line numbers); the sandbox tests load.
 - Undo: revert the commit.
+
+## MOD-320 — The cURL tests use a real HTTP server; the fake cURL is removed
+
+- Kind: test change, decided by the owner on 2026-11-27 (option B). The tests of `flat\core\curl\response` and of the IP lookup used
+  `tests/Support/CurlDouble.php`, which replaced PHP's cURL functions by namespaced functions, invented answers (an unknown URL got a
+  fake `200 OK`; `filetime` 123) and kept global state. They now send real requests with real cURL to the WireMock server that is
+  already in the test stack, through `tests/Support/HttpMock.php` (group `http`, variable `FLAT_TEST_HTTP_URL`; `tests/tools/services.php`
+  maps the group to the existing service, named once). `CurlDouble.php` is deleted. `ResponseTest` has 45 tests (was 25) and
+  `IpInfoDbTest` the same behavior as before; failures are real ones (errno 7, 56, 52).
+- The real server found three bugs, fixed in MOD-321 (KD-110 to KD-112). The one case real HTTP cannot produce, `curl_getinfo()` returning
+  false, keeps a tiny override (`tests/Support/CurlInfoFailure.php`) in its own test run in a fresh process; Q59 asks whether to remove
+  that dead branch instead.
+- The other three function doubles (`SshBoundary`, `AssetIoBoundary`, `NativeSessionBoundary`) are unchanged. A trial showed that
+  defining an override after other tests have run the call does not work (PHP remembers the function a call site resolved to), so they
+  keep their includes.
+- Behavior: none for flat. `docker/bin/test unit` no longer runs these tests (they need the server); `all` does. See
+  [../TESTING.md](../TESTING.md).
+- Undo: revert the commit.
+
+## MOD-321 — Three cURL bugs found by the real server are fixed (KD-110, KD-111, KD-112)
+
+- Kind: bug fixes (behavior changes). `src/flat/core/curl/response.php`: a request with data now sends it (`CURLOPT_POSTFIELDS`);
+  `CURLOPT_FILETIME` is set, so `filetime` is real; `is_robots_allowed()` keeps the port of the URL. Each has a real-HTTP test that
+  failed before. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: see above.
+- Undo: revert the commit.
+
+## MOD-322 — `ipinfodb::_get_api_base_url()`
+
+- Kind: a seam for the tests. `src/flat/cloud/ipinfodb.php` gets the protected hook `_get_api_base_url()`, returning `api_base_url` by default,
+  next to its existing hooks `_get_api_key()` and `_get_mongo_crud()`. The tests point it at the test server.
+- Behavior: none unless a subclass overrides it.
+- Verified (MOD-320 to MOD-322): `docker/bin/test all --coverage`: 1,663 tests, 7,303 assertions, all pass; 100% (333 classes, 1,106
+  methods, 8,872 lines); no PHP message; `docker/bin/test unit`: 1,538 tests pass.
+- Undo: revert the commit.

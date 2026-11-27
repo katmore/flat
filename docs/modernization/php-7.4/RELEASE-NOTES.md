@@ -41,6 +41,10 @@ coverage, and no PHP notice, warning or deprecation is raised.
   `...\missing_request_field` are now `flat\api\response_header\...`; `flat\cloud\authorize\customer\payment_profile\creditCard` and
   `bankAccount` are now `flat\cloud\authorize\customer\payment\...` (deprecated, going in v2.X). One-line forwarding files that made
   the old names load are deleted.
+- **Three cURL bugs fixed**, found by tests that now use a real HTTP server: a request with data now really sends its body (it
+  used to send `Content-Length` and no body, so the server waited), `filetime` is the server's `Last-Modified` time (it was always
+  -1), and `is_robots_allowed()` keeps the port when it fetches robots.txt. The consumer impact says what to search for.
+- `ipinfodb` has a protected `_get_api_base_url()` hook (the constant stays the default); nothing changes unless you override it.
 - **Eight files that declared nothing are deleted**: `cloud/disqus.php`, five under `cloud/pci/`, `orm/missing_required_field.php` and
   `event/alert/listener.php` (the retired pthread listener, kept as comments). Nothing used them.
 - Nothing else in `src` changed.

@@ -28,6 +28,9 @@ class ServicesToolTest extends TestCase
  <testCaseClass name="flat\test\Sandbox\ChargeThing">
   <testCaseMethod name="testCharges" groups="default,sandbox,anet,services"/>
  </testCaseClass>
+ <testCaseClass name="flat\test\Unit\Core\Curl\HttpThing">
+  <testCaseMethod name="testFetches" groups="default,http,services"/>
+ </testCaseClass>
  <testCaseClass name="flat\test\Unit\Vague">
   <testCaseMethod name="testNeedsSomething" groups="default,services"/>
  </testCaseClass>
@@ -58,6 +61,9 @@ XML
     {
         return [
             'every test, so every service' => [[], 'mongo rabbitmq anet-mock'],
+            'the http group needs the mock server, named once' => [['--group', 'http'], 'anet-mock'],
+            'http and anet together name the mock once' => [['--group', 'http,anet'], 'anet-mock'],
+            'a filter on the http test' => [['--filter', 'HttpThing'], 'anet-mock'],
             'a plain word filter on one class' => [['--filter', 'MongoThing'], 'mongo'],
             'a filter on one method' => [['--filter', 'testPublishes'], 'rabbitmq'],
             'a filter with a data set' => [['--filter', 'testWritesData with data set #1'], 'mongo'],

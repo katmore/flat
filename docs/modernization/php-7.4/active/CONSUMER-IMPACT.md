@@ -157,3 +157,33 @@ before, what they see now, and what to search for in their code.
   supported, synchronous API) is unchanged.
 - Search consumer code for: `alert\listener`, `event/alert/listener`.
 - Verified: yes (the same test passes).
+
+### MOD-321 (KD-110) — A cURL request with data now sends its body
+
+- Before: `new flat\core\curl\response` with a request that has data (`new request($url, ['field'=>'value'])`) sent the method, `Content-Type` and
+  `Content-Length: N` but no body, so the server waited for N bytes (a hang until its own timeout). No application could have relied on that.
+- After: the body (`$request->data`) is sent.
+- Search consumer code for: `curl\request(`, `curl::exec(` with data, `request_method`.
+- Verified: yes (a real server receives `value=1&text=a+b` with a matching `Content-Length`; JSON data with `application/json`).
+
+### MOD-321 (KD-111) — `response->filetime` is the server's Last-Modified time
+
+- Before: `filetime` was always -1.
+- After: it is the `Last-Modified` time of the response as a Unix timestamp, or -1 when the server sends none.
+- Search consumer code for: `->filetime`.
+- Verified: yes (a real server's `Last-Modified` gives its timestamp).
+
+### MOD-321 (KD-112) — `is_robots_allowed()` keeps the port
+
+- Before: for `http://host:8080/page` it fetched `http://host/robots.txt`.
+- After: it fetches `http://host:8080/robots.txt`.
+- Search consumer code for: `is_robots_allowed`, `use_robots`.
+- Verified: yes (a real server on a non-standard port receives the robots request).
+
+### MOD-322 — `ipinfodb` has an overridable base URL
+
+- Before: the API URL was only the constant `ipinfodb::api_base_url`.
+- After: the protected method `_get_api_base_url()` returns that constant by default; a subclass may override it (the tests point it at a test server).
+  Nothing changes for code that does not override it.
+- Search consumer code for: `ipinfodb`.
+- Verified: yes.
