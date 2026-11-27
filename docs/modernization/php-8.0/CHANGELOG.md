@@ -192,3 +192,9 @@ package version changes in this checkpoint. Full Docker suite: 1718 tests,
 1.1.4 → 3.0.2, resolved against PHP 8.0.30. No other
 package version changes in this checkpoint. Full Docker suite: 1718 tests,
 8100 assertions, no errors/failures/skips; 100% method and line coverage.
+
+## MOD-359 — Upgrade symfony/deprecation-contracts (2026-11-27)
+
+v2.5.4 → v3.0.2, resolved against PHP 8.0.30. No other
+package version changes in this checkpoint. Full Docker suite: 1718 tests,
+8104 assertions, no errors/failures/skips; 100% method and line coverage.
