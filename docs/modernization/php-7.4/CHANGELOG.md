@@ -463,3 +463,13 @@ continues from the php-7.3 phase.
 - Verified (MOD-316 and MOD-317): `docker/bin/test all --coverage`: all pass; 100% coverage; no PHP message. The API dump is regenerated
   (603 entries, none unloadable, none declaring nothing; [notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
 - Undo: revert the commit.
+
+## MOD-318 — The reason for deleting `event/alert/listener.php`, from the owner
+
+- Kind: documentation. The owner confirmed on 2026-11-27 that the pthread `listener` (MOD-317 deleted its comments-only file) was never used in
+  production code: the owner did something else, and the class "is missing a step anyway". The full git history agrees that it was
+  never more than a skeleton: since the initial commit of 2015 its `run()` held only comments (the old code is in git, for example
+  `git show 9bec827:src/flat/event/alert/listener.php`). It stays deleted and is not restored; a working alert listener, if wanted, is a new
+  design (not one that needs the pthreads extension, which has no PHP 8 version).
+- Behavior: none.
+- Undo: nothing to undo.
