@@ -71,3 +71,12 @@ before, what they see now, and what to search for in their code.
   is unchanged. The class is deprecated since v1.73.1 and goes in v2.X.
 - Search consumer code for: `subscription\cancelled`, `catch (` blocks naming `cancelled`.
 - Verified: yes (the suite uses the one name).
+
+### MOD-307 (Q58) — `ssh\exception\input_error\badParam` is now `bad_param`
+
+- Before: the file `bad_param.php` declared the class `badParam` (camel case, against flat's style), with a `class_alias` for
+  `bad_param`, the name `core/ssh.php` throws. Both names worked.
+- After: the class is `flat\core\ssh\exception\input_error\bad_param`. The alias is gone, so `badParam` no longer exists. The
+  message format ("input error: bad pid: invalid") is unchanged.
+- Search consumer code for: `input_error\badParam`, `badParam`.
+- Verified: yes. flat itself only ever threw `bad_param`.

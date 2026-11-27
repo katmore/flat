@@ -32,12 +32,10 @@
  */
 namespace flat\core\ssh\exception\input_error;
 
-class badParam extends \flat\core\ssh\exception\input_error {
+class bad_param extends \flat\core\ssh\exception\input_error {
 
    public function __construct($param,$msg) {
       parent::__construct("bad $param: $msg");
    }
 
 }
-// Retain the historical name and support the name used by SSH callers.
-class_alias(badParam::class, __NAMESPACE__.'\\bad_param');

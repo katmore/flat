@@ -502,26 +502,26 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Core/LegacyErrorMessagesTest.php` (20)
 
-- `testErrorsRetainOperationContext` (line 14): 45 data-provider cases
-- `testDuplicateKeyRetainsNonScalarValueDescription` (line 69)
-- `testConfigReferenceErrorRetainsAllLookupKeys` (line 74)
-- `testScalarDefaultErrorAndThreadFailureRetainDetails` (line 81)
-- `testIgnoredCollectionMemberRemainsAnEmptyString` (line 92)
-- `testUploadAndBrokerErrorsRetainTheOriginalExceptionContext` (line 99)
-- `testValidationFailureDescribesTheSuppliedValueAndRule` (line 109): 4 data-provider cases
-- `testRouteMissingErrorExposesBothCoordinates` (line 118)
-- `testCrudErrorAcceptsUnspecifiedOperation` (line 127)
-- `testDuplicateKeyErrorRetainsIndexAndNonScalarValue` (line 132)
-- `testDuplicateKeyDescribesANonemptyScalarValue` (line 139)
-- `testDuplicateKeyDescribesIndexesWithoutWarnings` (line 145)
-- `testBadApiResponseRetainsDocumentedClassAndMethod` (line 159)
-- `testSessionErrorsRetainReasonAndExpirationMetadata` (line 165)
-- `testCurlSystemErrorRetainsDataAndDetails` (line 173)
-- `testNotFoundStatusReportsCode404` (line 179)
-- `testXpathErrorRetainsActualLibxmlDetailsWithoutDuplicatingMessage` (line 185)
-- `testXpathErrorMessageNamesTheQueryOnceWhateverTheDetails` (line 201)
-- `testScalarTypeErrorUsesItsSuppliedTypeWithoutAnUndefinedLocal` (line 206)
-- `testLegacySshParameterErrorRetainsItsDeclaredNameAndMessage` (line 213)
+- `testErrorsRetainOperationContext` (line 11): 45 data-provider cases
+- `testDuplicateKeyRetainsNonScalarValueDescription` (line 66)
+- `testConfigReferenceErrorRetainsAllLookupKeys` (line 71)
+- `testScalarDefaultErrorAndThreadFailureRetainDetails` (line 78)
+- `testIgnoredCollectionMemberRemainsAnEmptyString` (line 89)
+- `testUploadAndBrokerErrorsRetainTheOriginalExceptionContext` (line 96)
+- `testValidationFailureDescribesTheSuppliedValueAndRule` (line 106): 4 data-provider cases
+- `testRouteMissingErrorExposesBothCoordinates` (line 115)
+- `testCrudErrorAcceptsUnspecifiedOperation` (line 124)
+- `testDuplicateKeyErrorRetainsIndexAndNonScalarValue` (line 129)
+- `testDuplicateKeyDescribesANonemptyScalarValue` (line 136)
+- `testDuplicateKeyDescribesIndexesWithoutWarnings` (line 142)
+- `testBadApiResponseRetainsDocumentedClassAndMethod` (line 156)
+- `testSessionErrorsRetainReasonAndExpirationMetadata` (line 162)
+- `testCurlSystemErrorRetainsDataAndDetails` (line 170)
+- `testNotFoundStatusReportsCode404` (line 176)
+- `testXpathErrorRetainsActualLibxmlDetailsWithoutDuplicatingMessage` (line 182)
+- `testXpathErrorMessageNamesTheQueryOnceWhateverTheDetails` (line 198)
+- `testScalarTypeErrorUsesItsSuppliedTypeWithoutAnUndefinedLocal` (line 203)
+- `testSshParameterErrorMessage` (line 210)
 
 ### `tests/Unit/Core/LegacyListenerTest.php` (4)
 

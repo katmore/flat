@@ -341,3 +341,11 @@ continues from the php-7.3 phase.
   `AuthorizeDataTest` uses the one name (its method lost "LegacySpellings"). The exception message is unchanged.
 - Behavior: the old class name no longer exists. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
 - Undo: revert the commit.
+
+## MOD-307 — `badParam` becomes `bad_param`; the alias is removed (Q58, item 2)
+
+- Kind: rename, decided by the owner on 2026-11-27: the class is `bad_param` (flat's style has no camel case); no alias.
+  `src/flat/core/ssh/exception/input_error/bad_param.php` declares `bad_param` and has no `class_alias`.
+  `LegacyErrorMessagesTest` no longer includes the file by hand and uses `bad_param` (its method lost "Legacy... DeclaredName").
+- Behavior: the old class name `badParam` no longer exists. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Undo: revert the commit.
