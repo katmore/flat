@@ -36,7 +36,7 @@ class loader extends \flat\data {
    protected static function _typed_classname($type) {
 
       if (!empty($type)) {
-         if (substr($type,0,1)=="\\") {
+         if (str_starts_with($type, "\\")) {
             $classname = $type;
          } else {
             $classname = "\\".get_called_class()."\\".$type;

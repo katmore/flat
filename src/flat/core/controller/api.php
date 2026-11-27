@@ -274,7 +274,7 @@ abstract class api implements  \flat\core\input\consumer, \flat\core\controller 
             }
             if (!$response instanceof \flat\api\response) {
                throw new api\exception\bad_response(
-                     get_class($this),
+                     $this::class,
                      $invoked_method
                      );
             }

@@ -40,7 +40,7 @@ trait controller {
       /*
        * add class name
        */
-      $crc['name'] = get_class($this);
+      $crc['name'] = $this::class;
        
       /*
        * add caller file

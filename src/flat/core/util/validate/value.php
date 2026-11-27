@@ -36,7 +36,7 @@ class value {
       if(
           ( !is_array( $item ) ) &&
           ( ( !is_object( $item ) && settype( $item, 'string' ) !== false ) ||
-          ( is_object( $item ) && method_exists( $item, '__toString' ) ) )
+          ( $item instanceof \Stringable ) )
       )
       {
           return true;

@@ -79,7 +79,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
         try {
             static::display($design, NULL, true);
             return true;
-        } catch (tmpl\exception\bad_design $e) {
+        } catch (tmpl\exception\bad_design) {
             return false;
         }
     }
@@ -184,7 +184,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
                 $sflags = $flags;
                 array_splice($sflags, $idx, 1);
                 return self::format($design, $sflags, $params);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 return '';
             }
         } else {
@@ -279,7 +279,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
         /*
          * skip all resolving if design is a display class
          */
-        if (is_string($design) && (substr($design, 0, 1) == '\\')) {
+        if (is_string($design) && (str_starts_with($design, '\\'))) {
             if (class_exists($design) && is_a($design, \flat\tmpl\display::class, true)) {
                 $design = new $design($design, $check_only);
             }
@@ -325,12 +325,12 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
          * transform relative to absolute design path
          *    as appropriate
          */
-        if (substr($design, 0, 1) !== '\\') {
+        if (!str_starts_with($design, '\\')) {
 
             if (is_a(get_called_class(), design_base::class, true)) {
                 
                 $design_base = trim(static::get_design_base(), '\\');
-                if (substr($design, 0, strlen($design_base)) !== $design_base) {
+                if (!str_starts_with($design, $design_base)) {
                     $design = $design_base . '\\' . $design;
                 }
             }
@@ -341,8 +341,8 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
         $design_class_suffix = $design;
 
         if (null !== ($f_design_prefix = static::format_design_prefix())) {
-            if (substr($design_class_suffix, 0, $f_design_prefix_len = strlen($f_design_prefix)) === $f_design_prefix) {
-                $design_class_suffix = substr($design_class_suffix, $f_design_prefix_len);
+            if (str_starts_with($design_class_suffix, $f_design_prefix)) {
+                $design_class_suffix = substr($design_class_suffix, strlen($f_design_prefix));
             }
         }
 
@@ -366,7 +366,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
         /*
          * skip remaining resolving logic if design is already full path to a php file
          */
-        if (substr($design, 0, 1) == '\\') {
+        if (str_starts_with($design, '\\')) {
             $design_file = str_replace('\\', DIRECTORY_SEPARATOR, $design);
             if (is_file($design_file) && is_readable($design_file)) {
                 if (pathinfo($design_file, PATHINFO_EXTENSION) == 'php') {
@@ -474,7 +474,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
 
                     echo $md->get_html();
                     return;
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                 }
                 return;
             }
@@ -513,7 +513,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
                         $text = ob_get_clean();
                         echo md\convert::string_to_html($text, ['safe' => false]); // the developer's own template
                         return;
-                    } catch (\Exception $e) {
+                    } catch (\Exception) {
                         // A failing generated template prints nothing, and its
                         // output buffer is closed (it used to be left open).
                         if (ob_get_level() > $level) ob_end_clean();
@@ -530,7 +530,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
     {
         try {
             return \flat\core\config::get("design/root_dir");
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
         // The folder that contains the 'tmpl' design folder: the design lookup adds DESIGN_PREFIX ('tmpl') itself.
         return __DIR__ . str_replace('/', DIRECTORY_SEPARATOR, '/../../../../../../../app/Resources/design');

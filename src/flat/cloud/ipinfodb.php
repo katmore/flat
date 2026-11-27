@@ -172,7 +172,7 @@ abstract class ipinfodb {
                $this->_iplookup($ip_addr);
             }
          }
-      } catch (\flat\db\driver\mongo\record\not_found $e) {
+      } catch (\flat\db\driver\mongo\record\not_found) {
          $this->_iplookup($ip_addr);
       }
    }

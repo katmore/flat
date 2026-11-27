@@ -50,17 +50,17 @@ class s3 extends \flat\cloud\aws {
          /*
           * always have trailing slash on prefix
           */
-         if (substr($prefix,-1)!="/") $prefix .= "/";
+         if (!str_ends_with($prefix, "/")) $prefix .= "/";
          if (strlen($prefix)>1) { //make sure prefix is not just "/"
             //if prefix starts with slash, remove it
-            if (substr($prefix,0,1)=="/") $prefix = substr($prefix,1);
+            if (str_starts_with($prefix, "/")) $prefix = substr($prefix,1);
             $pre = $prefix;
          }
       }
       /*
        * if key starts with slash, remove it
        */
-      if (substr($key,0,1)=="/") $key = substr($key,1);
+      if (str_starts_with($key, "/")) $key = substr($key,1);
       /*
        * concatonate any prefix with key
        */
@@ -169,7 +169,7 @@ class s3 extends \flat\cloud\aws {
              if (!empty($upload['UploadId'])) {
                  try {
                      $client->abortMultipartUpload($upload);
-                 } catch (AwsException $abort_failure) {
+                 } catch (AwsException) {
                      // The upload failure below is the one that matters; a failed abort (the upload may be gone already) does not replace it.
                  }
              }

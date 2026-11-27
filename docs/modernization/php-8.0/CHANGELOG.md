@@ -85,3 +85,21 @@ only source API rename; PHP itself adds Stringable on 302 classes and infers
 string returns on 16 __toString methods. Both platform locks retain their
 previous package versions at this checkpoint. Source syntax guard and inventory
 are included. Documentation validation reports zero problems.
+
+## MOD-348 — Adopt PHP 8.0 syntax (2026-11-27)
+
+Modernization, no intended behavior change. String predicates replace boolean
+substring tests and fixed nonnumeric prefix/suffix checks; position-dependent
+strpos calls and overridable loose-comparison prefixes remain unchanged.
+Validated integer asset dispatch and PCRE error selection use match and throw
+expressions. Known objects use ::class; string conversion capability uses
+Stringable; optional libxml details use nullsafe access. Unused catch bindings
+are removed and collection members promote their private untyped constructor storage.
+Public names, parameter names/types/defaults and payloads stay the same.
+
+### MOD-348 validation
+
+The full suite passes: 1,712 tests, 8,110 assertions (including three new API-tool
+cases). Coverage remains 100% of all loaded classes, methods and lines. The
+602-entry API dumps immediately before and after modernization are identical.
+Existing test assertions were not changed for these syntax rewrites.

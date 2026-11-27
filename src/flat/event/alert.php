@@ -229,7 +229,7 @@ abstract class alert
       while(count($chan->callbacks)) {
          try {
             $chan->wait(null,false,$timeout);
-         } catch (\PhpAmqpLib\Exception\AMQPTimeoutException $e) {
+         } catch (\PhpAmqpLib\Exception\AMQPTimeoutException) {
             /*
              * freshen expiration
              */

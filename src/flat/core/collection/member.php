@@ -39,11 +39,8 @@
  */
 namespace flat\core\collection;
 class member extends \flat\core\mappable {
-   private $data;
    public function get_data() {
       return $this->data;
    }
-   public function __construct($data) {
-      $this->data = $data;
-   }
+   public function __construct(private $data) {}
 } 

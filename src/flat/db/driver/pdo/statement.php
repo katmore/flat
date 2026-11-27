@@ -201,7 +201,7 @@ class statement extends \flat\core\collection
         if ($clause_comp != $clause_test) throw new exception\bad_rule('join_clause', "syntax error: invalid chars found in sql clause");
         $badchar = ";'\"\\G";
         for ($i = 0; $i < strlen($badchar); $i++) {
-            if (false !== strpos($join_clause, $badchar[$i])) {
+            if (str_contains($join_clause, $badchar[$i])) {
                 throw new exception\bad_rule('join_clause', 'syntax error: invalid char ' . $badchar[$i] . ' found in sql clause');
             }
         }

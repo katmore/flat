@@ -175,7 +175,7 @@ implements
           return $node;
        } else          
        if (is_string($input)) {
-          if (substr($input,0,5)=="<?xml") {
+          if (str_starts_with($input, "<?xml")) {
              return self::_xml_to_DOMNode($input,$option);
           } else
           if (is_file($input) && is_readable($input)) {
@@ -201,7 +201,7 @@ implements
           if ($node = self::_html_to_DOMNode($input)) {
              return $node;
           }
-       } catch (dom\exception\invalid_input $e) {
+       } catch (dom\exception\invalid_input) {
           //ok...
        }
        throw new dom\exception\invalid_input(

@@ -117,7 +117,7 @@ trait mapper {
          try {
          $rp=$r->getProperty($field);
             if ($rp->isPublic()) return true;
-         } catch (\ReflectionException $e) {
+         } catch (\ReflectionException) {
             
          }
          return false;
@@ -399,7 +399,7 @@ trait mapper {
    final protected function _check_stringify($var,$interface) {
       if (!is_string($var)) {
          throw new data\exception\not_stringable(
-            get_class($this),
+            $this::class,
             "bad string given from interface: $interface"
          );
       }
@@ -459,7 +459,7 @@ trait mapper {
       }
       if ($this instanceof \flat\data\not_stringable) {
          throw new data\exception\not_stringable(
-            get_class($this),
+            $this::class,
             "has not_stringable interface"
          );
       } else
@@ -502,7 +502,7 @@ trait mapper {
             return "";
          } else {
             throw new data\exception\not_stringable(
-               get_class($this),
+               $this::class,
                "unknown stringify interface"
             );
          }
@@ -753,7 +753,7 @@ trait mapper {
          $this->type = $this->get_data_type();
       } else
       if ($this instanceof \flat\data\typed\classname) {
-         $this->type = get_class($this);
+         $this->type = $this::class;
       }
       
       if ($this instanceof \flat\data\webview) {

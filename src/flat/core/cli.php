@@ -160,7 +160,7 @@ class cli {
          for($i=$param_start_idx;$i<count($argv);$i++) {
             $val = $argv[$i];
 
-            if ( substr($val,0,1)!="-" ) {
+            if ( !str_starts_with($val, "-") ) {
                //echo "$val doesn't start with dash";
                self::$_param[] = $val;
             }
@@ -229,13 +229,13 @@ class cli {
    public static function is_switch_on($switch_name,$char_alias=NULL) {
       if (!is_array(self::$_argv)) return false;
       foreach (self::$_argv as $p) {
-         if (substr($p,0,2)=="--") {
+         if (str_starts_with($p, "--")) {
             if (substr($p,2)==$switch_name) {
                return true;
             }
          } else
-            if ($char_alias && (substr($p,0,1)=="-")) {
-               if (false !==(strpos($p,$char_alias))) return true;
+            if ($char_alias && (str_starts_with($p, "-"))) {
+               if (str_contains($p,$char_alias)) return true;
             }
       }
       return false;
@@ -263,15 +263,15 @@ class cli {
       foreach (self::$_argv as $p) {
          if ($expect_char_val) {
             $expect_char_val = false;
-            if (substr($p,0,1)!="-") {
+            if (!str_starts_with($p, "-")) {
                return $p;
             } else {
                return "";
             }
          }
-         if (substr($p,0,2)=="--") {
+         if (str_starts_with($p, "--")) {
             if (substr($p,2,strlen($option_name))==$option_name) {
-               if (false!==(strpos($p,"="))) {
+               if (str_contains($p,"=")) {
                   $kv = explode("=",$p);
                   $name_check = substr(array_shift($kv),2);
                   if ($name_check==$option_name) {
@@ -281,8 +281,8 @@ class cli {
                if (substr($p,2)==$option_name) return "";
             }
          } else
-            if ($char_alias && (substr($p,0,1)=="-")) {
-               if (false !== (strpos($p,$char_alias))) $expect_char_val = true;
+            if ($char_alias && (str_starts_with($p, "-"))) {
+               if (str_contains($p,$char_alias)) $expect_char_val = true;
             }
       }
       return null;
@@ -370,9 +370,9 @@ class cli {
             $option []= ['-'=>''];
             $last_option_name=null;
          } 
-         if (substr($arg,0,2)==='--') {
+         if (str_starts_with($arg, '--')) {
             $argsub  = substr($arg,2);
-         } else if (substr($arg,0,1)==='-') {
+         } else if (str_starts_with($arg, '-')) {
             $shortopt = true;
             $argsub = substr($arg,1);
          } else if ($last_option_name!==null) {
@@ -442,9 +442,9 @@ class cli {
          
          $argsub = null;
          $shortname = false;
-         if (substr($arg,0,2)==='--') {
+         if (str_starts_with($arg, '--')) {
             $argsub  = substr($arg,2);
-         } else if (substr($arg,0,1)==='-') {
+         } else if (str_starts_with($arg, '-')) {
             $argsub  = substr($arg,1);  
             $shortname = true;
          } else if ($last_flag!==null) {

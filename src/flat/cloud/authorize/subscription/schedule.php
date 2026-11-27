@@ -111,7 +111,7 @@ class schedule extends \flat\data
               $dateTime = new \DateTime ($this->startDate, new \DateTimeZone($this->startDate_timeZone));
               $dateTime->setTimezone(new \DateTimeZone('America/Denver'));
               $this->startDate = $dateTime->format("Y-m-d");
-          } catch (\Exception $e) {
+          } catch (\Exception) {
               $this->startDate = null;
           }
       }

@@ -101,7 +101,7 @@ abstract class asset implements \flat\core\controller {
    }
    
    final public function is_equal(asset $asset) : bool {
-      return get_class($asset)===static::class && $asset->get_resource_uri() === $this->get_resource_uri();
+      return $asset::class===static::class && $asset->get_resource_uri() === $this->get_resource_uri();
    }
    
    /**
@@ -188,7 +188,7 @@ abstract class asset implements \flat\core\controller {
     */
    protected function set_resource(string $resource,array $param=null) : void {
       $resource = str_replace("\\","/",$resource);
-      if (substr($resource,0,1) === "/") {
+      if (str_starts_with($resource, "/")) {
          $resource = substr($resource,1);
       }
       $this->resource = $resource;

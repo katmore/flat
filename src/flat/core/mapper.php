@@ -169,7 +169,7 @@ trait mapper  {
        * CONSERVATIVELY DISABLED: a successful string cast always yields a string.
          if (!is_string($property = (string) $property)) throw new mappable\exception\bad_property_name();
        */
-         if (property_exists(get_class($this), $property)) {
+         if (property_exists($this::class, $property)) {
             $rp = new \ReflectionProperty($this,$property);
          } else 
          if (method_exists($this, $property)) {

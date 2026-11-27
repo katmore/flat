@@ -38,6 +38,6 @@ class upload_failure extends \flat\cloud\aws\exception {
    private $_ex;
    public function __construct($exception) {
       $this->_ex = $exception;
-      parent::__construct("upload failure: ".get_class($exception));
+      parent::__construct("upload failure: ".$exception::class);
    }
 }

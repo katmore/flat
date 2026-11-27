@@ -38,17 +38,15 @@ class xpath_error extends exception {
          $details = "";
       }
       
-      if ($libXMLError instanceof \LibXMLError) {
-         if (!empty($libXMLError->message) && (false===strpos($details,$libXMLError->message))) {
-            $msg []= $libXMLError->message;
-         }
+      if (!empty($libXMLError?->message) && !str_contains($details,$libXMLError->message)) {
+         $msg []= $libXMLError->message;
       }
       
       if (!count($msg)) {
          $msg []= "xpath error";
       }
       
-      if (!empty($query) && is_string($query) && (false===strpos($details,$query))) {
+      if (!empty($query) && is_string($query) && !str_contains($details,$query)) {
          
          $msg []= "query: $query";
          

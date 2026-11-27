@@ -377,7 +377,7 @@ abstract class mongo extends \flat\db implements \flat\db\driver {
             self::_verify_client(self::$_client[$hash]);
             self::$_client_ping[$hash] = time() + $ping_offset;
             return self::$_client[$hash];
-         } catch (\MongoConnectionException $e) {
+         } catch (\MongoConnectionException) {
             // A failed cached verification must not leave a usable cache entry.
             unset(self::$_client[$hash], self::$_client_ping[$hash]);
          }

@@ -256,7 +256,7 @@ class rabbitmq extends \flat\db implements
       foreach ($param as $k=>&$v) {
          try {
             $v = \flat\core\config::get($configns."/$k");
-         } catch (\flat\core\config\exception\key_not_found $e) {
+         } catch (\flat\core\config\exception\key_not_found) {
             
          }
       }

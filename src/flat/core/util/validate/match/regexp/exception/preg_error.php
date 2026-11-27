@@ -46,24 +46,14 @@ class preg_error extends \flat\core\util\validate\match\regexp\exception {
 
    private function preg_error_string($err) {
       
-      switch ($err) {
-         case PREG_INTERNAL_ERROR:
-            return "PREG_INTERNAL_ERROR: internal PCRE error";
-            break;
-         case PREG_BACKTRACK_LIMIT_ERROR:
-            return "PREG_BACKTRACK_LIMIT_ERROR: backtract limit exhausted";
-            break;
-         case PREG_RECURSION_LIMIT_ERROR:
-            return "PREG_RECURSION_LIMIT_ERROR: recursion limit exhausted";
-            break;
-         case PREG_BAD_UTF8_ERROR:
-            return "PREG_BAD_UTF8_ERROR: malformed UTF-8 data";
-            break;
-         case PREG_BAD_UTF8_OFFSET_ERROR:
-            return "PREG_BAD_UTF8_OFFSET_ERROR: offset did not correspond to the start of a valid UTF-8 code point";
-            break;
-      }
-      return "unknown error";
+      return match ($err) {
+         PREG_INTERNAL_ERROR => "PREG_INTERNAL_ERROR: internal PCRE error",
+         PREG_BACKTRACK_LIMIT_ERROR => "PREG_BACKTRACK_LIMIT_ERROR: backtract limit exhausted",
+         PREG_RECURSION_LIMIT_ERROR => "PREG_RECURSION_LIMIT_ERROR: recursion limit exhausted",
+         PREG_BAD_UTF8_ERROR => "PREG_BAD_UTF8_ERROR: malformed UTF-8 data",
+         PREG_BAD_UTF8_OFFSET_ERROR => "PREG_BAD_UTF8_OFFSET_ERROR: offset did not correspond to the start of a valid UTF-8 code point",
+         default => "unknown error",
+      };
    }
 
    public function __construct() {

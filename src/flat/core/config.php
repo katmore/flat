@@ -212,7 +212,7 @@ class config extends \flat\core {
                if (!empty($basename) && !empty($ns)) {
                   try {
                      return self::get_ref_value($basename, $ns);
-                  } catch (config\exception\key_not_found $e) {
+                  } catch (config\exception\key_not_found) {
                      throw new config\exception\key_not_found("$key=".static::REFERENCE_VALUE_IDENTIFIER_PREFIX.static::REFERENCE_VALUE_IDENTIFIER_TERMINATOR."$basename.$ns");
                   }
                }
@@ -381,7 +381,7 @@ class config extends \flat\core {
    private static function _get_value_or_default($key,$default=NULL,array $options=null) {
       try {
          return self::get($key,$options);
-      } catch (config\exception $e) {
+      } catch (config\exception) {
          return $default;
       }
       
@@ -419,7 +419,7 @@ class config extends \flat\core {
        * @internal
        */
       $topns = self::NS_TOP_LEVEL.'/';
-      if (substr($path,0,strlen($topns))==$topns) {
+      if (str_starts_with($path, $topns)) {
          $path = substr($path,strlen($topns));
       }
       

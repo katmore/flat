@@ -33,6 +33,6 @@
 namespace flat\db\driver\pdo\exception;
 class connect_error extends \flat\db\driver\pdo\exception {
    public function __construct(\Exception $e) {
-      parent::__construct("connection error ".$e->getCode()." (".get_class($e)."): ".$e->getMessage());
+      parent::__construct("connection error ".$e->getCode()." (".$e::class."): ".$e->getMessage());
    }
 }

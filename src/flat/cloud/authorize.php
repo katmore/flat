@@ -140,7 +140,7 @@ abstract class authorize {
          // Summarize instead of print_r()-ing the exception: its trace holds
          // argument values that can exhaust memory (owner answer Q21). The
          // original stays available as the previous exception.
-         throw new \Exception(get_class($e).': '.$e->getMessage(), (int) $e->getCode(), $e);
+         throw new \Exception($e::class.': '.$e->getMessage(), (int) $e->getCode(), $e);
       }
        
       if (($response != null) && ($response->getMessages()->getResultCode() == "Ok") )

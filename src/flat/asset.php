@@ -366,7 +366,7 @@ class asset extends core\controller\asset implements core\app
         try {
             return $this->get_url();
         } catch (\Exception $e) {
-            trigger_error("magic method asset::__toString() failed because exception " . get_class($e) . " code: " . $e->getCode() . " message: \"" . $e->getMessage() . "\" thrown by " . static::class . "::get_url()", E_USER_NOTICE);
+            trigger_error("magic method asset::__toString() failed because exception " . $e::class . " code: " . $e->getCode() . " message: \"" . $e->getMessage() . "\" thrown by " . static::class . "::get_url()", E_USER_NOTICE);
             return "";
         }
     }
@@ -585,16 +585,11 @@ class asset extends core\controller\asset implements core\app
             $resource_type = $this->get_resource_type();
         }
 
-        switch ($resource_type) {
-            // Inline JavaScript source is handled above; a file asset has none.
-            case self::RESOURCE_JS:
-                $this->print_contents_script_tag();
-                return;
-            case self::RESOURCE_CSS:
-                $this->print_contents_style_tag();
-                return;
-        }
-        throw new exception\app_error("cannot print contents: unsupported resource type for '" . $this->get_resource() . "'");
+        match ($resource_type) {
+            self::RESOURCE_JS => $this->print_contents_script_tag(),
+            self::RESOURCE_CSS => $this->print_contents_style_tag(),
+            default => throw new exception\app_error("cannot print contents: unsupported resource type for '" . $this->get_resource() . "'"),
+        };
     }
 
     /**
@@ -623,20 +618,12 @@ class asset extends core\controller\asset implements core\app
             }
         }
 
-        switch ($tag_type) {
-            case self::TAG_SCRIPT_SOURCE:
-                $this->print_script_source_tag();
-                return;
-            case self::TAG_SCRIPT:
-                $this->print_js_script_tag();
-                return;
-            case self::TAG_STYLESHEET_LINK:
-                $this->print_css_link_tag();
-                return;
-        }
-        // A tag type was requested (or implied by the resource type) that has no
-        // implementation; assets without any tag form still print nothing above.
-        throw new exception\app_error("cannot print tag: unsupported tag type $tag_type for '" . $this->get_resource() . "'");
+        match ($tag_type) {
+            self::TAG_SCRIPT_SOURCE => $this->print_script_source_tag(),
+            self::TAG_SCRIPT => $this->print_js_script_tag(),
+            self::TAG_STYLESHEET_LINK => $this->print_css_link_tag(),
+            default => throw new exception\app_error("cannot print tag: unsupported tag type $tag_type for '" . $this->get_resource() . "'"),
+        };
     }
 
     /**
@@ -1043,7 +1030,7 @@ class asset extends core\controller\asset implements core\app
                 $base = str_replace("/", "\\", $value);
             }
 
-            if (substr($base, 0, 1) == "\\" && class_exists($base) && is_a($base, '\flat\asset', true)) {
+            if (str_starts_with($base, "\\") && class_exists($base) && is_a($base, '\flat\asset', true)) {
                 $asset = $base;
             } else {
                 if (class_exists("$asset\\$base") && is_a("$asset\\$base", '\flat\asset', true)) {
@@ -1317,7 +1304,7 @@ class asset extends core\controller\asset implements core\app
             if ($depends_asset instanceof asset) {
                 $depends_asset_hash = $depends_asset->get_hash();
             } else if (is_callable($depends_asset)) {
-                $depends_asset_hash = uniqid("callback." . get_class($asset) . ".", true);
+                $depends_asset_hash = uniqid("callback." . $asset::class . ".", true);
             }
 
             if (!isset(self::$reigster_depends[$asset_hash][$depends_asset_hash])) {
