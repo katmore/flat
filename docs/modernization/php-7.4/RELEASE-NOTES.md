@@ -23,6 +23,8 @@ coverage, and no PHP notice, warning or deprecation is raised.
   resolution ... the first will be used" for that trait. flat's copy is the one used. To silence the warning, add the
   adapter's file to `exclude-from-classmap` in your `composer.json`; the exact line is in
   `docs/modernization/php-7.4/active/CONSUMER-IMPACT.md`.
+- **One unusable class is removed.** `flat\core\util\validate\collection` was an empty class that implemented an
+  interface that never existed, so it could not be loaded; the file is gone. Nothing could have used it.
 - Nothing else in `src` changed.
 
 Every entry has what you saw before, what you see now, and what to search for in
@@ -44,4 +46,4 @@ Every entry has what you saw before, what you see now, and what to search for in
 - The four open dependency advisories (`mongodb/mongodb`, `aws/aws-sdk-php`; test environment only) need PHP 8.1 for
   their fixes (`docs/modernization/php-7.4/notes/DEPENDENCY-ALERTS.md`). An application on PHP 8.1 or newer can already
   install the fixed releases; flat's constraints allow them.
-- Eight classes cannot be loaded by the API tool, as in `v1.73.2` (`docs/modernization/php-7.4/notes/API-COMPARISON.md`).
+- Seven classes cannot be loaded by the API tool (`docs/modernization/php-7.4/notes/API-COMPARISON.md`).

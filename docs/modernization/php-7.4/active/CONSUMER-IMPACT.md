@@ -41,3 +41,12 @@ before, what they see now, and what to search for in their code.
 - Search consumer code for: `Alcaeus\MongoDbAdapter\Helper\ReadPreference`, `MongoClient::RP_`, `getReadPreference`.
 - Verified: yes. A Composer install of flat with the adapter loads flat's copy under the normal, optimized and
   authoritative autoloaders (the last two with the warning above). 13 new tests; any PHP message fails them.
+
+### MOD-302 (KD-108) — `flat\core\util\validate\collection` is removed
+
+- Before: the file src/flat/core/util/validate/collection.php existed, with an empty class that implemented
+  `flat\core\collection\validator`, which does not exist. Loading the class was a fatal error ("Interface ... not found"),
+  so no code could have used it.
+- After: the file is gone. `class_exists('flat\\core\\util\\validate\\collection')` is `false` instead of a fatal error.
+- Search consumer code for: `util\validate\collection`.
+- Verified: yes. Nothing in flat's code or tests referenced it.

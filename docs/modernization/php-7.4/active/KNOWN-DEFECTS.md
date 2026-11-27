@@ -27,14 +27,15 @@ the php-7.2 phase and written down there as "untested and unusable", but never r
 
 ### KD-108 - `util\validate\collection` implements an interface that does not exist
 
-- Category: C (unfinished stub), needs the owner. `src/flat/core/util/validate/collection.php` is
+- Category: C (unfinished stub), needs the owner. src/flat/core/util/validate/collection.php is
   `class collection extends \flat\core\collection implements \flat\core\collection\validator {}`: an empty body, and
   no `flat\core\collection\validator` anywhere. The nearest real thing is the interface
   `flat\core\collection\member\validator` (methods `member_validate`, `member_filter`, `member_success`), which the
   collection controller checks. Nothing references the class: it is not used in `src`, the tests or the docs, and the
   file's header has no purpose text. It cannot be loaded at all (fatal error).
-- Not fixed: pointing it at `member\validator` would need three methods whose behavior nobody has stated.
-  See Q56.
+- The owner decided on 2026-11-27 (Q56): remove it; it was an over-composed idea that was never finished.
+- Fixed (MOD-302): the file is removed.
+- **Fixed.**
 
 ### KD-109 - Files whose declared class name differs from their path (sixteen in all, seven are KD-107)
 
@@ -84,10 +85,7 @@ Each has a recommendation; "agree" is enough.
     before its PHP version step; this phase's step is already taken, so this is your call. Recommend yes, then rebuild
     the release notes. **Open.**
 
-56. **What was `flat\core\util\validate\collection` meant to be (KD-108)?** A collection that validates its members,
-    implementing `member\validator`? Or dead code? Recommend: if you know what it was for, tell me and I implement it;
-    if not, leave it as it is until v2.X (nothing can use it today, and removing a class changes flat's API list).
-    **Open.**
+56. **What was `flat\core\util\validate\collection` meant to be (KD-108)?** **Answered 2026-11-27: remove it** (MOD-302).
 
 57. **Which names were intended for `src/flat/fsm.php` (`flat\fsm` or `flat\fsm\fsm`) and `src/flat/orm/invalid_field.php`
     (`flat\orm\invalid_field` or `invalid_param`) (KD-109)?** Recommend: the path names, with `class_alias` for the

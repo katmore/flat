@@ -294,3 +294,12 @@ continues from the php-7.3 phase.
   [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md). No code changed.
 - Behavior: none.
 - Undo: revert the commit.
+
+## MOD-302 — `util\validate\collection` is removed (KD-108, Q56)
+
+- Kind: removal of dead code, decided by the owner on 2026-11-27: the class was an unfinished idea ("over-composed"). The file
+  `src/flat/core/util/validate/collection.php` had an empty body and implemented `flat\core\collection\validator`, which does not
+  exist; it could never be loaded. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: none for any code that could run. The API dump and comparison are regenerated in a later entry.
+- Verified: nothing in `src` or the tests references the class. `docker/bin/test all --coverage`: all pass; 100%.
+- Undo: revert the commit.
