@@ -1,7 +1,5 @@
 <?php
 namespace flat\test\Unit\Cloud;
-require_once __DIR__.'/../../Support/LegacyAuthorizeSdk.php';
-
 use PHPUnit\Framework\TestCase;
 use flat\cloud\authorize;
 

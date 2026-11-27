@@ -2,7 +2,6 @@
 namespace flat\test\Unit\Vendor;
 use PHPUnit\Framework\TestCase;
 use flat\vendor\erusev\parsedown\extra;
-require_once __DIR__.'/../../Support/PhpSubprocess.php';
 class MarkdownTest extends TestCase
 {
     use \flat\test\Support\PhpSubprocess;

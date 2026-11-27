@@ -7,7 +7,6 @@ namespace FlatUnit\Alert {
     }
 }
 namespace flat\test\Unit\Core {
-    require_once __DIR__.'/../../Support/ConfigSandbox.php';
     use PHPUnit\Framework\TestCase;
     use flat\db\driver\rabbitmq;
     class AlertDefaultsTest extends TestCase

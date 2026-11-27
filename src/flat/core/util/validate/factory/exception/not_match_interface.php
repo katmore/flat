@@ -49,4 +49,3 @@ class not_match_interface extends \flat\core\util\validate\factory\exception {
    }
 
 }
-class_alias(not_match_interface::class, 'flat\\core\\util\\factory\\exception\\not_match_interface');

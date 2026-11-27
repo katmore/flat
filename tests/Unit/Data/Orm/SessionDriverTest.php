@@ -1,8 +1,5 @@
 <?php
 namespace flat\test\Unit\Data\Orm;
-require_once __DIR__.'/../../../Support/ConfigSandbox.php';
-require_once __DIR__.'/../../../Support/PhpSubprocess.php';
-require_once __DIR__.'/../../../Support/NativeSessionBoundary.php';
 use PHPUnit\Framework\TestCase;
 use flat\data\orm\driver\session as SessionDriver;
 use flat\data\orm\driver\session\handler\native as NativeHandler;
@@ -18,7 +15,6 @@ class MemorySessionHandler extends \flat\data\orm\driver\session\handler
 class NativeHandlerProbe extends NativeHandler
 {
     public static function key(array $options = null) { return parent::_get_ormkey($options); }
-    public static function initialize(array $options = null) { return parent::_init_session($options); }
 }
 class SessionDriverTest extends TestCase
 {
@@ -35,7 +31,7 @@ class SessionDriverTest extends TestCase
     }
     protected function tearDown(): void
     {
-        \flat\test\Support\NativeSessionBoundary::$disabled = false; NativeHandler::set_ormkey(NativeHandler::fallback_ormkey);
+        NativeHandler::set_ormkey(NativeHandler::fallback_ormkey);
         $root = $this->configSandboxDirectory(); unlink($root.'/data/orm/driver/session.php');
         foreach (['data/orm/driver','data/orm','data'] as $directory) rmdir($root.'/'.$directory);
         $this->closeConfigSandbox();
@@ -48,8 +44,8 @@ class SessionDriverTest extends TestCase
         $data = new \flat\data\generic(['value'=>'object identity']);
         $this->assertSame('stored',$driver->set_data('key',$data));
         $this->assertSame($data,$driver->get_data('key')); $this->assertNull($driver->get_data('missing'));
-        $this->assertInstanceOf(\flat\data\session\driver::class,$driver);
-        $this->assertInstanceOf(\flat\data\session\driver\session::class,$driver);
+        $this->assertInstanceOf(\flat\data\orm\driver::class,$driver);
+        $this->assertInstanceOf(\flat\data\orm\driver\session::class,$driver);
     }
     public function testHandlerClassReceivesItsConstructorParameters()
     {
@@ -57,7 +53,7 @@ class SessionDriverTest extends TestCase
         $data = new \flat\data\generic(['value'=>42]); $driver->set_data('key',$data);
         $this->assertSame($data,$driver->get_data('key'));
         // Verify the actual handler constructor, not only the wrapper's type.
-        $property = new \ReflectionProperty(\flat\data\session\driver\session::class,'_h'); $property->setAccessible(true);
+        $property = new \ReflectionProperty(\flat\data\orm\driver\session::class,'_h'); $property->setAccessible(true);
         $this->assertSame(['local'=>'parameter'],$property->getValue($driver)->parameters);
     }
     /** @dataProvider fallbackHandlers */
@@ -81,22 +77,29 @@ class SessionDriverTest extends TestCase
         NativeHandler::set_ormkey($key);
     }
     public function invalidKeys() { return [[''],[0],[['nested']],[new \stdClass]]; }
-    public function testDisabledSessionStatusUsesItsFrameworkFailure()
+    /** @dataProvider unusableSessionSettings */
+    public function testDisabledSessionStatusUsesItsFrameworkFailure($setting)
     {
-        \flat\test\Support\NativeSessionBoundary::$disabled = true;
-        $this->expectException(\flat\data\orm\driver\session\exception\failure::class);
-        NativeHandlerProbe::initialize();
+        // PHP itself reports the session as disabled when its save handler or serializer does not exist.
+        $body = 'echo json_encode(session_status() === PHP_SESSION_DISABLED); try { $m = new \\ReflectionMethod(\\flat\\data\\orm\\driver\\session\\handler\\native::class, "_init_session"); $m->setAccessible(true); $m->invoke(null); } catch (\\Throwable $e) { echo " ", get_class($e), ": ", $e->getMessage(); }';
+        list($status,$out,$err) = $this->subprocess($body,$setting);
+        $this->assertSame(0,$status,$out.$err); $this->assertSame('',$err);
+        $this->assertSame('true '.\flat\data\orm\driver\session\exception\failure::class.': session failure: PHP sessions are not enabled',$out);
+    }
+    public function unusableSessionSettings()
+    {
+        return [['save handler'=>['session.save_handler'=>'absent']],['serializer'=>['session.serialize_handler'=>'absent']]];
     }
     private function sessionPrefix()
     {
         return 'session_save_path('.var_export($this->sessionDirectory,true).'); session_id('.var_export($this->sessionId,true).'); \\flat\\data\\orm\\driver\\session\\handler\\native::set_ormkey("flatunitnative"); ';
     }
-    public function testRealNativeSessionPersistsAcrossModernAndLegacyDriverNames()
+    public function testRealNativeSessionPersistsAcrossSeparateProcesses()
     {
         $body = $this->sessionPrefix().'$driver=new \\flat\\data\\orm\\driver\\session(["handler"=>"missing"]); $driver->set_data("key",new \\flat\\data\\generic(["value"=>"persisted"])); session_write_close(); echo "written";';
         list($status,$out,$err) = $this->subprocess($body);
         $this->assertSame(0,$status,$out.$err); $this->assertSame('written',$out); $this->assertSame('',$err);
-        $body = $this->sessionPrefix().'$driver=new \\flat\\data\\session\\driver\\session; echo json_encode([$driver->get_data("key")->value,$driver->get_data("missing")]); session_write_close();';
+        $body = $this->sessionPrefix().'$driver=new \\flat\\data\\orm\\driver\\session; echo json_encode([$driver->get_data("key")->value,$driver->get_data("missing")]); session_write_close();';
         list($status,$out,$err) = $this->subprocess($body);
         $this->assertSame(0,$status,$out.$err); $this->assertSame('',$err); $this->assertSame(['persisted',null],json_decode($out,true));
     }

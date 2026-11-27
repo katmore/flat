@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Db;
-require_once __DIR__.'/../../Support/ConfigSandbox.php';
 use PHPUnit\Framework\TestCase;
 class MongoConfigFixture extends \flat\db\driver\mongo\config
 {

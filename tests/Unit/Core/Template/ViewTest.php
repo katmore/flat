@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Core\Template;
-require_once __DIR__.'/../../../Support/ConfigSandbox.php';
 use PHPUnit\Framework\TestCase;
 class ViewFixture extends \flat\core\controller\view
 {

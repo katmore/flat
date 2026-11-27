@@ -64,8 +64,8 @@ class AuthorizeTransactionTest extends TestCase
     }
     public function testLegacyPaymentTypeNamesAutoloadWithoutRenamingTheirImplementations()
     {
-        $card = new \flat\cloud\authorize\customer\payment_profile\creditCard(['cardNumber'=>'local-card']);
-        $bank = new \flat\cloud\authorize\customer\payment_profile\bankAccount(['accountNumber'=>'local-account']);
+        $card = new \flat\cloud\authorize\customer\payment\creditCard(['cardNumber'=>'local-card']);
+        $bank = new \flat\cloud\authorize\customer\payment\bankAccount(['accountNumber'=>'local-account']);
         $this->assertSame('creditCard',$card::get_data_type()); $this->assertSame('local-card',$card->cardNumber);
         $this->assertSame('bankAccount',$bank::get_data_type()); $this->assertSame('local-account',$bank->accountNumber);
     }

@@ -68,7 +68,7 @@ class response_header extends \flat\event {
     */
    public function __construct(string $field,string $value=null,\flat\data $meta=null) {
       if (empty($field)) {
-         throw new header\exception\missing_request_field();
+         throw new response_header\exception\missing_request_field();
       }
       $this->_field = $field;
       $this->_value = $value;

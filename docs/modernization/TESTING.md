@@ -2,7 +2,7 @@
 
 Two entry points take the same arguments. `bin/test` holds all test logic (modes,
 PHPUnit arguments, coverage reports, the inventory) and runs natively where PHP
-7.3 and PHPUnit are installed. `docker/bin/test` only handles Docker: it builds or
+7.4 and PHPUnit are installed. `docker/bin/test` only handles Docker: it builds or
 checks the image, starts the services a mode needs, runs `bin/test` inside the PHP
 container with the same arguments, and removes the containers afterwards. The
 rest of this page uses `docker/bin/test`, the supported way to run the suite.
@@ -41,9 +41,37 @@ If starting the services fails, `docker/bin/test` prints the state and logs of t
 stack and tries again, up to three attempts. A run that needed a retry says so in its output; a third failure
 stops the run.
 
-The JavaScript check runs minification in the PHP 7.3 test image and executes both the original
+The JavaScript check runs minification in the PHP 7.4 test image and executes both the original
 and minified programs against expected results in a separate, digest-pinned Node container.
 Docker downloads that additional image on first use; no host Node installation is needed.
+
+## cURL tests: a real HTTP server
+
+The tests of `flat\core\curl` and of the IP lookup (`tests/Unit/Core/Curl`, `tests/Unit/Cloud/IpInfoDbTest.php`) send real
+requests with real cURL to the same WireMock server as the Authorize.Net mock (`FLAT_TEST_HTTP_URL`, group `http`). Each test
+adds its own stubs through WireMock's admin API (`tests/Support/HttpMock.php`) under a random path prefix, reads back what the
+server received, and removes the stubs. They need the server, so `docker/bin/test unit` leaves them out; `all`, `services` and
+a `--filter` that selects them start it. Failures are real ones: a closed port (errno 7), a reset (56), an empty reply (52).
+There are no PHP function overrides for cURL any more.
+
+## SSH tests: a real OpenSSH server
+
+`tests/Unit/Core/SshServerTest.php` tests `flat\core\ssh` against a real OpenSSH server (group `ssh`, service `sshd`, built from
+`docker/sshd`: Alpine, OpenSSH, a user with a fake password) with the real ssh2 extension of the test image. Logins by password and by
+key, commands, background processes, signals, zombies and SFTP downloads are all real. The test adds its own client key to
+`/shared/authorized_keys`, a volume the server reads at each login; the server's host key is new at every start and its public half is
+in `/shared/host_key.pub`. A second port (2222) logs in but refuses every session channel. These tests need the server, so
+`docker/bin/test unit` leaves them out; `all`, `services` and a `--filter` that selects them start it. `tests/Unit/Core/SshTest.php` holds
+the checks that need no server. There is no PHP function override for ssh2 any more.
+
+## S3 tests: a real S3 emulator
+
+`tests/Unit/Cloud/S3MultipartTest.php` tests `flat\cloud\aws\s3` with the real AWS SDK against Adobe's S3Mock (group `s3`, service `s3mock`,
+image pinned by digest in `docker/docker-compose.s3.yml`; address in `FLAT_TEST_S3_ENDPOINT`). `tests/Support/S3Mock.php` makes a client and
+creates a bucket with a random name per test, and removes the buckets afterwards. Single uploads with every key form, uploads of a file, the
+multipart upload of a 100 MB file (a sparse file, so it takes no disk), and the failures the emulator itself reports are all real. The image has no
+shell, so the stack has no health check and `S3Mock` waits until the server answers. `docker/bin/test unit` leaves these tests out. `AwsTest`
+tests the generic client handling with a plain PHP class and needs no server. There is no PHP function override and no stand-in client for S3 any more.
 
 ## Authorize.Net tests: mock and real sandbox
 
@@ -130,7 +158,7 @@ docker/bin/test all --offline --coverage
 
 Offline mode checks that the selected local image refs exist, skips builds,
 and passes explicit no-pull flags. A missing image produces a clear error; it is not downloaded automatically. Cached base images or Composer
-archives alone are not sufficient: the built flat-tests-php73 image must exist.
+archives alone are not sufficient: the built flat-tests-php74 image must exist.
 Rebuild that image online after changing Dockerfile/test dependency inputs.
 The optional build CA input is not used by offline execution.
 
@@ -142,7 +170,7 @@ on services in Compose, so unit mode needs only the PHP image.
 
 ## What runs where
 
-- PHP/PHPUnit: PHP 7.3 container (exact patch set in `docker/Dockerfile`), pinned official base digest
+- PHP/PHPUnit: PHP 7.4 container (exact patch set in `docker/Dockerfile`), pinned official base digest
 - Error reporting: `E_ALL` (`php.ini-development`); PHPUnit fails on notices, warnings and deprecations
 - MongoDB integration: Separate pinned MongoDB 9.0 Compose service
 - RabbitMQ integration: Separate pinned RabbitMQ 4.4 Compose service
@@ -173,7 +201,7 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
 - `docker/docker-compose.yml`: PHP plus health-checked MongoDB/RabbitMQ services.
 - `tests/docker/tools/composer.json` and its checked-in lock: PHPUnit and framework
   test autoload paths inside the container.
-- `tests/docker/runtime/composer.json` and its checked-in lock: PHP-7.3-compatible
+- `tests/docker/runtime/composer.json` and its checked-in lock: PHP-7.4-compatible
   SDK dependencies used by the suite, separate from application dependencies.
 - `tests/docker/bootstrap.php`: container-local test bootstrap.
 - `tests/docker/compose.ca.yaml`: optional build CA trust input.
@@ -183,10 +211,10 @@ timeout so coverage instrumentation and slower CI machines do not cause a false
   the Markdown test inventory (`bin/test inventory`).
 
 The Composer-only archive-fetch stage uses the official Composer image and the
-locked PHP-7.3 platform constraints; it does not execute framework/tests. The
-actual PHP runtime is pinned and validated as PHP 7.3 (the exact patch is set in `docker/Dockerfile`), with required extensions
+locked PHP-7.4 platform constraints; it does not execute framework/tests. The
+actual PHP runtime is pinned and validated as PHP 7.4 (the exact patch is set in `docker/Dockerfile`), with required extensions
 built/verified there. ext-sockets is ignored only by the archive-fetch stage and
-is actually compiled/enabled in the PHP 7.3 test runtime. GitHub archives use
+is actually compiled/enabled in the PHP 7.4 test runtime. GitHub archives use
 codeload URLs with the same locked source commits. Application composer.json and
 its dependency policy are unchanged by this isolated test setup.
 

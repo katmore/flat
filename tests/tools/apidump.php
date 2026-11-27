@@ -22,7 +22,7 @@ $mode = isset($argv[1]) ? $argv[1] : '';
 
 function type_string($type) {
     if ($type === null) return null;
-    return ($type->allowsNull() ? '?' : '') . (string) $type;
+    return ($type->allowsNull() ? '?' : '') . $type->getName();
 }
 
 function describe_class($name) {
@@ -81,6 +81,17 @@ function register_autoload($root, $extra) {
 
 if ($mode === 'one') { // internal: describe one class in this process
     $root = $argv[2]; $class = $argv[3]; $extra = isset($argv[4]) ? $argv[4] : null;
+    /*
+     * APPROVED EXCEPTION to prime directive 2 (AGENTS.md, "Approved exceptions"; approved 2026-11-27). Only the
+     * E_USER_DEPRECATED notice that the Authorize.Net SDK raises from its own lib/deprecated/ files while a class loads is
+     * discarded; every other message is handled by PHP as usual. flat's wrappers AuthorizeNetARB and AuthorizeNetCIM extend those
+     * deprecated SDK classes, and the notice printed ahead of this tool's JSON made the tool report them as "cannot be loaded". They
+     * are deprecated and will be removed in v2.X (docs/modernization/DEFERRED-V2.md, item 2), and this goes with them. Do not copy
+     * this pattern.
+     */
+    set_error_handler(function ($level, $message, $file) {
+        return $level === E_USER_DEPRECATED && strpos($file, '/authorizenet/authorizenet/lib/deprecated/') !== false;
+    });
     register_autoload($root, $extra);
     $found = class_exists($class) || interface_exists($class) || trait_exists($class);
     echo $found ? json_encode(describe_class($class)) : json_encode(['missing' => true]);

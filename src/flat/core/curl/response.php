@@ -93,7 +93,9 @@ class response {
       $agents[] = preg_quote($useragent, '/');
       $agents = implode('|', $agents);
       
-      $robots_url = "{$parsed['scheme']}://{$parsed['host']}/robots.txt";
+      // robots.txt belongs to one origin, port included
+      $port = isset($parsed['port']) ? ':'.$parsed['port'] : '';
+      $robots_url = "{$parsed['scheme']}://{$parsed['host']}{$port}/robots.txt";
       $handle = curl_init($robots_url);
       curl_setopt($handle,  \CURLOPT_RETURNTRANSFER, TRUE);
       curl_setopt($handle, \CURLOPT_FOLLOWLOCATION, true);
@@ -314,6 +316,8 @@ class response {
       $this->_ch = $ch = curl_init($url);
       
       curl_setopt($ch, \CURLOPT_USERAGENT, $config->user_agent);
+      // without this, CURLINFO_FILETIME (the filetime property) is always -1
+      curl_setopt($ch, \CURLOPT_FILETIME, true);
       if ($save_cookies) {
          curl_setopt($ch, \CURLOPT_COOKIEJAR, $cookie_file);
       }
@@ -323,6 +327,7 @@ class response {
       
       if (!empty($request->data)) {
          curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, $config->request_method);
+         curl_setopt($ch, \CURLOPT_POSTFIELDS, $request->data);
          curl_setopt($ch, \CURLOPT_HTTPHEADER, array(
             'Content-Type: '.$request->content_type,
             'Content-Length: ' . strlen($request->data))
@@ -359,9 +364,7 @@ class response {
       if (curl_errno($ch)!=0) {
          throw new exception\curlexec_error($ch,$request->url_string);
       }
-      if (false === ($this->info = curl_getinfo($ch))) {
-         throw new exception\missing_curlinfo();
-      }
+      $this->info = curl_getinfo($ch);
       $this->status_code = $this->info['http_code'];
       
       /*

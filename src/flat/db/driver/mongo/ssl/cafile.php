@@ -9,7 +9,7 @@
  * @package flat/db/mongo
  * @link http://php.net/manual/en/mongo.connecting.ssl.php
  */
-namespace flat\db\mongo\ssl;
+namespace flat\db\driver\mongo\ssl;
 abstract class cafile {
    public $ca; //certificate value (base64)
    protected $file;

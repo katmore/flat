@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Db\Pdo;
-require_once __DIR__.'/../../../Support/ConfigSandbox.php';
 use PHPUnit\Framework\TestCase;
 use flat\db\driver\pdo\pdo;
 class FileConfigTest extends TestCase

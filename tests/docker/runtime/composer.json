@@ -5,13 +5,19 @@
     "authorizenet/authorizenet": "1.9.9",
     "php-amqplib/php-amqplib": "^3.7",
     "aws/aws-sdk-php": "^3.0",
-    "azuyalabs/yasumi": "^2.4"
+    "azuyalabs/yasumi": "^2.4",
+    "doctrine/annotations": "^2.0"
   },
   "config": {
     "platform": {
-      "php": "7.3.33",
-      "ext-mongodb": "1.16.2"
+      "php": "7.4.33",
+      "ext-mongodb": "1.20.1"
     },
     "preferred-install": "source"
+  },
+  "autoload": {
+    "psr-4": {
+      "Alcaeus\\MongoDbAdapter\\Helper\\": "/app/src/flat/vendor/alcaeus/mongo-php-adapter/Helper/"
+    }
   }
 }

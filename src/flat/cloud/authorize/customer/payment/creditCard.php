@@ -30,7 +30,7 @@
  * @author     D. Bird <retran@gmail.com>
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
-namespace flat\cloud\authorize\customer\payment_profile;
+namespace flat\cloud\authorize\customer\payment;
 /**
  * @deprecated since v1.73.1. Authorize.Net no longer supports the legacy SDK classes this is built on
  *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see

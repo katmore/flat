@@ -9,8 +9,8 @@
  * @package flat/db/mongo
  * @link http://php.net/manual/en/mongo.connecting.ssl.php
  */
-namespace flat\db\mongo\ssl\cafile;
-abstract class file extends \flat\db\mongo\ssl\cafile {
+namespace flat\db\driver\mongo\ssl\cafile;
+abstract class file extends \flat\db\driver\mongo\ssl\cafile {
    abstract protected function _get_cafile_path();
    final public function __construct() {
       if ($this->ca = file_get_contents($this->_get_cafile_path())) {

@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Core;
-require_once __DIR__.'/../../Support/PhpSubprocess.php';
 use PHPUnit\Framework\TestCase;
 use flat\core\shutdown;
 class ShutdownTest extends TestCase

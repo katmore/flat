@@ -285,6 +285,17 @@ trait mapper  {
             $args = $args[0];
          }
       }
+      /*
+       * named arguments (an array with a string key): a name that was left out
+       * keeps its default; it never takes the value at its position
+       */
+      $named = false;
+      foreach (array_keys($args) as $arg_key) {
+         if (is_string($arg_key)) {
+            $named = true;
+            break;
+         }
+      }
       $i=0;
       
       $argval = array();
@@ -305,7 +316,7 @@ trait mapper  {
             if (isset($args[$val])) {
                $list[$val] = $args[$val];
             } else {
-               if (isset($argval[$i])) {
+               if (!$named && isset($argval[$i])) {
                   $list[$val] = $argval[$i];
                }
             }
@@ -313,7 +324,7 @@ trait mapper  {
             if (isset($args[$key])) {
                $list[$key] = $args[$key];
             } else {
-               if (isset($argval[$i])) {
+               if (!$named && isset($argval[$i])) {
                   $list[$key] = $argval[$i];
                } else {
                   $list[$key] = $val;

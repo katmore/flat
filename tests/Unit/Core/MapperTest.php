@@ -138,6 +138,10 @@ class MapperTest extends TestCase
             [[], ['first' => 'default', 'second' => 'fallback'], ['first' => 'default', 'second' => 'fallback']],
             [['x'], ['first' => 'default', 'second' => 'fallback'], ['first' => 'x', 'second' => 'fallback']],
             [['first' => 'named'], ['first' => 'default'], ['first' => 'named']],
+            // named arguments: a name left out keeps its default, it does not take the value at its position
+            [[['second' => 'b']], ['first' => 'default', 'second' => 'fallback'], ['first' => 'default', 'second' => 'b']],
+            [['second' => 'b'], ['first' => 'default', 'second' => 'fallback'], ['first' => 'default', 'second' => 'b']],
+            [[['second' => 'b']], ['first', 'second'], ['first' => '', 'second' => 'b']],
         ];
     }
 

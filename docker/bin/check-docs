@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs bin/check-docs inside the repository's PHP 7.3 container, for machines
+# Runs bin/check-docs inside the repository's PHP 7.4 container, for machines
 # without PHP. Needs no service containers; uses its own Compose project so it
 # never touches a running test stack.
 set -eu

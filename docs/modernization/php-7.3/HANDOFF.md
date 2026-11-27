@@ -274,7 +274,7 @@ Do not fix these as part of the PHP step; raise them with the owner if they matt
   MongoDB SSL file classes under `flat\db\driver\mongo\ssl\`. The list is in
   `docs/modernization/php-7.2/notes/API-COMPARISON.md`.
 - Six other empty (0-byte) files that are not exceptions were deliberately left
-  (`src/flat/cloud/disqus.php` and five under `src/flat/cloud/pci/`), per MOD-125 in the php-7.2
+  (src/flat/cloud/disqus.php and five under src/flat/cloud/pci/), per MOD-125 in the php-7.2
   change log.
 - Further mutation-probe seeds (also with `--services`) can still be run; the first sample is
   closed.

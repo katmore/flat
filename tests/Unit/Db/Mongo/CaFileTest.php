@@ -1,17 +1,11 @@
 <?php
 namespace flat\test\Unit\Db\Mongo;
-require_once __DIR__.'/../../../Support/PhpSubprocess.php';
-// These legacy helpers declare db\mongo namespaces in db/driver/mongo paths.
-// Include their real files explicitly; autoload compatibility remains a follow-up.
-require_once __DIR__.'/../../../../src/flat/db/driver/mongo/ssl/cafile.php';
-require_once __DIR__.'/../../../../src/flat/db/driver/mongo/ssl/cafile/base64.php';
-require_once __DIR__.'/../../../../src/flat/db/driver/mongo/ssl/cafile/file.php';
 use PHPUnit\Framework\TestCase;
-class CaLiteralFixture extends \flat\db\mongo\ssl\cafile\base64
+class CaLiteralFixture extends \flat\db\driver\mongo\ssl\cafile\base64
 {
     protected function _get_cafile_base64() { return 'literal certificate content'; }
 }
-class CaPathFixture extends \flat\db\mongo\ssl\cafile\file
+class CaPathFixture extends \flat\db\driver\mongo\ssl\cafile\file
 {
     public static $path;
     protected function _get_cafile_path() { return self::$path; }
@@ -46,8 +40,7 @@ class CaFileTest extends TestCase
     }
     public function testTemporaryCertificateIsRemovedAtNativePhpShutdown()
     {
-        $source = dirname(__DIR__,4).'/src/flat/db/driver/mongo/ssl/cafile.php';
-        $body = 'require '.var_export($source,true).'; $c = new class extends \\flat\\db\\mongo\\ssl\\cafile {}; $c->ca="local certificate"; echo $c->get_file();';
+        $body = '$c = new class extends \\flat\\db\\driver\\mongo\\ssl\\cafile {}; $c->ca="local certificate"; echo $c->get_file();';
         list($status,$out,$err) = $this->subprocess($body);
         $this->assertSame(0,$status); $this->assertSame('',$err);
         $this->assertStringContainsString('cafile',$out);
@@ -68,5 +61,24 @@ class CaFileTest extends TestCase
             $this->assertStringContainsString('could not write CA file: '.sys_get_temp_dir(), $e->getMessage());
         } finally { restore_error_handler(); }
         $this->assertCount(1,$warnings);
+    }
+    public function testEverySslClassLoadsByNameWithoutIncludingFiles()
+    {
+        // A clean process: nothing has been included by hand, so only the autoloader can find them.
+        $body = '$names = ["flat\\\\db\\\\driver\\\\mongo\\\\ssl", "flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\cafile", "flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\cafile\\\\base64",'
+            .' "flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\cafile\\\\file", "flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\localcert", "flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\localcert\\\\base64",'
+            .' "flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\localcert\\\\file"]; $loaded = [];'
+            .' foreach ($names as $name) $loaded[$name] = class_exists($name) || interface_exists($name);'
+            .' echo json_encode([$loaded, class_exists("flat\\\\db\\\\mongo\\\\ssl\\\\cafile"), interface_exists("flat\\\\db\\\\mongo\\\\ssl"),'
+            .' is_subclass_of("flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\localcert", "flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\cafile"),'
+            .' is_subclass_of("flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\localcert\\\\file", "flat\\\\db\\\\driver\\\\mongo\\\\ssl\\\\cafile\\\\file")]);';
+        list($status,$out,$err) = $this->subprocess($body);
+        $this->assertSame(0,$status); $this->assertSame('',$err);
+        list($loaded,$oldClass,$oldInterface,$certIsCafile,$localFileIsCaFile) = json_decode($out,true);
+        $this->assertCount(7,$loaded);
+        foreach ($loaded as $name => $ok) $this->assertTrue($ok,"$name must load by name");
+        // The old, wrong names (KD-107) are gone.
+        $this->assertFalse($oldClass); $this->assertFalse($oldInterface);
+        $this->assertTrue($certIsCafile); $this->assertTrue($localFileIsCaFile);
     }
 }

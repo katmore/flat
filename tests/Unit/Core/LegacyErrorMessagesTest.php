@@ -1,9 +1,6 @@
 <?php
 namespace flat\test\Unit\Core;
 use PHPUnit\Framework\TestCase;
-// Preserve coverage of this file's actual historical declaration; its basename
-// uses bad_param while the declared class is badParam.
-require_once __DIR__.'/../../../src/flat/core/ssh/exception/input_error/bad_param.php';
 class UnlabeledDuplicateError extends \flat\db\op\exception\duplicate_key
 {
     public function get_namespace_label() { return null; }
@@ -210,9 +207,9 @@ class LegacyErrorMessagesTest extends TestCase
             $this->assertStringContainsString("given type $type instead",$error->getMessage());
         }
     }
-    public function testLegacySshParameterErrorRetainsItsDeclaredNameAndMessage()
+    public function testSshParameterErrorMessage()
     {
-        $error = new \flat\core\ssh\exception\input_error\badParam('pid','invalid');
+        $error = new \flat\core\ssh\exception\input_error\bad_param('pid','invalid');
         $this->assertSame('input error: bad pid: invalid',$error->getMessage());
     }
 }

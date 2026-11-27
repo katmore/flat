@@ -37,6 +37,9 @@ are: do not "fix", copy or extend them.
 - `tests/Support/LegacyAuthorizeSdk.php`: the Authorize.Net SDK's `E_USER_DEPRECATED` notice,
   raised from its `lib/deprecated/` files when a legacy class loads, is discarded (approved
   2026-11-21). It stays until flat's Authorize.Net wrappers are removed (v2.X).
+- `tests/tools/apidump.php`: the same notice, raised when flat's `AuthorizeNetARB` and `AuthorizeNetCIM`
+  wrappers load, is discarded so the API comparison can describe them (approved 2026-11-27). Nothing else
+  is discarded, and `tests/Unit/Tools/ApiDumpTest.php` proves it. It goes with the wrappers (v2.X).
 
 ## Error reporting
 
@@ -47,6 +50,29 @@ you build or change an environment, check that it holds: a `php.ini` exists and 
 is `E_ALL` (the image build verifies it). Fix a deprecation when you find it, in the same phase:
 do not put off what can be done now. (Why: a test image without a `php.ini` hid every notice and
 deprecation for two phases.)
+
+## Class names: never `class_alias`
+
+- **Never use `class_alias`.** Not in `src`, not in the tests, not in tools; not as a "compatibility shim", a "forwarding
+  file" or a "historical name". There is no exception list for it. To rename a class, rename it and change every reference
+  to it (source, tests, docs). The old name stops existing, and the rename is recorded in the phase's
+  `active/CONSUMER-IMPACT.md` with what to search for. If a rename would break the public API, record the question with a
+  recommendation and ask the maintainer; do not add an alias.
+- **A class is declared where its path says.** Every class, interface and trait has the namespace and name its file path
+  gives: `src/flat/core/ssh/exception/input_error/bad_param.php` declares
+  `flat\core\ssh\exception\input_error\bad_param`. When a file and its declaration disagree, fix the declaration (or move
+  the file) and every reference. A file that only requires another file under a second name is the same shim: delete it.
+- **flat's style for class names** is lowercase words joined by underscores (`bad_param`, `not_found`). Never name a new or
+  renamed class in camel case (`badParam`).
+- **Classes load through the autoloader, never through `require` or `include`.** No "forwarding file" that only requires another
+  file, no `require_once` of a class file in the source or in a test. Only data files may be included: a config file that returns
+  an array, a template. `tests/Unit/CodingRulesTest.php` checks all of these rules over `src` and fails on a violation.
+- A test double that needs a class under a third party's name declares it under that name in a support file
+  (`tests/Support/LegacyAmqpConnection.php`), never with an alias.
+
+(Why: earlier sessions added five `class_alias` calls, and a forwarding file for most of them, to make mismatched classes
+loadable instead of renaming them. The maintainer had all five removed on 2026-11-27: MOD-306 to MOD-309 in
+`docs/modernization/php-7.4/CHANGELOG.md`.)
 
 ## Keep everything current
 
@@ -66,8 +92,9 @@ RabbitMQ stayed years old until the owner asked.)
 The framework is being modernized one PHP version at a time. Read
 `docs/modernization/README.md` (plan and phase rules), then the current phase's
 `README.md` for status and how to resume work. The php-7.2 phase is complete
-(`docs/modernization/php-7.2/README.md`); the php-7.3 phase has started (maintainer's
-go-ahead, 2026-11-20). Its work plan is `docs/modernization/php-7.3/HANDOFF.md`: read it first.
+(`docs/modernization/php-7.2/README.md`), and so is php-7.3 (`docs/modernization/php-7.3/README.md`).
+The php-7.4 phase has started (the owner created its branch, 2026-11-26). Its work plan is
+`docs/modernization/php-7.4/HANDOFF.md`: read it first.
 
 ## Reproducibility
 
@@ -84,7 +111,7 @@ repository broke this, and had to be replaced.)
   private container names to executable tooling; accept generic explicit inputs.
 - Run PHP, Composer, unit tests and their external services through Docker.
   Do not depend on host PHP or an agent-private virtual environment.
-- `bin/test` holds the test logic and runs natively where PHP 7.3 and PHPUnit are
+- `bin/test` holds the test logic and runs natively where PHP 7.4 and PHPUnit are
   installed; `docker/bin/test` runs that same script in the repository's
   container and only manages Docker. Agents run tests with `docker/bin/test`.
 - Placement: `bin/` holds scripts that run natively on the host given the tools.
@@ -95,7 +122,7 @@ repository broke this, and had to be replaced.)
 - Do not archive agent-private harnesses, vendor trees, or scratch environments
   inside the repository, even as ignored files. Discard obsolete scratch setup.
 - Keep test dependencies separate from the framework's application dependencies.
-- Keep the pinned PHP version (7.3 on this branch) until the maintainer explicitly approves a version step.
+- Keep the pinned PHP version (7.4 on this branch) until the maintainer explicitly approves a version step.
   Do not merge, publish, or change release branches on your own.
 - Keep code changes, test findings, compatibility decisions, and deferred work
   documented in the current phase folder under `docs/modernization/`. Ask the maintainer about unknown method/class purposes;
@@ -155,6 +182,6 @@ repository broke this, and had to be replaced.)
 - Commit often, in coherent logical groups, each with its related
   documentation updates, after running the relevant checks. Do not let a large
   undocumented working tree build up.
-- Commit and push to the current phase branch (`php-7.3`; `php-7.2` is closed). Never
+- Commit and push to the current phase branch (`php-7.4`; `php-7.2` and `php-7.3` are closed). Never
   touch `master` (prime directive 1), and follow the maintainer's explicit branch and push
   instructions. There is no `modernize-26` branch any more (retired 2026-11-20).

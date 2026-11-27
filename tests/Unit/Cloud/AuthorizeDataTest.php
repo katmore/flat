@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Cloud;
-require_once __DIR__.'/../../Support/LegacyAuthorizeSdk.php';
 use PHPUnit\Framework\TestCase;
 use flat\cloud\authorize;
 class ScheduleFixture extends authorize\subscription\schedule
@@ -58,12 +57,12 @@ class AuthorizeDataTest extends TestCase
         $cache = new authorize\subscription\cache(['subscription_id'=>'local','cipher'=>'opaque']);
         $this->assertSame('local',$cache->subscription_id); $this->assertSame('opaque',$cache->cipher);
     }
-    public function testSubscriptionErrorsRetainTheirIdentifiersAndLegacySpellings()
+    public function testSubscriptionErrorsRetainTheirIdentifiers()
     {
-        $cancelled = new authorize\subscription\cancelled('sub-1');
-        $this->assertSame('sub-1',$cancelled->get_subscriptionId());
-        $this->assertInstanceOf(authorize\subscription\canceled::class,$cancelled);
-        $this->assertSame('ARB is cancelled (subscriptionId: sub-1)',$cancelled->getMessage());
+        $canceled = new authorize\subscription\canceled('sub-1');
+        $this->assertSame('sub-1',$canceled->get_subscriptionId());
+        $this->assertInstanceOf(authorize\exception::class,$canceled);
+        $this->assertSame('ARB is cancelled (subscriptionId: sub-1)',$canceled->getMessage());
         $missing = new authorize\subscription\not_found('sub-2');
         $this->assertSame('sub-2',$missing->get_subscriptionId());
         $this->assertSame('subscription not found using id: sub-2',$missing->getMessage());

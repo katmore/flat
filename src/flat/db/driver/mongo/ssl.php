@@ -10,7 +10,7 @@
  * @package flat/db/mongo
  * @link http://php.net/manual/en/mongo.connecting.ssl.php
  */
-namespace flat\db\mongo;
+namespace flat\db\driver\mongo;
 interface ssl {
    public function get_cafile();
    public function get_localcert();

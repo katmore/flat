@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs flat's PHPUnit suite natively, on a machine with PHP 7.3 and PHPUnit
+# Runs flat's PHPUnit suite natively, on a machine with PHP 7.4 and PHPUnit
 # installed (e.g. after `composer install`). docker/bin/test runs this same
 # script inside the repository's PHP container and starts any services it needs.
 set -eu
@@ -16,7 +16,7 @@ usage() {
     echo '       bin/test services-needed [mode] [PHPUnit arguments]'
     echo '  all (default): every test; MongoDB/RabbitMQ tests need those services reachable'
     echo '  unit:          tests that need no external services'
-    echo '  services:      MongoDB-, RabbitMQ- and Authorize.Net-mock-dependent tests'
+    echo '  services:      MongoDB-, RabbitMQ-, Authorize.Net-mock-, HTTP-mock- (the cURL tests), SSH-server- and S3-emulator-dependent tests'
     echo '  mongo:         MongoDB-dependent tests'
     echo '  rabbitmq:      RabbitMQ-dependent tests'
     echo '  anet:          the Authorize.Net tests, against a WireMock stand-in (FLAT_TEST_ANET_URL,'
@@ -25,7 +25,7 @@ usage() {
     echo '                 credentials needed; not part of all). Set FLAT_TEST_ANET_LOGIN_ID and'
     echo '                 FLAT_TEST_ANET_TRANSACTION_KEY to a sandbox account (and leave'
     echo '                 FLAT_TEST_ANET_URL unset). They fail, not skip, without them.'
-    echo '  services-needed: print the test services (mongo rabbitmq anet-mock) the tests this run selects'
+    echo '  services-needed: print the test services (mongo rabbitmq anet-mock sshd s3mock) the tests this run selects'
     echo '                 need, nothing if none; docker/bin/test starts only those'
     echo '  inventory:     print a Markdown inventory of every test to stdout, from'
     echo "                 PHPUnit's test list; KD IDs are added from a given defects file"

@@ -11,7 +11,8 @@ class ApiDumpTest extends TestCase
     }
     protected function tearDown(): void
     {
-        foreach (glob($this->directory.'/*') as $file) unlink($file);
+        $items = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($items as $item) $item->isDir() ? rmdir($item->getPathname()) : unlink($item->getPathname());
         rmdir($this->directory);
     }
     private function tool(array $args, $expectedStatus = 0)
@@ -55,5 +56,31 @@ class ApiDumpTest extends TestCase
     public function testParameterTypeControlStillFindsAChange()
     {
         $this->assertStringContainsString('parameter type changed', $this->compare($this->dump(false), $this->dump(false, 'string')));
+    }
+    /** Dumps a one-class tree whose file raises a notice on loading; $folder is the tree's root, relative to the test directory. */
+    private function dumpRaising($folder, $level)
+    {
+        $root = $this->directory.'/'.$folder;
+        mkdir($root.'/flat', 0777, true);
+        file_put_contents($root.'/flat/Legacy.php', '<?php namespace flat; trigger_error("legacy class is deprecated", '.$level.'); class Legacy { public function run() {} }');
+        return json_decode($this->tool(['dump', $root]), true, 512, JSON_THROW_ON_ERROR)['flat\\Legacy'];
+    }
+    public function testTheAuthorizeNetSdkDeprecationNoticeDoesNotMakeAClassUnloadable()
+    {
+        // The one approved exception: E_USER_DEPRECATED raised from the SDK's own lib/deprecated/ files.
+        $class = $this->dumpRaising('authorizenet/authorizenet/lib/deprecated', 'E_USER_DEPRECATED');
+        $this->assertArrayNotHasKey('unloadable', $class);
+        $this->assertSame('class', $class['kind']);
+        $this->assertArrayHasKey('run', $class['methods']);
+    }
+    public function testAnyOtherNoticeStillMakesAClassUnloadable()
+    {
+        // Nothing else is discarded: the same notice from another place, and another severity from the SDK's place.
+        $elsewhere = $this->dumpRaising('elsewhere', 'E_USER_DEPRECATED');
+        $this->assertTrue($elsewhere['unloadable']);
+        $this->assertStringContainsString('legacy class is deprecated', $elsewhere['reason']);
+        $warning = $this->dumpRaising('authorizenet/authorizenet/lib/deprecated/warning', 'E_USER_WARNING');
+        $this->assertTrue($warning['unloadable']);
+        $this->assertStringContainsString('legacy class is deprecated', $warning['reason']);
     }
 }

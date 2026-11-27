@@ -193,11 +193,13 @@ namespace flat\test\Unit\Core\Session {
             $this->assertSame('', $id);
             $this->assertSame(PHP_SESSION_NONE, session_status());
             $this->assertTrue(isset($_SESSION));
-            // The failure is reported, not hidden: each of the 100 attempts says why it failed.
-            $this->assertNotEmpty($warnings);
-            $this->assertStringContainsString('session_start(): open(', $warnings[0]);
-            $this->assertStringContainsString('/missing/sess_', $warnings[0]);
-            $this->assertSame(0, count($warnings) % 100);
+            // The failure is reported, not hidden: each of the 100 attempts says why it failed, with exactly these
+            // two messages and nothing else (a new message from a newer PHP must show up here).
+            $this->assertCount(200, $warnings);
+            foreach (array_chunk($warnings, 2) as $pair) {
+                $this->assertMatchesRegularExpression('#^session_start\(\): open\(.*/missing/sess_[A-Za-z0-9,-]+, O_RDWR\) failed: No such file or directory \(2\)$#', $pair[0]);
+                $this->assertSame('session_start(): Failed to read session data: files (path: '.$this->directory.'/missing)', $pair[1]);
+            }
         }
     }
 }

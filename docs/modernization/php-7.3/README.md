@@ -5,24 +5,13 @@ project plan, branch model and the rules every phase follows are in
 [../README.md](../README.md). The work plan, decisions and traps are in
 [HANDOFF.md](HANDOFF.md).
 
-## Status: in progress (started 2026-11-20)
+## Status: complete
 
-- The suite passes on PHP 7.3.33 with 100% coverage; what changed and why is in
+- Released as `v1.73.0`, `v1.73.1` and `v1.73.2`, and merged to `master`.
+- The suite passed on PHP 7.3.33 with 100% coverage; what changed and why is in
   [CHANGELOG.md](CHANGELOG.md), the environment in [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md).
-- No open owner questions (Q37 to Q45 answered).
-- Release notes for `v1.73.0` are drafted in [RELEASE-NOTES.md](RELEASE-NOTES.md); the owner declares the phase complete.
-
-## Resume here
-
-1. Read the phase rules in [../README.md](../README.md) and `AGENTS.md`, then
-   [HANDOFF.md](HANDOFF.md).
-2. Run `docker/bin/test` and confirm 1,471 tests pass before changing anything.
-3. Pick up the "Not done yet" list above. Every notice, warning or deprecation is fixed at its
-   cause (prime directive 2). Commit runtime fixes, behavior changes and modernizations
-   separately, each with its change-log entry.
-4. After tests change, regenerate the inventory:
-   `tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.3/active/KNOWN-DEFECTS.md > "$tmp" && chmod 644 "$tmp" && mv "$tmp" docs/modernization/php-7.3/TEST-INVENTORY.md`
-5. Run `docker/bin/check-docs` after every documentation change.
+- No open owner questions (Q37 to Q50 answered).
+- The next phase is [php-7.4](../php-7.4/README.md). This branch is kept as the record of the phase.
 
 ## Contents
 
