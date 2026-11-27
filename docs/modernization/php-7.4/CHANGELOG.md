@@ -621,3 +621,13 @@ continues from the php-7.3 phase.
 - Behavior: none for flat.
 - Verified: flat-webapp's `docker/bin/test` after each step: 67 tests, 203 assertions, all pass, no PHP message in the server log.
 - Undo: revert the commit.
+
+## MOD-331 — Internal test services bypass the host's outbound proxy
+
+- Kind: test environment fix, found during the adversarial review. Docker injected proxy variables with only localhost in the bypass list;
+  cURL and the AWS SDK sent requests for the internal HTTP services toward the proxy. The initial full run raised service errors and was interrupted.
+  `docker/docker-compose.yml` now adds every fixed test service name to `NO_PROXY` and `no_proxy`, preserving host entries.
+- Behavior: test networking only; no framework API, application behavior or test assertion changed.
+- Verified: repository images built online, then `docker/bin/test all --offline --coverage`: 1,673 tests, 7,415 assertions, all pass;
+  100% class, method and line coverage. Docker-only PHP 7.4.33 execution, with the injected proxy settings still enabled.
+- Undo: revert the commit.

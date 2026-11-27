@@ -223,7 +223,9 @@ The CA is a BuildKit secret mount, never copied into an image. Newer Compose
 builds through Bake, which refuses a secret read from outside the build context;
 docker/bin/test sets BUILDX_BAKE_ENTITLEMENTS_FS=0 for CA builds only (an explicit value
 in the environment wins). Ordinary local builds
-need no CA override; Docker's standard proxy configuration is respected.
+need no CA override; Docker's standard proxy configuration is respected. The PHP test container
+adds the internal Compose service names to `NO_PROXY` and `no_proxy`, retaining
+host-supplied entries, so local service requests do not go to an outbound proxy.
 
 ## Maintainer expectation
 
