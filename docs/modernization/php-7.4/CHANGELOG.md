@@ -610,3 +610,14 @@ continues from the php-7.3 phase.
 - Verified: `docker/bin/test all --coverage`: 1,673 tests, 7,399 assertions, all pass; 100% (332 classes, 1,105 methods, 8,877 lines); no PHP message. No method
   signature changed, so the API comparison stands.
 - Undo: revert the commit.
+
+## MOD-330 — flat-webapp follows the release
+
+- Kind: documentation, after the owner tagged `v1.74.0` on 2026-11-27 (the tag is the merge of this branch into `master`, `2812136`).
+  flat-webapp (`php-7.4`): the lock moves to flat v1.74.0 with the constraint `1.74.*` and `php >=7.4.0`, `DependencyLockTest` expects a 1.74.x framework, and
+  then `doctrine/deprecations` 1.2.0, `jms/serializer` 3.32.9, `phpstan/phpdoc-parser` 2.4.2, `mongodb/mongodb` 1.20.0 (dropping `jean85/pretty-package-versions` and
+  `symfony/polyfill-php73`, adding `psr/log`) and, in its test-tool lock, `nikic/php-parser` 5.9.0: one package and one commit each. The four advisories
+  on `aws/aws-sdk-php` and `mongodb/mongodb` still need PHP 8.1. This repository's README, handoff and two notes are updated to say so.
+- Behavior: none for flat.
+- Verified: flat-webapp's `docker/bin/test` after each step: 67 tests, 203 assertions, all pass, no PHP message in the server log.
+- Undo: revert the commit.

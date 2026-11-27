@@ -21,3 +21,10 @@ flat from a local copy of this branch (`katmore/flat` 1.74.0, from a path reposi
   moves to the published 7.4 release.
 
 The consumer check against the owner's closed-source application is still the owner's task.
+
+## After the release
+
+flat-webapp locks the published `v1.74.0` (its `DependencyLockTest` expects 1.74.x). The packages of its application lock
+(`doctrine/deprecations`, `jms/serializer`, `phpstan/phpdoc-parser`, `mongodb/mongodb`) and of its test-tool lock (`nikic/php-parser`)
+were moved to the newest releases PHP 7.4 allows, one at a time; its 67 tests pass after each and its server log has no PHP message.
+The details are in flat-webapp's `CHANGELOG.md`.

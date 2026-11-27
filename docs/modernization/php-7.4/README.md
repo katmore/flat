@@ -10,11 +10,11 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 - `docker/bin/test all --coverage`: 1,673 tests, 7,399 assertions, all pass; 100% coverage; no PHP message anywhere
   (MOD-298). flat's test tools and dependencies are at their newest 7.4-compatible releases
   ([notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)).
-- Ready for the owner: the release notes, API comparison, consumer check and dependency audit are written. The owner
-  tags `v1.74.0`; then flat-webapp follows (see [active/SESSION-HANDOFF.md](active/SESSION-HANDOFF.md)).
+- Released: the owner tagged `v1.74.0` (the merge of this branch into `master`) on 2026-11-27. The release notes, API
+  comparison, consumer check and dependency audit are in this folder.
 - No open owner questions: Q51 to Q61 are answered ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
-- flat-webapp runs on PHP 7.4.33 (images and platform pins moved; 67 tests pass). Its application lock still
-  holds flat `v1.73.2` and the packages that go with it.
+- flat-webapp runs on PHP 7.4.33 and locks flat `v1.74.0`; its locks are at the newest releases PHP 7.4 allows
+  (67 tests pass).
 
 ## Resume here
 

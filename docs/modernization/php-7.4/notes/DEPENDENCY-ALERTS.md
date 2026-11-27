@@ -18,7 +18,7 @@ Earlier note: [../../php-7.3/notes/DEPENDENCY-ALERTS.md](../../php-7.3/notes/DEP
   - A full dry-run update of flat's runtime lock finds nothing newer: it is at the newest release PHP 7.4 allows.
 - What moved in this phase: flat's runtime lock went from `mongodb/mongodb` 1.16.1 to 1.20.0 (MOD-286, MOD-297); the
   new release is affected by the same two advisories, so the exposure is unchanged. `aws/aws-sdk-php` stays at 3.337.3.
-  flat-webapp's application lock still holds `mongodb/mongodb` 1.16.1 until it follows flat's release.
+  flat-webapp's application lock followed flat's release on 2026-11-27 and holds `mongodb/mongodb` 1.20.0 too, with the same four advisories.
 
 ## The four, for the owner to keep dismissed on GitHub
 

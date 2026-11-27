@@ -7,7 +7,7 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 ## Branches
 
 - flat: `php-7.4` (created at `673df9f`, `master`, `v1.73.2`). All work so far is pushed there.
-- flat-webapp: `php-7.4` at `bcb91ec` (its `master`). Nothing has been changed on it.
+- flat-webapp: `php-7.4` (created at `bcb91ec`, its `master`). Its lock moved to flat `v1.74.0` and its packages to the newest 7.4 releases.
 
 ## Done
 
@@ -27,6 +27,7 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
   retired `event/alert/listener.php` is deleted.
 - MOD-314, MOD-315: the four mismatched classes declared at their own path, their forwarding files deleted, seven empty files deleted,
   and `tests/Unit/CodingRulesTest.php` guarding the rules of `AGENTS.md` (no `class_alias`, names match paths, no class includes).
+- MOD-330: flat-webapp locks flat `v1.74.0`, and its packages and test tools are at the newest 7.4 releases (changes in its own `CHANGELOG.md`).
 - MOD-327, MOD-328: the last PHP function overrides and the fake AWS client replaced by real conditions and a real S3 emulator (Adobe S3Mock).
 - MOD-329: KD-115 (a named argument left out kept another's value) and KD-116 (a failed abort replaced the upload failure) fixed (Q60, Q61).
 - MOD-312, MOD-313: `flat\fsm` and `flat\orm\invalid_field` declared under their path names (Q57).
@@ -35,11 +36,7 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 
 ## Next
 
-1. The owner reviews [../RELEASE-NOTES.md](../RELEASE-NOTES.md), the notes it links, and tags `v1.74.0` (Q52).
-2. After the tag: move flat-webapp's application lock to the published release, update its `DependencyLockTest` (it
-   requires `1.73.x`) and bring its packages to the newest 7.4 releases, one at a time. See
-   [../notes/CONSUMER-CHECK.md](../notes/CONSUMER-CHECK.md) for what a fresh resolution gives.
-3. The next phase (PHP 8.0) needs the owner's go-ahead.
+1. The next phase (PHP 8.0) needs the owner's go-ahead.
 
 ## Working in a cloud session
 
