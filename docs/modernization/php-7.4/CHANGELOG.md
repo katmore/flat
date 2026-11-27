@@ -272,3 +272,15 @@ continues from the php-7.3 phase.
   66 of 67 tests pass and the server log is clean; the one failure is its own `1.73.x` lock guard, expected.
 - Behavior: none.
 - Undo: nothing to undo.
+
+## MOD-300 — The unloadable classes are recorded as defects
+
+- Kind: documentation. KD-107 (the MongoDB SSL classes declare `flat\db\mongo\ssl...` in `db/driver/mongo/ssl...` and
+  cannot be autoloaded) and KD-108 (`util\validate\collection` implements `flat\core\collection\validator`, which does
+  not exist) are in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md), with Q55 and Q56 for the owner. Both were
+  already listed as "cannot be loaded" since php-7.2, but never as defects. No code changed.
+- Also found by checking every file of `src/flat` for a declared name that differs from its path: nine more files, which
+  are already handled by `class_alias` or documented in the php-7.2 API comparison, or have no use; they were not
+  looked into one by one.
+- Behavior: none.
+- Undo: revert the commit.

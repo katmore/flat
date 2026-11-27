@@ -7,7 +7,34 @@ Questions continue the same numbering.
 
 ## Defects found in this phase
 
-None.
+Found on 2026-11-27 by looking into the eight classes the API tool reports as "cannot be loaded". Both were seen in
+the php-7.2 phase and written down there as "untested and unusable", but never recorded as defects or put to the owner.
+
+### KD-107 - The MongoDB SSL classes declare the wrong namespace and cannot be autoloaded
+
+- Category: A in effect. Seven files in `src/flat/db/driver/mongo/` (six classes and the interface `ssl.php`:
+  `ssl/cafile.php`, `ssl/cafile/base64.php`, `ssl/cafile/file.php`, `ssl/localcert.php`,
+  `ssl/localcert/base64.php`, `ssl/localcert/file.php`) declare `namespace flat\db\mongo\ssl...`, but the path says
+  `flat\db\driver\mongo\ssl...`. flat has no autoloader of its own, so Composer cannot find any of them by name
+  (`Class 'flat\db\mongo\ssl\cafile' not found`). They work only when a file is included by hand, which is what
+  `tests/Unit/Db/Mongo/CaFileTest.php` does (its comment calls autoload "a follow-up").
+- Nothing in flat uses them: the interface `flat\db\mongo\ssl` ("indicate to controller that mongo connection is
+  ssl") is not checked by the MongoDB driver (`src/flat/db/driver/mongo.php` has no reference to SSL).
+- The project already fixes such mismatches with `class_alias` (`subscription\canceled`, `ssh ... bad_param`, the
+  session driver). Fix: declare the path-correct names and keep the old names with `class_alias`, so code that
+  includes the file by hand and extends the old name keeps working.
+- Not fixed yet; see Q55.
+
+### KD-108 - `util\validate\collection` implements an interface that does not exist
+
+- Category: C (unfinished stub), needs the owner. `src/flat/core/util/validate/collection.php` is
+  `class collection extends \flat\core\collection implements \flat\core\collection\validator {}`: an empty body, and
+  no `flat\core\collection\validator` anywhere. The nearest real thing is the interface
+  `flat\core\collection\member\validator` (methods `member_validate`, `member_filter`, `member_success`), which the
+  collection controller checks. Nothing references the class: it is not used in `src`, the tests or the docs, and the
+  file's header has no purpose text. It cannot be loaded at all (fatal error).
+- Not fixed: pointing it at `member\validator` would need three methods whose behavior nobody has stated.
+  See Q56.
 
 ## Owner questions
 
@@ -34,3 +61,13 @@ Each has a recommendation; "agree" is enough.
     Authorize.Net SDK; one who keeps an existing lock (flat-webapp locks 3.29.1) does not. Recommend yes,
     in the same step as Q51, so the root `composer.json` changes once. Until then flat-webapp's application
     lock keeps its packages. **Answered 2026-11-27: yes (MOD-292).**
+
+55. **Fix KD-107 (the MongoDB SSL classes' namespace) now, as a separate commit of this phase, with `class_alias` for
+    the old names?** It is a clear bug and the fix keeps every old name working. The rule is to fix a phase's defects
+    before its PHP version step; this phase's step is already taken, so this is your call. Recommend yes, then rebuild
+    the release notes. **Open.**
+
+56. **What was `flat\core\util\validate\collection` meant to be (KD-108)?** A collection that validates its members,
+    implementing `member\validator`? Or dead code? Recommend: if you know what it was for, tell me and I implement it;
+    if not, leave it as it is until v2.X (nothing can use it today, and removing a class changes flat's API list).
+    **Open.**
