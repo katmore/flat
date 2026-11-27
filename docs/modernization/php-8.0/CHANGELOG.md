@@ -210,3 +210,15 @@ package version changes in this checkpoint. Full Docker suite: 1718 tests,
 1.13.4 → 1.14.0, resolved against PHP 8.0.30. No other
 package version changes in this checkpoint. Full Docker suite: 1718 tests,
 8106 assertions, no errors/failures/skips; 100% method and line coverage.
+
+## MOD-362 — Upgrade the isolated OpenSSL build to 4.1.0 (2026-11-27)
+
+The final upstream check found stable OpenSSL 4.1.0. Its release archive is
+pinned by SHA-256 and builds with the current libssh2/ssh2 on PHP 8.0. Link the
+static SSH crypto with -Bsymbolic so it cannot interpose on PHP's original
+OpenSSL 1.1.1w. The standalone /usr/bin/openssl command now uses the pinned
+4.1.0 build; the build verifies its version. PHP's original crypto stays intact.
+An isolated key round trip succeeds between PHP's crypto and the new CLI.
+
+Full Docker suite: 1,718 tests, 8,103 assertions, no errors/failures/skips.
+Coverage is 100%: 332 classes, 1104 methods and 8867 lines.

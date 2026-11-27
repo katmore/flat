@@ -49,11 +49,11 @@ set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt;
     cd /tmp/mongodb; phpize; ./configure --with-mongodb-ssl=no; make -j2; make install;
     docker-php-ext-enable mongodb; cd /; rm -rf /tmp/mongodb /tmp/mongodb.tar.gz /tmp/mongoc.tar.gz
 
-# OpenSSL 3.6.5
+# OpenSSL 4.1.0
 set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt;
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi;
-    curl --cacert "$task_ca" -fsSL https://github.com/openssl/openssl/releases/download/openssl-3.6.5/openssl-3.6.5.tar.gz -o /tmp/openssl.tar.gz;
-    echo "a2157c2830efdec3788939b00c9b0638306d3f0bbb76dc4832ee503bb397df98  /tmp/openssl.tar.gz" | sha256sum -c -;
+    curl --cacert "$task_ca" -fsSL https://github.com/openssl/openssl/releases/download/openssl-4.1.0/openssl-4.1.0.tar.gz -o /tmp/openssl.tar.gz;
+    echo "50c17baf54cb008f6ce42d50deb4b28050a1aad711636cabd4b241c7e90cc2fd  /tmp/openssl.tar.gz" | sha256sum -c -;
     mkdir /tmp/openssl; tar -xzf /tmp/openssl.tar.gz -C /tmp/openssl --strip-components=1;
     cd /tmp/openssl; ./config no-shared no-tests -fPIC --prefix=/opt/openssl --openssldir=/opt/openssl --libdir=lib;
     make -j2; make install_sw; cd /; rm -rf /tmp/openssl /tmp/openssl.tar.gz
@@ -75,13 +75,15 @@ set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt;
     mkdir /tmp/ssh2; tar -xzf /tmp/ssh2.tar.gz -C /tmp/ssh2 --strip-components=1;
     cd /tmp/ssh2; phpize;
     LIBS="-L/opt/openssl/lib -lssl -lcrypto -ldl -lpthread" ./configure --with-ssh2=/usr/local;
-    make -j2 SSH2_SHARED_LIBADD="-L/usr/local/lib -lssh2 -L/opt/openssl/lib -lssl -lcrypto -ldl -lpthread"; make install;
+    make -j2 SSH2_SHARED_LIBADD="-Wl,-Bsymbolic -L/usr/local/lib -lssh2 -L/opt/openssl/lib -lssl -lcrypto -ldl -lpthread"; make install;
     docker-php-ext-enable ssh2; cd /; rm -rf /tmp/ssh2 /tmp/ssh2.tar.gz
 
 docker-php-ext-install sockets
 cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
 BUILD
 COPY --from=dependencies /opt/flat-test /opt/flat-test
-RUN chmod -R a+rX /opt/flat-test && php -r 'if (PHP_VERSION !== "8.0.30") { throw new RuntimeException("Unexpected PHP version"); } foreach (["imagick"=>"3.8.1", "xdebug"=>"3.5.3", "ssh2"=>"1.6.1", "mongodb"=>"1.20.1"] as $extension=>$version) { if (phpversion($extension) !== $version) { throw new RuntimeException("Unexpected extension version: ".$extension); } } if (error_reporting() !== E_ALL) { throw new RuntimeException("error_reporting is not E_ALL"); } foreach (["curl","dom","imagick","mongodb","pdo_sqlite","sockets","ssh2","xdebug"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: ".$extension); } } require "/opt/flat-test/tools/vendor/autoload.php"; require "/opt/flat-test/runtime/vendor/autoload.php"; echo "Verified PHP ".PHP_VERSION." and locked test dependencies\n";'
+# Bind SSH's static crypto internally; leave PHP's original libcrypto untouched.
+# The framework's standalone OpenSSL command uses the current pinned build.
+RUN ln -sf /opt/openssl/bin/openssl /usr/bin/openssl && /usr/bin/openssl version | grep -F 'OpenSSL 4.1.0 ' && chmod -R a+rX /opt/flat-test && php -r 'if (PHP_VERSION !== "8.0.30") { throw new RuntimeException("Unexpected PHP version"); } foreach (["imagick"=>"3.8.1", "xdebug"=>"3.5.3", "ssh2"=>"1.6.1", "mongodb"=>"1.20.1"] as $extension=>$version) { if (phpversion($extension) !== $version) { throw new RuntimeException("Unexpected extension version: ".$extension); } } if (error_reporting() !== E_ALL) { throw new RuntimeException("error_reporting is not E_ALL"); } foreach (["curl","dom","imagick","mongodb","pdo_sqlite","sockets","ssh2","xdebug"] as $extension) { if (!extension_loaded($extension)) { throw new RuntimeException("Missing extension: ".$extension); } } require "/opt/flat-test/tools/vendor/autoload.php"; require "/opt/flat-test/runtime/vendor/autoload.php"; echo "Verified PHP ".PHP_VERSION." and locked test dependencies\n";'
 WORKDIR /app
 ENTRYPOINT ["php", "/opt/flat-test/tools/vendor/bin/phpunit", "--bootstrap", "/opt/flat-test/bootstrap.php"]

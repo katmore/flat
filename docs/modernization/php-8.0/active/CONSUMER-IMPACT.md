@@ -31,3 +31,12 @@
   External subclasses must update their parent name. No alias exists. Classes
   within the `flat\core\util\validate\match\...` namespace keep their names.
 - Search consumer code for: `\flat\core\util\validate\match`
+
+### MOD-362: SSH crypto tooling
+
+- Before in the test environment: the standalone OpenSSL command came from the
+  archived PHP base; SSH's isolated crypto build was OpenSSL 3.6.5.
+- After: the standalone command and isolated SSH build use OpenSSL 4.1.0.
+  PHP's embedded crypto is unchanged. Authentication, host pins and cleanup
+  retain their contract; native OpenSSL error wording may follow the new tool.
+- Search consumer code for: `\flat\core\ssh`, `openssl`
