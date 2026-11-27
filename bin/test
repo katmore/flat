@@ -3,6 +3,9 @@
 # installed (e.g. after `composer install`). docker/bin/test runs this same
 # script inside the repository's PHP container and starts any services it needs.
 set -eu
+# Xdebug develop retains exception arguments; tests need native object lifetimes.
+# PHP diagnostics still use E_ALL and PHPUnit's strict error handler.
+export XDEBUG_MODE=coverage
 # The script lives in bin/; work from the repository root.
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$repo_dir"

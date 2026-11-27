@@ -116,3 +116,17 @@ ReflectionUnionType has no getName and mixed must not be rendered as ?mixed.
 Use ReflectionType's own string representation. Three new cases cover union,
 mixed and nullable types. The targeted API-tool suite passes 8 tests and 70
 assertions; the full suite containing these cases also passes (MOD-348 above).
+
+## MOD-350 — Upgrade Xdebug to 3.5.3 (2026-11-27)
+
+Pinned upstream commit 127bbcb980400752221cfaa54bdc1420e6ef3c12, the newest
+stable release verified to support PHP 8.0. Its develop-mode exception stack
+cache retains argument objects, delaying SSH destruction and exhausting fixture
+connections. Upstream src/develop/stack.c confirms the strong trace cache.
+Garbage collection did not release those references; that attempted test change
+was discarded. Keep the strict session-count assertion and use Xdebug coverage
+mode for test runs (native entry point and Compose). PHP E_ALL, warning/error
+conversion and every existing diagnostic assertion remain enabled.
+
+Validation: 57 SSH tests/199 assertions, then 1,712 full-suite tests/8,091
+assertions; 100% of 332 classes, 1,104 methods and 8,867 lines. No errors or skips.

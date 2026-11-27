@@ -17,7 +17,7 @@ FROM php:8.0.30-cli@sha256:0569e384b9064c04dec55dc6e41be41b494a878dfbb6577a7d76b
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/xdebug/xdebug/tar.gz/78ef02f7374db83e152751b4567b5a1bc9d9e86a -o /tmp/source.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/xdebug/xdebug/tar.gz/127bbcb980400752221cfaa54bdc1420e6ef3c12 -o /tmp/source.tar.gz; \
     mkdir /tmp/xdebug; tar -xzf /tmp/source.tar.gz -C /tmp/xdebug --strip-components=1; \
     cd /tmp/xdebug; phpize; ./configure --enable-xdebug; make -j2; make install; \
     docker-php-ext-enable xdebug; \
