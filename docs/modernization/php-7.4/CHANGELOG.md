@@ -315,3 +315,11 @@ continues from the php-7.3 phase.
   name). `docker/bin/test all --coverage`: 1,638 tests, 7,225 assertions, all pass; 100% (333 classes, 1,105 methods,
   8,880 lines). The API dump and comparison are regenerated in the next entry.
 - Undo: revert the commit.
+
+## MOD-304 — A note on the five `class_alias` calls
+
+- Kind: documentation. [notes/ALIASES.md](notes/ALIASES.md) lists each alias in `src/flat`: where it is, what it points at, who
+  uses each name, where the php-7.2 change log (MOD-091, MOD-092, MOD-093, MOD-097) describes it, and what removing it would mean.
+  Written for the owner, who dislikes the pattern (Q58). No code changed.
+- Behavior: none.
+- Undo: revert the commit.
