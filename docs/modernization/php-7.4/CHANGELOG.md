@@ -349,3 +349,13 @@ continues from the php-7.3 phase.
   `LegacyErrorMessagesTest` no longer includes the file by hand and uses `bad_param` (its method lost "Legacy... DeclaredName").
 - Behavior: the old class name `badParam` no longer exists. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
 - Undo: revert the commit.
+
+## MOD-308 — The session driver is declared as `data\orm\driver\session`; both aliases are removed (Q58, items 3 and 4)
+
+- Kind: rename, decided by the owner on 2026-11-27: declare it as `data\orm\driver\session`, extend the real base class instead of an
+  alias, no aliases. `src/flat/data/orm/driver/session.php` has `namespace flat\data\orm\driver; class session extends
+  \flat\data\orm\driver`; its `class_alias` is gone. The forwarding files `src/flat/data/session/driver.php` (an alias of the base
+  class) and `src/flat/data/session/driver/session.php` are removed. `SessionDriverTest` uses the one name.
+- Behavior: the names `flat\data\session\driver` and `flat\data\session\driver\session` no longer exist. See
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Undo: revert the commit.

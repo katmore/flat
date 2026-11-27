@@ -41,8 +41,8 @@
  * @copyright  Copyright (c) 2012-2014 Doug Bird. All Rights Reserved.
  * 
  */
-namespace flat\data\session\driver;
-class session extends \flat\data\session\driver {
+namespace flat\data\orm\driver;
+class session extends \flat\data\orm\driver {
 
    private $_h;
 
@@ -107,25 +107,3 @@ class session extends \flat\data\session\driver {
 
    }
 }
-
-// Keep the declared historical name and the name implied by the original path.
-class_alias(session::class, 'flat\data\orm\driver\session');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

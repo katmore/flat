@@ -80,3 +80,14 @@ before, what they see now, and what to search for in their code.
   message format ("input error: bad pid: invalid") is unchanged.
 - Search consumer code for: `input_error\badParam`, `badParam`.
 - Verified: yes. flat itself only ever threw `bad_param`.
+
+### MOD-308 (Q58) — The session driver is `data\orm\driver\session` only
+
+- Before: `src/flat/data/orm/driver/session.php` declared `flat\data\session\driver\session` extending `flat\data\session\driver`, which
+  was a `class_alias` of the real base class `flat\data\orm\driver`; a second `class_alias` made the class also `flat\data\orm\driver\session`.
+  Forwarding files `data/session/driver.php` and `data/session/driver/session.php` loaded it under the old names.
+- After: the class is declared `flat\data\orm\driver\session` and extends `flat\data\orm\driver` directly. Both aliases and both
+  forwarding files are gone: `flat\data\session\driver` and `flat\data\session\driver\session` no longer exist. `data/orm.php` and the
+  handler classes already used the `orm` name.
+- Search consumer code for: `data\session\driver`, `session\driver\session`.
+- Verified: yes (the suite and a real native session across separate processes use the one name).

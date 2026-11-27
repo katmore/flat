@@ -48,8 +48,8 @@ class SessionDriverTest extends TestCase
         $data = new \flat\data\generic(['value'=>'object identity']);
         $this->assertSame('stored',$driver->set_data('key',$data));
         $this->assertSame($data,$driver->get_data('key')); $this->assertNull($driver->get_data('missing'));
-        $this->assertInstanceOf(\flat\data\session\driver::class,$driver);
-        $this->assertInstanceOf(\flat\data\session\driver\session::class,$driver);
+        $this->assertInstanceOf(\flat\data\orm\driver::class,$driver);
+        $this->assertInstanceOf(\flat\data\orm\driver\session::class,$driver);
     }
     public function testHandlerClassReceivesItsConstructorParameters()
     {
@@ -57,7 +57,7 @@ class SessionDriverTest extends TestCase
         $data = new \flat\data\generic(['value'=>42]); $driver->set_data('key',$data);
         $this->assertSame($data,$driver->get_data('key'));
         // Verify the actual handler constructor, not only the wrapper's type.
-        $property = new \ReflectionProperty(\flat\data\session\driver\session::class,'_h'); $property->setAccessible(true);
+        $property = new \ReflectionProperty(\flat\data\orm\driver\session::class,'_h'); $property->setAccessible(true);
         $this->assertSame(['local'=>'parameter'],$property->getValue($driver)->parameters);
     }
     /** @dataProvider fallbackHandlers */
@@ -91,12 +91,12 @@ class SessionDriverTest extends TestCase
     {
         return 'session_save_path('.var_export($this->sessionDirectory,true).'); session_id('.var_export($this->sessionId,true).'); \\flat\\data\\orm\\driver\\session\\handler\\native::set_ormkey("flatunitnative"); ';
     }
-    public function testRealNativeSessionPersistsAcrossModernAndLegacyDriverNames()
+    public function testRealNativeSessionPersistsAcrossSeparateProcesses()
     {
         $body = $this->sessionPrefix().'$driver=new \\flat\\data\\orm\\driver\\session(["handler"=>"missing"]); $driver->set_data("key",new \\flat\\data\\generic(["value"=>"persisted"])); session_write_close(); echo "written";';
         list($status,$out,$err) = $this->subprocess($body);
         $this->assertSame(0,$status,$out.$err); $this->assertSame('written',$out); $this->assertSame('',$err);
-        $body = $this->sessionPrefix().'$driver=new \\flat\\data\\session\\driver\\session; echo json_encode([$driver->get_data("key")->value,$driver->get_data("missing")]); session_write_close();';
+        $body = $this->sessionPrefix().'$driver=new \\flat\\data\\orm\\driver\\session; echo json_encode([$driver->get_data("key")->value,$driver->get_data("missing")]); session_write_close();';
         list($status,$out,$err) = $this->subprocess($body);
         $this->assertSame(0,$status,$out.$err); $this->assertSame('',$err); $this->assertSame(['persisted',null],json_decode($out,true));
     }

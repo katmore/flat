@@ -910,7 +910,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNativeOrmKeyOptionsAndConfiguration` (line 71)
 - `testInvalidKeysThrowTheDeclaredParameterError` (line 78): 4 data-provider cases
 - `testDisabledSessionStatusUsesItsFrameworkFailure` (line 84)
-- `testRealNativeSessionPersistsAcrossModernAndLegacyDriverNames` (line 94)
+- `testRealNativeSessionPersistsAcrossSeparateProcesses` (line 94)
 - `testDestroyEndsTheSessionAndRemovesItsData` (line 103)
 
 ### `tests/Unit/Data/OrmMapTest.php` (3)

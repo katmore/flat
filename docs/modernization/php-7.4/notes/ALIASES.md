@@ -1,7 +1,7 @@
 # class_alias in flat
 
-The five `class_alias` calls in `src/flat` (outside `vendor`), as of 2026-11-27. Find them again with
-`grep -rn class_alias src --include=*.php`. All five are written up in the php-7.2 change log, made in that phase by AI
+The five `class_alias` calls that `src/flat` (outside `vendor`) had on 2026-11-27, kept as a record. **All five were removed**
+(MOD-306 to MOD-309, Q58); `AGENTS.md` now forbids `class_alias`. The paths below are as they were and several no longer exist. All five are written up in the php-7.2 change log, made in that phase by AI
 sessions while making the classes loadable and tested; whether the owner approved the pattern then is not recorded. The
 owner dislikes it (2026-11-27); the question is Q58 in [../active/KNOWN-DEFECTS.md](../active/KNOWN-DEFECTS.md). No
 alias was added in this phase, and the MongoDB SSL classes were renamed without one (MOD-303).
@@ -31,7 +31,7 @@ alias was added in this phase, and the MongoDB SSL classes were renamed without 
 - Where: `src/flat/data/orm/driver/session.php`, line 112: `class_alias(session::class, 'flat\data\orm\driver\session')`.
 - What: that file declares `flat\data\session\driver\session`, while its path, its `handler` and `exception` subfolder
   (five more files) and `data/orm.php` (line 42, the fallback driver) all say `flat\data\orm\driver\session`.
-  `src/flat/data/session/driver/session.php` is a forwarding file that requires it.
+  src/flat/data/session/driver/session.php is a forwarding file that requires it.
 - Used: both names; `data/orm.php` and the subfolder use the `orm` name, the test `SessionDriverTest` checks both.
 - Written up: MOD-092 ("restore both legacy session-driver names").
 - Removal: the `orm` name is the one the path and the code use; declare it, delete the forwarding file.
@@ -39,7 +39,7 @@ alias was added in this phase, and the MongoDB SSL classes were renamed without 
 
 ## 4. `data\session\driver`
 
-- Where: `src/flat/data/session/driver.php`, line 3: `class_alias(\flat\data\orm\driver::class, 'flat\data\session\driver')`.
+- Where: src/flat/data/session/driver.php, line 3: `class_alias(\flat\data\orm\driver::class, 'flat\data\session\driver')`.
 - What: a file with only that line. The class in item 3 extends `flat\data\session\driver`, which did not exist; this makes
   it an alias of the real base class `flat\data\orm\driver` (an abstract class).
 - Used: only by item 3 and its test.

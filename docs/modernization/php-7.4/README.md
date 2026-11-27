@@ -44,7 +44,7 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 - [notes/VENDORED.md](notes/VENDORED.md): The corrected copy of the Mongo adapter's read-preference trait.
 - [notes/API-COMPARISON.md](notes/API-COMPARISON.md): The public API against `v1.73.2` (one unloadable class removed, seven renamed); the dump is `notes/API-V1.74.0.json`.
 - [notes/CONSUMER-CHECK.md](notes/CONSUMER-CHECK.md): The consumer scan and flat-webapp on the 7.4 code.
-- [notes/ALIASES.md](notes/ALIASES.md): The five `class_alias` calls in flat: where, why, who uses each name.
+- [notes/ALIASES.md](notes/ALIASES.md): The five `class_alias` calls flat had, and how each was removed (a record).
 - [notes/DEPENDENCY-ALERTS.md](notes/DEPENDENCY-ALERTS.md): The end-of-phase audit: the same four advisories, all needing PHP 8.1.
 
 [history/](history/): Finished or replaced documents (none yet; `.gitkeep` keeps the folder in Git)
