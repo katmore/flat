@@ -37,6 +37,9 @@ are: do not "fix", copy or extend them.
 - `tests/Support/LegacyAuthorizeSdk.php`: the Authorize.Net SDK's `E_USER_DEPRECATED` notice,
   raised from its `lib/deprecated/` files when a legacy class loads, is discarded (approved
   2026-11-21). It stays until flat's Authorize.Net wrappers are removed (v2.X).
+- `tests/tools/apidump.php`: the same notice, raised when flat's `AuthorizeNetARB` and `AuthorizeNetCIM`
+  wrappers load, is discarded so the API comparison can describe them (approved 2026-11-27). Nothing else
+  is discarded, and `tests/Unit/Tools/ApiDumpTest.php` proves it. It goes with the wrappers (v2.X).
 
 ## Error reporting
 

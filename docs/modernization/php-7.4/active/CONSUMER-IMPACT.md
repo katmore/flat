@@ -148,3 +148,12 @@ before, what they see now, and what to search for in their code.
 - After: they are gone. Code that included one by path would get a missing-file error instead of nothing.
 - Search consumer code for: `cloud/disqus`, `cloud/pci`, `cloud\pci`, `missing_required_field`.
 - Verified: yes (nothing in flat referenced them).
+
+### MOD-317 — src/flat/event/alert/listener.php is deleted
+
+- Before: the file held the license header, a `namespace flat\event\alert;` line and the old pthread `listener` class as comments, kept
+  by the owner's decision of MOD-107 "for historical reference". It declared no class (a test asserts `flat\event\alert\listener` does not exist).
+- After: the file is gone; git history has the old code. `flat\event\alert\listener` still does not exist. `alert::add_listener` (the
+  supported, synchronous API) is unchanged.
+- Search consumer code for: `alert\listener`, `event/alert/listener`.
+- Verified: yes (the same test passes).

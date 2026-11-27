@@ -440,3 +440,26 @@ continues from the php-7.3 phase.
   methods, 8,868 lines); no PHP message. The API dump and comparison are regenerated (604 entries;
   [notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
 - Undo: revert the commit.
+
+## MOD-316 — The API tool ignores the Authorize.Net SDK's deprecation notice; the two wrappers are no longer "unloadable"
+
+- Kind: tool fix with an approved exception, decided by the owner on 2026-11-27 ("ignore the E_USER_DEPRECATED for that one class").
+  `AuthorizeNetARB` and `AuthorizeNetCIM` of flat extend the SDK's deprecated classes, whose files call `trigger_error(...,
+  E_USER_DEPRECATED)` when they load. In `tests/tools/apidump.php` the notice went to the same output as the tool's JSON, so the
+  tool could not read it and reported both classes as unloadable (a flaw of the tool, not of the classes, and not related to
+  PHPUnit's setting). The tool now discards only an `E_USER_DEPRECATED` notice raised from the SDK's `lib/deprecated/` files, in the
+  same way as the approved exception of `tests/Support/LegacyAuthorizeSdk.php`; everything else is handled as before. The exception
+  carries its comment block and is listed in `AGENTS.md`. Two tests in `ApiDumpTest` prove the scope: the SDK notice is discarded,
+  the same notice from another place and another severity from the SDK's folder still make a class unloadable.
+- Behavior: none for flat. The API dump describes both wrappers (their methods and parent classes) and none is unloadable.
+- Undo: revert the commit.
+
+## MOD-317 — `event/alert/listener.php` is deleted
+
+- Kind: removal of a file that declared nothing, decided by the owner on 2026-11-27 (the retired pthread listener kept as comments:
+  "it's slop"). MOD-107 had kept it for reference; git history keeps the old code. Consumer impact:
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). The test that the class does not exist is unchanged.
+- Behavior: none.
+- Verified (MOD-316 and MOD-317): `docker/bin/test all --coverage`: all pass; 100% coverage; no PHP message. The API dump is regenerated
+  (603 entries, none unloadable, none declaring nothing; [notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
+- Undo: revert the commit.

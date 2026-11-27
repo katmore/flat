@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 879 test methods in 109 files, running 1642 test cases.
+- 881 test methods in 109 files, running 1644 test cases.
 - 142 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -1157,11 +1157,13 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testResolvableOutputForwardsTheOptionalTemplateData` (line 11)
 
-### `tests/Unit/Tools/ApiDumpTest.php` (3)
+### `tests/Unit/Tools/ApiDumpTest.php` (5)
 
-- `testReferenceReturnChangesAreDetectedInBothDirections` (line 41)
-- `testOlderBaselinesRequireFreshReferenceMetadata` (line 47)
-- `testParameterTypeControlStillFindsAChange` (line 55)
+- `testReferenceReturnChangesAreDetectedInBothDirections` (line 42)
+- `testOlderBaselinesRequireFreshReferenceMetadata` (line 48)
+- `testParameterTypeControlStillFindsAChange` (line 56)
+- `testTheAuthorizeNetSdkDeprecationNoticeDoesNotMakeAClassUnloadable` (line 68)
+- `testAnyOtherNoticeStillMakesAClassUnloadable` (line 76)
 
 ### `tests/Unit/Tools/ServicesToolTest.php` (2)
 

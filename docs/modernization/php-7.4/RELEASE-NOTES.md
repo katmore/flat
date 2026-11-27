@@ -41,7 +41,8 @@ coverage, and no PHP notice, warning or deprecation is raised.
   `...\missing_request_field` are now `flat\api\response_header\...`; `flat\cloud\authorize\customer\payment_profile\creditCard` and
   `bankAccount` are now `flat\cloud\authorize\customer\payment\...` (deprecated, going in v2.X). One-line forwarding files that made
   the old names load are deleted.
-- **Seven empty files are deleted** (`cloud/disqus.php`, five under `cloud/pci/`, `orm/missing_required_field.php`); nothing used them.
+- **Eight files that declared nothing are deleted**: `cloud/disqus.php`, five under `cloud/pci/`, `orm/missing_required_field.php` and
+  `event/alert/listener.php` (the retired pthread listener, kept as comments). Nothing used them.
 - Nothing else in `src` changed.
 
 Every entry has what you saw before, what you see now, and what to search for in
@@ -63,7 +64,6 @@ Every entry has what you saw before, what you see now, and what to search for in
 - The four open dependency advisories (`mongodb/mongodb`, `aws/aws-sdk-php`; test environment only) need PHP 8.1 for
   their fixes (`docs/modernization/php-7.4/notes/DEPENDENCY-ALERTS.md`). An application on PHP 8.1 or newer can already
   install the fixed releases; flat's constraints allow them.
-- Two classes cannot be loaded by the API tool: the Authorize.Net wrappers `AuthorizeNetARB` and `AuthorizeNetCIM`, which print
-  the SDK's deprecation notice (`docs/modernization/php-7.4/notes/API-COMPARISON.md`).
-- One file declares no class: `event/alert/listener.php`, the retired pthread listener, kept as comments (owner decision MOD-107).
-  `tests/Unit/CodingRulesTest.php` checks that every other file declares the class its path names.
+- Every class in `src` loads, and the API comparison describes all of them. The API tool discards the Authorize.Net SDK's own deprecation notice
+  while describing the two wrappers (an exception approved in `AGENTS.md`); the wrappers go in v2.X.
+  `tests/Unit/CodingRulesTest.php` checks that every file declares the class its path names.

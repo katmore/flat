@@ -23,6 +23,8 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 - MOD-299: release preparation: release notes, API comparison, consumer check, dependency audit.
 - MOD-300 to MOD-305: the unloadable classes looked into: `validate\collection` removed (KD-108), the MongoDB SSL classes renamed
   to match their paths (KD-107), the rest recorded as KD-109 / Q57.
+- MOD-316, MOD-317: the API tool discards the Authorize.Net SDK's notice (approved exception), so every class in `src` loads; the
+  retired `event/alert/listener.php` is deleted.
 - MOD-314, MOD-315: the four mismatched classes declared at their own path, their forwarding files deleted, seven empty files deleted,
   and `tests/Unit/CodingRulesTest.php` guarding the rules of `AGENTS.md` (no `class_alias`, names match paths, no class includes).
 - MOD-312, MOD-313: `flat\fsm` and `flat\orm\invalid_field` declared under their path names (Q57).
