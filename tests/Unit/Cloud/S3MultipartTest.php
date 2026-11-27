@@ -41,15 +41,6 @@ class S3MultipartTest extends TestCase
         foreach ($this->files as $file) { if (is_file($file)) { chmod($file,0600); unlink($file); } }
         putenv($this->deprecationSetting === false ? 'AWS_SUPPRESS_PHP_DEPRECATION_WARNING' : 'AWS_SUPPRESS_PHP_DEPRECATION_WARNING='.$this->deprecationSetting);
     }
-    /**
-     * An object of flat's s3 class. Every parameter is given, in the order of the constructor: a name left out would take the value at
-     * its position (a defect in args_to_properties, see AwsTest::testAParameterLeftOutTakesTheValueAtItsPosition).
-     */
-    private function object(array $given)
-    {
-        $all = ['key'=>null,'file'=>null,'prefix'=>null,'operation'=>null,'contentType'=>null,'bucket'=>null,'client'=>null];
-        return new UploadingS3(array_merge($all,$given));
-    }
     private function file($contents)
     {
         $path = tempnam(sys_get_temp_dir(),'flat-s3-'); file_put_contents($path,$contents);
@@ -84,14 +75,14 @@ class S3MultipartTest extends TestCase
     public function testS3ObjectMapsItsParametersAndUploadsThroughTheExplicitClient()
     {
         $client = UploadingS3::$useClient = $this->mock->client(); UploadingS3::$useBucket = $this->mock->bucket(); $path = $this->file('from a file');
-        $object = $this->object(['key'=>'/key','prefix'=>'/folder','client'=>$client]);
+        $object = new UploadingS3(['key'=>'/key','prefix'=>'/folder','client'=>$client]);
         $object->set_contentType('text/plain'); $object->set('0');
         $this->assertSame('0',(string) $client->getObject(['Bucket'=>UploadingS3::$useBucket,'Key'=>'folder/key'])['Body']);
         $this->assertSame('text/plain',$client->headObject(['Bucket'=>UploadingS3::$useBucket,'Key'=>'folder/key'])['ContentType']);
         $other = $this->mock->bucket();
-        $this->object(['key'=>'upload','file'=>$path,'operation'=>'upload','bucket'=>$other,'client'=>$client]);
+        new UploadingS3(['key'=>'upload','file'=>$path,'operation'=>'upload','bucket'=>$other,'client'=>$client]);
         $this->assertSame('from a file',(string) $client->getObject(['Bucket'=>$other,'Key'=>'upload'])['Body']);
-        $again = $this->object(['key'=>'again','file'=>$path,'bucket'=>$other,'client'=>$client]); $again->set();
+        $again = new UploadingS3(['key'=>'again','file'=>$path,'bucket'=>$other,'client'=>$client]); $again->set();
         $this->assertSame('from a file',(string) $client->getObject(['Bucket'=>$other,'Key'=>'again'])['Body']);
     }
     public function testThresholdFileIsUploadedInPartsAndKeepsTheContentType()
@@ -137,24 +128,23 @@ class S3MultipartTest extends TestCase
         }
         $this->fail('Expected wrapped part failure');
     }
-    /**
-     * @group known-defect
-     * KD-116: when the abort of a failed upload fails too (here the upload was aborted from outside just before its first part), the SDK's
-     * exception from the abort leaves file_upload() and the upload_failure is never thrown.
-     */
-    public function testAFailedAbortReplacesTheUploadFailure()
+    public function testAFailedAbortDoesNotReplaceTheUploadFailure()
     {
-        $client = $this->mock->client(); $bucket = $this->mock->bucket(); $outside = $this->mock->newClient(); $parts = 0;
-        $client->getHandlerList()->appendSign(\Aws\Middleware::tap(function ($command) use ($outside,&$parts) {
+        // KD-116: the upload is aborted from outside just before its first part is sent, so flat's own abort fails too (NoSuchUpload).
+        $client = $this->mock->client(); $bucket = $this->mock->bucket(); $outside = $this->mock->newClient(); $parts = 0; $commands = [];
+        $client->getHandlerList()->appendSign(\Aws\Middleware::tap(function ($command) use ($outside,&$parts,&$commands) {
+            $commands[] = $command->getName();
             if ($command->getName() === 'UploadPart' && ++$parts === 1) {
                 $outside->abortMultipartUpload(['Bucket'=>$command['Bucket'],'Key'=>$command['Key'],'UploadId'=>$command['UploadId']]);
             }
         }));
         try { s3::file_upload($client,$bucket,$this->thresholdFile(),'object'); }
-        catch (\Aws\S3\Exception\S3Exception $error) {
-            $this->assertSame('NoSuchUpload',$error->getAwsErrorCode()); $this->assertSame('AbortMultipartUpload',$error->getCommand()->getName());
+        catch (s3\upload_failure $error) {
+            $this->assertInstanceOf(\Aws\Exception\MultipartUploadException::class,$error->get_exception());
+            $this->assertStringContainsString('NoSuchUpload',$error->get_exception()->getMessage()); // the original failure
+            $this->assertSame('AbortMultipartUpload',end($commands)); // the abort was tried
             return;
         }
-        $this->fail('Expected the abort failure');
+        $this->fail('Expected the upload failure');
     }
 }

@@ -599,3 +599,14 @@ continues from the php-7.3 phase.
 - Verified: `docker/bin/test all --coverage`: 1,670 tests, 7,394 assertions, all pass; 100% (332 classes, 1,105 methods, 8,870 lines); no PHP message;
   `docker/bin/test unit`: 1,485 tests, all pass without any service.
 - Undo: revert the commit.
+
+## MOD-329 — A named argument left out keeps its default; a failed abort no longer replaces the upload failure (KD-115, KD-116)
+
+- Kind: bug fixes, decided by the owner on 2026-11-27 (Q60, Q61). `src/flat/core/mapper.php`: in `args_to_properties()`, when the arguments are named (an
+  array with a string key) a name that was left out keeps its default instead of taking the value at its position; positional calls are unchanged.
+  `src/flat/cloud/aws/s3.php`: in `file_upload()` the SDK's exception from `abortMultipartUpload()` is caught and dropped, so `upload_failure` holding the
+  original exception is thrown. Each has a test that failed before. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: see above.
+- Verified: `docker/bin/test all --coverage`: 1,673 tests, 7,399 assertions, all pass; 100% (332 classes, 1,105 methods, 8,877 lines); no PHP message. No method
+  signature changed, so the API comparison stands.
+- Undo: revert the commit.

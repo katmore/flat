@@ -6,9 +6,9 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 902 test methods in 110 files, running 1670 test cases.
+- 902 test methods in 110 files, running 1673 test cases.
 - 142 methods use a data provider (one case per data set).
-- 2 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
+- 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 
@@ -255,7 +255,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testMissingClientReportsUnavailable` (line 42)
 - `testFileUploadRejectsInvalidPathsBeforeAnyRequest` (line 47): 3 data-provider cases
 - `testS3UrlsAndTheStandardClientClass` (line 60)
-- `testAParameterLeftOutTakesTheValueAtItsPosition` (line 73): **known defect KD-115**
+- `testAParameterLeftOutKeepsItsDefault` (line 68)
 
 ### `tests/Unit/Cloud/IpInfoDbTest.php` (7)
 
@@ -269,13 +269,13 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Cloud/S3MultipartTest.php` (7)
 
-- `testBodyUploadCanonicalizesKeysAndWaitsForTheUploadedObject` (line 66): 5 data-provider cases; groups: services, s3
-- `testSmallFileUploadUsesFileAndOptionalContentType` (line 75): groups: services, s3
-- `testS3ObjectMapsItsParametersAndUploadsThroughTheExplicitClient` (line 84): groups: services, s3
-- `testThresholdFileIsUploadedInPartsAndKeepsTheContentType` (line 97): groups: services, s3
-- `testInitiationFailureDoesNotAttemptAbortWithoutAnUploadId` (line 109): groups: services, s3
-- `testPartFailureAbortsTheStartedUploadAndWrapsSdkFailure` (line 121): groups: services, s3
-- `testAFailedAbortReplacesTheUploadFailure` (line 145): groups: services, s3; **known defect KD-116**
+- `testBodyUploadCanonicalizesKeysAndWaitsForTheUploadedObject` (line 57): 5 data-provider cases; groups: services, s3
+- `testSmallFileUploadUsesFileAndOptionalContentType` (line 66): groups: services, s3
+- `testS3ObjectMapsItsParametersAndUploadsThroughTheExplicitClient` (line 75): groups: services, s3
+- `testThresholdFileIsUploadedInPartsAndKeepsTheContentType` (line 88): groups: services, s3
+- `testInitiationFailureDoesNotAttemptAbortWithoutAnUploadId` (line 100): groups: services, s3
+- `testPartFailureAbortsTheStartedUploadAndWrapsSdkFailure` (line 112): groups: services, s3
+- `testAFailedAbortDoesNotReplaceTheUploadFailure` (line 131): groups: services, s3
 
 ### `tests/Unit/Cloud/TwitterUserInfoTest.php` (2)
 
@@ -566,15 +566,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testIgnoredWritesAndDynamicProperties` (line 85)
 - `testExportsPublicPropertiesAndOmitsNullFromStdClass` (line 101)
 - `testListsAndObjectsPopulateProperties` (line 113)
-- `testArgumentMapping` (line 125): 6 data-provider cases
-- `testParamsSupportNamedPositionalAndEmptyLists` (line 144)
-- `testParamsWithNumericKeysAreAPositionalList` (line 155)
-- `testVisitReadsAndUpdatesSelectedPublicProperties` (line 163)
-- `testRetiredPrivateReadOptionsRaiseAClearMappingError` (line 181): 3 data-provider cases
-- `testPrivateReadFlagIsHarmlessForPublicOnlyObjects` (line 191)
-- `testProtectedVisitPreservesReflectionFailure` (line 201)
-- `testPrivateVisitIsIgnoredEvenWithObsoleteFlags` (line 207)
-- `testMissingVisitThrowsCannotGetProperty` (line 214)
+- `testArgumentMapping` (line 125): 9 data-provider cases
+- `testParamsSupportNamedPositionalAndEmptyLists` (line 148)
+- `testParamsWithNumericKeysAreAPositionalList` (line 159)
+- `testVisitReadsAndUpdatesSelectedPublicProperties` (line 167)
+- `testRetiredPrivateReadOptionsRaiseAClearMappingError` (line 185): 3 data-provider cases
+- `testPrivateReadFlagIsHarmlessForPublicOnlyObjects` (line 195)
+- `testProtectedVisitPreservesReflectionFailure` (line 205)
+- `testPrivateVisitIsIgnoredEvenWithObsoleteFlags` (line 211)
+- `testMissingVisitThrowsCannotGetProperty` (line 218)
 
 ### `tests/Unit/Core/Md/ConvertTest.php` (9)
 

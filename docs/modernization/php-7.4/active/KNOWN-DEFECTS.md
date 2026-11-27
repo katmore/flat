@@ -86,17 +86,19 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
 
 ### KD-115 - A named argument left out takes the value at its position
 
-- Category: B, needs the owner (Q60). Found by the S3 tests against a real emulator (MOD-328). `flat\core\mapper::args_to_properties()`, which maps the
+- Category: B, answered by the owner (Q60), **fixed (MOD-329)**. Found by the S3 tests against a real emulator (MOD-328). `flat\core\mapper::args_to_properties()`, which maps the
   arguments of many constructors (for example `flat\cloud\aws\s3`), gives a parameter that is missing from an array of named arguments the value found at
   the same position of that array. `new s3(['key'=>'k','file'=>'f','operation'=>'upload'])` puts `upload` in `prefix` (the third parameter), and
   `['key'=>…,'file'=>…,'operation'=>…,'bucket'=>…,'client'=>…]` puts the client in `contentType` (the fifth), so the upload fails in the SDK.
-  The old test used a stand-in client and never noticed. Test: `AwsTest::testAParameterLeftOutTakesTheValueAtItsPosition` (`@group known-defect`).
+  The old test used a stand-in client and never noticed. Fix: when the arguments are named (an array with a string key), a name left out keeps its default;
+  positional calls are unchanged. Test: `AwsTest::testAParameterLeftOutKeepsItsDefault` and three data sets of `MapperTest::testArgumentMapping`.
 
 ### KD-116 - A failed abort replaces the upload failure
 
-- Category: B, needs the owner (Q61). Found by the S3 tests (MOD-328). When a multipart upload fails, `s3::file_upload()` aborts it and throws
+- Category: B, answered by the owner (Q61), **fixed (MOD-329)**. Found by the S3 tests (MOD-328). When a multipart upload fails, `s3::file_upload()` aborts it and throws
   `upload_failure`. If the abort itself fails (for example the upload no longer exists), the SDK's exception from the abort leaves `file_upload()` and
-  the original failure is lost. Test: `S3MultipartTest::testAFailedAbortReplacesTheUploadFailure` (`@group known-defect`).
+  the original failure is lost. Fix: the SDK's exception from the abort is caught and dropped; `upload_failure` holding the original exception is thrown.
+  Test: `S3MultipartTest::testAFailedAbortDoesNotReplaceTheUploadFailure`.
 
 ## Owner questions
 
@@ -142,7 +144,8 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
 
 60. **Should a parameter left out of an array of named arguments be empty (KD-115)?** Today it takes the value at its position in the array.
     Positions only make sense for positional arguments. Recommend: when the arguments are named, a missing name keeps its default; positional
-    calls are unchanged. This changes what a consumer gets only if it relies on the accident.
+    calls are unchanged. This changes what a consumer gets only if it relies on the accident. **Answered 2026-11-27: yes (MOD-329).**
 
 61. **When the abort of a failed upload fails too, what should `file_upload()` throw (KD-116)?** Recommend: still `upload_failure`, holding the
     original exception, and the abort failure is not thrown. Today the abort's exception is thrown and the original is lost.
+    **Answered 2026-11-27: yes (MOD-329).**

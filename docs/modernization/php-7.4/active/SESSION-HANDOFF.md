@@ -28,6 +28,7 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 - MOD-314, MOD-315: the four mismatched classes declared at their own path, their forwarding files deleted, seven empty files deleted,
   and `tests/Unit/CodingRulesTest.php` guarding the rules of `AGENTS.md` (no `class_alias`, names match paths, no class includes).
 - MOD-327, MOD-328: the last PHP function overrides and the fake AWS client replaced by real conditions and a real S3 emulator (Adobe S3Mock).
+- MOD-329: KD-115 (a named argument left out kept another's value) and KD-116 (a failed abort replaced the upload failure) fixed (Q60, Q61).
 - MOD-312, MOD-313: `flat\fsm` and `flat\orm\invalid_field` declared under their path names (Q57).
 - MOD-306 to MOD-310: the five `class_alias` calls removed with their references fixed, and a rule against `class_alias`
   in both repositories' `AGENTS.md`. [../notes/ALIASES.md](../notes/ALIASES.md) is the record.
@@ -51,4 +52,4 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 
 ## Waiting for the owner
 
-Q60 and Q61 (KD-115, KD-116; both change behavior, so they wait for the answer). Q51 to Q59 are answered. The owner tags the release.
+Nothing. Q51 to Q61 are answered. The owner tags the release.

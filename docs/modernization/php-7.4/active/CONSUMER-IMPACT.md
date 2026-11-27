@@ -210,3 +210,22 @@ before, what they see now, and what to search for in their code.
 - Search consumer code for: code that connects with `flat\core\ssh` and expected the connection to stay open after dropping the object (it did not stay open
   on purpose, only by accident), and scripts that open many connections in a loop.
 - Verified: yes (the number of open SSH sessions goes down when the client is dropped).
+
+### MOD-329 (KD-115) — A named argument that is left out keeps its default
+
+- Before: with an array of named arguments, a name that was left out took the value found at the same position of the array. For example
+  `new \flat\cloud\aws\s3(['key'=>'k','file'=>'f','operation'=>'upload'])` used `upload` as the `prefix`, and an array in which `client` was fifth made
+  the client the `contentType`.
+- After: a name that is left out keeps its default (`null` here). Positional calls (`new s3('k','f')`) and arrays that name every parameter are unchanged.
+  This applies to every class that maps its arguments with `args_to_properties()` or `core\util\map`.
+- Search consumer code for: constructors of `flat\cloud\aws\s3`, `flat\data\history`, `flat\data\rules` and `flat\data\mapper` classes called with an
+  array that leaves some names out and was written to work because of the positions.
+- Verified: yes (tests of the mapper and of `s3`).
+
+### MOD-329 (KD-116) — `s3::file_upload()` throws `upload_failure` even when the abort fails
+
+- Before: when a multipart upload failed and the abort of it failed too (for example the upload was gone), the SDK's exception from the abort was thrown
+  and the original failure was lost.
+- After: `flat\cloud\aws\s3\upload_failure` is thrown, holding the original `MultipartUploadException` (`get_exception()`); the abort's failure is dropped.
+- Search consumer code for: `catch` blocks around `file_upload` or `new ...\s3(... 'operation'=>'upload')` that expect `Aws\S3\Exception\S3Exception`.
+- Verified: yes (a real emulator: the upload aborted from outside).

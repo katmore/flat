@@ -15,6 +15,7 @@ namespace flat\cloud\aws;
 /**
  * AWS namespace aliases
  */
+use Aws\Exception\AwsException;
 use Aws\Exception\MultipartUploadException;
 use Aws\S3\MultipartUploader;
 use Aws\S3\S3Client;
@@ -165,7 +166,13 @@ class s3 extends \flat\cloud\aws {
              return;
          } catch (MultipartUploadException $e) {
              $upload = $e->getState()->getId();
-             if (!empty($upload['UploadId'])) $client->abortMultipartUpload($upload);
+             if (!empty($upload['UploadId'])) {
+                 try {
+                     $client->abortMultipartUpload($upload);
+                 } catch (AwsException $abort_failure) {
+                     // The upload failure below is the one that matters; a failed abort (the upload may be gone already) does not replace it.
+                 }
+             }
              throw new s3\upload_failure($e);
          } 
          /* CONSERVATIVELY DISABLED unreachable waiter. Successful upload returns

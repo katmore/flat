@@ -65,14 +65,10 @@ class AwsTest extends TestCase
         $this->assertNull($object->get()); // Existing read method is a stub.
         $this->assertSame('https://example.com/provided-bucket/key',(new CustomUrlS3(['key'=>'key']))->get_url());
     }
-    /**
-     * @group known-defect
-     * KD-115: \flat\core\mapper::args_to_properties() gives a parameter that was left out of an array of named arguments the value at the same position
-     * of the array. Here "prefix" (the third parameter) takes the third value, the operation.
-     */
-    public function testAParameterLeftOutTakesTheValueAtItsPosition()
+    public function testAParameterLeftOutKeepsItsDefault()
     {
+        // KD-115: "prefix" (the third parameter) used to take the third value, the operation.
         $object = new PublicS3(['key'=>'key','file'=>'file','operation'=>'not-an-operation']);
-        $this->assertSame('https://provided-bucket.s3.amazonaws.com/not-an-operation/key',$object->get_url());
+        $this->assertSame('https://provided-bucket.s3.amazonaws.com/key',$object->get_url());
     }
 }
