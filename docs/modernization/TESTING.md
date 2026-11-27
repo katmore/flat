@@ -104,7 +104,7 @@ no service containers. Pass a known-defects file to label `@group known-defect`
 tests with their KD IDs, and redirect the output where it belongs:
 
 ```sh
-tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > "$tmp" && chmod 644 "$tmp" && mv "$tmp" docs/modernization/php-7.2/TEST-INVENTORY.md
+tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.2/history/KNOWN-DEFECTS.md > "$tmp" && chmod 644 "$tmp" && mv "$tmp" docs/modernization/php-7.2/history/TEST-INVENTORY.md
 ```
 
 A redirect straight onto the inventory would empty it if the command fails (for
@@ -123,6 +123,14 @@ slow (the unit suite runs once per mutant, about 6 seconds), so it samples:
 docker/bin/mutate --list                          # candidate mutants per file
 docker/bin/mutate --limit=200 --seed=1 src/flat/core > build/tests/mutate-core.md
 ```
+
+The default probe runs the unit suite without service containers. Add
+`--services` to run the full suite with MongoDB, RabbitMQ, WireMock (HTTP and
+Authorize.Net), OpenSSH and S3Mock. Prepare their repository-defined images
+with `docker/bin/test all` first; the mutation wrapper uses cached images and
+never pulls service images. It copies src, tests, bin, docker and the root test
+configuration into its temporary checkout, runs PHP unprivileged, and removes
+the copy and its Compose stack on exit. Startup and cleanup errors fail the run.
 
 Every mutant that is not caught is listed with its file, line and change. Use
 a different `--seed` for a different sample; the same seed gives the same one.
@@ -223,7 +231,9 @@ The CA is a BuildKit secret mount, never copied into an image. Newer Compose
 builds through Bake, which refuses a secret read from outside the build context;
 docker/bin/test sets BUILDX_BAKE_ENTITLEMENTS_FS=0 for CA builds only (an explicit value
 in the environment wins). Ordinary local builds
-need no CA override; Docker's standard proxy configuration is respected.
+need no CA override; Docker's standard proxy configuration is respected. The PHP test container
+adds the internal Compose service names to `NO_PROXY` and `no_proxy`, retaining
+host-supplied entries, so local service requests do not go to an outbound proxy.
 
 ## Maintainer expectation
 

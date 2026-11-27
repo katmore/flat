@@ -2405,7 +2405,7 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 ## MOD-139 — Mutation probe findings: tests for the gaps, and a config fix (KD-73, 74, 75)
 
 - TS-05 first sample (400 mutants, 73.4% caught) triaged in
-  [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md): 30 surviving lines now
+  [active/MUTATION-PROBE.md](history/MUTATION-PROBE.md): 30 surviving lines now
   pinned by tests (re-running the same lines catches everything except equivalent
   mutants), 14 shown equivalent, 54 left as TS-06.
 - KD-73 (fix): `config` removed the last five characters of a key beginning with
@@ -2450,7 +2450,7 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   explicit types), schedule start dates (empty), HTML/XML encoding, asset
   realpath, the RabbitMQ connection cache key and Mongo client options. Re-probing
   the 54 lines with services leaves 31 lines (41 mutants) open; see
-  [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md#ts-06-follow-up).
+  [active/MUTATION-PROBE.md](history/MUTATION-PROBE.md#ts-06-follow-up).
 - Files changed: `src/flat/core/rand.php`, `src/flat/cloud/ipinfodb.php`, tests.
 - Undo: revert this commit.- Verified: `docker/bin/test all --coverage` passes 1,393 tests; 100% methods (1,062/1,062) and lines (8,051/8,051). The suite has one `known-defect` test left (KD-76).
 
@@ -2461,7 +2461,7 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
   groups), config directories and unreadable files, template PHP designs that
   are directories or unreadable, and typed loader fallbacks.
 - The remaining survivors (25 mutants) are all equivalent; reasons per line in
-  [active/MUTATION-PROBE.md](active/MUTATION-PROBE.md#ts-06-outcome).
+  [active/MUTATION-PROBE.md](history/MUTATION-PROBE.md#ts-06-outcome).
 - Tool fix: `tests/tools/mutate.php` no longer mutates the text inside
   interpolated `"..."` strings (it had mutated `>` characters in markup).
 - No behavior change. Files changed: tests and `tests/tools/mutate.php` only.
@@ -2586,7 +2586,7 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 - Owner decision: make flat-webapp work with flat first; functional tests wait
   until the owner has run it on their own machine.
 - Changes are in the `php-7.2` branch of `katmore/flat-webapp` (listed in
-  [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md)): finished rename, config
+  [active/WEBAPP-REVIEW.md](history/WEBAPP-REVIEW.md)): finished rename, config
   and template fixes, example API resource, `docker/bin/serve`, composer.json
   pointing at flat's `php-7.2` branch.
 - Found in flat while doing it: KD-78 (template design root fallback can never
@@ -2609,7 +2609,7 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 ## MOD-154 — flat-webapp stripped to plain HTML; Bower removed
 
 - Done in the `php-7.2` branch of `katmore/flat-webapp` at the owner's request
-  (details in [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md)). Checked from a
+  (details in [active/WEBAPP-REVIEW.md](history/WEBAPP-REVIEW.md)). Checked from a
   fresh clone: home view 200, unknown view 404, `Hello` 200, unknown API
   resource 403, stylesheet served.
 - No change to flat's source or tests. Documentation only in this repository.
@@ -2617,7 +2617,7 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 ## MOD-155 — flat-webapp clean-up: leftovers, licence headers, LF endings
 
 - Done in the `php-7.2` branch of `katmore/flat-webapp` (list in
-  [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md)). Question 33 answered:
+  [active/WEBAPP-REVIEW.md](history/WEBAPP-REVIEW.md)). Question 33 answered:
   the mismatched headers are removed.
 - Fresh-clone check: home view 200, unknown view 404, `example` API 200,
   unknown API resource 403.
@@ -2626,7 +2626,7 @@ Three blocks, same `CONSERVATIVELY DISABLED` treatment as MOD-006
 ## MOD-156 — flat-webapp honors error_reporting()
 
 - Done in the `php-7.2` branch of `katmore/flat-webapp` at the owner's request
-  (details in [active/WEBAPP-REVIEW.md](active/WEBAPP-REVIEW.md)). No change to
+  (details in [active/WEBAPP-REVIEW.md](history/WEBAPP-REVIEW.md)). No change to
   flat's source or tests.
 
 

@@ -20,7 +20,7 @@ differences at all.
 - 620 entries in the `v1.73.2` dump, 602 in this one. **Every one of them loads:** none is reported as unloadable or as declaring nothing. Every class, method, property, constant, parameter, type and default of
   every class that kept its name is the same.
 - **Eighteen names gone.** Twelve are renames or removals of classes that existed under that name; the owner decided each one,
-  none has an alias, and each is in [../active/CONSUMER-IMPACT.md](../active/CONSUMER-IMPACT.md) with what to search for:
+  none has an alias, and each is in [../active/CONSUMER-IMPACT.md](../history/CONSUMER-IMPACT.md) with what to search for:
   - `flat\api\header\exception` and `...\exception\missing_request_field` are now `flat\api\response_header\...` (MOD-314);
   - `flat\cloud\authorize\customer\payment_profile\bankAccount` and `...\creditCard` are now `...\customer\payment\...` (MOD-314);
   - `flat\cloud\authorize\subscription\cancelled` (MOD-306), `flat\data\session\driver` and `flat\data\session\driver\session`
@@ -52,3 +52,15 @@ the same notice from anywhere else, or another severity from the SDK's folder, s
 ## Entries that declare nothing
 
 None. `tests/Unit/CodingRulesTest.php` checks that every file in `src/flat` declares the class its path names.
+
+## Post-review fixes (MOD-333 to MOD-335)
+
+A fresh dump after these fixes still contains 602 entries. Against the released
+7.4 dump, its only difference is the added public property
+`flat\core\ssh\auth::$fingerprint` (default NULL). No method signature, class name,
+existing property or constant was removed or changed. The released JSON remains
+the release snapshot; the new dump is a test artifact under build/tests.
+
+The new property declares the pin previously set dynamically for key logins;
+password logins now honor it too. Its consumer-visible export behavior is in
+[../active/CONSUMER-IMPACT.md](../history/CONSUMER-IMPACT.md).

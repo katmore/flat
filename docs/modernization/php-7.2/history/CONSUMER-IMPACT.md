@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Consumer impact review of approved behavior changes
 
 Re-examination of the behavior changes made on the PHP 7.2 baseline (MOD-014

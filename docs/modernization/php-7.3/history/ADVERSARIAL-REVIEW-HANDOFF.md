@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Adversarial review of the php-7.3 phase: handoff
 
 You are a second agent checking the php-7.3 work of another agent. Assume it is wrong somewhere

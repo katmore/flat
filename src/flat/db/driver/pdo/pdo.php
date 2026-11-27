@@ -158,30 +158,22 @@ class pdo extends \PDO {
       
       
       
-      if (!empty($param['bindValue']) || !empty($param['bindParam'])) {
-         if (!empty($param['bindValue'])) {
-            foreach($param['bindValue'] as $k=>$v) {
-               $type = null;
-               if (is_int($v)) {
-                  $type = \PDO::PARAM_INT;
-               }elseif(is_string($v)) {
-                  $type= \PDO::PARAM_STR;
-               }
-               $stmt->bindValue($k,$v,$type);
+      foreach (['bindValue', 'bindParam'] as $binding) {
+         if (empty($param[$binding])) continue;
+         // bindParam retains references: each placeholder must own its array slot.
+         foreach ($param[$binding] as $k=>&$v) {
+            $type = \PDO::PARAM_STR;
+            if ($v === null) {
+               $type = \PDO::PARAM_NULL;
+            } elseif (is_bool($v)) {
+               $type = \PDO::PARAM_BOOL;
+            } elseif (is_int($v)) {
+               $type = \PDO::PARAM_INT;
             }
+            $stmt->$binding($k,$v,$type);
          }
-         if (!empty($param['bindParam'])) {
-            foreach($param['bindParam'] as $k=>$v) {
-               $type = null;
-               if (is_int($v)) {
-                  $type = \PDO::PARAM_INT;
-               } elseif(is_string($v)) {
-                  $type= \PDO::PARAM_STR;
-               }     
-               $stmt->bindParam($k,$v,$type);
-            }
-         }   
-      }    
+         unset($v);
+      }
       $executed = false;
       
       

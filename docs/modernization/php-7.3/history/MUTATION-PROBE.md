@@ -1,8 +1,10 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Mutation probe, php-7.3 sample
 
 One sample of the mutation probe on the 7.3 environment (HANDOFF step 7), to see whether the
 move changed how well the suite catches planted bugs. Tool and earlier record:
-[../../php-7.2/active/MUTATION-PROBE.md](../../php-7.2/active/MUTATION-PROBE.md).
+[../../php-7.2/active/MUTATION-PROBE.md](../../php-7.2/history/MUTATION-PROBE.md).
 
 ## Result (2026-11-20)
 

@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # php-7.3 phase: handoff for the next agent
 
 First written 2026-11-20 at the end of the php-7.2 phase; updated the same day with the

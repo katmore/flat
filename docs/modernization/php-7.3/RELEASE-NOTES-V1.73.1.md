@@ -14,7 +14,7 @@ and line coverage.
 
 ## Fixes
 
-Each has a "before, after, what to search for" entry in `docs/modernization/php-7.3/active/CONSUMER-IMPACT.md`.
+Each has a "before, after, what to search for" entry in `docs/modernization/php-7.3/history/CONSUMER-IMPACT.md`.
 
 - **JavaScript minifier:** an empty comment (`var/**/x`, `return/**/1`, `x+/**/+x`) no longer joins tokens into
   broken code, and `/**/` inside a string is kept. Re-minify affected files.

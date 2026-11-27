@@ -74,6 +74,28 @@ class StatementTest extends TestCase
         $this->pdo->last->execute();
         $this->assertSame('1', $this->pdo->last->fetchColumn());
     }
+    public function testDecimalCriteriaSelectTheExactValue()
+    {
+        $this->pdo->exec('ALTER TABLE items ADD COLUMN price REAL');
+        $this->pdo->exec('UPDATE items SET price = CASE id WHEN 1 THEN 1.25 ELSE 1.0 END');
+        new statement($this->pdo, $this->rules(['criteria'=>['price'=>1.25], 'criteria_hash'=>['price'=>'i.price']]));
+        $this->pdo->last->execute();
+        $this->assertSame(['1'], $this->pdo->last->fetchAll(\PDO::FETCH_COLUMN));
+    }
+    public function testInnerJoinExcludesUnmatchedRowsAndLeftJoinKeepsThem()
+    {
+        $this->pdo->exec('CREATE TABLE labels (item_id INTEGER)');
+        foreach (['LEFT'=>['1'], 'INNER'=>[]] as $direction=>$expected) {
+            new statement($this->pdo, $this->rules(['join'=>['l'=>[$direction=>['labels'=>['item_id'=>['i'=>'id']]]]]]));
+            $this->pdo->last->execute();
+            $this->assertSame($expected, $this->pdo->last->fetchAll(\PDO::FETCH_COLUMN));
+        }
+    }
+    public function testInvalidJoinDirectionIsRejectedBeforeSqlPreparation()
+    {
+        $this->expectException(\flat\db\driver\pdo\exception\bad_rule::class);
+        new statement($this->pdo, $this->rules(['join'=>['l'=>['INVALID'=>['labels'=>['item_id'=>['i'=>'id']]]]]]));
+    }
     /** @dataProvider invalidRules */
     public function testInvalidStructuralRules($changes, $exception)
     {
@@ -85,7 +107,7 @@ class StatementTest extends TestCase
         $bad = \flat\db\driver\pdo\exception\bad_rule::class;
         return [[['criteria'=>null],$bad], [['criteria_hash'=>'bad'],$bad], [['column_hash'=>null],$bad],
             [['join_hash'=>'bad'],$bad], [['order'=>'bad'],$bad], [['table_name'=>''],$bad], [['table_alias'=>'1invalid'],$bad],
-            [['table_name'=>'bad;name'],$bad], [['skip'=>'not integer'],$bad], [['limit'=>'bad'],$bad],
+            [['table_name'=>'bad;name'],$bad], [['skip'=>'not integer'],$bad], [['limit'=>'bad'],$bad], [['limit'=>0],$bad], [['limit'=>-1],$bad], [['skip'=>-1],$bad],
             [['criteria'=>[]],$bad], [['criteria'=>['id'=>[]]],\flat\db\driver\pdo\exception\bad_criteria::class],
             [['column_hash'=>['bad-prefix'=>['id']]],$bad], [['column_hash'=>['i'=>['bad-column']]],$bad],
             [['column_hash'=>['i'=>['bad-alias'=>'id']]],$bad]];

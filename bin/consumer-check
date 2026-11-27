@@ -2,7 +2,7 @@
 <?php
 /**
  * Consumer check: scans an application's source for the search terms of
- * docs/modernization/php-7.2/active/CONSUMER-IMPACT.md and reports where the
+ * docs/modernization/php-7.2/history/CONSUMER-IMPACT.md and reports where the
  * behavior changes of the release may affect it.
  *
  *   bin/consumer-check [--show-code] [--loose] [--summary] [--impact=FILE] <folder>...
@@ -39,7 +39,7 @@ foreach (array_slice($argv, 1) as $arg) {
     else $folders[] = $arg;
 }
 if (!$folders) { fwrite(STDERR, "usage: bin/consumer-check [--show-code] [--loose] [--summary] [--impact=FILE] <folder>...\n"); exit(2); }
-$impactFile = $options['impact'] ?: dirname(__DIR__) . '/docs/modernization/php-7.2/active/CONSUMER-IMPACT.md';
+$impactFile = $options['impact'] ?: dirname(__DIR__) . '/docs/modernization/php-7.2/history/CONSUMER-IMPACT.md';
 if (!is_file($impactFile)) { fwrite(STDERR, "impact document not found: $impactFile\n"); exit(2); }
 
 /** Words that match everywhere; searching for them would only produce noise. */

@@ -1,7 +1,9 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Known defects and owner questions, php-7.3 phase
 
 The 79 known defects of php-7.2 (KD-01 to KD-79) are all resolved; the record is
-[../../php-7.2/active/KNOWN-DEFECTS.md](../../php-7.2/active/KNOWN-DEFECTS.md). No test
+[../../php-7.2/active/KNOWN-DEFECTS.md](../../php-7.2/history/KNOWN-DEFECTS.md). No test
 carries `@group known-defect` now. A defect found in this phase starts here as KD-80 and
 follows "How each fix lands" in that file. Questions continue the php-7.2 numbering.
 

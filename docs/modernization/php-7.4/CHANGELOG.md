@@ -91,7 +91,7 @@ continues from the php-7.3 phase.
   `ReadPreference::getMode()`. `alcaeus/mongo-php-adapter` 1.2.5 (newest, archived) uses both in every
   database object it creates. With 1.20.1, 47 tests error and 1 fails on those deprecations (all in
   `Db/Mongo`). The cause is outside flat and cannot be fixed there; nothing is hidden. See Q53 in
-  [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+  [active/KNOWN-DEFECTS.md](history/KNOWN-DEFECTS.md).
 - Behavior: none for flat's code.
 - Verified: `docker/bin/test all --coverage` on the 1.19.4 image: 1,624 tests, 6,954 assertions, all pass;
   100% coverage (332 classes, 1,099 methods, 8,821 lines). With 1.20.1 the same run: 47 errors, 1 failure.
@@ -160,7 +160,7 @@ continues from the php-7.3 phase.
   (hash and platform only). The application code is unchanged. 67 tests and 203 assertions pass; the server
   log has no PHP message.
 - Found: a fresh resolution on PHP 7.4 drops `doctrine/annotations`, which flat's Authorize.Net wrappers need
-  below PHP 8.0 (see MOD-287). It is Q54 in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md). flat-webapp's
+  below PHP 8.0 (see MOD-287). It is Q54 in [active/KNOWN-DEFECTS.md](history/KNOWN-DEFECTS.md). flat-webapp's
   application lock is therefore left as it is.
 - Behavior: none.
 - Undo: revert flat-webapp's commit.
@@ -170,7 +170,7 @@ continues from the php-7.3 phase.
 - Kind: dependency declaration; the owner answered Q51 and Q54 "yes" on 2026-11-27 and Q52 "yes" (numbering
   `v1.74.0`, tagged by the owner). Root `composer.json`: `php` is `>=7.4.0` (was `>=7.3.0`) and `doctrine/annotations
   ^2.0` is required (it was not). The consumer-impact entries are in
-  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Behavior: a PHP 7.3 host keeps installing `v1.73.x`; a fresh install on PHP 7.4 now has a working
   Authorize.Net SDK.
 - Not verified yet: Docker was unavailable when this was committed, so neither the full suite, `check-docs`
@@ -210,7 +210,7 @@ continues from the php-7.3 phase.
   to it ([notes/VENDORED.md](notes/VENDORED.md)).
 - Decided by the owner on 2026-11-27: fix it at its cause now, with a corrected copy of the one class.
 - Behavior: none (same modes, same tags, same slave-okay results). Consumers see one cosmetic change with
-  optimized autoloaders: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  optimized autoloaders: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Verified: 13 new tests (`tests/Unit/Db/Mongo/ReadPreferenceTest.php`; every mode, tags, the array form, slave-okay,
   the warnings, no PHP message, and that flat's copy is the file that loads). `docker/bin/test all --coverage`: 1,637
   tests, 7,010 assertions, all pass; 100% (333 classes, 1,105 methods, 8,880 lines). A Composer install of flat
@@ -277,7 +277,7 @@ continues from the php-7.3 phase.
 
 - Kind: documentation. KD-107 (the MongoDB SSL classes declare `flat\db\mongo\ssl...` in `db/driver/mongo/ssl...` and
   cannot be autoloaded) and KD-108 (`util\validate\collection` implements `flat\core\collection\validator`, which does
-  not exist) are in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md), with Q55 and Q56 for the owner. Both were
+  not exist) are in [active/KNOWN-DEFECTS.md](history/KNOWN-DEFECTS.md), with Q55 and Q56 for the owner. Both were
   already listed as "cannot be loaded" since php-7.2, but never as defects. No code changed.
 - Also found by checking every file of `src/flat` for a declared name that differs from its path: nine more files, which
   are already handled by `class_alias` or documented in the php-7.2 API comparison, or have no use; they were not
@@ -291,7 +291,7 @@ continues from the php-7.3 phase.
   from their path were "already handled ... or have no use". That was not checked. They were then loaded by name under
   PHP 7.4: three are working aliases, four are stray duplicates of classes that load from their own files, and two
   (`flat\fsm`, `flat\orm\invalid_field`) load under neither name. The result is KD-109 and Q57 in
-  [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md). No code changed.
+  [active/KNOWN-DEFECTS.md](history/KNOWN-DEFECTS.md). No code changed.
 - Behavior: none.
 - Undo: revert the commit.
 
@@ -299,7 +299,7 @@ continues from the php-7.3 phase.
 
 - Kind: removal of dead code, decided by the owner on 2026-11-27: the class was an unfinished idea ("over-composed"). The file
   `src/flat/core/util/validate/collection.php` had an empty body and implemented `flat\core\collection\validator`, which does not
-  exist; it could never be loaded. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  exist; it could never be loaded. Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Behavior: none for any code that could run. The API dump and comparison are regenerated in a later entry.
 - Verified: nothing in `src` or the tests references the class. `docker/bin/test all --coverage`: all pass; 100%.
 - Undo: revert the commit.
@@ -309,7 +309,7 @@ continues from the php-7.3 phase.
 - Kind: bug fix with a rename, decided by the owner on 2026-11-27: correct the declarations and references, no `class_alias`.
   Seven files under `src/flat/db/driver/mongo/` (`ssl.php` and six classes) now declare `flat\db\driver\mongo\ssl...` in place
   of `flat\db\mongo\ssl...`; the `extends` references of the four child files follow. `tests/Unit/Db/Mongo/CaFileTest.php` uses
-  the new names and no longer includes files by hand. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  the new names and no longer includes files by hand. Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Behavior: the classes behave as before; only their names change, and they now load by name. The old names no longer exist.
 - Verified: new test `testEverySslClassLoadsByNameWithoutIncludingFiles` (a clean process loads all seven and finds no old
   name). `docker/bin/test all --coverage`: 1,638 tests, 7,225 assertions, all pass; 100% (333 classes, 1,105 methods,
@@ -339,7 +339,7 @@ continues from the php-7.3 phase.
 - Kind: rename, decided by the owner on 2026-11-27: the file's spelling is the name; no alias. `class cancelled` is now `class canceled`
   in `src/flat/cloud/authorize/subscription/canceled.php`; the `class_alias` line and the forwarding file `cancelled.php` are removed.
   `AuthorizeDataTest` uses the one name (its method lost "LegacySpellings"). The exception message is unchanged.
-- Behavior: the old class name no longer exists. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: the old class name no longer exists. See [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Undo: revert the commit.
 
 ## MOD-307 — `badParam` becomes `bad_param`; the alias is removed (Q58, item 2)
@@ -347,7 +347,7 @@ continues from the php-7.3 phase.
 - Kind: rename, decided by the owner on 2026-11-27: the class is `bad_param` (flat's style has no camel case); no alias.
   `src/flat/core/ssh/exception/input_error/bad_param.php` declares `bad_param` and has no `class_alias`.
   `LegacyErrorMessagesTest` no longer includes the file by hand and uses `bad_param` (its method lost "Legacy... DeclaredName").
-- Behavior: the old class name `badParam` no longer exists. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: the old class name `badParam` no longer exists. See [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Undo: revert the commit.
 
 ## MOD-308 — The session driver is declared as `data\orm\driver\session`; both aliases are removed (Q58, items 3 and 4)
@@ -357,7 +357,7 @@ continues from the php-7.3 phase.
   \flat\data\orm\driver`; its `class_alias` is gone. The forwarding files `src/flat/data/session/driver.php` (an alias of the base
   class) and `src/flat/data/session/driver/session.php` are removed. `SessionDriverTest` uses the one name.
 - Behavior: the names `flat\data\session\driver` and `flat\data\session\driver\session` no longer exist. See
-  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Undo: revert the commit.
 
 ## MOD-309 — `not_match_interface` has one name; the last `class_alias` in `src` and the one in the tests are removed (Q58, item 5)
@@ -369,7 +369,7 @@ continues from the php-7.3 phase.
   class as `PhpAmqpLib\Connection\AMQPConnection`, the class php-amqplib 3 removed; it now requires `tests/Support/LegacyAmqpConnection.php`,
   which declares that class under its real name, and checks that name.
 - Behavior: the old name `flat\core\util\factory\exception\not_match_interface` no longer exists. See
-  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Undo: revert the commit.
 
 ## MOD-310 — A rule against `class_alias` in `AGENTS.md`
@@ -397,7 +397,7 @@ continues from the php-7.3 phase.
 - Kind: rename, decided by the owner on 2026-11-27: the path name, no alias. `src/flat/fsm.php` has `namespace flat; abstract class fsm`
   (it declared `flat\fsm\fsm`; its own header says `\flat\fsm`). New test `tests/Unit/FsmTest.php` loads it by name. The string
   `"flat\\fsm"` in `core/exception/controller.php` is a namespace-prefix list and still matches.
-- Behavior: the name `flat\fsm\fsm` no longer exists; nothing used it. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: the name `flat\fsm\fsm` no longer exists; nothing used it. See [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Undo: revert the commit.
 
 ## MOD-313 — `flat\orm\invalid_param` is declared as `flat\orm\invalid_field` (KD-109, Q57)
@@ -406,7 +406,7 @@ continues from the php-7.3 phase.
   `LegacyFieldErrorTest` no longer includes the file by hand and loads the class by name in a fresh process.
 - Behavior: the name `flat\orm\invalid_param` no longer exists; nothing used it. The API dump is regenerated: 615 entries, nine that now
   load ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)); the entries that declare nothing are 12, counted one by one. See
-  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Verified (both): `docker/bin/test all --coverage`: 1,639 tests, 7,229 assertions, all pass; 100% (333 classes, 1,105 methods, 8,872
   lines); no PHP message.
 - Undo: revert the commit.
@@ -425,7 +425,7 @@ continues from the php-7.3 phase.
   `docker`), every class declared where its path says, and no `require`/`include` except the two loaders of data files
   (`core/config.php`, which includes a config file returning an array, and `core/controller/tmpl.php`, which includes templates).
   `AGENTS.md` now says classes load through the autoloader, never by include.
-- Behavior: the four old names no longer exist ([active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)).
+- Behavior: the four old names no longer exist ([active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md)).
 - Undo: revert the commit.
 
 ## MOD-315 — Seven files that declared nothing are deleted
@@ -458,7 +458,7 @@ continues from the php-7.3 phase.
 
 - Kind: removal of a file that declared nothing, decided by the owner on 2026-11-27 (the retired pthread listener kept as comments:
   "it's slop"). MOD-107 had kept it for reference; git history keeps the old code. Consumer impact:
-  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). The test that the class does not exist is unchanged.
+  [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md). The test that the class does not exist is unchanged.
 - Behavior: none.
 - Verified (MOD-316 and MOD-317): `docker/bin/test all --coverage`: all pass; 100% coverage; no PHP message. The API dump is regenerated
   (603 entries, none unloadable, none declaring nothing; [notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
@@ -510,7 +510,7 @@ continues from the php-7.3 phase.
 
 - Kind: bug fixes (behavior changes). `src/flat/core/curl/response.php`: a request with data now sends it (`CURLOPT_POSTFIELDS`);
   `CURLOPT_FILETIME` is set, so `filetime` is real; `is_robots_allowed()` keeps the port of the URL. Each has a real-HTTP test that
-  failed before. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  failed before. Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Behavior: see above.
 - Undo: revert the commit.
 
@@ -529,7 +529,7 @@ continues from the php-7.3 phase.
   `curl_getinfo($ch)` for `false` (it cannot be false for a finished transfer), and the class `flat\core\curl\exception\missing_curlinfo` is
   deleted. With them go the last override of a cURL function, `tests/Support/CurlInfoFailure.php`, and its test
   `ResponseTransferInfoTest`. There is no PHP function override for cURL left in the tests. Consumer impact:
-  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Behavior: the exception class no longer exists; nothing could throw it.
 - Verified: `docker/bin/test all --coverage`: all pass; 100% coverage. The API dump is regenerated (one more name gone;
   [notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
@@ -566,7 +566,7 @@ continues from the php-7.3 phase.
 ## MOD-326 — Two SSH bugs found by the real server are fixed (KD-113, KD-114)
 
 - Kind: bug fixes. `src/flat/core/ssh.php`: `tr`'s standard error is discarded in the command that makes the temporary passphrase, and the disconnect callback
-  is `static`. Each has a test that failed before. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  is `static`. Each has a test that failed before. Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Behavior: see above.
 - Verified (MOD-325, MOD-326): `docker/bin/test all --coverage`: 1,666 tests, 7,371 assertions, all pass; 100% (332 classes, 1,105 methods, 8,870 lines); no PHP message;
   `docker/bin/test unit`: all pass without the server.
@@ -605,8 +605,170 @@ continues from the php-7.3 phase.
 - Kind: bug fixes, decided by the owner on 2026-11-27 (Q60, Q61). `src/flat/core/mapper.php`: in `args_to_properties()`, when the arguments are named (an
   array with a string key) a name that was left out keeps its default instead of taking the value at its position; positional calls are unchanged.
   `src/flat/cloud/aws/s3.php`: in `file_upload()` the SDK's exception from `abortMultipartUpload()` is caught and dropped, so `upload_failure` holding the
-  original exception is thrown. Each has a test that failed before. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  original exception is thrown. Each has a test that failed before. Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Behavior: see above.
 - Verified: `docker/bin/test all --coverage`: 1,673 tests, 7,399 assertions, all pass; 100% (332 classes, 1,105 methods, 8,877 lines); no PHP message. No method
   signature changed, so the API comparison stands.
 - Undo: revert the commit.
+
+## MOD-330 — flat-webapp follows the release
+
+- Kind: documentation, after the owner tagged `v1.74.0` on 2026-11-27 (the tag is the merge of this branch into `master`, `2812136`).
+  flat-webapp (`php-7.4`): the lock moves to flat v1.74.0 with the constraint `1.74.*` and `php >=7.4.0`, `DependencyLockTest` expects a 1.74.x framework, and
+  then `doctrine/deprecations` 1.2.0, `jms/serializer` 3.32.9, `phpstan/phpdoc-parser` 2.4.2, `mongodb/mongodb` 1.20.0 (dropping `jean85/pretty-package-versions` and
+  `symfony/polyfill-php73`, adding `psr/log`) and, in its test-tool lock, `nikic/php-parser` 5.9.0: one package and one commit each. The four advisories
+  on `aws/aws-sdk-php` and `mongodb/mongodb` still need PHP 8.1. This repository's README, handoff and two notes are updated to say so.
+- Behavior: none for flat.
+- Verified: flat-webapp's `docker/bin/test` after each step: 67 tests, 203 assertions, all pass, no PHP message in the server log.
+- Undo: revert the commit.
+
+## MOD-331 — Internal test services bypass the host's outbound proxy
+
+- Kind: test environment fix, found during the adversarial review. Docker injected proxy variables with only localhost in the bypass list;
+  cURL and the AWS SDK sent requests for the internal HTTP services toward the proxy. The initial full run raised service errors and was interrupted.
+  `docker/docker-compose.yml` now adds every fixed test service name to `NO_PROXY` and `no_proxy`, preserving host entries.
+- Behavior: test networking only; no framework API, application behavior or test assertion changed.
+- Verified: repository images built online, then `docker/bin/test all --offline --coverage`: 1,673 tests, 7,415 assertions, all pass;
+  100% class, method and line coverage. Docker-only PHP 7.4.33 execution, with the injected proxy settings still enabled.
+- Undo: revert the commit.
+
+## MOD-332 — Adversarial review records eleven inherited defects
+
+- Kind: review and documentation. [active/ADVERSARIAL-REVIEW.md](history/ADVERSARIAL-REVIEW.md) records eleven findings (KD-117 to KD-127),
+  with native PHP 7.4.33 Docker reproductions, impacts, test gaps and recommendations. Four are P1: three PDO data errors and SSH password
+  authentication without server identity verification. Seven are P2: joins, cURL methods/bodies/DOM/robots, negative limits and SSH disconnect.
+- Behavior: no production source fix or existing test assertion changed. The defects stay open in
+  [active/KNOWN-DEFECTS.md](history/KNOWN-DEFECTS.md); Q62 asks for the host verification policy before a security compatibility change.
+  README and session handoff point to the findings. The separate MOD-331 fixes only test-container networking.
+- Verified: full suite 1,673 tests / 7,415 assertions / 100% coverage; flat-webapp 67 tests / 203 assertions with a clean PHP server log;
+  45 JavaScript programs; fresh API dump (602 entries, no differences); consumer scan (41 files, 24 impact entries, no hits);
+  both locked dependency audits (four known runtime advisories, none in tools); documentation check with no problems.
+  All PHP and Composer execution was in Docker. The live Authorize.Net sandbox was not run; the full suite uses its documented mock.
+- Undo: revert this documentation commit; the recorded defects remain in the source until separately fixed.
+
+## MOD-333 — Correct PDO bindings, criteria, joins and pagination (KD-117 to KD-120, KD-125)
+
+- Kind: inherited bug fixes authorized after the adversarial review. Bound parameters retain independent storage;
+  boolean/decimal values no longer become NULL, and decimal criteria are not truncated. Structured joins use their direction
+  (LEFT, INNER or RIGHT) and reject invalid directions. Pagination enforces its minimums and identifies the invalid field.
+- Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md). No public signature changed.
+- Verified: new regressions failed against the old source (8 failures); after the fixes, the focused native SQLite suite passes
+  in PHP 7.4 Docker: 58 tests, 122 assertions. Test inventory regenerated and documentation checked before committing.
+- Owner decision Q62: supplied SSH fingerprints must be verified for password and key authentication; unpinned callers remain allowed.
+- Undo: revert the commit.
+
+## MOD-334 — Correct cURL methods, falsy bodies, DOM and robots parsing (KD-121 to KD-124)
+
+- Kind: inherited bug fixes. Explicit methods are applied with or without a body; HEAD does not consume the response body.
+  Non-NULL bodies are transmitted even when zero or empty. Lazy DOM access tests the DOM itself. Robots parsing ignores comments,
+  unrelated directives and empty rules, accepts whitespace around separators, and treats an absent path as `/`.
+- Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md). No public signature changed.
+- Verified: regressions first reproduced 3 errors and 9 failures against the old source; after the fix the real-HTTP response suite passes
+  in PHP 7.4 Docker: 60 tests, 172 assertions. Inventory regenerated and documentation checked before committing.
+- Undo: revert the commit.
+
+## MOD-335 — Fix SSH disconnect and verify supplied host fingerprints (KD-126, KD-127)
+
+- Kind: inherited bug and security fixes. disconnect() releases SFTP, disconnects the SSH transport, clears local state and allows reconnecting.
+  Destruction no longer opens a remote command channel. A supplied fingerprint is checked before either password or key authentication;
+  constructor `fingerprint` and the existing get_auth() mechanism both work. Q62 keeps NULL/empty-string pins optional. Unpinned key logins
+  still remember their first fingerprint; unpinned password logins remain unpinned. auth declares the public fingerprint field (default NULL).
+- Tests: new regressions exercise real disconnect/reconnect, SFTP release, rejected commands after disconnect, constructor pins, mismatches before
+  bad credentials can be sent, malformed pins and unpinned callers. Initial runs also exposed two fixture faults: OpenSSH banned the shared
+  client after intentional pre-authentication rejections, and a shell could reap the supposed zombie before exec. The local SSH server disables
+  PerSourcePenalties; the child now waits for its parent to become sleep, and its zombie state is asserted before signal testing. No PHP diagnostic
+  was suppressed and no test was skipped. Both SSH server images were rebuilt from the repository configuration.
+- Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md). API comparison: 602 entries; only the declared fingerprint property is added.
+  All eleven review defects are marked fixed, Q62 is resolved, current status/handoff and reference notes are updated, and inventory is regenerated.
+- Verified: PHP 7.4.33 Docker full suite: 1,703 tests, 7,470 assertions, zero errors/warnings/failures/skips;
+  100% coverage (332 classes, 1,105 methods, 8,877 lines). The sample app passed 67 tests / 203 assertions plus its server-log check with this modified
+  framework mounted into both containers. All 45 JavaScript programs passed. Documentation checked before committing. No release or PHP version step.
+- Undo: revert the commit.
+
+## MOD-336 — Check PHP 7.4 exit readiness and draft v1.74.1 notes
+
+- Kind: review/documentation, no production or test behavior changed. [notes/EXIT-REVIEW.md](notes/EXIT-REVIEW.md) records release/consumer closeout,
+  branch ancestry, deferred work and PHP 8.0 handoff considerations. [RELEASE-NOTES-V1.74.1.md](RELEASE-NOTES-V1.74.1.md) is a draft; no release published.
+- Found KD-128: the mutation wrapper's copied checkout omits bin/docker, so the unmutated suite fails at CodingRulesTest before a mutant runs.
+  Its service mode also omits the newer HTTP/SSH/S3 setup by inspection. This remains open, with a concrete reproduction and required validation.
+- Verified: four locked Composer audits rerun in Docker; four unchanged runtime advisories, no tool advisories. GitHub alert-state reads returned
+  integration HTTP 403, recorded explicitly. Existing unchanged-source evidence remains 1,703 passing tests and 100% coverage, plus patched-app tests.
+  Documentation checked before committing. Neither master branch, PHP runtime, release tag nor alert state was changed.
+- Undo: revert this documentation commit.
+
+## MOD-337 — Merge master back into php-7.4 on the owner's instruction
+
+- Kind: branch synchronization. Merged origin/master at 2812136 into php-7.4 after the owner explicitly requested it.
+  The merge brings in the PR 6 merge commit that GitHub counted as one commit behind; it changes no file contents compared with its first parent.
+- Behavior: none. Master remains at 2812136; no release, runtime step, reset, rebase or force push.
+- Verified: merge tree equals its first parent's tree; master is an ancestor of php-7.4. Documentation check passes.
+  Updated [notes/EXIT-REVIEW.md](notes/EXIT-REVIEW.md) to distinguish the original ancestry finding from the completed synchronization.
+- Undo: no undo required for runtime behavior; this is additive history only.
+
+## MOD-338 — Archive completed phase work and keep active folders current
+
+- Kind: documentation organization. Closed PHP 7.2/7.3 active folders are emptied; completed plans, defect/impact records, reviews, evidence and
+  frozen inventories are archived. The PHP 7.4 completed review and old registry/handoff/impact snapshots move to history. Generated inventory
+  bodies are preserved; only archive context is prepended. The live defect list contains KD-128 only; the handoff carries unresolved follow-ups.
+- Historical entry wording and printed paths are preserved; Markdown link destinations are maintained for moved records. Current links and
+  consumer-check's historical default input follow the new locations. No framework behavior changes and KD-128 is still open.
+- Verified: documentation link/path check and consumer-check's default scan compared before/after in Docker before committing.
+- Undo: reverse the path map and navigation changes.
+
+### Path map for MOD-338
+
+- `docs/modernization/php-7.2/TEST-INVENTORY.md` → `docs/modernization/php-7.2/history/TEST-INVENTORY.md`
+- `docs/modernization/php-7.2/active/CONSUMER-IMPACT.md` → `docs/modernization/php-7.2/history/CONSUMER-IMPACT.md`
+- `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md` → `docs/modernization/php-7.2/history/KNOWN-DEFECTS.md`
+- `docs/modernization/php-7.2/active/MUTATION-PROBE.md` → `docs/modernization/php-7.2/history/MUTATION-PROBE.md`
+- `docs/modernization/php-7.2/active/WEBAPP-REVIEW.md` → `docs/modernization/php-7.2/history/WEBAPP-REVIEW.md`
+- `docs/modernization/php-7.2/active/WEBAPP-TESTS.md` → `docs/modernization/php-7.2/history/WEBAPP-TESTS.md`
+- `docs/modernization/php-7.3/HANDOFF.md` → `docs/modernization/php-7.3/history/HANDOFF.md`
+- `docs/modernization/php-7.3/TEST-INVENTORY.md` → `docs/modernization/php-7.3/history/TEST-INVENTORY.md`
+- `docs/modernization/php-7.3/active/ADVERSARIAL-REVIEW-HANDOFF.md` → `docs/modernization/php-7.3/history/ADVERSARIAL-REVIEW-HANDOFF.md`
+- `docs/modernization/php-7.3/active/ADVERSARIAL-REVIEW.md` → `docs/modernization/php-7.3/history/ADVERSARIAL-REVIEW.md`
+- `docs/modernization/php-7.3/active/CONSUMER-IMPACT.md` → `docs/modernization/php-7.3/history/CONSUMER-IMPACT.md`
+- `docs/modernization/php-7.3/active/HIDDEN-ERRORS.md` → `docs/modernization/php-7.3/history/HIDDEN-ERRORS.md`
+- `docs/modernization/php-7.3/active/KNOWN-DEFECTS.md` → `docs/modernization/php-7.3/history/KNOWN-DEFECTS.md`
+- `docs/modernization/php-7.3/active/MUTATION-PROBE.md` → `docs/modernization/php-7.3/history/MUTATION-PROBE.md`
+- `docs/modernization/php-7.3/active/WEBAPP-FUNCTIONAL.md` → `docs/modernization/php-7.3/history/WEBAPP-FUNCTIONAL.md`
+- `docs/modernization/php-7.3/active/review-evidence/API-COMPARISON.log` → `docs/modernization/php-7.3/history/review-evidence/API-COMPARISON.log`
+- `docs/modernization/php-7.3/active/review-evidence/BASELINE.log` → `docs/modernization/php-7.3/history/review-evidence/BASELINE.log`
+- `docs/modernization/php-7.3/active/review-evidence/CURL-PROBES.log` → `docs/modernization/php-7.3/history/review-evidence/CURL-PROBES.log`
+- `docs/modernization/php-7.3/active/review-evidence/EQUIVALENCE.log` → `docs/modernization/php-7.3/history/review-evidence/EQUIVALENCE.log`
+- `docs/modernization/php-7.3/active/review-evidence/ERROR-CANARIES.log` → `docs/modernization/php-7.3/history/review-evidence/ERROR-CANARIES.log`
+- `docs/modernization/php-7.3/active/review-evidence/HANDLED-FATAL.log` → `docs/modernization/php-7.3/history/review-evidence/HANDLED-FATAL.log`
+- `docs/modernization/php-7.3/active/review-evidence/JAVASCRIPT.log` → `docs/modernization/php-7.3/history/review-evidence/JAVASCRIPT.log`
+- `docs/modernization/php-7.3/active/review-evidence/LOCKS.log` → `docs/modernization/php-7.3/history/review-evidence/LOCKS.log`
+- `docs/modernization/php-7.3/active/review-evidence/MUTATION-731.log` → `docs/modernization/php-7.3/history/review-evidence/MUTATION-731.log`
+- `docs/modernization/php-7.3/active/review-evidence/MUTATION-732.log` → `docs/modernization/php-7.3/history/review-evidence/MUTATION-732.log`
+- `docs/modernization/php-7.3/active/review-evidence/TOOL-PROBES.log` → `docs/modernization/php-7.3/history/review-evidence/TOOL-PROBES.log`
+- `docs/modernization/php-7.3/active/review-evidence/WEBAPP-FIXES.log` → `docs/modernization/php-7.3/history/review-evidence/WEBAPP-FIXES.log`
+- `docs/modernization/php-7.3/active/review-evidence/WEBAPP-INSTALL.log` → `docs/modernization/php-7.3/history/review-evidence/WEBAPP-INSTALL.log`
+- `docs/modernization/php-7.4/active/ADVERSARIAL-REVIEW.md` → `docs/modernization/php-7.4/history/ADVERSARIAL-REVIEW.md`
+- `docs/modernization/php-7.4/active/CONSUMER-IMPACT.md` → `docs/modernization/php-7.4/history/CONSUMER-IMPACT.md`
+- `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md` → `docs/modernization/php-7.4/history/KNOWN-DEFECTS.md`
+- `docs/modernization/php-7.4/active/SESSION-HANDOFF.md` → `docs/modernization/php-7.4/history/SESSION-HANDOFF.md`
+
+## MOD-339 — Repair both mutation-runner modes (KD-128)
+
+- Kind: test-tool fix. The temporary checkout includes bin/docker as required by CodingRulesTest. Service mode loads the current HTTP/Authorize.Net,
+  SSH and S3 Compose fragments alongside MongoDB/RabbitMQ, supplying all environment/volume inputs. PHP runs as the host UID/GID (1000:1000 for root
+  hosts). Startup failures print diagnostics and cleanup failures propagate instead of being discarded. No production source or mutation algorithm changed.
+- Verified in Docker: unit-only and full-service baselines pass; each targeted one-mutant probe catches the removed rand type guard, with one valid
+  mutant killed, zero timeouts and zero survivors. Invalid arguments exit 2 after cleanup. Temporary copies were removed and source stayed unchanged.
+  Commands and results: [history/MUTATION-RUNNER.md](history/MUTATION-RUNNER.md). No test was skipped or diagnostic suppressed.
+- Archive: `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md` snapshot moved to
+  `docs/modernization/php-7.4/history/MUTATION-RUNNER.md`; the active file is now a short current-status index with no open defects.
+  Updated handoff, overview, testing workflow and exit review. Test cases did not change, so the existing generated inventory remains valid.
+- Undo: revert the commit.
+
+## MOD-340 — Make completion-time archiving mandatory for future agents
+
+- Kind: agent/documentation instructions, requested by the owner. Root AGENTS.md makes archiving a completion/commit/handoff requirement;
+  docs/modernization/README.md holds the detailed workflow. Active folders retain unfinished work and pending release checks only;
+  closed-phase active folders contain only their placeholder. Unresolved follow-ups must be carried forward before old reports are archived.
+- Records retain their narrative, labels and printed paths; Markdown link destinations follow moved files. Raw evidence and generated inventory
+  bodies are preserved. The completion check includes navigation, the change-log path map and the full Docker documentation-check output.
+- Verified: current active folders audited against the rule and documentation checked before committing. No runtime behavior or test cases changed.
+- Undo: revert the instruction update.

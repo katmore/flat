@@ -103,9 +103,9 @@ class statement extends \flat\core\collection
             if (!isset($param[$key])) continue;
             
             if (false === ($param[$key] = filter_var($param[$key], FILTER_VALIDATE_INT, [
-                'min_range' => $min_range
+                'options' => ['min_range' => $min_range]
             ]))) {
-                throw new exception\bad_rule('skip', "must be integer $min_range or greater");
+                throw new exception\bad_rule($key, "must be integer $min_range or greater");
             }
         }
         unset($key);
@@ -299,7 +299,10 @@ class statement extends \flat\core\collection
             if (is_array($rel)) {
                 foreach ($rel as $dir => $on) {
                     $dir = strtoupper($dir);
-                    if (is_array($on) && ($dir == 'LEFT' || $dir == 'INNER' || $dir == "RIGHT" || $dir = "OUTER" || $dir = "LEFT INNER")) {
+                    if (!in_array($dir, ['LEFT', 'INNER', 'RIGHT'], true)) {
+                        throw new exception\bad_rule('join', 'direction must be LEFT, INNER or RIGHT');
+                    }
+                    if (is_array($on)) {
 
                         foreach ($on as $t1name => $on2) {
                             $relon = [];
@@ -313,7 +316,7 @@ class statement extends \flat\core\collection
                                 }
                             }
                             if (count($relon)) {
-                                $joinrel[] = "LEFT JOIN\n   $t1name $t1alias\nON\n   " . implode("AND\n", $relon);
+                                $joinrel[] = "$dir JOIN\n   $t1name $t1alias\nON\n   " . implode("AND\n", $relon);
                             }
                         }
                     }
@@ -369,7 +372,7 @@ $skip_limit_clause
          * bind given $criteria
          */
         foreach ($bind as $key => $val) {
-            if (is_int($val) || is_float($val)) {
+            if (is_int($val)) {
                 $type = \PDO::PARAM_INT;
             } else {
                 $type = \PDO::PARAM_STR;

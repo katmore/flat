@@ -1,7 +1,9 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Consumer impact, php-7.3 phase
 
 Behavior changes of this phase that an application using flat may notice, in the format of
-[../../php-7.2/active/CONSUMER-IMPACT.md](../../php-7.2/active/CONSUMER-IMPACT.md): what
+[../../php-7.2/active/CONSUMER-IMPACT.md](../../php-7.2/history/CONSUMER-IMPACT.md): what
 consumers saw before, what they see now, and what to search for in their code.
 
 ## Behavior changes
@@ -230,7 +232,7 @@ consumers saw before, what they see now, and what to search for in their code.
 ### MOD-277 — Markdown: Parsedown 1.8.0 and ParsedownExtra 0.9.0 (security fix, rendering changes)
 
 - Before: `flat\core\md\convert` rendered with Parsedown 1.5.0 (2015) and ParsedownExtra 0.6.x. One of its flaws: an
-  image whose address contains a quote broke out of the attribute, so `![a](x"onerror="alert(1))` produced
+  image whose address contains a quote broke out of the attribute, so `![a](../active/x"onerror="alert(1))` produced
   `<img src="x"onerror="alert(1)" ...>` (attribute injection).
 - After: Parsedown 1.8.0 and ParsedownExtra 0.9.0. The injection is fixed (the quote is escaped). In a set of 55
   typical documents, 40 render identically; the rest differ as the newer parsers follow the Markdown rules more

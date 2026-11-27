@@ -4,7 +4,7 @@
 
 ## The scan
 
-`bin/consumer-check` with this phase's impact list ([../active/CONSUMER-IMPACT.md](../active/CONSUMER-IMPACT.md), 3
+`bin/consumer-check` with this phase's impact list ([../active/CONSUMER-IMPACT.md](../history/CONSUMER-IMPACT.md), 3
 entries) over `app/` and `web/`: 41 files scanned, no entry has a hit. The `php` entry is too generic to search; its
 meaning (flat now needs PHP 7.4 or newer) is a Composer matter and does not touch the application's code.
 
@@ -21,3 +21,18 @@ flat from a local copy of this branch (`katmore/flat` 1.74.0, from a path reposi
   moves to the published 7.4 release.
 
 The consumer check against the owner's closed-source application is still the owner's task.
+
+## After the release
+
+flat-webapp locks the published `v1.74.0` (its `DependencyLockTest` expects 1.74.x). The packages of its application lock
+(`doctrine/deprecations`, `jms/serializer`, `phpstan/phpdoc-parser`, `mongodb/mongodb`) and of its test-tool lock (`nikic/php-parser`)
+were moved to the newest releases PHP 7.4 allows, one at a time; its 67 tests pass after each and its server log has no PHP message.
+The details are in flat-webapp's `CHANGELOG.md`.
+
+## Adversarial fixes (MOD-333 to MOD-335)
+
+The sample app at `9e6fb73` was tested with the modified framework bind-mounted
+into its vendor directory in both the web and test containers. Its tracked lock
+and application source were unchanged. The Compose functional suite passed
+67 tests and 203 assertions; the PHP server-log check passed. This run exercises
+the patched source, rather than only the published v1.74.0 package.

@@ -110,6 +110,43 @@ class ResponseTest extends TestCase
         $this->assertSame('{"a":1}', $requests[0]['body']);
         $this->assertSame('application/json', $requests[0]['headers']['content-type']);
     }
+    /** @dataProvider bodylessMethods */
+    public function testExplicitMethodsAreSentWithoutABody($method)
+    {
+        $this->http->stub('/method', ['body'=>'server body'], $method);
+        $response = new response(new config(new request($this->http->url('/method')), $method), []);
+        $this->assertSame(200, $response->status_code);
+        $this->assertSame($method, $this->http->requests('/method')[0]['method']);
+        if ($method === 'HEAD') $this->assertSame('', $response->get_response_data());
+    }
+    public function bodylessMethods() { return [['DELETE'], ['HEAD'], ['PUT'], ['POST']]; }
+    /** @dataProvider falsyBodies */
+    public function testFalsyBodiesReachTheServer($value, $encoding, $expected, $method)
+    {
+        $sentMethod = $method ?? 'POST';
+        $this->http->stub('/body', ['body'=>'ok'], $sentMethod);
+        $request = new request($this->http->url('/body'), $value, $encoding, 'text/plain');
+        $response = new response(new config($request, $method), []);
+        $this->assertSame(200, $response->status_code);
+        $received = $this->http->requests('/body')[0];
+        $this->assertSame($sentMethod, $received['method']);
+        $this->assertSame($expected, $received['body']);
+        $this->assertSame($encoding === 'json' ? 'application/json' : 'text/plain', $received['headers']['content-type']);
+    }
+    public function falsyBodies()
+    {
+        return [[0, 'json', '0', 'POST'], ['0', 'none', '0', 'PUT'], ['', 'none', '', null],
+            [false, 'json', 'false', null], ['', 'json', '""', null]];
+    }
+    public function testLazyDomIsInitializedOnceForOrdinaryHtml()
+    {
+        $this->page();
+        $response = new response($this->config(), []);
+        $dom = $response->get_dom();
+        $this->assertInstanceOf(\DOMDocument::class, $dom);
+        $this->assertSame('text', $dom->getElementsByTagName('p')->item(0)->textContent);
+        $this->assertSame($dom, $response->get_dom());
+    }
     public function testFiletimeIsTheServersLastModifiedTimeOrMinusOne()
     {
         $this->page(self::PAGE, ['headers'=>['Last-Modified'=>'Wed, 21 Oct 2015 07:28:00 GMT']]);
@@ -315,6 +352,11 @@ class ResponseTest extends TestCase
     public function robotsCases()
     {
         return [['', '/page',404,true], ['', '/page',200,true],
+            ["User-agent: *\nDisallow:\n", '/page',200,true],
+            ["User-agent: *\nAllow: /private\nDisallow:\n", '/private',200,true],
+            ["User-agent: *\n# comment\nCrawl-delay: 5\nDisallow: /private # reason\n", '/private',200,false],
+            ["User-agent: *\nDisallow: /\n", '',200,false],
+            ["User-agent:*\nDisallow:/private\n", '/private',200,false],
             ["User-agent: OtherBot\nDisallow: /\nUser-agent: UnitBot\nDisallow: /private\nAllow: /private/public\n", '/private/public',200,true],
             ["User-agent: *\n\nDisallow: /private\n", '/private/a',200,false],
             ["User-agent: *\nDisallow: /tie\nAllow: /tie\nDisallow: /tie\n", '/tie',200,true],

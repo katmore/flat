@@ -31,4 +31,7 @@
  * @copyright  Copyright (c) 2012-2017 Doug Bird. All Rights Reserved.
  */
 namespace flat\core\ssh;
-abstract class auth extends \flat\data {}
+abstract class auth extends \flat\data {
+   /** Expected ssh2_fingerprint() value (uppercase MD5 hex); NULL or the empty string means unpinned. */
+   public $fingerprint;
+}

@@ -1,12 +1,12 @@
 #!/bin/sh
 # Runs the mutation probe (tests/tools/mutate.php) in the repository's PHP 7.4
 # container, on a throwaway COPY of the repository mounted at /app, so a mutant
-# can never be left behind in your working tree. Needs no service containers.
+# can never be left behind in your working tree. The default mode needs no services.
 # Slow by design: every mutant runs the unit suite once (about 6 seconds).
 #
 # Usage: docker/bin/mutate [--limit=N] [--seed=N] [--timeout=SECONDS] [--list]
 #                          [--services] [--at=FILE:LINE ...] [path...]
-#   --services  also start MongoDB and RabbitMQ and run their tests (slower)
+#   --services  start all five test services and run the full suite (slower)
 #   e.g. docker/bin/mutate --limit=200 src/flat/core > build/tests/mutate-core.md
 set -eu
 # The script lives in docker/bin/; work from the repository root.
@@ -16,7 +16,16 @@ cd "$repo_dir"
 # with different --seed values) can go in parallel without sharing anything.
 run_id="$$"
 export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-flat-mutate-$run_id}"
-compose() { docker compose -f docker/docker-compose.yml "$@"; }
+export FLAT_TEST_UID="$(id -u)" FLAT_TEST_GID="$(id -g)"
+if [ "$FLAT_TEST_UID" = 0 ]; then export FLAT_TEST_UID=1000 FLAT_TEST_GID=1000; fi
+compose() {
+    if "$services"; then
+        docker compose -f docker/docker-compose.yml -f docker/docker-compose.anet-mock.yml \
+            -f docker/docker-compose.ssh.yml -f docker/docker-compose.s3.yml "$@"
+    else
+        docker compose -f docker/docker-compose.yml "$@"
+    fi
+}
 case "${1:-}" in -h|--help) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit ;; esac
 # Take --services here; forward every other argument to the tool.
 services=false
@@ -32,13 +41,25 @@ if ! docker image inspect "$image_ref" >/dev/null 2>&1; then
     exit 1
 fi
 work="$repo_dir/build/tests/mutate-work-$run_id"
-cleanup() { rm -rf "$work"; compose down --volumes --remove-orphans >/dev/null 2>&1 || true; }
+cleanup() {
+    status=$?
+    trap - EXIT INT TERM
+    rm -rf "$work" || status=1
+    compose down --volumes --remove-orphans >&2 || status=1
+    exit "$status"
+}
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 rm -rf "$work"; mkdir -p "$work"
-cp -R src tests phpunit.xml.dist composer.json "$work/"
+cp -R src tests bin docker phpunit.xml.dist composer.json "$work/"
 touch "$work/.mutation-copy"
 chmod -R a+rwX "$work"
-if "$services"; then compose up -d --wait --pull never mongo rabbitmq >&2; fi
+if "$services"; then
+    if ! compose up -d --wait --pull never mongo rabbitmq anet-mock sshd s3mock >&2; then
+        compose ps -a >&2 || true
+        compose logs --no-color --tail=80 >&2 || true
+        exit 1
+    fi
+fi
 compose run --rm -T --no-deps --pull never -v "$work:/app" --entrypoint php php tests/tools/mutate.php "$@"

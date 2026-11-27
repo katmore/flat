@@ -83,7 +83,8 @@ class ssh {
     *    password,
     *    pubkey,
     *    privkey,
-    *    secret
+    *    secret,
+    *    fingerprint (optional trusted host fingerprint, uppercase MD5 hex)
     */
    public function __construct($config) {
       $this->config = $config;
@@ -128,6 +129,7 @@ class ssh {
          );
       }
       
+      $auth->fingerprint = $config['fingerprint'] ?? null;
       $this->auth = $auth;
       $this->profile = $profile;
       
@@ -233,6 +235,12 @@ class ssh {
       }
    
       //if (is_a($this->auth,"\\sf\module\\ssh2\\data\\auth\\password")) {
+      $host_fingerprint = ssh2_fingerprint($connection);
+      $expected_fingerprint = $this->auth->fingerprint;
+      if ($expected_fingerprint !== null && $expected_fingerprint !== '' &&
+          (!is_string($expected_fingerprint) || !hash_equals($expected_fingerprint, $host_fingerprint))) {
+         throw new exception\syserror('fingerprint mismatch');
+      }
       if ($this->auth instanceof auth\password) {
          if (!ssh2_auth_password($connection, $this->auth->username, $this->auth->password)) {
             throw new exception\auth\failure\password();
@@ -297,18 +305,11 @@ class ssh {
             throw new exception\syserror("could not encrypt plain private key with openssl: $out");
          }
          
-         /*
-          * verify fingerprint
-          */
-         $ssh2_fingerprint = ssh2_fingerprint($connection);
-         if (empty($this->auth->fingerprint)) {
-            $this->auth->fingerprint = $ssh2_fingerprint;
-         } else {
-            if ($this->auth->fingerprint != $ssh2_fingerprint) {
-               throw new exception\syserror("fingerprint mismatch");
-            }
+         // Preserve the existing key-login behavior: remember the first host when no pin was supplied.
+         if ($expected_fingerprint === null || $expected_fingerprint === '') {
+            $this->auth->fingerprint = $host_fingerprint;
          }
-         
+
          if (!ssh2_auth_pubkey_file ( $connection , $this->auth->username , $this->pubkey_file, $this->privkey_file, $passphrase )) {
             throw new exception\auth\failure\pubkey();
          }
@@ -437,7 +438,10 @@ class ssh {
          throw new exception\connection\missing();
       }   
       
-      ssh2_exec($this->connection,'echo "EXITING" && exit;');
+      // Release the dependent SFTP handle before disconnecting the transport.
+      $this->sftp = null;
+      ssh2_disconnect($this->connection);
+      $this->connection = null;
       
       return true;
    }

@@ -150,13 +150,30 @@ repository broke this, and had to be replaced.)
 - Every behavior change, bug fixes included, gets an entry in the phase's
   `active/CONSUMER-IMPACT.md`: what consumers saw before, what they see now,
   and what to search for in their code.
-- Change-log entries are never rewritten. A correction, rename or move gets a
+- Change-log narrative is never rewritten. A correction, rename or move gets a
   new entry; when files move, the entry includes an old-to-new path map. Old
-  paths in past entries and in `history/` stay as written.
+  printed paths in past entries and in `history/` stay as written. When files
+  move, update Markdown link destinations to keep references navigable; preserve
+  the original labels, wording and recorded facts.
 - After moving or renaming anything, run `bin/check-docs` (or
   `docker/bin/check-docs`): it checks every Markdown link, `#anchor` and
   repository-root path in backticks, and exits nonzero on any problem. Also make
   sure no live document still uses the old name.
+
+### Archive completed work before handing off
+
+- Archiving is part of completing a work item, not something to leave until the
+  phase ends or the owner reminds you. Move completed reviews, plans, resolved
+  defect details and superseded handoffs into the phase's `history/` in the same
+  change. Keep only open work, a concise current handoff/status index and pending
+  release/consumer-impact checks in `active/`.
+- Carry unresolved follow-ups into the current work list or handoff before
+  archiving their old report. Do not lose work or mark it resolved merely by moving it.
+- Before committing or ending a session, inspect the phase `active/` folders:
+  closed phases must be empty except for `.gitkeep`; current files must describe
+  unfinished work. Update navigation, add the path map and read the full output
+  of `docker/bin/check-docs`. Preserve archived evidence and generated snapshots.
+  The detailed workflow is [Archiving phase work](docs/modernization/README.md#archiving-phase-work).
 
 ## Known-defect process
 
