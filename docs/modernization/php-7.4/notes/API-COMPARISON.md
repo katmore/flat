@@ -22,7 +22,8 @@ at all.
   (could never load, KD-108), and the old names `flat\cloud\authorize\subscription\cancelled`, `flat\data\session\driver`,
   `flat\data\session\driver\session` and `flat\core\util\factory\exception\not_match_interface`, which only existed as `class_alias`
   names or forwarding files (MOD-306 to MOD-309).
-- **Seven entries changed from "cannot be loaded" or "declares nothing" to "loads":** the MongoDB SSL classes, now
+- **Nine entries changed from "cannot be loaded" or "declares nothing" to "loads":** `flat\fsm` and `flat\orm\invalid_field` (KD-109, Q57; they declared
+  `flat\fsm\fsm` and `invalid_param`) and the MongoDB SSL classes, now
   `flat\db\driver\mongo\ssl`, `ssl\cafile`, `ssl\cafile\base64`, `ssl\cafile\file`, `ssl\localcert`, `ssl\localcert\base64` and
   `ssl\localcert\file` (KD-107). The old names `flat\db\mongo\ssl...` no longer exist.
 - **Six methods and one constant "added"**, on `subscription\canceled`, `ssh\...\input_error\bad_param` and `data\orm\driver\session`
@@ -41,11 +42,11 @@ two above, `validate\collection` and the five SSL classes); the `v1.72.0` and `v
 
 ## Entries that declare nothing
 
-The tool lists 14 entries as "declares nothing" (it looks for the class named by the path). Checked one by one:
+The tool lists 12 entries as "declares nothing" (it looks for the class named by the path). Checked one by one:
 
-- Six declare a class under another name and load under neither: four stray duplicates (`api\response_header\exception`,
-  `api\response_header\exception\missing_request_field`, `cloud\authorize\customer\payment\bankAccount` and `creditCard`)
-  and two (`flat\fsm`, `flat\orm\invalid_field`). They are KD-109 and Q57 in
+- Four declare a class under another name and load under neither: stray duplicates of classes that load from their own
+  files (`api\response_header\exception`, `api\response_header\exception\missing_request_field`,
+  `cloud\authorize\customer\payment\bankAccount` and `creditCard`). They are the rest of KD-109 in
   [../active/KNOWN-DEFECTS.md](../active/KNOWN-DEFECTS.md).
 - Six are empty files (the known leftovers of the php-7.3 handoff).
 - Two declare no class: `flat\event\alert\listener` (the retired class of MOD-107) and `flat\orm\missing_required_field`.

@@ -35,6 +35,8 @@ coverage, and no PHP notice, warning or deprecation is raised.
   - `flat\data\session\driver\session` and `flat\data\session\driver` are gone; use `flat\data\orm\driver\session` and
     `flat\data\orm\driver`.
   - `flat\core\util\factory\exception\not_match_interface` is gone; use `flat\core\util\validate\factory\exception\not_match_interface`.
+- **Two more classes now load under the name their file gives.** `flat\fsm\fsm` is now `flat\fsm` and `flat\orm\invalid_param` is now
+  `flat\orm\invalid_field`. Neither could be loaded before and flat did not use them.
 - Nothing else in `src` changed.
 
 Every entry has what you saw before, what you see now, and what to search for in
@@ -58,5 +60,5 @@ Every entry has what you saw before, what you see now, and what to search for in
   install the fixed releases; flat's constraints allow them.
 - Two classes cannot be loaded by the API tool: the Authorize.Net wrappers `AuthorizeNetARB` and `AuthorizeNetCIM`, which print
   the SDK's deprecation notice (`docs/modernization/php-7.4/notes/API-COMPARISON.md`).
-- Six files declare a class under another name than their path and load under neither (`docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`,
-  KD-109); the owner has been asked what names were intended.
+- Four stray files declare a class under another name than their path (`docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`,
+  KD-109); the real classes load from their own files, so nothing is lost.

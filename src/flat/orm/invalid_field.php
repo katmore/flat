@@ -1,6 +1,6 @@
 <?php
 namespace flat\orm;
-class invalid_param extends exception {
+class invalid_field extends exception {
    public function get_field_key() {
       return $this->_key;
    }

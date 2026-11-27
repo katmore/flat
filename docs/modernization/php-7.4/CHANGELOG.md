@@ -391,3 +391,22 @@ continues from the php-7.3 phase.
   lists the old names to search for; the defect list is brought up to date (Q58 answered, KD-109 and Q57 no longer mention aliases).
 - Behavior: none.
 - Undo: nothing to undo.
+
+## MOD-312 — `flat\fsm\fsm` is declared as `flat\fsm` (KD-109, Q57)
+
+- Kind: rename, decided by the owner on 2026-11-27: the path name, no alias. `src/flat/fsm.php` has `namespace flat; abstract class fsm`
+  (it declared `flat\fsm\fsm`; its own header says `\flat\fsm`). New test `tests/Unit/FsmTest.php` loads it by name. The string
+  `"flat\\fsm"` in `core/exception/controller.php` is a namespace-prefix list and still matches.
+- Behavior: the name `flat\fsm\fsm` no longer exists; nothing used it. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Undo: revert the commit.
+
+## MOD-313 — `flat\orm\invalid_param` is declared as `flat\orm\invalid_field` (KD-109, Q57)
+
+- Kind: rename, decided by the owner on 2026-11-27: the path name, no alias. `src/flat/orm/invalid_field.php` declares `invalid_field`.
+  `LegacyFieldErrorTest` no longer includes the file by hand and loads the class by name in a fresh process.
+- Behavior: the name `flat\orm\invalid_param` no longer exists; nothing used it. The API dump is regenerated: 615 entries, nine that now
+  load ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)); the entries that declare nothing are 12, counted one by one. See
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Verified (both): `docker/bin/test all --coverage`: 1,639 tests, 7,229 assertions, all pass; 100% (333 classes, 1,105 methods, 8,872
+  lines); no PHP message.
+- Undo: revert the commit.

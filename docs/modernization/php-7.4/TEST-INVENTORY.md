@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 875 test methods in 107 files, running 1638 test cases.
+- 876 test methods in 108 files, running 1639 test cases.
 - 142 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -1089,6 +1089,10 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testMissingQueueIsRejected` (line 212): groups: services, rabbitmq
 - `testConfigNamespaceSuppliesPresentKeysAndKeepsDefaults` (line 218)
 
+### `tests/Unit/FsmTest.php` (1)
+
+- `testTheFiniteStateMachineDefinitionLoadsByItsPathName` (line 8)
+
 ### `tests/Unit/Input/MapTest.php` (6)
 
 - `testArrayBecomesProperties` (line 9)
@@ -1115,7 +1119,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Orm/LegacyFieldErrorTest.php` (1)
 
-- `testLegacyFieldFileCanBeIncludedUnderItsActualDeclaredName` (line 8)
+- `testFieldErrorLoadsByItsOwnName` (line 8)
 
 ### `tests/Unit/Orm/LifecycleTest.php` (6)
 

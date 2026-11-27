@@ -27829,7 +27829,17 @@
         }
     },
     "flat\\fsm": {
-        "nodeclaration": true
+        "kind": "class",
+        "abstract": true,
+        "final": false,
+        "parent": null,
+        "interfaces": [
+            "flat\\core\\app",
+            "flat\\core\\routable"
+        ],
+        "constants": [],
+        "properties": [],
+        "methods": []
     },
     "flat\\helper": {
         "kind": "class",
@@ -29049,7 +29059,61 @@
         "methods": []
     },
     "flat\\orm\\invalid_field": {
-        "nodeclaration": true
+        "kind": "class",
+        "abstract": false,
+        "final": false,
+        "parent": "flat\\orm\\exception",
+        "interfaces": [
+            "Throwable"
+        ],
+        "constants": [],
+        "properties": [],
+        "methods": {
+            "__construct": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [
+                    {
+                        "name": "key",
+                        "type": null,
+                        "optional": false,
+                        "default": null,
+                        "byref": false,
+                        "variadic": false
+                    },
+                    {
+                        "name": "reason",
+                        "type": null,
+                        "optional": false,
+                        "default": null,
+                        "byref": false,
+                        "variadic": false
+                    }
+                ],
+                "return": null
+            },
+            "get_field_key": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            },
+            "get_reason": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [],
+                "return": null
+            }
+        }
     },
     "flat\\orm\\missing_required_field": {
         "nodeclaration": true

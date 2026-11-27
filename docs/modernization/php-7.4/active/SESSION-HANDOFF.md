@@ -23,17 +23,17 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 - MOD-299: release preparation: release notes, API comparison, consumer check, dependency audit.
 - MOD-300 to MOD-305: the unloadable classes looked into: `validate\collection` removed (KD-108), the MongoDB SSL classes renamed
   to match their paths (KD-107), the rest recorded as KD-109 / Q57.
+- MOD-312, MOD-313: `flat\fsm` and `flat\orm\invalid_field` declared under their path names (Q57).
 - MOD-306 to MOD-310: the five `class_alias` calls removed with their references fixed, and a rule against `class_alias`
   in both repositories' `AGENTS.md`. [../notes/ALIASES.md](../notes/ALIASES.md) is the record.
 
 ## Next
 
-1. Q57 is the one open question (what `flat\fsm` and `flat\orm\invalid_field` were meant to be, KD-109).
-2. The owner reviews [../RELEASE-NOTES.md](../RELEASE-NOTES.md), the notes it links, and tags `v1.74.0` (Q52).
-3. After the tag: move flat-webapp's application lock to the published release, update its `DependencyLockTest` (it
+1. The owner reviews [../RELEASE-NOTES.md](../RELEASE-NOTES.md), the notes it links, and tags `v1.74.0` (Q52).
+2. After the tag: move flat-webapp's application lock to the published release, update its `DependencyLockTest` (it
    requires `1.73.x`) and bring its packages to the newest 7.4 releases, one at a time. See
    [../notes/CONSUMER-CHECK.md](../notes/CONSUMER-CHECK.md) for what a fresh resolution gives.
-4. The next phase (PHP 8.0) needs the owner's go-ahead.
+3. The next phase (PHP 8.0) needs the owner's go-ahead.
 
 ## Working in a cloud session
 
@@ -46,4 +46,5 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 
 ## Waiting for the owner
 
-Q57 (see Next). Q51 to Q56 and Q58 are answered. The owner tags the release.
+Nothing. Q51 to Q58 are answered. The owner tags the release. Left for the owner to say, no question yet: whether to delete the four stray
+duplicate files of KD-109.

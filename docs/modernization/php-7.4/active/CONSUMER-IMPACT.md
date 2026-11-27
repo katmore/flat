@@ -100,3 +100,21 @@ before, what they see now, and what to search for in their code.
   forwarding file are gone. Nothing in flat used the old name.
 - Search consumer code for: `util\factory\exception`, `not_match_interface`.
 - Verified: yes (the fresh-process test loads the one name).
+
+### MOD-312 (Q57) — `flat\fsm` is declared as `flat\fsm`
+
+- Before: `src/flat/fsm.php` (the "finite state machine definition", 0.1.0-alpha, an empty abstract class implementing
+  `flat\core\app` and `flat\core\routable`) declared `flat\fsm\fsm`. The autoloader looks for `flat\fsm` in that file, so neither
+  name could be loaded.
+- After: the class is `flat\fsm`, the name its file and its own header say. No alias.
+- Search consumer code for: `flat\fsm`, `fsm\fsm`.
+- Verified: yes. Nothing in flat used it.
+
+### MOD-313 (Q57) — `flat\orm\invalid_param` is now `flat\orm\invalid_field`
+
+- Before: `src/flat/orm/invalid_field.php` declared `flat\orm\invalid_param`, so `flat\orm\invalid_field` did not exist and
+  `invalid_param` loaded only when the file was included by hand.
+- After: the class is `flat\orm\invalid_field`, and it loads by name. `invalid_param` no longer exists. The message
+  ("invalid field: name, reason: ...") and the `get_field_key()` and `get_reason()` methods are unchanged. No alias.
+- Search consumer code for: `orm\invalid_param`, `invalid_param`, `orm\invalid_field`.
+- Verified: yes. Nothing in flat used either name.
