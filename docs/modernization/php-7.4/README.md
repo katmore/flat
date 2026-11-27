@@ -7,7 +7,7 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 ## Status: in progress (started 2026-11-26)
 
 - The test image is PHP 7.4.33 and the Composer platform pins are 7.4.33.
-- `docker/bin/test all --coverage`: 1,637 tests, 7,209 assertions, all pass; 100% coverage; no PHP message anywhere
+- `docker/bin/test all --coverage`: 1,667 tests, 7,375 assertions, all pass; 100% coverage; no PHP message anywhere
   (MOD-298). flat's test tools and dependencies are at their newest 7.4-compatible releases
   ([notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)).
 - Ready for the owner: the release notes, API comparison, consumer check and dependency audit are written. The owner

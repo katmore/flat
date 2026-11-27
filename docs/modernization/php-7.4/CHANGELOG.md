@@ -571,3 +571,15 @@ continues from the php-7.3 phase.
 - Verified (MOD-325, MOD-326): `docker/bin/test all --coverage`: 1,666 tests, 7,371 assertions, all pass; 100% (332 classes, 1,105 methods, 8,870 lines); no PHP message;
   `docker/bin/test unit`: all pass without the server.
 - Undo: revert the commit.
+
+## MOD-327 — The last two function overrides are replaced by real conditions
+
+- Kind: test change, decided by the owner on 2026-11-27. `tests/Support/NativeSessionBoundary.php` (an override of `session_status()`) and
+  `tests/Support/AssetIoBoundary.php` (an override of `file_get_contents()`) are deleted, with their `require_once` lines.
+  - `SessionDriverTest` now starts a fresh PHP process with `session.save_handler` (and, in a second data set, `session.serialize_handler`) set to a name
+    that does not exist. PHP itself then reports `PHP_SESSION_DISABLED`, and flat's `failure` exception is thrown.
+  - `AssetTest` now exhausts the process's file descriptors in a fresh PHP process, so a file that exists and is readable cannot be opened. PHP raises its
+    own "Too many open files" warning, the test captures it, and flat's `failed to read system resource file` exception is thrown.
+- Behavior: none for flat.
+- Verified: `docker/bin/test all --coverage`: 1,667 tests, 7,375 assertions, all pass; 100% (332 classes, 1,105 methods, 8,870 lines); no PHP message.
+- Undo: revert the commit.

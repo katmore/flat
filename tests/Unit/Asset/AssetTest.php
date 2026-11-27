@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Asset;
-require_once __DIR__.'/../../Support/AssetIoBoundary.php';
 use PHPUnit\Framework\TestCase;
 use flat\asset;
 class LocalAsset extends asset implements \flat\asset\base, \flat\asset\system_base
@@ -40,6 +39,7 @@ class FacebookProfileAsset extends \flat\asset\facebook { protected function _ge
 class TwitterProfileAsset extends \flat\asset\twitter { protected function _get_twitter_username() { return 'local-user'; } }
 class AssetTest extends TestCase
 {
+    use \flat\test\Support\PhpSubprocess;
     private $saved = [];
     private $root;
     private $bufferLevel;
@@ -60,7 +60,6 @@ class AssetTest extends TestCase
     }
     protected function tearDown(): void
     {
-        \flat\test\Support\AssetIoBoundary::$failedPath = null;
         while (ob_get_level() > $this->bufferLevel) ob_end_clean();
         foreach ($this->saved as $class=>$values) foreach ($values as $name=>$value) {
             $p = new \ReflectionProperty($class, $name); $p->setAccessible(true); $p->setValue(null, $value);
@@ -192,11 +191,29 @@ class AssetTest extends TestCase
     {
         $asset = new UncheckedSystemAsset($kind === 'missing' ? 'missing.js' : 'app.js');
         if ($kind === 'permissions') chmod($this->root.'/app.js',0000);
-        if ($kind === 'read') \flat\test\Support\AssetIoBoundary::$failedPath = $this->root.'/app.js';
         $this->expectException(\flat\lib\exception\app_error::class); $this->expectExceptionMessage($message);
         ob_start(); try { $asset->print_contents_script_tag(); } finally { ob_end_clean(); }
     }
-    public function outputFailures() { return [['missing','file not found'],['permissions','file not readable'],['read','failed to read']]; }
+    public function outputFailures() { return [['missing','file not found'],['permissions','file not readable']]; }
+    public function testAFileThatPassesTheChecksButCannotBeOpenedFailsClearly()
+    {
+        // A real operating system limit: the process has no file descriptor left to open the (readable) file with.
+        $file = var_export($this->root.'/app.js',true);
+        $body = 'class Unchecked extends \\flat\\asset { public function get_system(int $flags = null) { return '.$file.'; } }
+            $asset = new Unchecked("app.js"); class_exists(\\flat\\lib\\exception\\app_error::class);
+            $warnings = []; set_error_handler(function ($number, $message) use (&$warnings) { $warnings[] = $message; return true; });
+            $held = []; while (false !== ($handle = fopen("/dev/null", "r"))) $held[] = $handle;
+            $warnings = []; $caught = null; ob_start();
+            try { $asset->print_contents_script_tag(); } catch (\\Throwable $e) { $caught = get_class($e).": ".$e->getMessage(); }
+            $printed = ob_get_clean(); foreach ($held as $handle) fclose($handle); restore_error_handler();
+            echo json_encode([$caught, $printed, $warnings]);';
+        list($status,$out,$err) = $this->subprocess($body);
+        $this->assertSame(0,$status,$out.$err); $this->assertSame('',$err);
+        list($caught,$printed,$warnings) = json_decode($out,true);
+        $this->assertSame(\flat\lib\exception\app_error::class.': application_error: failed to read system resource file',$caught);
+        $this->assertSame("<!--START script asset contents: app.js Unchecked-->\n<script>\n",$printed); // the opening tags come out before the read fails
+        $this->assertCount(1,$warnings); $this->assertStringContainsString('Too many open files',$warnings[0]);
+    }
     public function testExplicitCssContentAndExtensionFallbackTags()
     {
         $this->assertStringContainsString('body {color: red;}',$this->output(function () { (new LocalAsset('app.css'))->print_contents(asset::RESOURCE_CSS); }));

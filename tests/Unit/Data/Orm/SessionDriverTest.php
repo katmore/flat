@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Data\Orm;
-require_once __DIR__.'/../../../Support/NativeSessionBoundary.php';
 use PHPUnit\Framework\TestCase;
 use flat\data\orm\driver\session as SessionDriver;
 use flat\data\orm\driver\session\handler\native as NativeHandler;
@@ -16,7 +15,6 @@ class MemorySessionHandler extends \flat\data\orm\driver\session\handler
 class NativeHandlerProbe extends NativeHandler
 {
     public static function key(array $options = null) { return parent::_get_ormkey($options); }
-    public static function initialize(array $options = null) { return parent::_init_session($options); }
 }
 class SessionDriverTest extends TestCase
 {
@@ -33,7 +31,7 @@ class SessionDriverTest extends TestCase
     }
     protected function tearDown(): void
     {
-        \flat\test\Support\NativeSessionBoundary::$disabled = false; NativeHandler::set_ormkey(NativeHandler::fallback_ormkey);
+        NativeHandler::set_ormkey(NativeHandler::fallback_ormkey);
         $root = $this->configSandboxDirectory(); unlink($root.'/data/orm/driver/session.php');
         foreach (['data/orm/driver','data/orm','data'] as $directory) rmdir($root.'/'.$directory);
         $this->closeConfigSandbox();
@@ -79,11 +77,18 @@ class SessionDriverTest extends TestCase
         NativeHandler::set_ormkey($key);
     }
     public function invalidKeys() { return [[''],[0],[['nested']],[new \stdClass]]; }
-    public function testDisabledSessionStatusUsesItsFrameworkFailure()
+    /** @dataProvider unusableSessionSettings */
+    public function testDisabledSessionStatusUsesItsFrameworkFailure($setting)
     {
-        \flat\test\Support\NativeSessionBoundary::$disabled = true;
-        $this->expectException(\flat\data\orm\driver\session\exception\failure::class);
-        NativeHandlerProbe::initialize();
+        // PHP itself reports the session as disabled when its save handler or serializer does not exist.
+        $body = 'echo json_encode(session_status() === PHP_SESSION_DISABLED); try { $m = new \\ReflectionMethod(\\flat\\data\\orm\\driver\\session\\handler\\native::class, "_init_session"); $m->setAccessible(true); $m->invoke(null); } catch (\\Throwable $e) { echo " ", get_class($e), ": ", $e->getMessage(); }';
+        list($status,$out,$err) = $this->subprocess($body,$setting);
+        $this->assertSame(0,$status,$out.$err); $this->assertSame('',$err);
+        $this->assertSame('true '.\flat\data\orm\driver\session\exception\failure::class.': session failure: PHP sessions are not enabled',$out);
+    }
+    public function unusableSessionSettings()
+    {
+        return [['save handler'=>['session.save_handler'=>'absent']],['serializer'=>['session.serialize_handler'=>'absent']]];
     }
     private function sessionPrefix()
     {

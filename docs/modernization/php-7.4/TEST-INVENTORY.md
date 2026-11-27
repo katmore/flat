@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 900 test methods in 110 files, running 1666 test cases.
-- 141 methods use a data provider (one case per data set).
+- 901 test methods in 110 files, running 1667 test cases.
+- 142 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -86,37 +86,38 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testFormattingUsesTheCodeClassMetadata` (line 46)
 - `testUnknownCodeNumberFormatsAsAnEmptyString` (line 61)
 
-### `tests/Unit/Asset/AssetTest.php` (29)
+### `tests/Unit/Asset/AssetTest.php` (30)
 
-- `testSocialProfileAssetsResolveUserBasesAndIgnoreResources` (line 72)
-- `testUrlsResourcesHashesAndInvocation` (line 86)
-- `testExplicitHashesAndInlineScriptSource` (line 106)
-- `testFilesystemPathsExistenceAndDataUris` (line 121)
-- `testAbsoluteSystemPathsAreCanonicalized` (line 132)
-- `testAHtmlCallbackAloneIsRegisteredAsOutput` (line 140)
-- `testFilesystemPathFailures` (line 146): 5 data-provider cases
-- `testLinkedTagsFileContentsAndDeprecatedAliases` (line 162)
-- `testInvalidFileContentTypeIsRejected` (line 175)
-- `testDirectoryFlagsRequireDirectoriesAndAcceptRealDirectories` (line 182)
-- `testOverriddenSystemPathsAndReadFailuresRemainGuarded` (line 191): 3 data-provider cases
-- `testExplicitCssContentAndExtensionFallbackTags` (line 200)
-- `testHtmlSpecialAcceptsImplicitPositionAndSingleItemsWithoutExecutingCycles` (line 205)
-- `testUnsupportedContentRequestsFailClearly` (line 217)
-- `testExplicitOutputAssetsResourcesAndCallbacksAreRegistered` (line 227)
-- `testRegistrationsDeduplicateAndRespectResourceAndPositionFilters` (line 237)
-- `testInvalidRegistrationPositionFails` (line 253): 2 data-provider cases
-- `testDependenciesRunBeforeParentsAndAreOnlyEmittedOnce` (line 259)
-- `testHtmlCallbacksAndArraysAreRegistered` (line 272)
-- `testMultipleHtmlItemsPrintInOrderWithoutASelfDependency` (line 283)
-- `testRegisteringOutputForAnExistingAssetKeepsTheFirstWithoutASelfDependency` (line 290)
-- `testOutputAssetsGetAnOutputHashUnlessTheCallerChoosesOne` (line 298)
-- `testDependencyGroupsWithoutUsableNestedDependenciesRegisterOnlyThemselves` (line 308)
-- `testDependsTakesAnyNumberOfDependencies` (line 315)
-- `testFileAssetHasNoInlineSourceToPrint` (line 324)
-- `testInlineSourcePrintsWithoutAFilePath` (line 329)
-- `testBuiltinDependenciesAreRegisteredOncePerAssetClass` (line 334)
-- `testResolvedHandlerCanRewriteResources` (line 340)
-- `testStringConversionReportsUrlFailureAsNotice` (line 347)
+- `testSocialProfileAssetsResolveUserBasesAndIgnoreResources` (line 71)
+- `testUrlsResourcesHashesAndInvocation` (line 85)
+- `testExplicitHashesAndInlineScriptSource` (line 105)
+- `testFilesystemPathsExistenceAndDataUris` (line 120)
+- `testAbsoluteSystemPathsAreCanonicalized` (line 131)
+- `testAHtmlCallbackAloneIsRegisteredAsOutput` (line 139)
+- `testFilesystemPathFailures` (line 145): 5 data-provider cases
+- `testLinkedTagsFileContentsAndDeprecatedAliases` (line 161)
+- `testInvalidFileContentTypeIsRejected` (line 174)
+- `testDirectoryFlagsRequireDirectoriesAndAcceptRealDirectories` (line 181)
+- `testOverriddenSystemPathsAndReadFailuresRemainGuarded` (line 190): 2 data-provider cases
+- `testAFileThatPassesTheChecksButCannotBeOpenedFailsClearly` (line 198)
+- `testExplicitCssContentAndExtensionFallbackTags` (line 217)
+- `testHtmlSpecialAcceptsImplicitPositionAndSingleItemsWithoutExecutingCycles` (line 222)
+- `testUnsupportedContentRequestsFailClearly` (line 234)
+- `testExplicitOutputAssetsResourcesAndCallbacksAreRegistered` (line 244)
+- `testRegistrationsDeduplicateAndRespectResourceAndPositionFilters` (line 254)
+- `testInvalidRegistrationPositionFails` (line 270): 2 data-provider cases
+- `testDependenciesRunBeforeParentsAndAreOnlyEmittedOnce` (line 276)
+- `testHtmlCallbacksAndArraysAreRegistered` (line 289)
+- `testMultipleHtmlItemsPrintInOrderWithoutASelfDependency` (line 300)
+- `testRegisteringOutputForAnExistingAssetKeepsTheFirstWithoutASelfDependency` (line 307)
+- `testOutputAssetsGetAnOutputHashUnlessTheCallerChoosesOne` (line 315)
+- `testDependencyGroupsWithoutUsableNestedDependenciesRegisterOnlyThemselves` (line 325)
+- `testDependsTakesAnyNumberOfDependencies` (line 332)
+- `testFileAssetHasNoInlineSourceToPrint` (line 341)
+- `testInlineSourcePrintsWithoutAFilePath` (line 346)
+- `testBuiltinDependenciesAreRegisteredOncePerAssetClass` (line 351)
+- `testResolvedHandlerCanRewriteResources` (line 357)
+- `testStringConversionReportsUrlFailureAsNotice` (line 364)
 
 ### `tests/Unit/Asset/CascadeTest.php` (4)
 
@@ -932,14 +933,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Data/Orm/SessionDriverTest.php` (8)
 
-- `testHandlerObjectIsUsedDirectlyAndReturnsItsResults` (line 43)
-- `testHandlerClassReceivesItsConstructorParameters` (line 52)
-- `testInvalidExplicitHandlersFallBackToConfiguration` (line 62): 5 data-provider cases
-- `testNativeOrmKeyOptionsAndConfiguration` (line 69)
-- `testInvalidKeysThrowTheDeclaredParameterError` (line 76): 4 data-provider cases
-- `testDisabledSessionStatusUsesItsFrameworkFailure` (line 82)
-- `testRealNativeSessionPersistsAcrossSeparateProcesses` (line 92)
-- `testDestroyEndsTheSessionAndRemovesItsData` (line 101)
+- `testHandlerObjectIsUsedDirectlyAndReturnsItsResults` (line 41)
+- `testHandlerClassReceivesItsConstructorParameters` (line 50)
+- `testInvalidExplicitHandlersFallBackToConfiguration` (line 60): 5 data-provider cases
+- `testNativeOrmKeyOptionsAndConfiguration` (line 67)
+- `testInvalidKeysThrowTheDeclaredParameterError` (line 74): 4 data-provider cases
+- `testDisabledSessionStatusUsesItsFrameworkFailure` (line 81): 2 data-provider cases
+- `testRealNativeSessionPersistsAcrossSeparateProcesses` (line 97)
+- `testDestroyEndsTheSessionAndRemovesItsData` (line 106)
 
 ### `tests/Unit/Data/OrmMapTest.php` (3)
 
