@@ -645,3 +645,14 @@ continues from the php-7.3 phase.
   both locked dependency audits (four known runtime advisories, none in tools); documentation check with no problems.
   All PHP and Composer execution was in Docker. The live Authorize.Net sandbox was not run; the full suite uses its documented mock.
 - Undo: revert this documentation commit; the recorded defects remain in the source until separately fixed.
+
+## MOD-333 — Correct PDO bindings, criteria, joins and pagination (KD-117 to KD-120, KD-125)
+
+- Kind: inherited bug fixes authorized after the adversarial review. Bound parameters retain independent storage;
+  boolean/decimal values no longer become NULL, and decimal criteria are not truncated. Structured joins use their direction
+  (LEFT, INNER or RIGHT) and reject invalid directions. Pagination enforces its minimums and identifies the invalid field.
+- Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). No public signature changed.
+- Verified: new regressions failed against the old source (8 failures); after the fixes, the focused native SQLite suite passes
+  in PHP 7.4 Docker: 58 tests, 122 assertions. Test inventory regenerated and documentation checked before committing.
+- Owner decision Q62: supplied SSH fingerprints must be verified for password and key authentication; unpinned callers remain allowed.
+- Undo: revert the commit.

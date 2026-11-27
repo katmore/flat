@@ -50,6 +50,22 @@ class PdoTest extends TestCase
         $statement = $this->pdo->prepare_map(['stmt'=>'SELECT :empty', 'bindValue'=>[':empty'=>null], 'execute'=>true]);
         $this->assertNull($statement->fetchColumn());
     }
+    public function testDistinctBoundParametersKeepTheirValuesAfterPrepareReturns()
+    {
+        $statement = $this->pdo->prepare_map(['stmt'=>'SELECT :a AS a, :b AS b', 'bindParam'=>[':a'=>11, ':b'=>22]]);
+        $statement->execute();
+        $this->assertSame(['a'=>'11', 'b'=>'22'], $statement->fetch(\PDO::FETCH_ASSOC));
+        $statement->execute();
+        $this->assertSame(['a'=>'11', 'b'=>'22'], $statement->fetch(\PDO::FETCH_ASSOC));
+    }
+    public function testBothBindingModesPreserveScalarTypes()
+    {
+        foreach (['bindValue', 'bindParam'] as $mode) {
+            $statement = $this->pdo->prepare_map(['stmt'=>'SELECT :yes AS yes, :no AS no, :decimal AS decimal, :nil AS nil',
+                $mode=>[':yes'=>true, ':no'=>false, ':decimal'=>1.25, ':nil'=>null], 'execute'=>true]);
+            $this->assertSame(['yes'=>'1', 'no'=>'0', 'decimal'=>'1.25', 'nil'=>null], $statement->fetch(\PDO::FETCH_ASSOC));
+        }
+    }
     /** @dataProvider invalidParameters */
     public function testInvalidMapParameters($parameters)
     {

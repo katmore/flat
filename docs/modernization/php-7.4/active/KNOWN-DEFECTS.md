@@ -104,18 +104,18 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
 
 KD-117 to KD-126 are Category A (clear bugs). KD-127 is Category B
 (security behavior needs an owner decision). All were found in inherited code
-while reviewing `php-7.4`; none is fixed. Reproductions, priorities, test gaps and recommendations:
+while reviewing `php-7.4`; the status of each is listed below. Reproductions, priorities, test gaps and recommendations:
 [ADVERSARIAL-REVIEW.md](ADVERSARIAL-REVIEW.md).
 
-- **KD-117 (P1):** PDO `bindParam` placeholders all retain the last loop value.
-- **KD-118 (P1):** PDO boolean and decimal parameter values become SQL NULL.
-- **KD-119 (P1):** Structured PDO decimal criteria are truncated, selecting the wrong row.
-- **KD-120 (P2):** Structured INNER/RIGHT joins become LEFT joins; invalid directions pass.
+- **Fixed MOD-333 — KD-117 (P1):** PDO `bindParam` placeholders all retain the last loop value.
+- **Fixed MOD-333 — KD-118 (P1):** PDO boolean and decimal parameter values become SQL NULL.
+- **Fixed MOD-333 — KD-119 (P1):** Structured PDO decimal criteria are truncated, selecting the wrong row.
+- **Fixed MOD-333 — KD-120 (P2):** Structured INNER/RIGHT joins become LEFT joins; invalid directions pass.
 - **KD-121 (P2):** A configured cURL method without a body becomes GET.
 - **KD-122 (P2):** Zero-valued JSON and raw request bodies are dropped.
 - **KD-123 (P2):** Lazy `get_dom()` returns NULL for ordinary downloaded HTML.
 - **KD-124 (P2):** Valid empty robots directives raise notices or reuse earlier rules.
-- **KD-125 (P2):** Negative PDO limits bypass the intended minimum validation.
+- **Fixed MOD-333 — KD-125 (P2):** Negative PDO limits bypass the intended minimum validation.
 - **KD-126 (P2):** Explicit SSH disconnect leaves the transport connected and usable.
 - **KD-127 (P1, Category B / Q62):** Password SSH authentication does not verify host identity.
 
@@ -172,4 +172,4 @@ while reviewing `php-7.4`; none is fixed. Reproductions, priorities, test gaps a
 62. **How should SSH password connections verify the host identity (KD-127)?** The wrapper checks a fingerprint only for public-key authentication;
     password authentication sends the password without verifying the server key. A deliberately wrong fingerprint is ignored. Recommend an explicit
     trusted host fingerprint checked before either authentication mode; decide the pinning API and behavior of unpinned callers before changing the
-    existing contract. **Open**, found by the adversarial review; no source fix applied.
+    existing contract. **Answered 2026-11-27:** verify supplied fingerprints before either authentication method; keep allowing unpinned connections. Implementation pending.

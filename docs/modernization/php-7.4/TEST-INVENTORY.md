@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 902 test methods in 110 files, running 1673 test cases.
+- 907 test methods in 110 files, running 1681 test cases.
 - 142 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -1076,30 +1076,35 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testConfiguredSqlRootAndDriverOptionOverloadUseRealSqlite` (line 20)
 
-### `tests/Unit/Db/Pdo/PdoTest.php` (7)
+### `tests/Unit/Db/Pdo/PdoTest.php` (9)
 
 - `testBareRecordFlagsMapRowsToGenericData` (line 8)
 - `testPreparedStatementsRemainUnexecutedUnlessRequested` (line 32)
 - `testAliasesBindingAndExecuteFlags` (line 40)
-- `testInvalidMapParameters` (line 54): 5 data-provider cases
-- `testSqlFilesWithExplicitRootOrNoRoot` (line 65)
-- `testBadSqlPathsReportPathAndReason` (line 78): 5 data-provider cases
-- `testRecordsAndCallbacksUseNativeSqliteResults` (line 102)
+- `testDistinctBoundParametersKeepTheirValuesAfterPrepareReturns` (line 53)
+- `testBothBindingModesPreserveScalarTypes` (line 61)
+- `testInvalidMapParameters` (line 70): 5 data-provider cases
+- `testSqlFilesWithExplicitRootOrNoRoot` (line 81)
+- `testBadSqlPathsReportPathAndReason` (line 94): 5 data-provider cases
+- `testRecordsAndCallbacksUseNativeSqliteResults` (line 118)
 
-### `tests/Unit/Db/Pdo/StatementTest.php` (12)
+### `tests/Unit/Db/Pdo/StatementTest.php` (15)
 
 - `testPreparedSqlBindsCriteriaAndMapsColumnsAndOrdering` (line 43)
 - `testLimitsDefaultSkipAndStringCriteria` (line 53)
 - `testCriteriaJoinHashAndStructuredRelationsProduceExecutableJoins` (line 62)
-- `testInvalidStructuralRules` (line 78): 15 data-provider cases
-- `testFetchOptionsAddRowsToTheCollection` (line 93)
-- `testInvalidFetchOptionsAreRejected` (line 112): 4 data-provider cases
-- `testInvalidAliasedColumnNamesAreRejected` (line 118): 7 data-provider cases
-- `testAliasedColumnNamesMayContainDigitsAndUnderscoresAfterTheFirstLetter` (line 124)
-- `testFetchCallbackConsumesActualRowsThroughABufferedNativeStatement` (line 133)
-- `testExecutedRowsWithoutAFetchOptionAreAddedAsGenericData` (line 139)
-- `testDeclaredJoinClauseCannotContainAStatementSeparator` (line 145)
-- `testNotFoundMeansNoRowsWereFetched` (line 151)
+- `testDecimalCriteriaSelectTheExactValue` (line 77)
+- `testInnerJoinExcludesUnmatchedRowsAndLeftJoinKeepsThem` (line 85)
+- `testInvalidJoinDirectionIsRejectedBeforeSqlPreparation` (line 94)
+- `testInvalidStructuralRules` (line 100): 18 data-provider cases
+- `testFetchOptionsAddRowsToTheCollection` (line 115)
+- `testInvalidFetchOptionsAreRejected` (line 134): 4 data-provider cases
+- `testInvalidAliasedColumnNamesAreRejected` (line 140): 7 data-provider cases
+- `testAliasedColumnNamesMayContainDigitsAndUnderscoresAfterTheFirstLetter` (line 146)
+- `testFetchCallbackConsumesActualRowsThroughABufferedNativeStatement` (line 155)
+- `testExecutedRowsWithoutAFetchOptionAreAddedAsGenericData` (line 161)
+- `testDeclaredJoinClauseCannotContainAStatementSeparator` (line 167)
+- `testNotFoundMeansNoRowsWereFetched` (line 173)
 
 ### `tests/Unit/Db/RabbitMqTest.php` (15)
 

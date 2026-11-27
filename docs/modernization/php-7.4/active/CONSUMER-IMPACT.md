@@ -229,3 +229,38 @@ before, what they see now, and what to search for in their code.
 - After: `flat\cloud\aws\s3\upload_failure` is thrown, holding the original `MultipartUploadException` (`get_exception()`); the abort's failure is dropped.
 - Search consumer code for: `catch` blocks around `file_upload` or `new ...\s3(... 'operation'=>'upload')` that expect `Aws\S3\Exception\S3Exception`.
 - Verified: yes (a real emulator: the upload aborted from outside).
+
+### MOD-333 (KD-117) — PDO bound parameters retain independent values
+
+- Before: All bindParam placeholders used the last value.
+- After: Each placeholder retains its own value, including deferred and repeated execution.
+- Search consumer code for: `prepare_map`, `bindParam`.
+- Verified: native SQLite regression tests, including distinct parameters and adjacent decimal values.
+
+### MOD-333 (KD-118) — PDO bindings preserve booleans and decimals
+
+- Before: Boolean and decimal values became SQL NULL.
+- After: Booleans bind as booleans, NULL as NULL, integers as integers and decimals as strings without truncation.
+- Search consumer code for: `prepare_map`, `bindValue`, `bindParam`.
+- Verified: native SQLite regression tests, including distinct parameters and adjacent decimal values.
+
+### MOD-333 (KD-119) — PDO decimal criteria retain their fractional part
+
+- Before: Decimal criteria were truncated and could select another record.
+- After: Only integer criteria bind as integers; decimal comparisons retain their value.
+- Search consumer code for: `criteria_hash`, `criteria`.
+- Verified: native SQLite regression tests, including distinct parameters and adjacent decimal values.
+
+### MOD-333 (KD-120) — Structured PDO joins respect their direction
+
+- Before: Every structured join became LEFT JOIN, including invalid directions.
+- After: LEFT, INNER and RIGHT produce their requested SQL; other directions raise bad_rule before preparation.
+- Search consumer code for: `load_statement`, `join`.
+- Verified: native SQLite regression tests, including distinct parameters and adjacent decimal values.
+
+### MOD-333 (KD-125) — PDO pagination rejects negative bounds
+
+- Before: Negative limits and offsets bypassed validation; SQLite LIMIT -1 was unlimited.
+- After: limit must be at least 1 and skip at least 0; bad_rule names the invalid field.
+- Search consumer code for: `limit`, `skip`, `statement\rules`.
+- Verified: native SQLite regression tests, including distinct parameters and adjacent decimal values.
