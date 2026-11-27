@@ -72,8 +72,6 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
 
 ## Owner questions
 
-Each has a recommendation; "agree" is enough.
-
 51. **Should the root `composer.json` require `php >=7.4.0` (it requires `>=7.3.0`)?** A PHP 7.3 host would
     keep installing `v1.73.x`; Composer skips a release whose `php` requirement does not match. The version
     stays in major 1. Recommend yes, as decision D1 did for 7.3. **Answered 2026-11-27: yes (MOD-292).**
