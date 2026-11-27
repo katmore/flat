@@ -176,3 +176,13 @@ continues from the php-7.3 phase.
 - Not verified yet: Docker was unavailable when this was committed, so neither the full suite, `check-docs`
   nor a resolution under a simulated PHP 7.4.33 host has run on it. A later entry records that run.
 - Undo: revert the commit.
+
+## MOD-293 — MOD-292 verified
+
+- Kind: verification of MOD-292; no file of `src` or `tests` changed.
+- A fresh resolution of the root `composer.json` under a simulated PHP 7.4.33 host (ext-mongodb 1.19.4)
+  succeeds and locks `doctrine/annotations` 2.0.2, `jms/serializer` 3.32.9 and `mongodb/mongodb` 1.19.1.
+  `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% (332 classes, 1,099 methods,
+  8,824 lines). `docker/bin/check-docs`: 0 problems. The consumer-impact entry of Q54 now says "Verified: yes".
+- Behavior: none.
+- Undo: nothing to undo.

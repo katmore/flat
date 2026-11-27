@@ -23,4 +23,5 @@ before, what they see now, and what to search for in their code.
   marked abandoned on Packagist; Composer says so on install. On PHP 8 it is installed but not needed; the
   php-8.0 phase can drop the requirement.
 - Search consumer code for: `doctrine/annotations`, `jms/serializer`, `authorizenet/authorizenet`.
-- Verified: pending.
+- Verified: yes. A fresh resolution under a simulated PHP 7.4.33 host locks `doctrine/annotations` 2.0.2 with
+  `jms/serializer` 3.32.9.
