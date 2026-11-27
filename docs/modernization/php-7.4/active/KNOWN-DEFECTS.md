@@ -111,10 +111,10 @@ while reviewing `php-7.4`; the status of each is listed below. Reproductions, pr
 - **Fixed MOD-333 — KD-118 (P1):** PDO boolean and decimal parameter values become SQL NULL.
 - **Fixed MOD-333 — KD-119 (P1):** Structured PDO decimal criteria are truncated, selecting the wrong row.
 - **Fixed MOD-333 — KD-120 (P2):** Structured INNER/RIGHT joins become LEFT joins; invalid directions pass.
-- **KD-121 (P2):** A configured cURL method without a body becomes GET.
-- **KD-122 (P2):** Zero-valued JSON and raw request bodies are dropped.
-- **KD-123 (P2):** Lazy `get_dom()` returns NULL for ordinary downloaded HTML.
-- **KD-124 (P2):** Valid empty robots directives raise notices or reuse earlier rules.
+- **Fixed MOD-334 — KD-121 (P2):** A configured cURL method without a body becomes GET.
+- **Fixed MOD-334 — KD-122 (P2):** Zero-valued JSON and raw request bodies are dropped.
+- **Fixed MOD-334 — KD-123 (P2):** Lazy `get_dom()` returns NULL for ordinary downloaded HTML.
+- **Fixed MOD-334 — KD-124 (P2):** Valid empty robots directives raise notices or reuse earlier rules.
 - **Fixed MOD-333 — KD-125 (P2):** Negative PDO limits bypass the intended minimum validation.
 - **KD-126 (P2):** Explicit SSH disconnect leaves the transport connected and usable.
 - **KD-127 (P1, Category B / Q62):** Password SSH authentication does not verify host identity.

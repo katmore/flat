@@ -50,7 +50,7 @@ class response {
       return false;
    }
    public function get_dom() {
-      if (empty($this->_doc)) $this->_init_dom();
+      if ($this->_dom === null) $this->_init_dom();
       return $this->_dom;
    }
    public function get_response_data() {
@@ -115,36 +115,25 @@ class response {
       $rules = array();
       $ruleApplies = false;
       foreach($robotstxt as $line) {
-         // skip blank lines
-         if(!$line = trim($line)) continue;
-         
-         // following rules only apply if User-agent matches $useragent or '*'
-         if(preg_match('/^\s*User-agent: (.*)/i', $line, $match)) {
-            $ruleApplies = preg_match("/($agents)/i", $match[1]);
+         $line = trim(explode('#', $line, 2)[0]);
+         if (!preg_match('/^([a-z-]+)\\s*:\\s*(.*)$/i', $line, $parts)) continue;
+         $type = strtolower($parts[1]);
+         $value = trim($parts[2]);
+         if ($type === 'user-agent') {
+            $ruleApplies = preg_match("/($agents)/i", $value);
             continue;
          }
-         
-         if($ruleApplies) {
-            $rule_parts = explode(':', $line, 2);
-            if (!empty($rule_parts[0])) {
-               $type = trim(strtolower($rule_parts[0]));
-            }
-            if (!empty($rule_parts[1])) {
-               $rule = trim($rule_parts[1]);
-            }
-            // add rules that apply to array for testing
-            $rules[] = array(
-               'type' => $type,
-               'match' => preg_quote($rule, '/'),
-            );
+         if ($ruleApplies && in_array($type, ['allow', 'disallow'], true) && $value !== '') {
+            $rules[] = ['type'=>$type, 'match'=>preg_quote($value, '/')];
          }
       }
-      
+      $path = isset($parsed['path']) && $parsed['path'] !== '' ? $parsed['path'] : '/';
+
       $isAllowed = true;
       $currentStrength = 0;
       foreach($rules as $rule) {
          // check if page hits on a rule
-         if(preg_match("/^{$rule['match']}/", $parsed['path'])) {
+         if(preg_match("/^{$rule['match']}/", $path)) {
             // prefer longer (more specific) rules and Allow trumps Disallow if rules same length
             $strength = strlen($rule['match']);
             if($currentStrength < $strength) {
@@ -325,8 +314,7 @@ class response {
          curl_setopt($ch, \CURLOPT_COOKIEFILE, $cookie_file);
       }
       
-      if (!empty($request->data)) {
-         curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, $config->request_method);
+      if ($request->data !== null) {
          curl_setopt($ch, \CURLOPT_POSTFIELDS, $request->data);
          curl_setopt($ch, \CURLOPT_HTTPHEADER, array(
             'Content-Type: '.$request->content_type,
@@ -334,6 +322,10 @@ class response {
                );
       }
       
+      if ($config->request_method !== null) {
+         curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, $config->request_method);
+         if (strtoupper($config->request_method) === 'HEAD') curl_setopt($ch, \CURLOPT_NOBODY, true);
+      }
       curl_setopt($ch, \CURLOPT_CONNECTTIMEOUT ,5);
       curl_setopt($ch, \CURLOPT_TIMEOUT, $config->timeout);
       

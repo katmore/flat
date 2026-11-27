@@ -264,3 +264,31 @@ before, what they see now, and what to search for in their code.
 - After: limit must be at least 1 and skip at least 0; bad_rule names the invalid field.
 - Search consumer code for: `limit`, `skip`, `statement\rules`.
 - Verified: native SQLite regression tests, including distinct parameters and adjacent decimal values.
+
+### MOD-334 (KD-121) — cURL respects explicit methods without request data
+
+- Before: A bodyless DELETE, HEAD, PUT or POST was sent as GET.
+- After: Explicit methods are independent of body presence; HEAD does not read a response body. NULL method still selects GET without a body or POST with one.
+- Search consumer code for: `request_method`.
+- Verified: real HTTP requests with WireMock; method, body, content type, DOM and robots assertions.
+
+### MOD-334 (KD-122) — cURL sends zero and empty bodies
+
+- Before: JSON 0, raw "0" and empty raw bodies were treated as absent.
+- After: All non-NULL request bodies are sent, including zero and empty strings, with their content type.
+- Search consumer code for: `curl\request`, `encode`.
+- Verified: real HTTP requests with WireMock; method, body, content type, DOM and robots assertions.
+
+### MOD-334 (KD-123) — cURL lazily initializes the DOM
+
+- Before: get_dom() returned NULL for ordinary HTML unless eager DOM parsing or XPath ran first.
+- After: get_dom() initializes the DOM once based on DOM state, not the truthiness of response text.
+- Search consumer code for: `get_dom`.
+- Verified: real HTTP requests with WireMock; method, body, content type, DOM and robots assertions.
+
+### MOD-334 (KD-124) — Robots parsing handles empty directives and root URLs
+
+- Before: Empty Disallow or unrelated/comment lines could raise notices or reuse another rule; root URLs could lack a path.
+- After: Only Allow/Disallow rules are collected; empty values and comments are ignored, whitespace is accepted, and an absent path means /.
+- Search consumer code for: `is_robots_allowed`, `use_robots`.
+- Verified: real HTTP requests with WireMock; method, body, content type, DOM and robots assertions.

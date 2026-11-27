@@ -656,3 +656,13 @@ continues from the php-7.3 phase.
   in PHP 7.4 Docker: 58 tests, 122 assertions. Test inventory regenerated and documentation checked before committing.
 - Owner decision Q62: supplied SSH fingerprints must be verified for password and key authentication; unpinned callers remain allowed.
 - Undo: revert the commit.
+
+## MOD-334 — Correct cURL methods, falsy bodies, DOM and robots parsing (KD-121 to KD-124)
+
+- Kind: inherited bug fixes. Explicit methods are applied with or without a body; HEAD does not consume the response body.
+  Non-NULL bodies are transmitted even when zero or empty. Lazy DOM access tests the DOM itself. Robots parsing ignores comments,
+  unrelated directives and empty rules, accepts whitespace around separators, and treats an absent path as `/`.
+- Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). No public signature changed.
+- Verified: regressions first reproduced 3 errors and 9 failures against the old source; after the fix the real-HTTP response suite passes
+  in PHP 7.4 Docker: 60 tests, 172 assertions. Inventory regenerated and documentation checked before committing.
+- Undo: revert the commit.

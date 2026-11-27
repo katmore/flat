@@ -12,7 +12,7 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
   ([notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)).
 - Released: the owner tagged `v1.74.0` (the merge of this branch into `master`) on 2026-11-27. The release notes, API
   comparison, consumer check and dependency audit are in this folder.
-- Six open defects remain from the adversarial review (KD-121 to KD-124, KD-126 and KD-127):
+- Two open SSH defects remain from the adversarial review (KD-126 and KD-127):
   [active/ADVERSARIAL-REVIEW.md](active/ADVERSARIAL-REVIEW.md).
 - Q51 to Q62 are answered ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
 - flat-webapp runs on PHP 7.4.33 and locks flat `v1.74.0`; its locks are at the newest releases PHP 7.4 allows

@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 907 test methods in 110 files, running 1681 test cases.
-- 142 methods use a data provider (one case per data set).
+- 910 test methods in 110 files, running 1696 test cases.
+- 144 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -405,7 +405,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` (line 147)
 - `testEmptyUrlencodedQueryStringIsRejected` (line 155)
 
-### `tests/Unit/Core/Curl/ResponseTest.php` (30)
+### `tests/Unit/Core/Curl/ResponseTest.php` (33)
 
 - `testDefaultRequestsSendTheFlatUserAgent` (line 38): groups: services, http
 - `testFacadeAcceptsUrlsAndConfigurationObjects` (line 48): groups: services, http
@@ -415,28 +415,31 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testScalarUrlConfiguration` (line 85): groups: services, http
 - `testRequestDataIsSentAsTheBody` (line 90): groups: services, http
 - `testJsonRequestDataIsSentWithItsContentTypeAndMethod` (line 102): groups: services, http
-- `testFiletimeIsTheServersLastModifiedTimeOrMinusOne` (line 113): groups: services, http
-- `testRedirectsAreFollowed` (line 120): groups: services, http
-- `testFilesAndTemporaryCleanup` (line 128): groups: services, http
-- `testCallerProvidedFilePersists` (line 139): groups: services, http
-- `testSaveFlagsAndArraySavePaths` (line 150): groups: services, http
-- `testCookiesTheServerSetsAreSavedAndThoseInTheFileAreSent` (line 168): groups: services, http
-- `testAutomaticCookieFileIsRemovedWithTheResponse` (line 181): groups: services, http
-- `testInvalidCookieFile` (line 192): 2 data-provider cases; groups: services, http
-- `testDomAndXPathResults` (line 198): groups: services, http
-- `testInvalidXPathReportsQuery` (line 208): groups: services, http
-- `testDomAndXPathPreserveCallerLibxmlStateAndBufferedErrors` (line 218): 2 data-provider cases; groups: services, http
-- `testXPathArgumentWarningRestoresCallerLibxmlState` (line 241): 2 data-provider cases; groups: services, http
-- `testHtmlParserWarningReachesCallerAndLeavesReportingEnabled` (line 258): groups: services, http
-- `testAServerThatIsNotListeningIsAConnectError` (line 274): groups: services, http
-- `testTransferFailureRetainsErrorDetails` (line 289): 3 data-provider cases; groups: services, http
-- `testErrorAfterFileTransferStillFails` (line 299): groups: services, http
-- `testRobotsRules` (line 309): 6 data-provider cases; groups: services, http
-- `testRobotsCheckCanDenyOrAllowConstructor` (line 323): groups: services, http
-- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 332): groups: services, http
-- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 339): groups: services, http
-- `testFalsyTextBodyInitializesDomOnDemand` (line 347): groups: services, http
-- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 354): groups: services, http
+- `testExplicitMethodsAreSentWithoutABody` (line 114): 4 data-provider cases; groups: services, http
+- `testFalsyBodiesReachTheServer` (line 124): 5 data-provider cases; groups: services, http
+- `testLazyDomIsInitializedOnceForOrdinaryHtml` (line 141): groups: services, http
+- `testFiletimeIsTheServersLastModifiedTimeOrMinusOne` (line 150): groups: services, http
+- `testRedirectsAreFollowed` (line 157): groups: services, http
+- `testFilesAndTemporaryCleanup` (line 165): groups: services, http
+- `testCallerProvidedFilePersists` (line 176): groups: services, http
+- `testSaveFlagsAndArraySavePaths` (line 187): groups: services, http
+- `testCookiesTheServerSetsAreSavedAndThoseInTheFileAreSent` (line 205): groups: services, http
+- `testAutomaticCookieFileIsRemovedWithTheResponse` (line 218): groups: services, http
+- `testInvalidCookieFile` (line 229): 2 data-provider cases; groups: services, http
+- `testDomAndXPathResults` (line 235): groups: services, http
+- `testInvalidXPathReportsQuery` (line 245): groups: services, http
+- `testDomAndXPathPreserveCallerLibxmlStateAndBufferedErrors` (line 255): 2 data-provider cases; groups: services, http
+- `testXPathArgumentWarningRestoresCallerLibxmlState` (line 278): 2 data-provider cases; groups: services, http
+- `testHtmlParserWarningReachesCallerAndLeavesReportingEnabled` (line 295): groups: services, http
+- `testAServerThatIsNotListeningIsAConnectError` (line 311): groups: services, http
+- `testTransferFailureRetainsErrorDetails` (line 326): 3 data-provider cases; groups: services, http
+- `testErrorAfterFileTransferStillFails` (line 336): groups: services, http
+- `testRobotsRules` (line 346): 11 data-provider cases; groups: services, http
+- `testRobotsCheckCanDenyOrAllowConstructor` (line 365): groups: services, http
+- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 374): groups: services, http
+- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 381): groups: services, http
+- `testFalsyTextBodyInitializesDomOnDemand` (line 389): groups: services, http
+- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 396): groups: services, http
 
 ### `tests/Unit/Core/DebugTest.php` (13)
 
