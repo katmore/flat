@@ -37,6 +37,11 @@ coverage, and no PHP notice, warning or deprecation is raised.
   - `flat\core\util\factory\exception\not_match_interface` is gone; use `flat\core\util\validate\factory\exception\not_match_interface`.
 - **Two more classes now load under the name their file gives.** `flat\fsm\fsm` is now `flat\fsm` and `flat\orm\invalid_param` is now
   `flat\orm\invalid_field`. Neither could be loaded before and flat did not use them.
+- **Four more classes are declared at their own path (breaking renames, no alias).** `flat\api\header\exception` and
+  `...\missing_request_field` are now `flat\api\response_header\...`; `flat\cloud\authorize\customer\payment_profile\creditCard` and
+  `bankAccount` are now `flat\cloud\authorize\customer\payment\...` (deprecated, going in v2.X). One-line forwarding files that made
+  the old names load are deleted.
+- **Seven empty files are deleted** (`cloud/disqus.php`, five under `cloud/pci/`, `orm/missing_required_field.php`); nothing used them.
 - Nothing else in `src` changed.
 
 Every entry has what you saw before, what you see now, and what to search for in
@@ -60,5 +65,5 @@ Every entry has what you saw before, what you see now, and what to search for in
   install the fixed releases; flat's constraints allow them.
 - Two classes cannot be loaded by the API tool: the Authorize.Net wrappers `AuthorizeNetARB` and `AuthorizeNetCIM`, which print
   the SDK's deprecation notice (`docs/modernization/php-7.4/notes/API-COMPARISON.md`).
-- Four stray files declare a class under another name than their path (`docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`,
-  KD-109); the real classes load from their own files, so nothing is lost.
+- One file declares no class: `event/alert/listener.php`, the retired pthread listener, kept as comments (owner decision MOD-107).
+  `tests/Unit/CodingRulesTest.php` checks that every other file declares the class its path names.

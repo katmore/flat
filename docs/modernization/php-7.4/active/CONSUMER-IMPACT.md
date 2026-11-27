@@ -118,3 +118,33 @@ before, what they see now, and what to search for in their code.
   ("invalid field: name, reason: ...") and the `get_field_key()` and `get_reason()` methods are unchanged. No alias.
 - Search consumer code for: `orm\invalid_param`, `invalid_param`, `orm\invalid_field`.
 - Verified: yes. Nothing in flat used either name.
+
+### MOD-314 (KD-109) — The API header exceptions are `api\response_header\exception`
+
+- Before: the code of `flat\api\response_header\exception` and `...\exception\missing_request_field` lived under `api/response_header/`
+  but declared `flat\api\header\exception` and `flat\api\header\exception\missing_request_field`; forwarding files under `api/header/`
+  made those names load. `response_header.php` threw `header\exception\missing_request_field` when the field name is empty.
+- After: the classes are `flat\api\response_header\exception` and `flat\api\response_header\exception\missing_request_field`, next to
+  `etag.php`. The forwarding files are gone; `flat\api\header\...` no longer exists. Nothing else changed: the message is still
+  "missing request field".
+- Search consumer code for: `api\header\exception`, `missing_request_field`, `catch` blocks naming `header\exception`.
+- Verified: yes (`tests/Unit/Api/ResponseTest.php` expects the new name).
+
+### MOD-314 (KD-109) — The customer payment classes are `customer\payment\creditCard` and `bankAccount`
+
+- Before: the code of the two classes lived in `customer/payment/` and extended `customer\payment`, but declared
+  `flat\cloud\authorize\customer\payment_profile\creditCard` and `...\bankAccount`; forwarding files under `customer/payment_profile/`
+  made those names load. A docblock in `customer.php` named the `payment_profile` classes.
+- After: they are `flat\cloud\authorize\customer\payment\creditCard` and `...\bankAccount`. The forwarding files are gone and
+  `...\customer\payment_profile\creditCard` and `...\bankAccount` no longer exist (`customer\payment_profile`, the profile class
+  itself, is unchanged). The classes are deprecated since v1.73.1 and go in v2.X with the other Authorize.Net wrappers.
+- Search consumer code for: `payment_profile\creditCard`, `payment_profile\bankAccount`.
+- Verified: yes (the payment-method and transaction tests use the new names).
+
+### MOD-315 — Seven files that declared nothing are deleted
+
+- Before: src/flat/cloud/disqus.php and five files under src/flat/cloud/pci/ were 0 bytes, and src/flat/orm/missing_required_field.php
+  held only `<?php`. No code, test or document used them.
+- After: they are gone. Code that included one by path would get a missing-file error instead of nothing.
+- Search consumer code for: `cloud/disqus`, `cloud/pci`, `cloud\pci`, `missing_required_field`.
+- Verified: yes (nothing in flat referenced them).

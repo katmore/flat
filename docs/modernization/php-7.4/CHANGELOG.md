@@ -410,3 +410,33 @@ continues from the php-7.3 phase.
 - Verified (both): `docker/bin/test all --coverage`: 1,639 tests, 7,229 assertions, all pass; 100% (333 classes, 1,105 methods, 8,872
   lines); no PHP message.
 - Undo: revert the commit.
+
+## MOD-314 — The four mismatched classes are declared at their own path; forwarding files, includes and `class_alias` are guarded against (KD-109)
+
+- Kind: renames and a guard, decided by the owner on 2026-11-27 ("the path decides"; "everything should rely on autoload").
+  `src/flat/api/response_header/exception.php` and `exception/missing_request_field.php` declare `flat\api\response_header...`;
+  `src/flat/cloud/authorize/customer/payment/bankAccount.php` and `creditCard.php` declare `...\customer\payment`. The four one-line
+  forwarding files (`api/header/...`, `customer/payment_profile/...`) are deleted. `api/response_header.php`, `ResponseTest`,
+  `AuthorizePaymentMethodTest`, `AuthorizeTransactionTest` and a docblock in `customer.php` follow.
+- Correction: MOD-301, MOD-312 and MOD-313 and the notes of the same days called these four files "stray duplicates" whose real class
+  loads from its own file. That was wrong: the files at the declared names were forwarding stubs, and the code lived in the oddly named
+  files. Nothing was deleted on that basis. The defect list and the notes are corrected.
+- New test `tests/Unit/CodingRulesTest.php` enforces the rules of `AGENTS.md` over `src`: no `class_alias` (also in tests, `bin`,
+  `docker`), every class declared where its path says, and no `require`/`include` except the two loaders of data files
+  (`core/config.php`, which includes a config file returning an array, and `core/controller/tmpl.php`, which includes templates).
+  `AGENTS.md` now says classes load through the autoloader, never by include.
+- Behavior: the four old names no longer exist ([active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)).
+- Undo: revert the commit.
+
+## MOD-315 — Seven files that declared nothing are deleted
+
+- Kind: removal of dead files, decided by the owner on 2026-11-27 ("it's slop"). `src/flat/cloud/disqus.php`, the five 0-byte files
+  under `src/flat/cloud/pci/` and `src/flat/orm/missing_required_field.php` (only `<?php`) are deleted. The earlier notes called the six
+  0-byte files "deliberately left"; no owner decision to keep them is recorded (MOD-125 only said "not touched").
+  `src/flat/event/alert/listener.php` stays: its retirement, with the old scaffolding kept as comments, is the owner's decision of
+  MOD-107.
+- Behavior: none for any code; nothing referenced these files.
+- Verified (MOD-314 and MOD-315): `docker/bin/test all --coverage`: 1,642 tests, 7,232 assertions, all pass; 100% (333 classes, 1,105
+  methods, 8,868 lines); no PHP message. The API dump and comparison are regenerated (604 entries;
+  [notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
+- Undo: revert the commit.

@@ -14,22 +14,26 @@ php tests/tools/apidump.php compare ../php-7.3/notes/API-V1.73.2.json API-V1.74.
 
 ## Result
 
-Made after MOD-302 to MOD-309 (the removal and the renames); the first dump of this phase, made before them, had no differences
-at all.
+Made after MOD-302 to MOD-315 (the removals and renames of this phase); the first dump of this phase, made before them, had no
+differences at all.
 
-- 620 entries in the `v1.73.2` dump, 615 in this one.
-- **Five files removed**, all of them names that were not real classes of their own or could not load: `flat\core\util\validate\collection`
-  (could never load, KD-108), and the old names `flat\cloud\authorize\subscription\cancelled`, `flat\data\session\driver`,
-  `flat\data\session\driver\session` and `flat\core\util\factory\exception\not_match_interface`, which only existed as `class_alias`
-  names or forwarding files (MOD-306 to MOD-309).
-- **Nine entries changed from "cannot be loaded" or "declares nothing" to "loads":** `flat\fsm` and `flat\orm\invalid_field` (KD-109, Q57; they declared
-  `flat\fsm\fsm` and `invalid_param`) and the MongoDB SSL classes, now
-  `flat\db\driver\mongo\ssl`, `ssl\cafile`, `ssl\cafile\base64`, `ssl\cafile\file`, `ssl\localcert`, `ssl\localcert\base64` and
-  `ssl\localcert\file` (KD-107). The old names `flat\db\mongo\ssl...` no longer exist.
+- 620 entries in the `v1.73.2` dump, 604 in this one. Every class, method, property, constant, parameter, type and default of
+  every class that kept its name is the same.
+- **Sixteen names gone.** Eleven are renames or removals of classes that existed under that name; the owner decided each one,
+  none has an alias, and each is in [../active/CONSUMER-IMPACT.md](../active/CONSUMER-IMPACT.md) with what to search for:
+  - `flat\api\header\exception` and `...\exception\missing_request_field` are now `flat\api\response_header\...` (MOD-314);
+  - `flat\cloud\authorize\customer\payment_profile\bankAccount` and `...\creditCard` are now `...\customer\payment\...` (MOD-314);
+  - `flat\cloud\authorize\subscription\cancelled` (MOD-306), `flat\data\session\driver` and `flat\data\session\driver\session`
+    (MOD-308) and `flat\core\util\factory\exception\not_match_interface` (MOD-309), which existed only as `class_alias` names;
+  - `flat\core\util\validate\collection`, which could never be loaded (MOD-302).
+  The other five are empty files (`flat\cloud\disqus` and four under `flat\cloud\pci`) and `flat\orm\missing_required_field`, which
+  declared nothing (MOD-315).
+- **Thirteen entries now load that did not:** the seven MongoDB SSL classes (MOD-303), `flat\fsm` and `flat\orm\invalid_field`
+  (MOD-312, MOD-313) and the four renamed classes above (MOD-314), which are now declared at their own path.
 - **Six methods and one constant "added"**, on `subscription\canceled`, `ssh\...\input_error\bad_param` and `data\orm\driver\session`
   (its constructor, `get_data()`, `set_data()` and `fallback_handler`). They are not new: the tool records only what a class declares
   under the name its path gives, so while these were aliases of another class their entries looked empty and the members were
-  recorded under the old names. Nothing else differs.
+  recorded under the old names.
 - The corrected adapter trait (MOD-295) is under `src/flat/vendor`, which the tool skips; it is not part of flat's API.
 - The two dumps also differ in the stored fatal-error text of a class that cannot load, which PHP 7.4 words differently.
 
@@ -42,11 +46,5 @@ two above, `validate\collection` and the five SSL classes); the `v1.72.0` and `v
 
 ## Entries that declare nothing
 
-The tool lists 12 entries as "declares nothing" (it looks for the class named by the path). Checked one by one:
-
-- Four declare a class under another name and load under neither: stray duplicates of classes that load from their own
-  files (`api\response_header\exception`, `api\response_header\exception\missing_request_field`,
-  `cloud\authorize\customer\payment\bankAccount` and `creditCard`). They are the rest of KD-109 in
-  [../active/KNOWN-DEFECTS.md](../active/KNOWN-DEFECTS.md).
-- Six are empty files (the known leftovers of the php-7.3 handoff).
-- Two declare no class: `flat\event\alert\listener` (the retired class of MOD-107) and `flat\orm\missing_required_field`.
+One: `flat\event\alert\listener`, the pthread listener the owner retired in MOD-107; the file keeps the old scaffolding as comments.
+`tests/Unit/CodingRulesTest.php` now checks that every other file in `src/flat` declares the class its path names.

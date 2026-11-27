@@ -41,23 +41,22 @@ the php-7.2 phase and written down there as "untested and unusable", but never r
 - Fixed (MOD-302): the file is removed.
 - **Fixed.**
 
-### KD-109 - Files whose declared class name differs from their path (sixteen in all, seven are KD-107)
+### KD-109 - Files whose declared class name differs from their path (sixteen in all)
 
-- Category: mixed. A check of every file in `src/flat` (outside `vendor`) against the name its path implies found sixteen
-  that declare something else; each was then loaded by name under PHP 7.4. The API tool lists them as "no declaration".
-  - Seven are the MongoDB SSL files of KD-107.
-  - Three were `class_alias` names that worked: `subscription\canceled` (declared `cancelled`), `ssh ... bad_param` (declared
-    `badParam`) and `data\orm\driver\session`. **Fixed (MOD-306 to MOD-308):** each is declared under its path's name and the
-    aliases are gone (Q58).
-  - Four are stray files whose real class loads from its own file, so nothing is lost:
-    `api\response_header\exception`, `api\response_header\exception\missing_request_field` (declare `api\header\...`),
-    `cloud\authorize\customer\payment\bankAccount` and `...\creditCard` (declare `...\payment_profile\...`). Loading
-    their path name by hand while the real class is loaded is a fatal "Cannot declare class".
-  - Two loaded under neither name: `src/flat/fsm.php` declared the empty abstract class `flat\fsm\fsm` and
-    `src/flat/orm/invalid_field.php` declared `flat\orm\invalid_param`. **Fixed (MOD-312, MOD-313):** the owner chose the path
-    names (Q57), so they are `flat\fsm` and `flat\orm\invalid_field`, with no alias.
-- Still open: the four stray duplicate files. Their real classes load from their own files, so nothing is lost; the stray
-  files could be deleted, which is for the owner to say (it removes files, not classes).
+- Category: A in effect, and **fixed**. A check of every file in `src/flat` (outside `vendor`) against the name its path implies
+  found sixteen that declared something else. Each was then loaded by name under PHP 7.4.
+  - Seven are the MongoDB SSL files of KD-107 (MOD-303).
+  - Three were `class_alias` names: `subscription\canceled`, `ssh ... bad_param` and `data\orm\driver\session` (MOD-306 to MOD-308, Q58).
+  - Two loaded under neither name: `flat\fsm` (declared `flat\fsm\fsm`) and `flat\orm\invalid_field` (declared `invalid_param`)
+    (MOD-312, MOD-313, Q57).
+  - Four were the real code of `api\response_header\exception`, `...\exception\missing_request_field` (declared `flat\api\header\...`)
+    and `cloud\authorize\customer\payment\bankAccount` and `creditCard` (declared `...\payment_profile\...`), each with a
+    one-line `require_once` file at the path of its declared name, which made both names work. **Fixed (MOD-314):** the owner's
+    rule is that the path decides, so they are declared as their own path says, the forwarding files are deleted, and the
+    references (`api/response_header.php`, three tests, a docblock) follow. No alias.
+- A mistake of mine, corrected: the entries MOD-301, MOD-312 and MOD-313 of the change log, and the notes of the same days, called these
+  four "stray duplicates whose real classes load from their own files" and offered to delete them. That was backwards: the files at
+  the declared names were the stubs and the code lived in the oddly named files. Nothing was deleted on that basis.
 
 ## Owner questions
 

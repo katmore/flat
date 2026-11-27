@@ -357,7 +357,7 @@ implements
     *       $params['payment']['payment'] the payment details: an array with a 'creditCard' or 'bankAccount'
     *          element, an array of card fields (cardNumber, expirationDate, cardCode) or bank account fields
     *          (accountType, routingNumber, accountNumber, nameOnAccount, echeckType, bankName), or a
-    *          \flat\cloud\authorize\customer\payment_profile\creditCard or bankAccount object.
+    *          \flat\cloud\authorize\customer\payment\creditCard or bankAccount object.
     *    
     * @return string
     * 

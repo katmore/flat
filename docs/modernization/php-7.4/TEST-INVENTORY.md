@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 876 test methods in 108 files, running 1639 test cases.
+- 879 test methods in 109 files, running 1642 test cases.
 - 142 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -278,6 +278,12 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testKnownFieldsAreMappedAndExcludedFromExtraFields` (line 6)
 - `testFieldsAddedAfterConstructionReturnNamesOrValues` (line 14)
+
+### `tests/Unit/CodingRulesTest.php` (3)
+
+- `testClassAliasIsNeverUsed` (line 51)
+- `testEveryClassIsDeclaredWhereItsPathSays` (line 62)
+- `testClassesAreLoadedByTheAutoloaderNeverByInclude` (line 74)
 
 ### `tests/Unit/Core/AlertDefaultsTest.php` (2)
 

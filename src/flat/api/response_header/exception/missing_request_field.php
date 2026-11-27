@@ -1,7 +1,7 @@
 <?php
-namespace flat\api\header\exception;
+namespace flat\api\response_header\exception;
 
-use \flat\api\header\exception;
+use \flat\api\response_header\exception;
 
 class missing_request_field extends exception {
    public function __construct() {

@@ -61,6 +61,9 @@ deprecation for two phases.)
   the file) and every reference. A file that only requires another file under a second name is the same shim: delete it.
 - **flat's style for class names** is lowercase words joined by underscores (`bad_param`, `not_found`). Never name a new or
   renamed class in camel case (`badParam`).
+- **Classes load through the autoloader, never through `require` or `include`.** No "forwarding file" that only requires another
+  file, no `require_once` of a class file in the source or in a test. Only data files may be included: a config file that returns
+  an array, a template. `tests/Unit/CodingRulesTest.php` checks all of these rules over `src` and fails on a violation.
 - A test double that needs a class under a third party's name declares it under that name in a support file
   (`tests/Support/LegacyAmqpConnection.php`), never with an alias.
 

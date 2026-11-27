@@ -174,7 +174,7 @@ class ResponseTest extends TestCase
     }
     public function testEmptyHeaderFieldThrowsItsDeclaredLegacyException()
     {
-        $this->expectException(\flat\api\header\exception\missing_request_field::class);
+        $this->expectException(\flat\api\response_header\exception\missing_request_field::class);
         $this->expectExceptionMessage('missing request field');
         new \flat\api\response_header('');
     }

@@ -76,11 +76,11 @@ class AuthorizePaymentMethodTest extends TestCase
         switch ($name) {
             case 'array with a creditCard element': return ['billTo'=>$person, 'payment'=>['creditCard'=>$card]];
             case 'array with card fields': return ['billTo'=>$person, 'payment'=>$card];
-            case 'array with a payment object': return ['billTo'=>new c\billTo($person), 'payment'=>new c\payment_profile\creditCard($card)];
+            case 'array with a payment object': return ['billTo'=>new c\billTo($person), 'payment'=>new c\payment\creditCard($card)];
             case 'payment_profile object':
                 $profile = new class extends c\payment_profile { public $customerType = 'individual'; public function get_data_type() { return 'creditCard'; } };
                 $profile->billTo = new c\billTo($person);
-                $profile->payment = new c\payment_profile\creditCard($card);
+                $profile->payment = new c\payment\creditCard($card);
                 return $profile;
         }
         throw new \LogicException($name);
