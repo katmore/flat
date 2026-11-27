@@ -204,3 +204,9 @@ package version changes in this checkpoint. Full Docker suite: 1718 tests,
 v5.4.57 → v6.0.19, resolved against PHP 8.0.30. No other
 package version changes in this checkpoint. Full Docker suite: 1718 tests,
 8111 assertions, no errors/failures/skips; 100% method and line coverage.
+
+## MOD-361 — Upgrade myclabs/deep-copy (2026-11-27)
+
+1.13.4 → 1.14.0, resolved against PHP 8.0.30. No other
+package version changes in this checkpoint. Full Docker suite: 1718 tests,
+8106 assertions, no errors/failures/skips; 100% method and line coverage.
