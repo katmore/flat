@@ -4,6 +4,10 @@ services:
     build:
       secrets:
         - proxy_ca
+  sshd:
+    build:
+      secrets:
+        - proxy_ca
 secrets:
   proxy_ca:
     file: ${FLAT_TEST_CA_FILE:?Set FLAT_TEST_CA_FILE to a readable CA bundle}
