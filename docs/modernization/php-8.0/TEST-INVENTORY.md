@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 918 test methods in 110 files, running 1717 test cases.
+- 918 test methods in 110 files, running 1718 test cases.
 - 148 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-8.0/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -285,10 +285,10 @@ PHPUnit's `--list-tests-xml` and converts it with
 ### `tests/Unit/CodingRulesTest.php` (5)
 
 - `testEverySourceFileParsesOnThisPhpRuntime` (line 51)
-- `testAliasGuardHandlesPhp80NameTokens` (line 74): 5 data-provider cases
-- `testClassAliasIsNeverUsed` (line 89)
-- `testEveryClassIsDeclaredWhereItsPathSays` (line 98)
-- `testClassesAreLoadedByTheAutoloaderNeverByInclude` (line 110)
+- `testAliasGuardHandlesPhp80NameTokens` (line 74): 6 data-provider cases
+- `testClassAliasIsNeverUsed` (line 90)
+- `testEveryClassIsDeclaredWhereItsPathSays` (line 99)
+- `testClassesAreLoadedByTheAutoloaderNeverByInclude` (line 111)
 
 ### `tests/Unit/Core/AlertDefaultsTest.php` (2)
 

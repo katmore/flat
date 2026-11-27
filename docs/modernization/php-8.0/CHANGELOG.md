@@ -234,3 +234,33 @@ not a hold for a consumer's old API. No advisory is ignored or dismissed.
 Composer now reports the original four AWS/MongoDB advisories; the five YAML
 advisories are gone. Full Docker suite: 1,718 tests, 8,112 assertions, no failures,
 errors or skips; 100% of 332 classes, 1,104 methods and 8,867 lines.
+
+## MOD-364 — Finish validation records and archive phase work (2026-11-27)
+
+The final 602-entry API snapshot is unchanged from immediately after syntax
+modernization; all entries load. PHP 8 syntax checks cover all source and test
+PHP files. The minifier's 45 programs retain their JavaScript results. The CLI
+mutation gap is closed. The qualified-name rule also covers T_NAME_RELATIVE,
+with a sixth token fixture; the targeted coding-rule run passes 10 tests and
+611 assertions, and subsequent full suites include it. Headers in the already
+modernized source files now state the PHP 8.0 baseline.
+
+Final ordinary suite: 1,718 tests, 8,112 assertions, no errors/failures/skips;
+100% configured loaded-code coverage. The tools lock audit is clean; the runtime
+lock has only the four inherited AWS/MongoDB advisories. YAML's five additional
+advisories were removed in MOD-363. Static consumer findings and the remaining
+owner/private/live checks are recorded separately; no runtime app integration
+or live payment result is claimed. No release or master change is made.
+
+Archived path map:
+
+- php-7.4/active/KNOWN-DEFECTS.md → php-7.4/history/DEFECT-INDEX.md
+- php-7.4/active/SESSION-HANDOFF.md → php-7.4/history/PHASE-HANDOFF.md
+- php-7.4/active/CONSUMER-IMPACT.md → php-7.4/history/PATCH-IMPACT.md
+- php-7.4/HANDOFF.md → php-7.4/history/HANDOFF.md
+- php-7.4/notes/EXIT-REVIEW.md → php-7.4/history/EXIT-REVIEW.md
+- php-8.0/notes/MIGRATION-REVIEW.md → php-8.0/history/MIGRATION-REVIEW.md
+
+Link destinations are updated while historical labels and narrative remain.
+Closed-phase active folders contain only .gitkeep; current active files describe
+remaining work and pending release/consumer decisions. The inventory is regenerated.

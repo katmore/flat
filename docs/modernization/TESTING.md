@@ -240,3 +240,15 @@ my human was disappointed and irritated with me because the previous harness
 lived outside the repository. This setup replaces that mistake: operational test
 instructions must refer to repository-owned files and `docker/bin/test`, not a private
 workspace path. AGENTS.md makes that requirement explicit for later agents.
+
+## PHP 8.0 harness details
+
+The native test entry point and Compose select XDEBUG_MODE=coverage. Xdebug's
+develop-mode exception cache retains argument objects and changes resource
+lifetimes. Coverage mode leaves PHP's E_ALL reporting and PHPUnit's diagnostic
+failures intact. The image remains usable for interactive development modes.
+
+Pinned extensions build in one layer to keep VFS Docker from copying the entire
+runtime once per extension. Bootstrap is copied with the two dependency trees;
+the build verifies exact PHP/extension versions and E_ALL. Corporate proxy trust
+continues to use the optional build secret, including the HTTPS SSH fixture build.

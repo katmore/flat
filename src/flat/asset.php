@@ -3,7 +3,7 @@
 /*
  * \flat\asset definition 
  *
- * PHP version >=7.2
+ * PHP version >=8.0
  * 
  * This file is part of the "The Flat Framework".
  * 

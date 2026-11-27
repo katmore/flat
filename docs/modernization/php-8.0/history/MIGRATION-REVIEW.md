@@ -1,3 +1,5 @@
+> Archived: completed migration review. Current status: [phase overview](../README.md). Q63 is resolved in the [defect index](../active/KNOWN-DEFECTS.md).
+
 # PHP 8.0 migration review
 
 Authority: PHP's [incompatible changes](https://www.php.net/manual/en/migration80.incompatible.php)

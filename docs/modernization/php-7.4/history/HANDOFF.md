@@ -1,7 +1,9 @@
+> Archived: the PHP 7.4 phase brief. Current work: [PHP 8.0](../../php-8.0/README.md).
+
 # php-7.4 phase: handoff
 
 The brief the owner gave at the start of the phase (2026-11-26), written at the end of php-7.3. It is the
-work plan. What is true now is in [README.md](README.md).
+work plan. What is true now is in [README.md](../README.md).
 
 ## State at the start
 
@@ -25,18 +27,18 @@ work plan. What is true now is in [README.md](README.md).
 
 ## Read first
 
-- `AGENTS.md`, [../README.md](../README.md), [../TESTING.md](../TESTING.md).
-- In [../php-7.3/](../php-7.3/README.md): the README, the end of the change log,
-  [the 7.3 handoff](../php-7.3/history/HANDOFF.md) (its traps still apply),
-  [the environment](../php-7.3/notes/ENVIRONMENT.md), [vendored libraries](../php-7.3/notes/VENDORED.md),
-  [consumer impact](../php-7.3/history/CONSUMER-IMPACT.md) and
-  [known defects](../php-7.3/history/KNOWN-DEFECTS.md).
+- `AGENTS.md`, [../README.md](../../README.md), [../TESTING.md](../../TESTING.md).
+- In [../php-7.3/](../../php-7.3/README.md): the README, the end of the change log,
+  [the 7.3 handoff](../../php-7.3/history/HANDOFF.md) (its traps still apply),
+  [the environment](../../php-7.3/notes/ENVIRONMENT.md), [vendored libraries](../../php-7.3/notes/VENDORED.md),
+  [consumer impact](../../php-7.3/history/CONSUMER-IMPACT.md) and
+  [known defects](../../php-7.3/history/KNOWN-DEFECTS.md).
 - flat-webapp's `AGENTS.md` and `CHANGELOG.md`.
 
 ## Plan (mirrors php-7.3)
 
 1. Create this folder with the same skeleton. Update the Progress list in
-   [../README.md](../README.md) and the phase pointers in `AGENTS.md`.
+   [../README.md](../../README.md) and the phase pointers in `AGENTS.md`.
 2. Move the test environment to PHP 7.4.33, the last 7.4 release, pinned by digest with exact versions:
    - `php:7.4-cli`, `sha256:620a6b9f...`
    - `php:7.4-apache` (flat-webapp), `sha256:c9d7e608...`

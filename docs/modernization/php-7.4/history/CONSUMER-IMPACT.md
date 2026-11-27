@@ -1,4 +1,4 @@
-> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../active/SESSION-HANDOFF.md). The record below describes its original checkpoint.
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](PHASE-HANDOFF.md). The record below describes its original checkpoint.
 
 # Consumer impact, php-7.4 phase
 

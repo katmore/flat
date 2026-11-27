@@ -1,3 +1,5 @@
+> Archived: PHP 7.4 work has moved to the [PHP 8.0 phase](../../php-8.0/README.md). The record below describes its earlier checkpoint.
+
 # Current work, php-7.4
 
 Work and push only on php-7.4. Phase rules: [AGENTS.md](../../../../AGENTS.md),
@@ -7,7 +9,7 @@ Work and push only on php-7.4. Phase rules: [AGENTS.md](../../../../AGENTS.md),
 
 1. Revisit the [eight older mutation survivors](../../php-7.3/history/MUTATION-PROBE.md)
    and triage them as test gaps or equivalent changes.
-2. Complete [release closeout](../notes/EXIT-REVIEW.md), including the published
+2. Complete [release closeout](EXIT-REVIEW.md), including the published
    patch and flat-webapp lock update on the owner's instruction. Draft:
    [v1.74.1 release notes](../RELEASE-NOTES-V1.74.1.md).
 3. The private consumer scan and live Authorize.Net approval/decline checks need the

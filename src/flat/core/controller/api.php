@@ -2,7 +2,7 @@
 /**
  * class definition for \flat\core\controller\api
 *
-* PHP version >=7.0
+* PHP version >=8.0
 *
 * Copyright (c) 2012-2016 Doug Bird.
 *    All Rights Reserved.

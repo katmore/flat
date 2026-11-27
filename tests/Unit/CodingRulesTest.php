@@ -63,7 +63,7 @@ class CodingRulesTest extends TestCase
     private static function hasClassAlias($source)
     {
         foreach (token_get_all($source) as $token) {
-            if (!is_array($token) || !in_array($token[0], [T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED], true)) continue;
+            if (!is_array($token) || !in_array($token[0], [T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED, T_NAME_RELATIVE], true)) continue;
             $parts = explode('\\', $token[1]);
             if (strtolower(end($parts)) === 'class_alias') return true;
         }
@@ -81,6 +81,7 @@ class CodingRulesTest extends TestCase
             ['<?php class_alias("A", "B");', true],
             ['<?php \\class_alias("A", "B");', true],
             ['<?php custom\\class_alias("A", "B");', true],
+            ['<?php namespace\\class_alias("A", "B");', true],
             ['<?php // class_alias("A", "B");', false],
             ['<?php $text = "class_alias";', false],
         ];

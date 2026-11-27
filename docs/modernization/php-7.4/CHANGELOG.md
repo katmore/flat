@@ -84,7 +84,7 @@ continues from the php-7.3 phase.
   `bcb0a495a568243b331692443a04cdcc9cc9c205`, with libmongoc `32898b16f8236470ad5610bf0f0b0071bee6a1b4`) in place
   of 1.16.2; the `ext-mongodb` pin in `tests/docker/runtime/composer.json` is `1.19.4` and the lock is
   refreshed (hash and platform only).
-- Correction to the phase brief ([../php-7.4/HANDOFF.md](HANDOFF.md)): it says 1.21.1 runs on PHP 7.4. It does
+- Correction to the phase brief ([../php-7.4/HANDOFF.md](history/HANDOFF.md)): it says 1.21.1 runs on PHP 7.4. It does
   not: from 1.21.0 the extension's `config.m4` requires PHP 8.1 (the build stops with "Need a PHP version
   >= 8.1.0"). The newest release that builds on 7.4 is 1.20.1.
 - Why not 1.20.1: from 1.20.0 the extension deprecates an integer `ReadPreference` mode and
@@ -687,7 +687,7 @@ continues from the php-7.3 phase.
 
 ## MOD-336 — Check PHP 7.4 exit readiness and draft v1.74.1 notes
 
-- Kind: review/documentation, no production or test behavior changed. [notes/EXIT-REVIEW.md](notes/EXIT-REVIEW.md) records release/consumer closeout,
+- Kind: review/documentation, no production or test behavior changed. [notes/EXIT-REVIEW.md](history/EXIT-REVIEW.md) records release/consumer closeout,
   branch ancestry, deferred work and PHP 8.0 handoff considerations. [RELEASE-NOTES-V1.74.1.md](RELEASE-NOTES-V1.74.1.md) is a draft; no release published.
 - Found KD-128: the mutation wrapper's copied checkout omits bin/docker, so the unmutated suite fails at CodingRulesTest before a mutant runs.
   Its service mode also omits the newer HTTP/SSH/S3 setup by inspection. This remains open, with a concrete reproduction and required validation.
@@ -702,7 +702,7 @@ continues from the php-7.3 phase.
   The merge brings in the PR 6 merge commit that GitHub counted as one commit behind; it changes no file contents compared with its first parent.
 - Behavior: none. Master remains at 2812136; no release, runtime step, reset, rebase or force push.
 - Verified: merge tree equals its first parent's tree; master is an ancestor of php-7.4. Documentation check passes.
-  Updated [notes/EXIT-REVIEW.md](notes/EXIT-REVIEW.md) to distinguish the original ancestry finding from the completed synchronization.
+  Updated [notes/EXIT-REVIEW.md](history/EXIT-REVIEW.md) to distinguish the original ancestry finding from the completed synchronization.
 - Undo: no undo required for runtime behavior; this is additive history only.
 
 ## MOD-338 — Archive completed phase work and keep active folders current

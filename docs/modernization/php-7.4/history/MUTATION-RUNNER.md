@@ -1,4 +1,4 @@
-> Completed KD-128 (MOD-339). Replaced as an active item by the [current defect index](../active/KNOWN-DEFECTS.md); current next actions are in the [handoff](../active/SESSION-HANDOFF.md).
+> Completed KD-128 (MOD-339). Replaced as an active item by the [current defect index](DEFECT-INDEX.md); current next actions are in the [handoff](PHASE-HANDOFF.md).
 
 # Mutation runner repair
 
@@ -46,7 +46,7 @@ KD-129; the next owner question is Q63.
   HTTP, SSH and S3 services and environment inputs (confirmed by inspection).
 - Required fix: complete the copied checkout and service setup; prove both
   baselines pass and run a small mutation probe. Keep all coding-rule and
-  service tests enabled. Reproduction context: [exit review](../notes/EXIT-REVIEW.md).
+  service tests enabled. Reproduction context: [exit review](EXIT-REVIEW.md).
 
 ## How the fix lands
 

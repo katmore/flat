@@ -19,7 +19,7 @@ The major version follows semantic versioning. It stays at 1 while the public AP
 
 ### Branches during and after the project
 - **`master`:** the latest completed phase. Only the maintainer changes it, and only that way: an agent may change it only on the maintainer's explicit one-time instruction (prime directive 1 in `AGENTS.md`).
-- **`php-7.N`:** the work branch of one phase. When the phase is complete the maintainer merges it to `master` and tags the release; the branch is kept permanently as the record of the phase. Agents commit and push to the current phase branch only.
+- **`php-X.Y`:** the work branch of one phase. When the phase is complete the maintainer merges it to `master` and tags the release; the branch is kept permanently as the record of the phase. Agents commit and push to the current phase branch only.
 - **Tags and Releases:** `v1.<PHP major><PHP minor>.0`, plus patch releases (`v1.72.1`). Consumers pin these, not branches.
 - When the maintainer declares the whole project complete, the phase branches may be deleted: each finished phase's Release tag is the permanent record, so make sure every phase has its Release first. Only the maintainer decides this.
 

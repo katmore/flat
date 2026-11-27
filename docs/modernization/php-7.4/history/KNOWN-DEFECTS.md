@@ -1,4 +1,4 @@
-> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../active/SESSION-HANDOFF.md). The record below describes its original checkpoint.
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](PHASE-HANDOFF.md). The record below describes its original checkpoint.
 
 # Known defects and owner questions, php-7.4 phase
 
@@ -128,7 +128,7 @@ while reviewing `php-7.4`; the status of each is listed below. Reproductions, pr
 - Category: A, **open**. `docker/bin/mutate` copies src/tests and two root configuration files, but CodingRulesTest now scans bin/docker too.
   Its unmutated baseline fails before any mutation: missing /app/bin (296 tests reached, one error).
 - By inspection, `--services` also starts only MongoDB/RabbitMQ and omits the newer HTTP, SSH and S3 services and their environment inputs.
-- Reproduction and closeout context: [../notes/EXIT-REVIEW.md](../notes/EXIT-REVIEW.md).
+- Reproduction and closeout context: [../notes/EXIT-REVIEW.md](EXIT-REVIEW.md).
 - Required fix: complete the throwaway checkout and service setup, then verify both mutation baselines and a small probe without skipping tests.
 
 ## Owner questions

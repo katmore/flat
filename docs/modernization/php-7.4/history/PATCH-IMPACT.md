@@ -1,3 +1,5 @@
+> Archived: PHP 7.4 work has moved to the [PHP 8.0 phase](../../php-8.0/README.md). The record below describes its earlier checkpoint.
+
 # Consumer impact, pending PHP 7.4 patch
 
 These entries cover the changes pending v1.74.1. Changes already shipped in

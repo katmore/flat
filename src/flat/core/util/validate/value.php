@@ -2,7 +2,7 @@
 /**
  * class definition 
  *
- * PHP version >=7.1
+ * PHP version >=8.0
  * 
  * Copyright (c) 2012-2017 Doug Bird. 
  *    All Rights Reserved. 

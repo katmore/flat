@@ -17,6 +17,6 @@ Public names, parameters, defaults, return values and payload formats stay compa
 
 Restrictive public union/mixed types and attributes are not added merely to use
 syntax: they would change reflection contracts or require a new consumer protocol.
-Nullsafe access is used only where it would simplify a real nullable-object path.
+The nullsafe check simplifies a real nullable-object path rather than adding a new contract.
 
 Verification and exact results belong in the phase change log and API comparison.

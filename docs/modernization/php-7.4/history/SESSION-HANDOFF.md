@@ -1,9 +1,9 @@
-> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../active/SESSION-HANDOFF.md). The record below describes its original checkpoint.
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](PHASE-HANDOFF.md). The record below describes its original checkpoint.
 
 # Session handoff, php-7.4
 
 Updated 2026-11-27, to continue the phase in another session. The plan and rules are in
-[../HANDOFF.md](../HANDOFF.md); this page only says where things stand. When it is used up, move it to
+[../HANDOFF.md](HANDOFF.md); this page only says where things stand. When it is used up, move it to
 `history/`.
 
 ## Branches
@@ -44,7 +44,7 @@ The sample app passed with the modified framework mounted into its containers.
 
 ## Next
 
-1. Repair KD-128 (mutation runner), then complete the closeout in [../notes/EXIT-REVIEW.md](../notes/EXIT-REVIEW.md).
+1. Repair KD-128 (mutation runner), then complete the closeout in [../notes/EXIT-REVIEW.md](EXIT-REVIEW.md).
 2. The owner decides whether to publish the patch; notes: [../RELEASE-NOTES-V1.74.1.md](../RELEASE-NOTES-V1.74.1.md).
 3. The next phase (PHP 8.0) needs the owner's go-ahead.
 

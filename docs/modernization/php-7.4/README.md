@@ -1,49 +1,23 @@
-# php-7.4 phase
+# PHP 7.4 phase
 
-## Status: in progress
+Code work continues in the [PHP 8.0 phase](../php-8.0/README.md).
+This folder preserves the PHP 7.4 validation and release records.
 
-- PHP 7.4.33; the Docker suite passed 1,703 tests and 7,470 assertions with
-  100% class, method and line coverage. Environment: [notes](notes/ENVIRONMENT.md).
-- All eleven adversarial-review defects are fixed. The [review](history/ADVERSARIAL-REVIEW.md)
-  and [resolved registry](history/KNOWN-DEFECTS.md) are archived.
-- **KD-128 is fixed:** both mutation modes work; [verification record](history/MUTATION-RUNNER.md).
-  No confirmed defects are open. Remaining work is in the [handoff](active/SESSION-HANDOFF.md).
-- Published release: v1.74.0. The v1.74.1 patch is pending; its notes are a draft.
-  flat-webapp still locks v1.74.0; its tests also passed against the patched source.
-- No open owner questions. Publishing releases, changing master and starting
-  PHP 8.0 require the owner's instruction.
+## Validated snapshot
 
-## Resume
+PHP 7.4.33: 1,703 tests, 7,470 assertions, 100% class/method/line coverage.
+[Environment](notes/ENVIRONMENT.md), [API comparison](notes/API-COMPARISON.md),
+[test inventory](TEST-INVENTORY.md), [change log](CHANGELOG.md).
 
-Read [AGENTS.md](../../../AGENTS.md), the [project rules](../README.md), the
-[phase plan](HANDOFF.md), then the current handoff. Run `docker/bin/test` for
-framework checks and `docker/bin/check-docs` after documentation changes.
+## Release records
 
-After tests change, regenerate the current inventory safely:
-
-```sh
-tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.4/active/KNOWN-DEFECTS.md > "$tmp" && chmod 644 "$tmp" && mv "$tmp" docs/modernization/php-7.4/TEST-INVENTORY.md
-```
-
-## Active work
-
-- [Defect index](active/KNOWN-DEFECTS.md): Current status and where to add new findings.
-- [Current handoff](active/SESSION-HANDOFF.md): Next actions and unresolved follow-ups.
-- [Pending consumer impact](active/CONSUMER-IMPACT.md): v1.74.1 changes to check before release.
-
-## Reference
-
-- [Change log](CHANGELOG.md)
-- [Published release notes](RELEASE-NOTES.md)
-- [Draft v1.74.1 release notes](RELEASE-NOTES-V1.74.1.md)
-- [Current test inventory](TEST-INVENTORY.md)
-- [Exit review](notes/EXIT-REVIEW.md)
-- [Environment](notes/ENVIRONMENT.md), [vendored patch](notes/VENDORED.md),
-  [API comparison](notes/API-COMPARISON.md), [consumer checks](notes/CONSUMER-CHECK.md),
-  [dependency alerts](notes/DEPENDENCY-ALERTS.md), [class rename record](notes/ALIASES.md)
+[Published v1.74.0 notes](RELEASE-NOTES.md),
+[draft v1.74.1 notes](RELEASE-NOTES-V1.74.1.md),
+[exit review](history/EXIT-REVIEW.md). Releases remain the owner's responsibility.
+Pending release, private-consumer and mutation follow-ups are carried forward
+in the [current work list](../php-8.0/active/SESSION-HANDOFF.md).
 
 ## Archive
 
-Completed work is in [history](history/): the [adversarial review](history/ADVERSARIAL-REVIEW.md),
-[previous defect registry](history/KNOWN-DEFECTS.md), [full impact ledger](history/CONSUMER-IMPACT.md)
-and [previous handoff](history/SESSION-HANDOFF.md). Use the active files for current tasks.
+[Phase handoff](history/PHASE-HANDOFF.md), [defect index](history/DEFECT-INDEX.md),
+[pending patch impact](history/PATCH-IMPACT.md), and the earlier records in history.

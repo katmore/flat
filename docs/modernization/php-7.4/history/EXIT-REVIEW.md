@@ -1,3 +1,5 @@
+> Archived: completed PHP 7.4 exit review. Remaining owner checks are carried in the [PHP 8.0 handoff](../../php-8.0/active/SESSION-HANDOFF.md).
+
 # PHP 7.4 exit review
 
 Checked 2026-11-27 against flat `986d3cc` and flat-webapp `9e6fb73`.
@@ -9,7 +11,7 @@ This check found KD-128: the mutation copy omitted bin/docker, and service mode
 had only the older database/broker setup. MOD-339 repairs both modes. Each now
 passes its unmodified baseline and catches a known planted mutation, with no
 timeouts and no source changes left behind. Full reproduction and verification:
-[archived repair record](../history/MUTATION-RUNNER.md).
+[archived repair record](MUTATION-RUNNER.md).
 
 ## Release closeout
 
@@ -52,7 +54,7 @@ both tool locks are clean. The fixed releases require PHP 8.1, so the PHP 8.0
 step will not resolve them. The abandoned doctrine/annotations package remains.
 GitHub's current Dependabot dismissal state could not be reread: both API
 requests returned "Resource not accessible by integration" (HTTP 403). The
-previous recorded alert list remains in [DEPENDENCY-ALERTS.md](DEPENDENCY-ALERTS.md).
+previous recorded alert list remains in [DEPENDENCY-ALERTS.md](../notes/DEPENDENCY-ALERTS.md).
 No GitHub alert was changed.
 
 ## Carry forward, without expanding the PHP step
