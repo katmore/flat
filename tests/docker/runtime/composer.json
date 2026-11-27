@@ -14,5 +14,10 @@
       "ext-mongodb": "1.19.4"
     },
     "preferred-install": "source"
+  },
+  "autoload": {
+    "psr-4": {
+      "Alcaeus\\MongoDbAdapter\\Helper\\": "/app/src/flat/vendor/alcaeus/mongo-php-adapter/Helper/"
+    }
   }
 }

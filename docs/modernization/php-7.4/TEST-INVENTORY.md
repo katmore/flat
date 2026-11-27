@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 865 test methods in 106 files, running 1624 test cases.
-- 141 methods use a data provider (one case per data set).
+- 874 test methods in 107 files, running 1637 test cases.
+- 142 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -1018,6 +1018,18 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testPingOffsetIsSanitizedAndStoredWithClientCache` (line 201): groups: services, mongo
 - `testPingTimestampWithoutAnOffsetIsNow` (line 215): groups: services, mongo
 - `testRefreshedPingKeepsTheConfiguredOffset` (line 229): groups: services, mongo
+
+### `tests/Unit/Db/Mongo/ReadPreferenceTest.php` (9)
+
+- `testFlatsCopyOfTheTraitIsTheOneThatLoads` (line 38)
+- `testTheDefaultIsPrimaryWithoutTags` (line 44)
+- `testEveryLegacyModeIsSetAndReadBack` (line 65): 5 data-provider cases
+- `testTagSetsAreKept` (line 76)
+- `testTheArrayFormIsAcceptedForInternalCopies` (line 84)
+- `testAnUnknownModeWarnsAndChangesNothing` (line 94)
+- `testPrimaryRefusesTags` (line 102)
+- `testSlaveOkayTogglesSecondaryPreferredAndReportsTheEarlierState` (line 109)
+- `testSlaveOkayKeepsTheTagSets` (line 120)
 
 ### `tests/Unit/Db/Pdo/ConnectionTest.php` (7)
 

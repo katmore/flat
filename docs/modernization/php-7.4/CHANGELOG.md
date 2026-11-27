@@ -200,3 +200,19 @@ continues from the php-7.3 phase.
 - Verified: `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage. flat-webapp
   uses the same pin and passes its 67 tests.
 - Undo: revert the commit.
+
+## MOD-295 — A corrected copy of the Mongo adapter's read-preference trait (Q53)
+
+- Kind: runtime compatibility, ahead of the extension move (MOD-296), so it is tested on the extension still in
+  the image. `src/flat/vendor/alcaeus/mongo-php-adapter/Helper/ReadPreference.php` is the adapter's trait
+  (1.2.5) with string modes in place of the deprecated integer constants and `getMode()`; the mode is read through
+  `bsonSerialize()`. The root `composer.json` and `tests/docker/runtime/composer.json` map the trait's namespace
+  to it ([notes/VENDORED.md](notes/VENDORED.md)).
+- Decided by the owner on 2026-11-27: fix it at its cause now, with a corrected copy of the one class.
+- Behavior: none (same modes, same tags, same slave-okay results). Consumers see one cosmetic change with
+  optimized autoloaders: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Verified: 13 new tests (`tests/Unit/Db/Mongo/ReadPreferenceTest.php`; every mode, tags, the array form, slave-okay,
+  the warnings, no PHP message, and that flat's copy is the file that loads). `docker/bin/test all --coverage`: 1,637
+  tests, 7,010 assertions, all pass; 100% (333 classes, 1,105 methods, 8,880 lines). A Composer install of flat
+  with the adapter loads flat's copy with the normal, optimized and authoritative autoloaders.
+- Undo: revert the commit.

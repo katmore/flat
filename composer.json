@@ -4,7 +4,8 @@
    "homepage":"https://github.com/katmore/flat",
     "autoload": {
         "psr-4": {
-            "flat\\":        "src/flat"
+            "flat\\":        "src/flat",
+            "Alcaeus\\MongoDbAdapter\\Helper\\": "src/flat/vendor/alcaeus/mongo-php-adapter/Helper"
         }
     },
     "autoload-dev": {

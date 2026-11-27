@@ -38,5 +38,6 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 [notes/](notes/): Lasting reference
 
 - [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md): The test environment on 7.4: what is newest and why the rest is held.
+- [notes/VENDORED.md](notes/VENDORED.md): The corrected copy of the Mongo adapter's read-preference trait.
 
 [history/](history/): Finished or replaced documents (none yet; `.gitkeep` keeps the folder in Git)

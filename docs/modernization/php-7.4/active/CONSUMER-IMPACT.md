@@ -25,3 +25,19 @@ before, what they see now, and what to search for in their code.
 - Search consumer code for: `doctrine/annotations`, `jms/serializer`, `authorizenet/authorizenet`.
 - Verified: yes. A fresh resolution under a simulated PHP 7.4.33 host locks `doctrine/annotations` 2.0.2 with
   `jms/serializer` 3.32.9.
+
+### MOD-295 (Q53) — flat carries a corrected copy of the Mongo adapter's read-preference trait
+
+- Before: `alcaeus/mongo-php-adapter` 1.2.5 (archived) built every `MongoClient`, `MongoDB` and `MongoCollection` with
+  `ReadPreference` integer constants, an integer mode and `getMode()`. With ext-mongodb 1.20 or newer each one raised
+  a PHP deprecation ("Passing an integer mode to ... is deprecated", "Function ...::getMode() is deprecated").
+- After: flat's copy of that one trait (`src/flat/vendor/alcaeus/mongo-php-adapter/Helper/ReadPreference.php`) uses
+  string modes, so no deprecation is raised on any extension version. Behavior is the same. flat's `composer.json`
+  maps the namespace `Alcaeus\MongoDbAdapter\Helper\` to it, so flat's copy loads instead of the adapter's.
+- One visible side effect: an optimized autoloader (`composer dump-autoload -o`, `-a`, or `--optimize-autoloader`)
+  prints "Ambiguous class resolution, Alcaeus\MongoDbAdapter\Helper\ReadPreference was found in both ... the first
+  will be used". flat's copy is the one used. To silence the warning, add to your application's `composer.json`:
+  `"autoload": {"exclude-from-classmap": ["vendor/alcaeus/mongo-php-adapter/lib/Alcaeus/MongoDbAdapter/Helper/ReadPreference.php"]}`.
+- Search consumer code for: `Alcaeus\MongoDbAdapter\Helper\ReadPreference`, `MongoClient::RP_`, `getReadPreference`.
+- Verified: yes. A Composer install of flat with the adapter loads flat's copy under the normal, optimized and
+  authoritative autoloaders (the last two with the warning above). 13 new tests; any PHP message fails them.
