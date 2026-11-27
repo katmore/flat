@@ -186,3 +186,9 @@ package version changes in this checkpoint. Full Docker suite: 1718 tests,
 1.0.1 → 3.0.0, resolved against PHP 8.0.30. No other
 package version changes in this checkpoint. Full Docker suite: 1718 tests,
 8105 assertions, no errors/failures/skips; 100% method and line coverage.
+
+## MOD-358 — Upgrade psr/log (2026-11-27)
+
+1.1.4 → 3.0.2, resolved against PHP 8.0.30. No other
+package version changes in this checkpoint. Full Docker suite: 1718 tests,
+8100 assertions, no errors/failures/skips; 100% method and line coverage.
