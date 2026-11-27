@@ -534,3 +534,16 @@ continues from the php-7.3 phase.
 - Verified: `docker/bin/test all --coverage`: all pass; 100% coverage. The API dump is regenerated (one more name gone;
   [notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
 - Undo: revert the commit.
+
+## MOD-324 — The test image has the real ssh2 extension
+
+- Kind: environment, asked for by the owner on 2026-11-27 (the SSH tests faked the extension because "native SSH2 is unavailable"; nobody
+  had installed it). `docker/Dockerfile` builds, from pinned sources with their checksums or commits, OpenSSL 3.6.5 (static), libssh2
+  1.11.1 (static) and the PECL ssh2 extension 1.4.1 (commit `65c0da1b18373e2286d1569a176101583225a2c0`), which carries its own copy of both: PHP's own
+  OpenSSL (1.1.1n) is untouched. No apt: the base image's Debian 11 is end of life. The image's check that its extensions load lists `ssh2`.
+  `ssh2` 1.4.1 supports PHP 7.4 (minimum 7.0); the six functions flat uses (`ssh2_connect`, `ssh2_auth_password`, `ssh2_auth_pubkey_file`,
+  `ssh2_fingerprint`, `ssh2_exec`, `ssh2_sftp`) are present.
+- Next, in their own entries: a real OpenSSH server in the test stack, `SshTest` against it, and `SshBoundary` (the fake) deleted.
+- Behavior: none for flat; the existing tests still use their fake and pass.
+- Verified: the image builds and loads the extension; `docker/bin/test all --coverage`: 1,662 tests, 7,298 assertions, all pass; 100% coverage.
+- Undo: revert the commit.
