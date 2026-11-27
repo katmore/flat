@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM composer:2.11@sha256:0049ce90b432795bf413a738b073963ada1a689e1a8708104684baafe94586ec AS dependencies
+FROM composer:2.11@sha256:5b2137f112f939a92788ceb5e55f54859d9dbf467a44037cf7760bdda949f365 AS dependencies
 WORKDIR /opt/flat-test
 COPY tests/docker/tools/composer.json tests/docker/tools/composer.lock tools/
 COPY tests/docker/runtime/composer.json tests/docker/runtime/composer.lock runtime/

@@ -10,7 +10,7 @@ what is at its newest release and, for the rest, the reason.
   `sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5`. PCRE 10.35.
 - `error_reporting` is `E_ALL`: the image uses PHP's `php.ini-development` and the build fails if it
   is not. PHPUnit fails on notices, warnings and deprecations (`phpunit.xml.dist`).
-- Newest: Composer 2.11.3 (`composer:2.11`, pinned by digest), Node 26.13.1 for the JavaScript checks,
+- Newest: Composer 2.11.3 (`composer:2.11`, pinned by digest to the rebuild of 2026-11-27), Node 26.13.1 for the JavaScript checks,
   ImageMagick 7.1.2-36 built from source, imagick 3.8.1, MongoDB 9.0, RabbitMQ 4.4 and WireMock 3.13.2
   (service images pinned by digest).
 - Held, with the reason:

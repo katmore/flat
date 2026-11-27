@@ -186,3 +186,17 @@ continues from the php-7.3 phase.
   8,824 lines). `docker/bin/check-docs`: 0 problems. The consumer-impact entry of Q54 now says "Verified: yes".
 - Behavior: none.
 - Undo: nothing to undo.
+
+## MOD-294 — The Composer image rebuild of 2026-11-27
+
+- Kind: tooling. `docker/Dockerfile` pins `composer:2.11` to the rebuild of 2026-11-27
+  (`sha256:5b2137f112f939a92788ceb5e55f54859d9dbf467a44037cf7760bdda949f365`). It is still Composer 2.11.3, on
+  updated base layers; the old pin was the build of 2026-11-24.
+- The service audit of the same day found every other pin current: `mongo:9.0` (9.0.8), `rabbitmq:4.4-alpine`
+  (4.4.1), `wiremock/wiremock:3.13.2` (the newest release; 4.0 is beta only), `node:26-slim` (26.13.1; 27 is
+  alpha), `php:7.4-cli` and `php:7.4-apache` (7.4.33, final): each pinned digest is what its tag points at.
+  ImageMagick 7.1.2-36 and imagick 3.8.1 are the newest releases; Xdebug 3.1.6 is the last for PHP 7.4.
+- Behavior: none.
+- Verified: `docker/bin/test all --coverage`: 1,624 tests, 6,954 assertions, all pass; 100% coverage. flat-webapp
+  uses the same pin and passes its 67 tests.
+- Undo: revert the commit.
