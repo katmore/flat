@@ -61,3 +61,13 @@ before, what they see now, and what to search for in their code.
   \flat\db\mongo\ssl`) must use the new names and no longer needs to include the files by hand. flat itself used none of them.
 - Search consumer code for: `db\mongo\ssl`, `mongo\ssl\cafile`, `mongo\ssl\localcert`, `get_cafile`, `get_localcert`.
 - Verified: yes. A clean PHP process loads all seven by name and finds none of the old names.
+
+### MOD-306 (Q58) — `subscription\cancelled` is now `subscription\canceled`
+
+- Before: `src/flat/cloud/authorize/subscription/canceled.php` declared the class `cancelled`, with a `class_alias` for `canceled`
+  and a forwarding file `cancelled.php`. Both names worked.
+- After: the class is `flat\cloud\authorize\subscription\canceled`, the file's own spelling. The alias and the forwarding file are
+  gone, so `flat\cloud\authorize\subscription\cancelled` no longer exists. The message text ("ARB is cancelled (subscriptionId: ...)")
+  is unchanged. The class is deprecated since v1.73.1 and goes in v2.X.
+- Search consumer code for: `subscription\cancelled`, `catch (` blocks naming `cancelled`.
+- Verified: yes (the suite uses the one name).

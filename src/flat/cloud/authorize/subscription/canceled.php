@@ -36,7 +36,7 @@ namespace flat\cloud\authorize\subscription;
  *    (AuthorizeNetAIM, AuthorizeNetARB, AuthorizeNetCIM). It will be removed in v2.X; see
  *    docs/modernization/DEFERRED-V2.md, item 2.
  */
-class cancelled extends \flat\cloud\authorize\exception {
+class canceled extends \flat\cloud\authorize\exception {
    private $_subscriptionId;
    public function get_subscriptionId() {
       return $this->_subscriptionId;
@@ -46,4 +46,3 @@ class cancelled extends \flat\cloud\authorize\exception {
       parent::__construct("ARB is cancelled (subscriptionId: $subscriptionId)");
    }
 }
-class_alias(cancelled::class, __NAMESPACE__.'\\canceled');

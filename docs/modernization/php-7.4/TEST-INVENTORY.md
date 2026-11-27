@@ -159,7 +159,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testStartDateIsNormalizedToIsoFormat` (line 43)
 - `testValidTimezoneConversionUsesNativeDateTimeZone` (line 51)
 - `testSubscriptionCacheRetainsMappedMetadata` (line 56)
-- `testSubscriptionErrorsRetainTheirIdentifiersAndLegacySpellings` (line 61)
+- `testSubscriptionErrorsRetainTheirIdentifiers` (line 61)
 - `testSubscriptionPaymentAdaptersCopyFieldsIntoRealSdkDtos` (line 71)
 - `testResponseSubclassCanSupplyStatusInteger` (line 95): 6 data-provider cases
 - `testFailureDetailsComeFromSdkUnlessAlreadyProvided` (line 105)

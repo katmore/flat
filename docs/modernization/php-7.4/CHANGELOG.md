@@ -333,3 +333,11 @@ continues from the php-7.3 phase.
   [RELEASE-NOTES.md](RELEASE-NOTES.md) say so; the entries that "declare nothing" were counted one by one.
 - Behavior: none.
 - Undo: nothing to undo.
+
+## MOD-306 — `subscription\cancelled` becomes `subscription\canceled`; the alias is removed (Q58, item 1)
+
+- Kind: rename, decided by the owner on 2026-11-27: the file's spelling is the name; no alias. `class cancelled` is now `class canceled`
+  in `src/flat/cloud/authorize/subscription/canceled.php`; the `class_alias` line and the forwarding file `cancelled.php` are removed.
+  `AuthorizeDataTest` uses the one name (its method lost "LegacySpellings"). The exception message is unchanged.
+- Behavior: the old class name no longer exists. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Undo: revert the commit.
