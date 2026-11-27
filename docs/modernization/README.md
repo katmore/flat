@@ -76,3 +76,8 @@ phase release or an owner reminder.
   closed phases contain only `.gitkeep`; the current phase has no completed
   reports or old handoffs mixed into its remaining work. README files describe
   current status; completed-session chronology belongs in history or the change log.
+
+## PHP 8.0 work
+
+The owner authorized the PHP 8.0 phase on 2026-11-27. Current status and work:
+[php-8.0/README.md](php-8.0/README.md).
