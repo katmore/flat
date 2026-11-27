@@ -48,6 +48,26 @@ is `E_ALL` (the image build verifies it). Fix a deprecation when you find it, in
 do not put off what can be done now. (Why: a test image without a `php.ini` hid every notice and
 deprecation for two phases.)
 
+## Class names: never `class_alias`
+
+- **Never use `class_alias`.** Not in `src`, not in the tests, not in tools; not as a "compatibility shim", a "forwarding
+  file" or a "historical name". There is no exception list for it. To rename a class, rename it and change every reference
+  to it (source, tests, docs). The old name stops existing, and the rename is recorded in the phase's
+  `active/CONSUMER-IMPACT.md` with what to search for. If a rename would break the public API, record the question with a
+  recommendation and ask the maintainer; do not add an alias.
+- **A class is declared where its path says.** Every class, interface and trait has the namespace and name its file path
+  gives: `src/flat/core/ssh/exception/input_error/bad_param.php` declares
+  `flat\core\ssh\exception\input_error\bad_param`. When a file and its declaration disagree, fix the declaration (or move
+  the file) and every reference. A file that only requires another file under a second name is the same shim: delete it.
+- **flat's style for class names** is lowercase words joined by underscores (`bad_param`, `not_found`). Never name a new or
+  renamed class in camel case (`badParam`).
+- A test double that needs a class under a third party's name declares it under that name in a support file
+  (`tests/Support/LegacyAmqpConnection.php`), never with an alias.
+
+(Why: earlier sessions added five `class_alias` calls, and a forwarding file for most of them, to make mismatched classes
+loadable instead of renaming them. The maintainer had all five removed on 2026-11-27: MOD-306 to MOD-309 in
+`docs/modernization/php-7.4/CHANGELOG.md`.)
+
 ## Keep everything current
 
 Every phase brings every tool, service and dependency of the test environment up to the newest release

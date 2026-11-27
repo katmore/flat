@@ -1,8 +1,8 @@
 # flat v1.74.0
 
 The PHP 7.4 release of the flat modernization (`v1.<PHP major><PHP minor>.0`). The public API is the same as `v1.73.2` except
-two changes to classes that could not be loaded: one is removed and seven are renamed (below). Every class, method, property
-and constant was compared with PHP's Reflection (`docs/modernization/php-7.4/notes/API-COMPARISON.md`). 1,637 tests pass on PHP 7.4.33 with 100% class, method and line
+the renames and removals below, which concern classes that could not be loaded or were only names made by `class_alias`. Every
+class, method, property and constant was compared with PHP's Reflection (`docs/modernization/php-7.4/notes/API-COMPARISON.md`). 1,637 tests pass on PHP 7.4.33 with 100% class, method and line
 coverage, and no PHP notice, warning or deprecation is raised.
 
 ## The requirements changed
@@ -28,6 +28,13 @@ coverage, and no PHP notice, warning or deprecation is raised.
 - **The MongoDB SSL classes are renamed to match their paths (breaking rename, no alias).** Seven classes declared
   `flat\db\mongo\ssl...` in files under `db/driver/mongo/ssl*`, so they could not be autoloaded. They are now
   `flat\db\driver\mongo\ssl...`. flat did not use them; code that extended the old names must use the new ones.
+- **Five `class_alias` names are gone; the classes keep one name each.** flat no longer uses `class_alias` at all (a rule in
+  `AGENTS.md`). Search your code for the old names:
+  - `flat\cloud\authorize\subscription\cancelled` is now `...\subscription\canceled`.
+  - `flat\core\ssh\exception\input_error\badParam` is now `...\input_error\bad_param`.
+  - `flat\data\session\driver\session` and `flat\data\session\driver` are gone; use `flat\data\orm\driver\session` and
+    `flat\data\orm\driver`.
+  - `flat\core\util\factory\exception\not_match_interface` is gone; use `flat\core\util\validate\factory\exception\not_match_interface`.
 - Nothing else in `src` changed.
 
 Every entry has what you saw before, what you see now, and what to search for in

@@ -371,3 +371,23 @@ continues from the php-7.3 phase.
 - Behavior: the old name `flat\core\util\factory\exception\not_match_interface` no longer exists. See
   [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
 - Undo: revert the commit.
+
+## MOD-310 — A rule against `class_alias` in `AGENTS.md`
+
+- Kind: rule, asked for by the owner on 2026-11-27. flat's `AGENTS.md` has a section "Class names: never `class_alias`": never use it
+  (no shims, no forwarding files, no exception list); rename the class and every reference and record the rename in the consumer
+  impact; declare every class with the namespace and name its path gives; flat's class names are lowercase words joined by
+  underscores, never camel case; a test double that needs a third party's class name declares it in a support file. flat-webapp's
+  `AGENTS.md` carries the rule too and points to flat's.
+- Behavior: none.
+- Undo: revert the commit.
+
+## MOD-311 — The API dump and comparison after the renames
+
+- Kind: documentation (generated dump, regenerated with the tool and copied). `notes/API-V1.74.0.json` is made again: 615 entries
+  against the 620 of `v1.73.2`. [notes/API-COMPARISON.md](notes/API-COMPARISON.md) lists the five files removed (names that were only aliases
+  or forwarding files, plus `validate\collection`), the seven SSL entries that now load, and explains the six methods and one
+  constant that appear "added" (they were recorded under the old names while those were aliases). [RELEASE-NOTES.md](RELEASE-NOTES.md)
+  lists the old names to search for; the defect list is brought up to date (Q58 answered, KD-109 and Q57 no longer mention aliases).
+- Behavior: none.
+- Undo: nothing to undo.

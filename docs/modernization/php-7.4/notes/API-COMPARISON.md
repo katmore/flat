@@ -14,18 +14,23 @@ php tests/tools/apidump.php compare ../php-7.3/notes/API-V1.73.2.json API-V1.74.
 
 ## Result
 
-Made after MOD-303 (the SSL classes renamed) and MOD-302 (`validate\collection` removed); the first dump of this phase, made
-before them, had no differences at all.
+Made after MOD-302 to MOD-309 (the removal and the renames); the first dump of this phase, made before them, had no differences
+at all.
 
-- 620 entries in the `v1.73.2` dump, 619 in this one. Every class, method, property, constant, parameter, type and default of
-  the classes that loaded before is the same.
-- **One file removed:** `flat\core\util\validate\collection`, which could never be loaded (KD-108).
+- 620 entries in the `v1.73.2` dump, 615 in this one.
+- **Five files removed**, all of them names that were not real classes of their own or could not load: `flat\core\util\validate\collection`
+  (could never load, KD-108), and the old names `flat\cloud\authorize\subscription\cancelled`, `flat\data\session\driver`,
+  `flat\data\session\driver\session` and `flat\core\util\factory\exception\not_match_interface`, which only existed as `class_alias`
+  names or forwarding files (MOD-306 to MOD-309).
 - **Seven entries changed from "cannot be loaded" or "declares nothing" to "loads":** the MongoDB SSL classes, now
-  `flat\db\driver\mongo\ssl`, `ssl\cafile`, `ssl\cafile\base64`, `ssl\cafile\file`, `ssl\localcert`, `ssl\localcert\base64`
-  and `ssl\localcert\file` (KD-107). The old names `flat\db\mongo\ssl...` no longer exist.
+  `flat\db\driver\mongo\ssl`, `ssl\cafile`, `ssl\cafile\base64`, `ssl\cafile\file`, `ssl\localcert`, `ssl\localcert\base64` and
+  `ssl\localcert\file` (KD-107). The old names `flat\db\mongo\ssl...` no longer exist.
+- **Six methods and one constant "added"**, on `subscription\canceled`, `ssh\...\input_error\bad_param` and `data\orm\driver\session`
+  (its constructor, `get_data()`, `set_data()` and `fallback_handler`). They are not new: the tool records only what a class declares
+  under the name its path gives, so while these were aliases of another class their entries looked empty and the members were
+  recorded under the old names. Nothing else differs.
 - The corrected adapter trait (MOD-295) is under `src/flat/vendor`, which the tool skips; it is not part of flat's API.
-- Apart from that, the two dumps differ in one stored message only: the fatal-error text of a class that cannot load, which
-  PHP 7.4 words differently (now `flat\cloud\authorize\AuthorizeNetARB` and `AuthorizeNetCIM` are the only ones).
+- The two dumps also differ in the stored fatal-error text of a class that cannot load, which PHP 7.4 words differently.
 
 ## Classes that cannot be loaded
 

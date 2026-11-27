@@ -4549,18 +4549,6 @@
         ],
         "constants": [],
         "properties": [],
-        "methods": []
-    },
-    "flat\\cloud\\authorize\\subscription\\cancelled": {
-        "kind": "class",
-        "abstract": false,
-        "final": false,
-        "parent": "flat\\cloud\\authorize\\exception",
-        "interfaces": [
-            "Throwable"
-        ],
-        "constants": [],
-        "properties": [],
         "methods": {
             "__construct": {
                 "visibility": "public",
@@ -17838,7 +17826,34 @@
         ],
         "constants": [],
         "properties": [],
-        "methods": []
+        "methods": {
+            "__construct": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [
+                    {
+                        "name": "param",
+                        "type": null,
+                        "optional": false,
+                        "default": null,
+                        "byref": false,
+                        "variadic": false
+                    },
+                    {
+                        "name": "msg",
+                        "type": null,
+                        "optional": false,
+                        "default": null,
+                        "byref": false,
+                        "variadic": false
+                    }
+                ],
+                "return": null
+            }
+        }
     },
     "flat\\core\\ssh\\exception\\input_error\\missing_param": {
         "kind": "class",
@@ -18272,18 +18287,6 @@
         "abstract": true,
         "final": false,
         "parent": "flat\\core\\exception",
-        "interfaces": [
-            "Throwable"
-        ],
-        "constants": [],
-        "properties": [],
-        "methods": []
-    },
-    "flat\\core\\util\\factory\\exception\\not_match_interface": {
-        "kind": "class",
-        "abstract": false,
-        "final": false,
-        "parent": "flat\\core\\util\\validate\\factory\\exception",
         "interfaces": [
             "Throwable"
         ],
@@ -22669,9 +22672,93 @@
         "final": false,
         "parent": "flat\\data\\orm\\driver",
         "interfaces": [],
-        "constants": [],
+        "constants": {
+            "fallback_handler": {
+                "visibility": "public",
+                "value": "'\\\\flat\\\\data\\\\orm\\\\driver\\\\session\\\\handler\\\\native'"
+            }
+        },
         "properties": [],
-        "methods": []
+        "methods": {
+            "__construct": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [
+                    {
+                        "name": "param",
+                        "type": "?array",
+                        "optional": true,
+                        "default": "NULL",
+                        "byref": false,
+                        "variadic": false
+                    }
+                ],
+                "return": null
+            },
+            "get_data": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [
+                    {
+                        "name": "key",
+                        "type": null,
+                        "optional": false,
+                        "default": null,
+                        "byref": false,
+                        "variadic": false
+                    },
+                    {
+                        "name": "options",
+                        "type": "?array",
+                        "optional": true,
+                        "default": "NULL",
+                        "byref": false,
+                        "variadic": false
+                    }
+                ],
+                "return": null
+            },
+            "set_data": {
+                "visibility": "public",
+                "static": false,
+                "abstract": false,
+                "final": false,
+                "returns_reference": false,
+                "params": [
+                    {
+                        "name": "key",
+                        "type": null,
+                        "optional": false,
+                        "default": null,
+                        "byref": false,
+                        "variadic": false
+                    },
+                    {
+                        "name": "data",
+                        "type": "flat\\data",
+                        "optional": false,
+                        "default": null,
+                        "byref": false,
+                        "variadic": false
+                    },
+                    {
+                        "name": "options",
+                        "type": "?array",
+                        "optional": true,
+                        "default": "NULL",
+                        "byref": false,
+                        "variadic": false
+                    }
+                ],
+                "return": null
+            }
+        }
     },
     "flat\\data\\orm\\driver\\session\\exception": {
         "kind": "class",
@@ -23584,110 +23671,6 @@
         "constants": [],
         "properties": [],
         "methods": []
-    },
-    "flat\\data\\session\\driver": {
-        "kind": "class",
-        "abstract": true,
-        "final": false,
-        "parent": null,
-        "interfaces": [],
-        "constants": [],
-        "properties": [],
-        "methods": []
-    },
-    "flat\\data\\session\\driver\\session": {
-        "kind": "class",
-        "abstract": false,
-        "final": false,
-        "parent": "flat\\data\\orm\\driver",
-        "interfaces": [],
-        "constants": {
-            "fallback_handler": {
-                "visibility": "public",
-                "value": "'\\\\flat\\\\data\\\\orm\\\\driver\\\\session\\\\handler\\\\native'"
-            }
-        },
-        "properties": [],
-        "methods": {
-            "__construct": {
-                "visibility": "public",
-                "static": false,
-                "abstract": false,
-                "final": false,
-                "returns_reference": false,
-                "params": [
-                    {
-                        "name": "param",
-                        "type": "?array",
-                        "optional": true,
-                        "default": "NULL",
-                        "byref": false,
-                        "variadic": false
-                    }
-                ],
-                "return": null
-            },
-            "get_data": {
-                "visibility": "public",
-                "static": false,
-                "abstract": false,
-                "final": false,
-                "returns_reference": false,
-                "params": [
-                    {
-                        "name": "key",
-                        "type": null,
-                        "optional": false,
-                        "default": null,
-                        "byref": false,
-                        "variadic": false
-                    },
-                    {
-                        "name": "options",
-                        "type": "?array",
-                        "optional": true,
-                        "default": "NULL",
-                        "byref": false,
-                        "variadic": false
-                    }
-                ],
-                "return": null
-            },
-            "set_data": {
-                "visibility": "public",
-                "static": false,
-                "abstract": false,
-                "final": false,
-                "returns_reference": false,
-                "params": [
-                    {
-                        "name": "key",
-                        "type": null,
-                        "optional": false,
-                        "default": null,
-                        "byref": false,
-                        "variadic": false
-                    },
-                    {
-                        "name": "data",
-                        "type": "flat\\data",
-                        "optional": false,
-                        "default": null,
-                        "byref": false,
-                        "variadic": false
-                    },
-                    {
-                        "name": "options",
-                        "type": "?array",
-                        "optional": true,
-                        "default": "NULL",
-                        "byref": false,
-                        "variadic": false
-                    }
-                ],
-                "return": null
-            }
-        }
     },
     "flat\\data\\stringify": {
         "kind": "interface",

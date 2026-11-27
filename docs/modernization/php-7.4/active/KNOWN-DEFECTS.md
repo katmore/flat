@@ -46,8 +46,9 @@ the php-7.2 phase and written down there as "untested and unusable", but never r
 - Category: mixed. A check of every file in `src/flat` (outside `vendor`) against the name its path implies found sixteen
   that declare something else; each was then loaded by name under PHP 7.4. The API tool lists them as "no declaration".
   - Seven are the MongoDB SSL files of KD-107.
-  - Three are intended aliases that work: `subscription\canceled` (declares `cancelled`), `ssh ... bad_param` (declares
-    `badParam`) and `data\orm\driver\session`; each ends in `class_alias`.
+  - Three were `class_alias` names that worked: `subscription\canceled` (declared `cancelled`), `ssh ... bad_param` (declared
+    `badParam`) and `data\orm\driver\session`. **Fixed (MOD-306 to MOD-308):** each is declared under its path's name and the
+    aliases are gone (Q58).
   - Four are stray files whose real class loads from its own file, so nothing is lost:
     `api\response_header\exception`, `api\response_header\exception\missing_request_field` (declare `api\header\...`),
     `cloud\authorize\customer\payment\bankAccount` and `...\creditCard` (declare `...\payment_profile\...`). Loading
@@ -90,16 +91,10 @@ Each has a recommendation; "agree" is enough.
 56. **What was `flat\core\util\validate\collection` meant to be (KD-108)?** **Answered 2026-11-27: remove it** (MOD-302).
 
 57. **Which names were intended for `src/flat/fsm.php` (`flat\fsm` or `flat\fsm\fsm`) and `src/flat/orm/invalid_field.php`
-    (`flat\orm\invalid_field` or `invalid_param`) (KD-109)?** Recommend: the path names, with `class_alias` for the
-    declared names, as for `canceled`; for `fsm` that also means saying whether this alpha stub is still wanted.
-    **Open.**
+    (`flat\orm\invalid_field` or `invalid_param`) (KD-109)?** Recommend: the path names (`fsm`, `invalid_field`), declared
+    as such, with no alias; for `fsm` that also means saying whether this alpha stub is still wanted. **Open.**
 
-58. **Remove the five `class_alias` calls already in flat?** The owner dislikes them (2026-11-27). Each needs one
-    canonical name chosen and its references updated, which renames public classes:
-    - `subscription\canceled` / `cancelled`: `canceled.php` declares `cancelled`; a test uses `canceled`.
-    - `ssh\exception\input_error\bad_param` / `badParam`: `core/ssh.php` uses `bad_param`.
-    - `data\session\driver\session` / `data\orm\driver\session`: a whole subtree uses the second name.
-    - `data\session\driver` / `data\orm\driver`: a forwarding file.
-    - `core\util\validate\factory\exception\not_match_interface` / `core\util\factory\exception\...`: an older namespace.
-    Recommend: yes, one at a time, keeping the name the code and the file path already use, and listing each rename in
-    the consumer impact. Say which of the five, or all. **Open.**
+58. **Remove the five `class_alias` calls already in flat?** **Answered 2026-11-27: yes, all five, with no alias and every
+    reference fixed** (MOD-306 to MOD-309). The names kept are `canceled`, `bad_param`, `data\orm\driver\session` (extending
+    `data\orm\driver` directly) and `core\util\validate\factory\exception\not_match_interface`. `AGENTS.md` now forbids
+    `class_alias` (MOD-310).
