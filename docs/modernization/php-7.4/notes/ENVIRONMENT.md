@@ -36,11 +36,19 @@ The two locks carry the platform pin PHP 7.4.33 (the runtime lock also `ext-mong
   them (the fix needs PHP 8.1), so its lock was resolved with `--no-security-blocking`. The owner dismissed
   these advisories as "risk tolerable".
 
+## Local SSH fixture
+
+The test server disables OpenSSH PerSourcePenalties: negative host-verification
+tests deliberately disconnect before authentication and must not ban the shared
+test client. Both server ports use this local-only setting. The zombie fixture
+waits for its parent to become sleep and verifies state Z before signal testing,
+so the parent shell cannot reap the child first.
+
 ## Image name
 
 The test image is `flat-tests-php74` (it was `flat-tests-php73`).
 
 ## Results
 
-`docker/bin/test all --coverage`: 1,637 tests, 7,209 assertions, all pass; coverage 100% (333 classes, 1,105
-methods, 8,880 lines).
+`docker/bin/test all --coverage`: 1,703 tests, 7,470 assertions, all pass; coverage 100% (332 classes, 1,105
+methods, 8,877 lines).

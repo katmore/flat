@@ -9,4 +9,7 @@ StrictModes no
 AllowUsers flat
 PermitRootLogin no
 MaxSessions 0
+# Local negative-authentication tests deliberately reject host keys before login.
+# Do not ban the shared test client for those expected pre-auth disconnects.
+PerSourcePenalties no
 LogLevel INFO

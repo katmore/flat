@@ -292,3 +292,22 @@ before, what they see now, and what to search for in their code.
 - After: Only Allow/Disallow rules are collected; empty values and comments are ignored, whitespace is accepted, and an absent path means /.
 - Search consumer code for: `is_robots_allowed`, `use_robots`.
 - Verified: real HTTP requests with WireMock; method, body, content type, DOM and robots assertions.
+
+### MOD-335 (KD-126) — SSH disconnect closes the transport
+
+- Before: disconnect() ran a remote exit command, left SSH/SFTP resources alive and still reported connected; commands continued to work.
+- After: the SFTP handle is released and ssh2_disconnect() closes the transport; is_connected() is false, commands require reconnecting,
+  and the same object may connect again. ignore_missing retains its behavior. No remote exec channel is needed for disconnect or destruction.
+- Search consumer code for: `disconnect`, `is_connected`, `core\ssh`.
+- Verified: real OpenSSH sessions, SFTP use, resource counts, commands after disconnect and reconnect.
+
+### MOD-335 (KD-127, Q62) — Supplied SSH host fingerprints are verified before authentication
+
+- Before: password authentication ignored a fingerprint assigned through get_auth(); constructor fingerprints were ignored for both modes.
+- After: optional constructor `fingerprint` and `get_auth()->fingerprint` are checked before password or public-key authentication.
+  Use the trusted host fingerprint in ssh2_fingerprint()'s existing format: 32 uppercase MD5 hexadecimal characters, without separators.
+  A mismatch or non-string pin raises the existing syserror ("fingerprint mismatch") before credentials are sent.
+  NULL or an empty string leaves the connection unpinned, as the owner chose. Existing unpinned key logins still remember their first fingerprint.
+- The auth base now declares public `fingerprint` (default NULL); reflection and public-property exports can include it even for unpinned password auth.
+- Search consumer code for: `fingerprint`, `get_auth`, `core\ssh`.
+- Verified: both authentication modes against real OpenSSH; mismatches, malformed pins, trusted constructor pins and unpinned callers.

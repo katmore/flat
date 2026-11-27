@@ -214,21 +214,68 @@ class SshServerTest extends TestCase
         $client = $this->client(['port'=>SshServer::noSessionsPort(), 'connect'=>true]);
         list($warnings) = $this->failsWith(ssh\exception\syserror::class, function () use ($client) { $client->exec('echo hello'); });
         $this->assertNotEmpty($warnings);
-        // flat's disconnect() is itself an exec request ('echo "EXITING" && exit;'), which this server refuses too: dropping the client warns
-        $warnings = [];
-        set_error_handler(function ($level, $message) use (&$warnings) { $warnings[] = $message; return true; });
-        try { $this->clients = []; unset($client); } finally { restore_error_handler(); }
-        $this->assertCount(1, $warnings);
-        $this->assertStringContainsString('Unable to request a channel', $warnings[0]);
+        // Destruction must not open another command channel on this server.
+        $before = count(get_resources('SSH2 Session'));
+        $this->clients = []; unset($client);
+        $this->assertCount($before - 1, get_resources('SSH2 Session'));
     }
     public function testDisconnectIgnoresMissingConnectionOnlyWhenRequested()
     {
+        $before = count(get_resources('SSH2 Session'));
         $client = $this->client();
         $this->assertFalse($client->disconnect(true));
         $client->connect();
+        $local = tempnam(sys_get_temp_dir(), 'flat-disconnect-');
+        try {
+            $client->exec('printf data > /tmp/flat-disconnect; echo');
+            $client->sftp_get('/tmp/flat-disconnect', $local);
+            $this->assertSame('data', file_get_contents($local));
+        } finally { unlink($local); }
         $this->assertTrue($client->disconnect());
-        // The current no-op disconnect callback leaves local state populated.
+        $this->assertFalse($client->is_connected());
+        $this->assertCount($before, get_resources('SSH2 Session'));
+        try { $client->exec('echo must-not-run'); $this->fail('Expected missing connection'); }
+        catch (ssh\exception\connection\missing $error) { $this->assertFalse($client->is_connected()); }
+        $client->connect();
+        $this->assertSame("reconnected\n", $client->exec('echo reconnected'));
+        $this->assertTrue($client->disconnect());
+    }
+    /** @dataProvider invalidFingerprints */
+    public function testPasswordFingerprintIsVerifiedBeforeAuthentication($fingerprint)
+    {
+        // Wrong credentials would emit a native warning if authentication ran first.
+        $client = $this->client(['password'=>'wrong-password']);
+        $client->get_auth()->fingerprint = $fingerprint;
+        $this->expectException(ssh\exception\syserror::class);
+        $this->expectExceptionMessage('fingerprint mismatch');
+        $client->connect();
+    }
+    public function invalidFingerprints() { return [['wrong-host'], [0], ['0'], [false]]; }
+    public function testAnEmptyFingerprintKeepsPasswordAuthenticationUnpinned()
+    {
+        $client = $this->client(['fingerprint'=>'', 'connect'=>true]);
         $this->assertTrue($client->is_connected());
+        $this->assertSame('', $client->get_auth()->fingerprint);
+    }
+    public function testConstructorFingerprintWorksForPasswordAuthentication()
+    {
+        $client = $this->client(['fingerprint'=>SshServer::hostFingerprint(), 'connect'=>true]);
+        $this->assertTrue($client->is_connected());
+        $this->assertSame(SshServer::hostFingerprint(), $client->get_auth()->fingerprint);
+    }
+    public function testConstructorFingerprintRejectsTheWrongHostForBothAuthenticationModes()
+    {
+        list($private, $public) = SshServer::newKey();
+        SshServer::authorize($public);
+        foreach ([[], ['password'=>null, 'pubkey'=>$public, 'privkey'=>$private]] as $auth) {
+            $client = $this->client($auth + ['fingerprint'=>'wrong-host']);
+            try { $client->connect(); $this->fail('Expected fingerprint mismatch'); }
+            catch (ssh\exception\syserror $error) {
+                $this->assertSame('system error: fingerprint mismatch', $error->getMessage());
+                $this->assertFalse($client->is_connected());
+            }
+        }
+        $this->assertSame($this->keyFilesBefore, $this->keyFiles());
     }
     public function testProcessChecksSeeRealProcesses()
     {
@@ -324,19 +371,29 @@ class SshServerTest extends TestCase
     /** A zombie keeps its pid and answers `kill -0`, whatever signal it gets: the one real way a process "never exits". */
     private function zombie()
     {
-        // The outer shell starts a child that exits at once and then becomes `sleep`, which never waits for it: the child stays a zombie.
-        // The pids go to a file, because an exec channel stays open until its command ends.
-        $out = $this->connected()->exec('sh -c \'sh -c "exit 0" & echo $! $$ > /tmp/flat-zombie; exec sleep 100\' > /dev/null 2>&1 & sleep 1; cat /tmp/flat-zombie');
-        list($zombie, $parent) = array_map('intval', preg_split('/\s+/', trim($out)));
+        // The child waits until its parent has exec'd sleep before exiting, so the shell cannot reap it first.
+        $client = $this->connected();
+        $file = '/tmp/flat-zombie-'.bin2hex(random_bytes(6));
+        $child = 'while [ "$(cat /proc/$1/comm)" != sleep ]; do sleep 0.01; done; exit 0';
+        $parentCommand = 'sh -c '.escapeshellarg($child).' flat-child $$ & echo $! $$ > '.$file.'; exec sleep 100';
+        $out = $client->exec('sh -c '.escapeshellarg($parentCommand).' > /dev/null 2>&1 & '
+            .'i=0; while [ ! -s '.$file.' ] && [ "$i" -lt 500 ]; do i=$((i+1)); sleep 0.01; done; cat '.$file);
+        list($zombie, $parent) = array_map('intval', preg_split('/\\s+/', trim($out)));
         $this->pids[] = $parent;
         $this->assertGreaterThan(1, $zombie);
+        $deadline = microtime(true) + 5;
+        do {
+            $state = trim($client->exec("awk '{print $3}' /proc/".$zombie.'/stat'));
+            if ($state === 'Z') break;
+            usleep(10000);
+        } while (microtime(true) < $deadline);
+        $this->assertSame('Z', $state, 'the real child must be a zombie before signal testing');
         return $zombie;
     }
     public function testAProcessThatNeverExitsReportsTheTimeWaited()
     {
         $client = $this->connected();
         $zombie = $this->zombie();
-        usleep(300000); // let the child exit and become a zombie
         $this->assertTrue($client->checkpid($zombie));
         list(, $error) = $this->failsWith(ssh\exception\exec\pid\cannot_kill::class, function () use ($client, $zombie) { $client->kill_process($zombie, 1, 1, 9, 3); });
         $this->assertStringContainsString('after 3 seconds', $error->getMessage());

@@ -1,6 +1,6 @@
 # Session handoff, php-7.4
 
-Updated 2026-11-26, to continue the phase in another session. The plan and rules are in
+Updated 2026-11-27, to continue the phase in another session. The plan and rules are in
 [../HANDOFF.md](../HANDOFF.md); this page only says where things stand. When it is used up, move it to
 `history/`.
 
@@ -34,10 +34,15 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 - MOD-306 to MOD-310: the five `class_alias` calls removed with their references fixed, and a rule against `class_alias`
   in both repositories' `AGENTS.md`. [../notes/ALIASES.md](../notes/ALIASES.md) is the record.
 
+## Adversarial fixes
+
+MOD-333 to MOD-335 fix KD-117 to KD-127: PDO, cURL and SSH. Q62 keeps unpinned
+SSH callers allowed and verifies supplied pins before either authentication method.
+The sample app passed with the modified framework mounted into its containers.
+
 ## Next
 
-1. Review and resolve KD-117 to KD-127 in [KNOWN-DEFECTS.md](KNOWN-DEFECTS.md).
-   Reproductions and recommendations: [ADVERSARIAL-REVIEW.md](ADVERSARIAL-REVIEW.md).
+1. The owner decides whether to publish the php-7.4 fixes as a patch release.
 2. The next phase (PHP 8.0) needs the owner's go-ahead.
 
 ## Working in a cloud session
@@ -51,5 +56,4 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 
 ## Waiting for the owner
 
-Q62: the SSH host verification policy for password authentication (KD-127).
-Q51 to Q61 are answered. The owner tags the release.
+No open implementation questions. Q51 to Q62 are answered; the owner tags releases.

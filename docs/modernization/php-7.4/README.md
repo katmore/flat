@@ -7,12 +7,12 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 ## Status: in progress (started 2026-11-26)
 
 - The test image is PHP 7.4.33 and the Composer platform pins are 7.4.33.
-- `docker/bin/test all --coverage`: 1,673 tests, 7,399 assertions, all pass; 100% coverage; no PHP message anywhere
-  (MOD-298). flat's test tools and dependencies are at their newest 7.4-compatible releases
+- `docker/bin/test all --coverage`: 1,703 tests, 7,470 assertions, all pass; 100% coverage; no PHP message anywhere
+  (MOD-335). flat's test tools and dependencies are at their newest 7.4-compatible releases
   ([notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)).
 - Released: the owner tagged `v1.74.0` (the merge of this branch into `master`) on 2026-11-27. The release notes, API
   comparison, consumer check and dependency audit are in this folder.
-- Two open SSH defects remain from the adversarial review (KD-126 and KD-127):
+- All eleven defects from the adversarial review are fixed (MOD-333 to MOD-335):
   [active/ADVERSARIAL-REVIEW.md](active/ADVERSARIAL-REVIEW.md).
 - Q51 to Q62 are answered ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
 - flat-webapp runs on PHP 7.4.33 and locks flat `v1.74.0`; its locks are at the newest releases PHP 7.4 allows

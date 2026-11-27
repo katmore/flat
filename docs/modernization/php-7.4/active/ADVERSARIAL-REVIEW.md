@@ -2,9 +2,17 @@
 
 Reviewed commit `34c638d`, including inherited framework behavior, on 2026-11-27.
 The comparison base is the end of php-7.3 (`de2be1e`). This is a review, not a set
-of source fixes. The findings below remain open.
+of source fixes. These findings describe that snapshot; all eleven are now fixed
+(MOD-333 to MOD-335). Current status: [KNOWN-DEFECTS.md](KNOWN-DEFECTS.md).
 
-## Findings
+## Resolution
+
+MOD-333 fixes the five PDO defects, MOD-334 the four cURL defects, and MOD-335 the
+two SSH defects. Q62 was answered: verify supplied pins before either authentication
+method and keep unpinned callers allowed. Regression tests now cover the reproduced
+cases. See [../CHANGELOG.md](../CHANGELOG.md) for verification of the fixes.
+
+## Original findings (at 34c638d)
 
 ### KD-127 / P1: Password SSH authentication does not verify the server identity
 
@@ -171,7 +179,7 @@ Recommendation: disconnect the transport and release dependent resources,
 clear local state, and test commands/reconnection after explicit disconnect.
 Keep the existing `ignore_missing` behavior.
 
-## Validation
+## Review validation (before fixes)
 
 All executions use Docker; no host PHP or Composer is used. Initial focused
 reproductions ran in the repository's digest-pinned official PHP 7.4.33 CLI base

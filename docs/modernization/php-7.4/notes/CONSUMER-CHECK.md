@@ -28,3 +28,11 @@ flat-webapp locks the published `v1.74.0` (its `DependencyLockTest` expects 1.74
 (`doctrine/deprecations`, `jms/serializer`, `phpstan/phpdoc-parser`, `mongodb/mongodb`) and of its test-tool lock (`nikic/php-parser`)
 were moved to the newest releases PHP 7.4 allows, one at a time; its 67 tests pass after each and its server log has no PHP message.
 The details are in flat-webapp's `CHANGELOG.md`.
+
+## Adversarial fixes (MOD-333 to MOD-335)
+
+The sample app at `9e6fb73` was tested with the modified framework bind-mounted
+into its vendor directory in both the web and test containers. Its tracked lock
+and application source were unchanged. The Compose functional suite passed
+67 tests and 203 assertions; the PHP server-log check passed. This run exercises
+the patched source, rather than only the published v1.74.0 package.

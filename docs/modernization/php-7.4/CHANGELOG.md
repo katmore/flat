@@ -666,3 +666,21 @@ continues from the php-7.3 phase.
 - Verified: regressions first reproduced 3 errors and 9 failures against the old source; after the fix the real-HTTP response suite passes
   in PHP 7.4 Docker: 60 tests, 172 assertions. Inventory regenerated and documentation checked before committing.
 - Undo: revert the commit.
+
+## MOD-335 — Fix SSH disconnect and verify supplied host fingerprints (KD-126, KD-127)
+
+- Kind: inherited bug and security fixes. disconnect() releases SFTP, disconnects the SSH transport, clears local state and allows reconnecting.
+  Destruction no longer opens a remote command channel. A supplied fingerprint is checked before either password or key authentication;
+  constructor `fingerprint` and the existing get_auth() mechanism both work. Q62 keeps NULL/empty-string pins optional. Unpinned key logins
+  still remember their first fingerprint; unpinned password logins remain unpinned. auth declares the public fingerprint field (default NULL).
+- Tests: new regressions exercise real disconnect/reconnect, SFTP release, rejected commands after disconnect, constructor pins, mismatches before
+  bad credentials can be sent, malformed pins and unpinned callers. Initial runs also exposed two fixture faults: OpenSSH banned the shared
+  client after intentional pre-authentication rejections, and a shell could reap the supposed zombie before exec. The local SSH server disables
+  PerSourcePenalties; the child now waits for its parent to become sleep, and its zombie state is asserted before signal testing. No PHP diagnostic
+  was suppressed and no test was skipped. Both SSH server images were rebuilt from the repository configuration.
+- Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). API comparison: 602 entries; only the declared fingerprint property is added.
+  All eleven review defects are marked fixed, Q62 is resolved, current status/handoff and reference notes are updated, and inventory is regenerated.
+- Verified: PHP 7.4.33 Docker full suite: 1,703 tests, 7,470 assertions, zero errors/warnings/failures/skips;
+  100% coverage (332 classes, 1,105 methods, 8,877 lines). The sample app passed 67 tests / 203 assertions plus its server-log check with this modified
+  framework mounted into both containers. All 45 JavaScript programs passed. Documentation checked before committing. No release or PHP version step.
+- Undo: revert the commit.

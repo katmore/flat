@@ -100,7 +100,7 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
   the original failure is lost. Fix: the SDK's exception from the abort is caught and dropped; `upload_failure` holding the original exception is thrown.
   Test: `S3MultipartTest::testAFailedAbortDoesNotReplaceTheUploadFailure`.
 
-## Adversarial review: open defects
+## Adversarial review defects
 
 KD-117 to KD-126 are Category A (clear bugs). KD-127 is Category B
 (security behavior needs an owner decision). All were found in inherited code
@@ -116,8 +116,8 @@ while reviewing `php-7.4`; the status of each is listed below. Reproductions, pr
 - **Fixed MOD-334 — KD-123 (P2):** Lazy `get_dom()` returns NULL for ordinary downloaded HTML.
 - **Fixed MOD-334 — KD-124 (P2):** Valid empty robots directives raise notices or reuse earlier rules.
 - **Fixed MOD-333 — KD-125 (P2):** Negative PDO limits bypass the intended minimum validation.
-- **KD-126 (P2):** Explicit SSH disconnect leaves the transport connected and usable.
-- **KD-127 (P1, Category B / Q62):** Password SSH authentication does not verify host identity.
+- **Fixed MOD-335 — KD-126 (P2):** Explicit SSH disconnect leaves the transport connected and usable.
+- **Fixed MOD-335 — KD-127 (P1, Category B / Q62):** Password SSH authentication does not verify host identity.
 
 ## Owner questions
 
@@ -172,4 +172,4 @@ while reviewing `php-7.4`; the status of each is listed below. Reproductions, pr
 62. **How should SSH password connections verify the host identity (KD-127)?** The wrapper checks a fingerprint only for public-key authentication;
     password authentication sends the password without verifying the server key. A deliberately wrong fingerprint is ignored. Recommend an explicit
     trusted host fingerprint checked before either authentication mode; decide the pinning API and behavior of unpinned callers before changing the
-    existing contract. **Answered 2026-11-27:** verify supplied fingerprints before either authentication method; keep allowing unpinned connections. Implementation pending.
+    existing contract. **Answered 2026-11-27:** verify supplied fingerprints before either authentication method; keep allowing unpinned connections. Fixed in MOD-335.
