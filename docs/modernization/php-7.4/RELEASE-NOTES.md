@@ -47,6 +47,8 @@ coverage, and no PHP notice, warning or deprecation is raised.
 - **`flat\core\curl\exception\missing_curlinfo` is removed.** It was thrown when `curl_getinfo()` returned `false` for a finished transfer, which
   never happens; nothing could have caught it.
 - `ipinfodb` has a protected `_get_api_base_url()` hook (the constant stays the default); nothing changes unless you override it.
+- **Two SSH bugs fixed** (found by tests that now use a real SSH server): a key login no longer prints `tr: write error: Broken pipe` to standard error, and a
+  connected `flat\core\ssh` client now disconnects when you drop it (it used to stay connected until the script ended).
 - **Eight files that declared nothing are deleted**: `cloud/disqus.php`, five under `cloud/pci/`, `orm/missing_required_field.php` and
   `event/alert/listener.php` (the retired pthread listener, kept as comments). Nothing used them.
 - Nothing else in `src` changed.

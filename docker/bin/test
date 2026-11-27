@@ -20,6 +20,7 @@ compose() {
         if [ -n "${FLAT_TEST_CA_FILE:-}" ]; then files="$files -f tests/docker/compose.sandbox.ca.yaml"; fi
     fi
     case "${test_mode:-all}" in all|services|anet) files="$files -f docker/docker-compose.anet-mock.yml" ;; esac
+    case "${test_mode:-all}" in all|services) files="$files -f docker/docker-compose.ssh.yml" ;; esac
     if [ "${offline:-false}" != true ] && [ -n "${FLAT_TEST_CA_FILE:-}" ]; then
         # Newer Compose builds through Bake, which refuses a secret read from a
         # path outside the build context unless file-read entitlements are relaxed.
@@ -75,7 +76,7 @@ fi
 candidates=
 if ! "$inventory"; then
     case "$test_mode" in
-        all|services) candidates='mongo rabbitmq anet-mock' ;;
+        all|services) candidates='mongo rabbitmq anet-mock sshd' ;;
         mongo) candidates=mongo ;;
         rabbitmq) candidates=rabbitmq ;;
         anet) candidates=anet-mock ;;
@@ -96,7 +97,8 @@ if "$offline"; then
     check_images php
 else
     # Build progress goes to stderr: the inventory action prints only its Markdown to stdout.
-    compose build php >&2
+    # the services built from this repository (sshd) are built too, so that a change to their Dockerfile takes effect
+    case "$test_mode" in all|services) compose build php sshd >&2 ;; *) compose build php >&2 ;; esac
 fi
 if [ "$action" = build ]; then exit; fi
 # bin/test writes reports and test lists under build/tests/. The container user

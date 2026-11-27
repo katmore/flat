@@ -70,6 +70,20 @@ Numbering continues from the [previous phase](../../php-7.3/active/KNOWN-DEFECTS
 - Category: A, **fixed (MOD-321)**. `is_robots_allowed()` fetched `scheme://host/robots.txt` and dropped the port, so a site served
   on a port other than 80 or 443 had its robots rules read from a different server (or none). Fix: the port is kept.
 
+### KD-113 - Every key login printed a shell error to standard error
+
+- Category: A, **fixed (MOD-326)**. Found by the real SSH tests (MOD-325). `flat\core\ssh` makes the temporary passphrase of a key login with
+  `tr ... | head -c128`. PHP ignores `SIGPIPE`, so when `head` closes the pipe `tr` reports "write error: Broken pipe" instead of dying quietly,
+  and the message went to the standard error of every key login. Fix: `tr`'s own standard error is discarded in that one command; the passphrase
+  is unchanged.
+
+### KD-114 - A connected SSH client was never destroyed before the script ended
+
+- Category: A, **fixed (MOD-326)**. Found by the real SSH tests. `connect()` gave the extension a disconnect callback written as a closure, which
+  binds `$this`; the extension keeps the callback as long as the session, so the object and its connection kept each other alive, and
+  `__destruct()` (which disconnects) did not run until the PHP process ended. A long-running script that opened many connections never closed them.
+  Fix: the callback is `static`.
+
 ## Owner questions
 
 51. **Should the root `composer.json` require `php >=7.4.0` (it requires `>=7.3.0`)?** A PHP 7.3 host would

@@ -1,0 +1,12 @@
+# Port 22: the normal test server. Keys are taken from /shared/authorized_keys, a file the tests add their own keys to.
+Port 22
+HostKey /etc/ssh/ssh_host_ed25519_key
+PasswordAuthentication yes
+PubkeyAuthentication yes
+KbdInteractiveAuthentication no
+AuthorizedKeysFile /shared/authorized_keys
+StrictModes no
+AllowUsers flat
+PermitRootLogin no
+Subsystem sftp /usr/lib/ssh/sftp-server
+LogLevel INFO

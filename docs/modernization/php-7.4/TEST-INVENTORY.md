@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 889 test methods in 109 files, running 1662 test cases.
-- 144 methods use a data provider (one case per data set).
+- 900 test methods in 110 files, running 1666 test cases.
+- 141 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -665,42 +665,56 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testWeightCeilingStopsUnboundedInsertion` (line 105)
 - `testWeightCeilingAllowsExactlyTheRemainingSlots` (line 110)
 
-### `tests/Unit/Core/SshTest.php` (34)
+### `tests/Unit/Core/SshServerTest.php` (37)
 
-- `testUnavailableExtensionIsReported` (line 32)
-- `testRequiredConfigurationIsChecked` (line 38): 3 data-provider cases
-- `testAuthenticationConfigurationMustBePresent` (line 44)
-- `testPublicKeyConfigurationNeedsPrivateKey` (line 48)
-- `testDeferredSubclassReportsUninitializedAuthentication` (line 52)
-- `testPasswordConnectionAndExecutionUseTheirMatchingTransport` (line 57)
-- `testRepeatedConnectIsRejected` (line 65)
-- `testConnectionFailureIsReported` (line 69)
-- `testPasswordFailureUsesTheExistingFrameworkException` (line 74)
-- `testPublicKeyPathRunsRealOpenSslAndRemovesItsTemporaryFiles` (line 80): 2 data-provider cases
-- `testProvidedFingerprintIsChecked` (line 92)
-- `testFingerprintMismatchIsReported` (line 97)
-- `testPublicKeyAuthenticationFailureIsReported` (line 105)
-- `testLocalCryptoFailureBoundariesAreReported` (line 111): 4 data-provider cases
-- `testOperationsRequireAConnection` (line 126): 6 data-provider cases
-- `testFailedRemoteExecutionIsReported` (line 132)
-- `testDisconnectIgnoresMissingConnectionOnlyWhenRequested` (line 137)
-- `testProcessChecksPreserveZeroExitCodeSemanticsAndLegacyHooks` (line 144)
-- `testMissingRemoteProcessThrowsUnlessIgnored` (line 150)
-- `testInvalidPidUsesTheLegacyCompatibleParameterException` (line 155)
-- `testBackgroundExecutionReturnsPidAndChecksRequestedRuntime` (line 160): 3 data-provider cases
-- `testBackgroundExecutionNeedsAPid` (line 167)
-- `testKillArgumentsAreValidatedBeforeSendingSignals` (line 173): 11 data-provider cases
-- `testProcessCanExitAfterEitherSignal` (line 182)
-- `testKillWaitsForTheFirstSignalBeforeSendingTheSecond` (line 189)
-- `testAProcessThatNeverExitsReportsTheTimeWaited` (line 201)
-- `testSignalAndStillRunningFailuresAreReported` (line 211): 3 data-provider cases
-- `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` (line 217)
-- `testSftpLocalOpenFailureIsReported` (line 222)
-- `testLegacyParameterAliasAutoloadsInAFreshRuntime` (line 227)
-- `testSuccessfulReadsRestartTheIdleTimeoutAcrossALongerTransfer` (line 232)
-- `testAnIdleTimeoutStopsTheNextReadAndClosesBothStreams` (line 243)
-- `testNativeReadsHandleShortEmptyAndZeroBodies` (line 256): 5 data-provider cases
-- `testCallbackFailureStillClosesTheLocalAndRemoteStreams` (line 270)
+- `testPasswordConnectionAndExecution` (line 90): groups: services, ssh
+- `testDroppingAConnectedClientClosesItsSession` (line 98): groups: services, ssh
+- `testRepeatedConnectIsRejected` (line 106): groups: services, ssh
+- `testConnectionFailureIsReported` (line 112): groups: services, ssh
+- `testPasswordFailureUsesTheExistingFrameworkException` (line 120): groups: services, ssh
+- `testPublicKeyLoginWithARealKeyRemovesItsTemporaryFiles` (line 128): 2 data-provider cases; groups: services, ssh
+- `testProvidedFingerprintIsChecked` (line 138): groups: services, ssh
+- `testFingerprintMismatchIsReported` (line 145): groups: services, ssh
+- `testPublicKeyTheServerDoesNotKnowIsRefused` (line 154): groups: services, ssh
+- `testAKeyThatOpenSslCannotReadIsReportedAndLeavesNoFile` (line 162): groups: services, ssh
+- `testAKeyLoginPrintsNothingToStandardError` (line 182): groups: services, ssh
+- `testTheTemporaryPassphraseMustBeGenerated` (line 188): groups: services, ssh
+- `testOpenSslMustBeUsable` (line 195): groups: services, ssh
+- `testOperationsNeedAConnectionAndAnUnavailableExtensionIsReported` (line 202): groups: services, ssh
+- `testFailedRemoteExecutionIsReported` (line 211): groups: services, ssh
+- `testDisconnectIgnoresMissingConnectionOnlyWhenRequested` (line 224): groups: services, ssh
+- `testProcessChecksSeeRealProcesses` (line 233): groups: services, ssh
+- `testMissingRemoteProcessThrowsUnlessIgnored` (line 242): groups: services, ssh
+- `testBackgroundExecutionReturnsThePidOfARunningProcess` (line 248): groups: services, ssh
+- `testBackgroundExecutionWaitsTheRequestedRuntimeBeforeChecking` (line 256): groups: services, ssh
+- `testBackgroundExecutionOfAProcessThatEndsEarlyFailsTheCheck` (line 265): groups: services, ssh
+- `testAnInvalidRuntimeFallsBackToThreeSeconds` (line 271): groups: services, ssh
+- `testBackgroundExecutionNeedsAPid` (line 279): groups: services, ssh
+- `testKillArgumentsAreValidatedBeforeSendingSignals` (line 287): 11 data-provider cases; groups: services, ssh
+- `testAProcessThatDiesOfTheFirstSignalIsKilledAtOnce` (line 294): groups: services, ssh
+- `testAProcessThatIgnoresTheFirstSignalIsKilledByTheSecond` (line 301): groups: services, ssh
+- `testKillWaitsForTheFirstSignalBeforeSendingTheSecond` (line 308): groups: services, ssh
+- `testAProcessThatNeverExitsReportsTheTimeWaited` (line 335): groups: services, ssh
+- `testASignalThatCannotBeSentIsReported` (line 344): groups: services, ssh
+- `testASecondSignalThatCannotBeSentIsReported` (line 350): groups: services, ssh
+- `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` (line 358): groups: services, ssh
+- `testSftpLocalOpenFailureIsReported` (line 364): groups: services, ssh
+- `testSftpDownloadsARealFileAndReportsProgress` (line 377): groups: services, ssh
+- `testShortAndEmptyFilesAreDownloadedWhole` (line 391): 3 data-provider cases; groups: services, ssh
+- `testAFileThatReportsSizeZeroIsStillDownloaded` (line 401): groups: services, ssh
+- `testALargeFileIsDownloadedInManyReads` (line 410): groups: services, ssh
+- `testCallbackFailureStillClosesTheLocalAndRemoteStreams` (line 419): groups: services, ssh
+
+### `tests/Unit/Core/SshTest.php` (8)
+
+- `testRequiredConfigurationIsChecked` (line 20): 3 data-provider cases
+- `testAuthenticationConfigurationMustBePresent` (line 26)
+- `testPublicKeyConfigurationNeedsPrivateKey` (line 30)
+- `testDeferredSubclassReportsUninitializedAuthentication` (line 34)
+- `testOperationsRequireAConnection` (line 39): 6 data-provider cases
+- `testProcessChecksKeepTheLegacyOutputHook` (line 45)
+- `testInvalidPidUsesTheLegacyCompatibleParameterException` (line 50)
+- `testTheParameterExceptionAutoloadsInAFreshRuntime` (line 54)
 
 ### `tests/Unit/Core/Template/ControllerTest.php` (17)
 
@@ -1175,8 +1189,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Tools/ServicesToolTest.php` (2)
 
-- `testItNamesTheServicesTheSelectedTestsNeed` (line 85): 18 data-provider cases
-- `testAMissingListIsAUsageError` (line 90)
+- `testItNamesTheServicesTheSelectedTestsNeed` (line 90): 20 data-provider cases
+- `testAMissingListIsAUsageError` (line 95)
 
 ### `tests/Unit/Vendor/EncodingTest.php` (7)
 

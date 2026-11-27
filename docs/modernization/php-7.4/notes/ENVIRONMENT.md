@@ -12,7 +12,7 @@ what is at its newest release and, for the rest, the reason.
   is not. PHPUnit fails on notices, warnings and deprecations (`phpunit.xml.dist`).
 - Newest: Composer 2.11.3 (`composer:2.11`, pinned by digest to the rebuild of 2026-11-27), Node 26.13.1 for the JavaScript checks,
   ImageMagick 7.1.2-36 built from source, imagick 3.8.1, the ssh2 extension 1.4.1 with libssh2 1.11.1 and OpenSSL 3.6.5
-  (all built from pinned sources, OpenSSL and libssh2 static inside the extension), MongoDB 9.0, RabbitMQ 4.4 and WireMock 3.13.2
+  (all built from pinned sources, OpenSSL and libssh2 static inside the extension), MongoDB 9.0, RabbitMQ 4.4, WireMock 3.13.2 and the SSH test server (OpenSSH 10.3 on Alpine 3.24, built from `docker/sshd`)
   (service images pinned by digest).
 - Held, with the reason:
   - PHPUnit 9.6.39 (with php-code-coverage 9.2): PHPUnit 10 needs PHP 8.1.

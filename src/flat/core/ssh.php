@@ -224,7 +224,9 @@ class ssh {
          $this->profile->port,
          array(),
          array(
-            'disconnect'=>function($reason, $message, $language) {}
+            // static: a closure binds $this, and the extension keeps the callback as long as the session, so the object and its connection
+            // would keep each other alive until the end of the script and __destruct() would never disconnect
+            'disconnect'=>static function($reason, $message, $language) {}
          )
       )) {
          throw new exception\connection\failure();
@@ -260,7 +262,9 @@ class ssh {
           * re-encrypt private key with a randomly generated passphrase
           *    an unencrypted private key will never be written to the file system
           */
-         $passphrase = exec('< /dev/urandom tr -dc A-Za-z0-9 | head -c${1:-128};echo;');
+         // tr's stderr: PHP ignores SIGPIPE, so when head has its 128 characters and closes the pipe tr reports a write error instead of
+         // dying quietly, and that message went to the stderr of every key login
+         $passphrase = exec('< /dev/urandom tr -dc A-Za-z0-9 2>/dev/null | head -c${1:-128};echo;');
          if (strlen($passphrase)!=128) {
             throw new exception\syserror("could not generate temp passphrase for plain private key");
          }

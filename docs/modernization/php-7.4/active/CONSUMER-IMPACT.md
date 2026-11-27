@@ -195,3 +195,18 @@ before, what they see now, and what to search for in their code.
 - After: the check and the class are gone; `$response->info` is what `curl_getinfo()` returns.
 - Search consumer code for: `missing_curlinfo`.
 - Verified: yes (nothing in flat referenced it; the suite passes at 100% coverage).
+
+### MOD-326 (KD-113) — A key login no longer prints "tr: write error: Broken pipe"
+
+- Before: each `flat\core\ssh` connection with `pubkey` wrote that message to the process's standard error (a web server's error log, for example).
+- After: nothing is printed. The login works the same.
+- Search consumer code for: `'pubkey'`, `flat\core\ssh`; look for the message in logs.
+- Verified: yes (a key login in a fresh process prints nothing).
+
+### MOD-326 (KD-114) — A connected `flat\core\ssh` client disconnects when the last reference to it goes
+
+- Before: the client and its SSH session kept each other alive; the connection stayed open until the script ended, whatever the code did with the object.
+- After: dropping the client runs its destructor, which disconnects, and the session is freed.
+- Search consumer code for: code that connects with `flat\core\ssh` and expected the connection to stay open after dropping the object (it did not stay open
+  on purpose, only by accident), and scripts that open many connections in a loop.
+- Verified: yes (the number of open SSH sessions goes down when the client is dropped).

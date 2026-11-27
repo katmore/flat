@@ -547,3 +547,27 @@ continues from the php-7.3 phase.
 - Behavior: none for flat; the existing tests still use their fake and pass.
 - Verified: the image builds and loads the extension; `docker/bin/test all --coverage`: 1,662 tests, 7,298 assertions, all pass; 100% coverage.
 - Undo: revert the commit.
+
+## MOD-325 — The SSH tests use a real OpenSSH server; the fake ssh2 is removed
+
+- Kind: test change, decided by the owner on 2026-11-27. `tests/Unit/Core/SshTest.php` ran flat's SSH code against `tests/Support/SshBoundary.php`,
+  which replaced the `ssh2_*` functions (and `exec`, `function_exists`, `time`) by namespaced functions with scripted answers, because the extension was
+  missing from the image (MOD-324). Now: the new service `sshd` (`docker/sshd`, Alpine 3.24 with OpenSSH 10.3, compose file `docker/docker-compose.ssh.yml`,
+  group `ssh`, mapped in `tests/tools/services.php`; `docker/bin/test` also builds it, and `PhpSubprocess` takes PHP settings and an
+  environment for a child process) and `tests/Unit/Core/SshServerTest.php` (50 tests: password and key logins with real keys, the host fingerprint,
+  real commands, background processes, signals, a real zombie for "cannot kill", SFTP of real files, a refused channel on a second port).
+  Failures that are hard to cause are caused for real in a fresh PHP process (no `tr` on the PATH, `proc_open` disabled, the extension disabled); one race (the process
+  gone between the check and the second signal) uses the class's own `exec_output()` hook. `SshTest` keeps the 15 tests that need no server.
+  `SshBoundary.php` is deleted. Four cases of the old file are gone because no real server can produce what they scripted: the two idle-timeout tests
+  (they set a fake clock), a data set with a failing `fread`, and a data set with an error on standard error while `openssl` runs (a race). The coverage of `ssh.php` is still 100%.
+- Behavior: none for flat. See [../TESTING.md](../TESTING.md).
+- Undo: revert the commit.
+
+## MOD-326 — Two SSH bugs found by the real server are fixed (KD-113, KD-114)
+
+- Kind: bug fixes. `src/flat/core/ssh.php`: `tr`'s standard error is discarded in the command that makes the temporary passphrase, and the disconnect callback
+  is `static`. Each has a test that failed before. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: see above.
+- Verified (MOD-325, MOD-326): `docker/bin/test all --coverage`: 1,666 tests, 7,371 assertions, all pass; 100% (332 classes, 1,105 methods, 8,870 lines); no PHP message;
+  `docker/bin/test unit`: all pass without the server.
+- Undo: revert the commit.

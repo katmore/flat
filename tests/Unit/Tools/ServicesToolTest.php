@@ -31,6 +31,9 @@ class ServicesToolTest extends TestCase
  <testCaseClass name="flat\test\Unit\Core\Curl\HttpThing">
   <testCaseMethod name="testFetches" groups="default,http,services"/>
  </testCaseClass>
+ <testCaseClass name="flat\test\Unit\Core\SshThing">
+  <testCaseMethod name="testConnects" groups="default,ssh,services"/>
+ </testCaseClass>
  <testCaseClass name="flat\test\Unit\Vague">
   <testCaseMethod name="testNeedsSomething" groups="default,services"/>
  </testCaseClass>
@@ -60,7 +63,7 @@ XML
     public function selections()
     {
         return [
-            'every test, so every service' => [[], 'mongo rabbitmq anet-mock'],
+            'every test, so every service' => [[], 'mongo rabbitmq anet-mock sshd'],
             'the http group needs the mock server, named once' => [['--group', 'http'], 'anet-mock'],
             'http and anet together name the mock once' => [['--group', 'http,anet'], 'anet-mock'],
             'a filter on the http test' => [['--filter', 'HttpThing'], 'anet-mock'],
@@ -73,11 +76,13 @@ XML
             'a filter that matches nothing' => [['--filter', 'NoSuchTest'], ''],
             'a group' => [['--group', 'rabbitmq'], 'rabbitmq'],
             'two groups' => [['--group', 'mongo,anet'], 'mongo anet-mock'],
-            'services only' => [['--group', 'services'], 'mongo rabbitmq anet-mock'],
+            'services only' => [['--group', 'services'], 'mongo rabbitmq anet-mock sshd'],
+            'the ssh group needs the ssh server' => [['--group', 'ssh'], 'sshd'],
+            'a filter on the ssh test' => [['--filter', 'SshThing'], 'sshd'],
             'unit, which excludes services' => [['--exclude-group', 'services'], ''],
             'a group and a filter together' => [['--group', 'services', '--filter', 'Charge'], 'anet-mock'],
-            'a test in services that names no service asks for all' => [['--filter', 'Vague'], 'mongo rabbitmq anet-mock'],
-            'an argument it does not understand keeps every test' => [['some/path/Test.php'], 'mongo rabbitmq anet-mock'],
+            'a test in services that names no service asks for all' => [['--filter', 'Vague'], 'mongo rabbitmq anet-mock sshd'],
+            'an argument it does not understand keeps every test' => [['some/path/Test.php'], 'mongo rabbitmq anet-mock sshd'],
         ];
     }
 

@@ -54,6 +54,16 @@ server received, and removes the stubs. They need the server, so `docker/bin/tes
 a `--filter` that selects them start it. Failures are real ones: a closed port (errno 7), a reset (56), an empty reply (52).
 There are no PHP function overrides for cURL any more.
 
+## SSH tests: a real OpenSSH server
+
+`tests/Unit/Core/SshServerTest.php` tests `flat\core\ssh` against a real OpenSSH server (group `ssh`, service `sshd`, built from
+`docker/sshd`: Alpine, OpenSSH, a user with a fake password) with the real ssh2 extension of the test image. Logins by password and by
+key, commands, background processes, signals, zombies and SFTP downloads are all real. The test adds its own client key to
+`/shared/authorized_keys`, a volume the server reads at each login; the server's host key is new at every start and its public half is
+in `/shared/host_key.pub`. A second port (2222) logs in but refuses every session channel. These tests need the server, so
+`docker/bin/test unit` leaves them out; `all`, `services` and a `--filter` that selects them start it. `tests/Unit/Core/SshTest.php` holds
+the checks that need no server. There is no PHP function override for ssh2 any more.
+
 ## Authorize.Net tests: mock and real sandbox
 
 `tests/Sandbox` holds functional tests of flat's Authorize.Net wrappers. They run in two ways:
