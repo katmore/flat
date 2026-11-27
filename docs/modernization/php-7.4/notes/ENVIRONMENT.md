@@ -23,7 +23,7 @@ what is at its newest release and, for the rest, the reason.
 
 The two locks carry the platform pin PHP 7.4.33 (the runtime lock also `ext-mongodb` 1.20.1).
 
-- Runtime lock, newest that PHP 7.4 allows: `mongodb/mongodb` 1.19.1 (MOD-286), `jms/serializer` 3.32.9 with
+- Runtime lock, newest that PHP 7.4 allows: `mongodb/mongodb` 1.20.0 (MOD-286, MOD-297), `jms/serializer` 3.32.9 with
   `doctrine/annotations` 2.0.2 required explicitly (MOD-287), `azuyalabs/yasumi` 2.6.0 (MOD-288),
   `php-amqplib/php-amqplib` 3.7.5, `alcaeus/mongo-php-adapter` 1.2.5 (the last release), Guzzle 7.17.0 and the
   rest. `composer update --dry-run` finds nothing newer.

@@ -229,3 +229,14 @@ continues from the php-7.3 phase.
   7,010 assertions, all pass, no PHP message; 100% (333 classes, 1,105 methods, 8,880 lines). Before MOD-295 the
   same extension produced 47 errors and 1 failure on the adapter's deprecations.
 - Undo: revert the commit (and the extension falls back to 1.19.4, where MOD-295 is not needed but harmless).
+
+## MOD-297 — `mongodb/mongodb` 1.19.1 to 1.20.0
+
+- Kind: environment (test dependency). `tests/docker/runtime/composer.lock`: `mongodb/mongodb` 1.20.0, the newest
+  release that accepts PHP 7.4 (`^7.4 || ^8.0`); it needs extension 1.20, which MOD-296 installed. The lock was
+  resolved with `--no-security-blocking`, for the reason given in MOD-286: every release that runs on PHP 7.4 has the
+  advisories whose fixes need PHP 8.1.
+- Behavior: none for flat's code.
+- Verified: `docker/bin/test all --coverage` (with the MongoDB service): 1,637 tests, 7,010 assertions, all pass, no
+  PHP message; 100% coverage.
+- Undo: revert the commit.
