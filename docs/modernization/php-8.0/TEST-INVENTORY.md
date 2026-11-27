@@ -6,8 +6,8 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 916 test methods in 110 files, running 1709 test cases.
-- 146 methods use a data provider (one case per data set).
+- 917 test methods in 110 files, running 1712 test cases.
+- 147 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-8.0/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
@@ -1195,13 +1195,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testResolvableOutputForwardsTheOptionalTemplateData` (line 11)
 
-### `tests/Unit/Tools/ApiDumpTest.php` (5)
+### `tests/Unit/Tools/ApiDumpTest.php` (6)
 
 - `testReferenceReturnChangesAreDetectedInBothDirections` (line 42)
 - `testOlderBaselinesRequireFreshReferenceMetadata` (line 48)
-- `testParameterTypeControlStillFindsAChange` (line 56)
-- `testTheAuthorizeNetSdkDeprecationNoticeDoesNotMakeAClassUnloadable` (line 68)
-- `testAnyOtherNoticeStillMakesAClassUnloadable` (line 76)
+- `testPhp80ParameterTypesAreDescribedFaithfully` (line 57): 3 data-provider cases
+- `testParameterTypeControlStillFindsAChange` (line 66)
+- `testTheAuthorizeNetSdkDeprecationNoticeDoesNotMakeAClassUnloadable` (line 78)
+- `testAnyOtherNoticeStillMakesAClassUnloadable` (line 86)
 
 ### `tests/Unit/Tools/ServicesToolTest.php` (2)
 

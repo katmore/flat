@@ -53,6 +53,16 @@ class ApiDumpTest extends TestCase
         $this->assertStringContainsString('metadata is missing', $this->compare($old, $this->dump(true), 2));
         $this->assertStringContainsString('no differences', $this->compare($new, $new));
     }
+    /** @dataProvider php80Types */
+    public function testPhp80ParameterTypesAreDescribedFaithfully($declaration, $expected)
+    {
+        $api = $this->dump(false, $declaration);
+        $this->assertSame($expected, $api['flat\\Probe']['methods']['value']['params'][0]['type']);
+    }
+    public function php80Types()
+    {
+        return [['string|int', 'string|int'], ['mixed', 'mixed'], ['?string', '?string']];
+    }
     public function testParameterTypeControlStillFindsAChange()
     {
         $this->assertStringContainsString('parameter type changed', $this->compare($this->dump(false), $this->dump(false, 'string')));

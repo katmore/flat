@@ -103,3 +103,16 @@ The full suite passes: 1,712 tests, 8,110 assertions (including three new API-to
 cases). Coverage remains 100% of all loaded classes, methods and lines. The
 602-entry API dumps immediately before and after modernization are identical.
 Existing test assertions were not changed for these syntax rewrites.
+
+### MOD-348 assertion-count correction
+
+The recorded run reports 1,712 tests and **8,104** assertions, not 8,110. Coverage
+is 332/332 classes, 1,104/1,104 methods and 8,867/8,867 lines. The promoted empty
+constructor reduces executable instrumentation; the public API dump is unchanged.
+
+## MOD-349 — Describe PHP 8 types in API tooling (2026-11-27)
+
+ReflectionUnionType has no getName and mixed must not be rendered as ?mixed.
+Use ReflectionType's own string representation. Three new cases cover union,
+mixed and nullable types. The targeted API-tool suite passes 8 tests and 70
+assertions; the full suite containing these cases also passes (MOD-348 above).

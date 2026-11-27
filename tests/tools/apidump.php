@@ -21,8 +21,8 @@ $argv = $_SERVER['argv'];
 $mode = isset($argv[1]) ? $argv[1] : '';
 
 function type_string($type) {
-    if ($type === null) return null;
-    return ($type->allowsNull() ? '?' : '') . $type->getName();
+    // ReflectionUnionType has no getName(); PHP already formats each type faithfully.
+    return $type === null ? null : (string) $type;
 }
 
 function describe_class($name) {
