@@ -20,16 +20,24 @@ Updated 2026-11-26, to continue the phase in another session. The plan and rules
 - MOD-295 to MOD-297 (Q53, "fix it now"): a corrected copy of the Mongo adapter's read-preference trait, ext-mongodb
   1.20.1 and `mongodb/mongodb` 1.20.0.
 - MOD-291: flat-webapp on 7.4.33. MOD-298: review of every PHP message under 7.4 (none left).
+- MOD-299: release preparation: release notes, API comparison, consumer check, dependency audit.
 
 ## Next
 
-1. Release preparation, like php-7.3: release notes for `v1.74.0` (the owner tags; Q52), the consumer check, and a note
-   on the "Ambiguous class resolution" warning that optimized autoloaders print (see MOD-295 in
-   [CONSUMER-IMPACT.md](CONSUMER-IMPACT.md)).
-2. End of the phase: `composer audit --locked` on both flat locks and flat-webapp's, and the dependency-alert note
-   (the same four advisories are expected: their fixes need PHP 8.1).
-3. After the tag: move flat-webapp's application lock to the published release and bring its packages to the newest
-   7.4 releases, one at a time (its lock still holds `jms/serializer` 3.29.1 and `mongodb/mongodb` 1.16.1).
+1. The owner reviews [../RELEASE-NOTES.md](../RELEASE-NOTES.md), the notes it links, and tags `v1.74.0` (Q52).
+2. After the tag: move flat-webapp's application lock to the published release, update its `DependencyLockTest` (it
+   requires `1.73.x`) and bring its packages to the newest 7.4 releases, one at a time. See
+   [../notes/CONSUMER-CHECK.md](../notes/CONSUMER-CHECK.md) for what a fresh resolution gives.
+3. The next phase (PHP 8.0) needs the owner's go-ahead.
+
+## Working in a cloud session
+
+- Docker Hub can answer 429 on pulls; pull the service images one at a time, then use `--offline`.
+- Behind the cloud proxy, set `FLAT_TEST_CA_FILE=/root/.ccr/ca-bundle.crt` for builds.
+- `composer update --lock` rewrites some download URLs; keep the lock diff to real changes.
+- After an environment change the Docker daemon can be gone: `pkill containerd`, then start `dockerd`; the images are kept.
+- `composer update --no-security-blocking` is needed to resolve a package that has advisories (see
+  [../notes/DEPENDENCY-ALERTS.md](../notes/DEPENDENCY-ALERTS.md)); never commit an ignore entry.
 
 ## Waiting for the owner
 

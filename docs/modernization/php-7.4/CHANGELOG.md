@@ -259,3 +259,16 @@ continues from the php-7.3 phase.
 - Verified: `docker/bin/test all --coverage`: 1,637 tests, 7,209 assertions, all pass; 100% (333 classes, 1,105
   methods, 8,880 lines).
 - Undo: revert the commit.
+
+## MOD-299 — Release preparation
+
+- Kind: documentation and verification; no file of `src` or `tests` changed. New: [RELEASE-NOTES.md](RELEASE-NOTES.md),
+  [notes/API-COMPARISON.md](notes/API-COMPARISON.md) with the dump `notes/API-V1.74.0.json`,
+  [notes/CONSUMER-CHECK.md](notes/CONSUMER-CHECK.md) and [notes/DEPENDENCY-ALERTS.md](notes/DEPENDENCY-ALERTS.md).
+- API: 620 classes, interfaces and traits compared with the `v1.73.2` dump: no differences.
+- Audit (`composer audit --locked`): the same four advisories as at the end of php-7.3, in flat's runtime lock and
+  flat-webapp's application lock; the tools locks have none. No fixed release is reachable on PHP 7.4 (all need 8.1).
+- Consumer check: no hit in flat-webapp's `app/` and `web/`. flat-webapp on this branch's code (scratch copy):
+  66 of 67 tests pass and the server log is clean; the one failure is its own `1.73.x` lock guard, expected.
+- Behavior: none.
+- Undo: nothing to undo.

@@ -10,7 +10,8 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 - `docker/bin/test all --coverage`: 1,637 tests, 7,209 assertions, all pass; 100% coverage; no PHP message anywhere
   (MOD-298). flat's test tools and dependencies are at their newest 7.4-compatible releases
   ([notes/ENVIRONMENT.md](notes/ENVIRONMENT.md)).
-- Next: the end-of-phase work (see [active/SESSION-HANDOFF.md](active/SESSION-HANDOFF.md)).
+- Ready for the owner: the release notes, API comparison, consumer check and dependency audit are written. The owner
+  tags `v1.74.0`; then flat-webapp follows (see [active/SESSION-HANDOFF.md](active/SESSION-HANDOFF.md)).
 - No open owner questions: Q51 to Q54 are answered ([active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md)).
 - flat-webapp runs on PHP 7.4.33 (images and platform pins moved; 67 tests pass). Its application lock still
   holds flat `v1.73.2` and the packages that go with it.
@@ -28,6 +29,7 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 
 - [HANDOFF.md](HANDOFF.md): The work plan: rules, steps, what 7.4 unlocks, decisions, traps.
 - [CHANGELOG.md](CHANGELOG.md): Every change in this phase (MOD-280 onward).
+- [RELEASE-NOTES.md](RELEASE-NOTES.md): The notes of the planned release `v1.74.0`.
 - [TEST-INVENTORY.md](TEST-INVENTORY.md): All tests by file. Generated; do not edit by hand.
 
 [active/](active/): Work in progress
@@ -40,5 +42,8 @@ every phase follows are in [../README.md](../README.md). The work plan and traps
 
 - [notes/ENVIRONMENT.md](notes/ENVIRONMENT.md): The test environment on 7.4: what is newest and why the rest is held.
 - [notes/VENDORED.md](notes/VENDORED.md): The corrected copy of the Mongo adapter's read-preference trait.
+- [notes/API-COMPARISON.md](notes/API-COMPARISON.md): The public API against `v1.73.2` (no difference); the dump is `notes/API-V1.74.0.json`.
+- [notes/CONSUMER-CHECK.md](notes/CONSUMER-CHECK.md): The consumer scan and flat-webapp on the 7.4 code.
+- [notes/DEPENDENCY-ALERTS.md](notes/DEPENDENCY-ALERTS.md): The end-of-phase audit: the same four advisories, all needing PHP 8.1.
 
 [history/](history/): Finished or replaced documents (none yet; `.gitkeep` keeps the folder in Git)
