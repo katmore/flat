@@ -15,10 +15,10 @@ Each has a recommendation; "agree" is enough.
 
 51. **Should the root `composer.json` require `php >=7.4.0` (it requires `>=7.3.0`)?** A PHP 7.3 host would
     keep installing `v1.73.x`; Composer skips a release whose `php` requirement does not match. The version
-    stays in major 1. Recommend yes, as decision D1 did for 7.3. **Open.**
+    stays in major 1. Recommend yes, as decision D1 did for 7.3. **Answered 2026-11-27: yes (MOD-292).**
 
 52. **Release numbering: `v1.74.0` and then patch releases, tagged by the owner, with flat-webapp's lock
-    moved to the published release after the tag?** Recommend yes. **Open.**
+    moved to the published release after the tag?** Recommend yes. **Answered 2026-11-27: yes.**
 
 53. **The MongoDB extension stays at 1.19.4 (not 1.20.1, the newest that runs on PHP 7.4). Agree?** From
     1.20.0 the extension deprecates `ReadPreference` with an integer mode and `ReadPreference::getMode()`.
@@ -36,4 +36,4 @@ Each has a recommendation; "agree" is enough.
     it). A consumer who runs a fresh `composer update` on PHP 7.4 gets the new serializer and a broken
     Authorize.Net SDK; one who keeps an existing lock (flat-webapp locks 3.29.1) does not. Recommend yes,
     in the same step as Q51, so the root `composer.json` changes once. Until then flat-webapp's application
-    lock keeps its packages. **Open.**
+    lock keeps its packages. **Answered 2026-11-27: yes (MOD-292).**

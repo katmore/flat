@@ -164,3 +164,15 @@ continues from the php-7.3 phase.
   application lock is therefore left as it is.
 - Behavior: none.
 - Undo: revert flat-webapp's commit.
+
+## MOD-292 — The root `composer.json` requires PHP 7.4 and `doctrine/annotations` (Q51, Q54)
+
+- Kind: dependency declaration; the owner answered Q51 and Q54 "yes" on 2026-11-27 and Q52 "yes" (numbering
+  `v1.74.0`, tagged by the owner). Root `composer.json`: `php` is `>=7.4.0` (was `>=7.3.0`) and `doctrine/annotations
+  ^2.0` is required (it was not). The consumer-impact entries are in
+  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+- Behavior: a PHP 7.3 host keeps installing `v1.73.x`; a fresh install on PHP 7.4 now has a working
+  Authorize.Net SDK.
+- Not verified yet: Docker was unavailable when this was committed, so neither the full suite, `check-docs`
+  nor a resolution under a simulated PHP 7.4.33 host has run on it. A later entry records that run.
+- Undo: revert the commit.
