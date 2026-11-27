@@ -144,3 +144,19 @@ PHP 8 represents qualified names as single tokens. Extend the existing no-alias
 rule to recognize qualified and fully qualified calls, retaining its previous
 meaning. Five cases cover plain, absolute and qualified names, comments and
 string literals. Coding-rule tests: 9 tests, 610 assertions, all pass.
+
+## MOD-353 — Reduce Docker snapshot space and verify extension versions (2026-11-27)
+
+VFS Docker copies a full filesystem for every layer; intermediate comparison
+images and repeated source-build layers exhausted the workspace. Discarded only
+this task's obsolete images and unused build cache, preserving source and the
+current services. The pinned source builds now share one RUN layer, bootstrap
+travels with the dependency stage, and permissions/version checks share a layer.
+No private image or host path is required by the committed harness.
+
+Git's imagick source archive retains @PACKAGE_VERSION@ in its header. Stamp the
+pinned release's package.xml version (3.8.1) as the upstream packager does.
+Build assertions verify PHP, imagick, Xdebug, ssh2, MongoDB, E_ALL and required
+extensions. Full suite: 1,717 tests, 8,111 assertions; 100% coverage. No tool or
+package version changes in this checkpoint. The interrupted Yasumi update was
+restored before this validation and will be retried independently.
