@@ -198,3 +198,9 @@ package version changes in this checkpoint. Full Docker suite: 1718 tests,
 v2.5.4 → v3.0.2, resolved against PHP 8.0.30. No other
 package version changes in this checkpoint. Full Docker suite: 1718 tests,
 8104 assertions, no errors/failures/skips; 100% method and line coverage.
+
+## MOD-360 — Upgrade symfony/yaml (2026-11-27)
+
+v5.4.57 → v6.0.19, resolved against PHP 8.0.30. No other
+package version changes in this checkpoint. Full Docker suite: 1718 tests,
+8111 assertions, no errors/failures/skips; 100% method and line coverage.
