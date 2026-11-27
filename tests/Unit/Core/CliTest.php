@@ -132,7 +132,8 @@ class CliTest extends TestCase
     {
         $lines = []; cli::set_line_handler(function ($text, $options) use (&$lines) { $lines[] = [$text, $options]; });
         cli::line('normal', 2); cli::line('error', ['error'=>7]); cli::line('error marker', ['error']);
-        $this->assertSame([['normal',['tabs'=>2,'error'=>false]],['error',['tabs'=>0,'error'=>7]],['error marker',['tabs'=>0,'error'=>true]]], $lines);
+        cli::line('unrelated option', ['other'=>true]);
+        $this->assertSame([['normal',['tabs'=>2,'error'=>false]],['error',['tabs'=>0,'error'=>7]],['error marker',['tabs'=>0,'error'=>true]],['unrelated option',['tabs'=>0,'error'=>false]]], $lines);
         cli::set_error_line_handler(function ($text, $options) use (&$lines) { $lines[] = ['dedicated', $text, $options]; });
         cli::line('failure', ['error'=>true,'tabs'=>1]);
         $this->assertSame(['dedicated','failure',['tabs'=>1]], end($lines));

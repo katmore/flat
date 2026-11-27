@@ -323,9 +323,9 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testPrintAndDumpHandlers` (line 114)
 - `testDefaultPrintAndDumpOutput` (line 122)
 - `testLineAndErrorHandlers` (line 131)
-- `testNormalQuietAndErrorOutput` (line 140)
-- `testMissingArgvRaisesARuntimeException` (line 146)
-- `testGetoptWrapperUsesTheReturnedOperandIndex` (line 154)
+- `testNormalQuietAndErrorOutput` (line 141)
+- `testMissingArgvRaisesARuntimeException` (line 147)
+- `testGetoptWrapperUsesTheReturnedOperandIndex` (line 155)
 
 ### `tests/Unit/Core/Collection/ConstraintTest.php` (9)
 

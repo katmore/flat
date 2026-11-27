@@ -160,3 +160,11 @@ Build assertions verify PHP, imagick, Xdebug, ssh2, MongoDB, E_ALL and required
 extensions. Full suite: 1,717 tests, 8,111 assertions; 100% coverage. No tool or
 package version changes in this checkpoint. The interrupted Yasumi update was
 restored before this validation and will be retried independently.
+
+## MOD-354 — Close the CLI mutation assertion gap (2026-11-27)
+
+The PHP 8 CLI sample caught seven of eight mutants; relaxing in_array's strict
+flag survived. Add an unrelated boolean option to the existing line-handler
+contract test, requiring error=false. Source behavior stays unchanged. The
+three mutants at that line are now all killed, with no invalid mutants or
+timeouts. The full compact-harness run includes the tightened assertion.
