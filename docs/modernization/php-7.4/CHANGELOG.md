@@ -216,3 +216,16 @@ continues from the php-7.3 phase.
   tests, 7,010 assertions, all pass; 100% (333 classes, 1,105 methods, 8,880 lines). A Composer install of flat
   with the adapter loads flat's copy with the normal, optimized and authoritative autoloaders.
 - Undo: revert the commit.
+
+## MOD-296 — The MongoDB extension moves to 1.20.1
+
+- Kind: environment. `docker/Dockerfile` builds ext-mongodb 1.20.1 (commit
+  `7dc124cb54ca21cd9987bc9cd08a73dd52e60f97`, with libmongoc `97f166d8d784d6096d48ba288f98b48028cdfe8b`) in place of
+  1.19.4; the `ext-mongodb` pin in `tests/docker/runtime/composer.json` is `1.20.1` and the lock is refreshed (hash
+  and platform only). 1.20.1 is the newest release that builds on PHP 7.4: 1.21.0 needs 8.1 (see MOD-285).
+  MOD-285 held the extension at 1.19.4; MOD-295 removed the reason (Q53).
+- Behavior: none for flat's code.
+- Verified: with the extension at 1.20.1 and the corrected trait, `docker/bin/test all --coverage`: 1,637 tests,
+  7,010 assertions, all pass, no PHP message; 100% (333 classes, 1,105 methods, 8,880 lines). Before MOD-295 the
+  same extension produced 47 errors and 1 failure on the adapter's deprecations.
+- Undo: revert the commit (and the extension falls back to 1.19.4, where MOD-295 is not needed but harmless).

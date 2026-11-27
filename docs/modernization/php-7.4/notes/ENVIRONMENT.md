@@ -16,12 +16,12 @@ what is at its newest release and, for the rest, the reason.
 - Held, with the reason:
   - PHPUnit 9.6.39 (with php-code-coverage 9.2): PHPUnit 10 needs PHP 8.1.
   - Xdebug 3.1.6: 3.2 and later need PHP 8.0.
-  - ext-mongodb 1.19.4: 1.20 deprecates what `alcaeus/mongo-php-adapter` does; 1.21 needs PHP 8.1
-    (MOD-285, Q53 in [../active/KNOWN-DEFECTS.md](../active/KNOWN-DEFECTS.md)).
+  - ext-mongodb 1.20.1: the newest that builds on PHP 7.4 (1.21 needs PHP 8.1). It deprecates what
+    `alcaeus/mongo-php-adapter` does; flat carries a corrected copy of that trait (MOD-295, Q53).
 
 ## Test dependencies
 
-The two locks carry the platform pin PHP 7.4.33 (the runtime lock also `ext-mongodb` 1.19.4).
+The two locks carry the platform pin PHP 7.4.33 (the runtime lock also `ext-mongodb` 1.20.1).
 
 - Runtime lock, newest that PHP 7.4 allows: `mongodb/mongodb` 1.19.1 (MOD-286), `jms/serializer` 3.32.9 with
   `doctrine/annotations` 2.0.2 required explicitly (MOD-287), `azuyalabs/yasumi` 2.6.0 (MOD-288),

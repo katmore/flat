@@ -20,14 +20,11 @@ Each has a recommendation; "agree" is enough.
 52. **Release numbering: `v1.74.0` and then patch releases, tagged by the owner, with flat-webapp's lock
     moved to the published release after the tag?** Recommend yes. **Answered 2026-11-27: yes.**
 
-53. **The MongoDB extension stays at 1.19.4 (not 1.20.1, the newest that runs on PHP 7.4). Agree?** From
-    1.20.0 the extension deprecates `ReadPreference` with an integer mode and `ReadPreference::getMode()`.
-    The third-party `alcaeus/mongo-php-adapter` 1.2.5 (its newest release, and archived) does both for
-    every database object, so 47 tests fail on a deprecation that flat cannot fix and must not hide. flat's
-    legacy `Mongo` driver (`src/flat/db/driver/mongo.php`) is built on that adapter. Recommend: keep 1.19.4
-    until the adapter is replaced or patched, and decide that with the legacy driver's future (v2.X). In
-    flat-webapp the question does not arise: its image has no MongoDB extension. Whichever way, a consumer on PHP 7.4
-    with extension 1.20 or newer sees these deprecations from the adapter. **Open.**
+53. **The MongoDB extension was held at 1.19.4 because 1.20 deprecates what the archived
+    `alcaeus/mongo-php-adapter` does. Fix it now?** The owner answered on 2026-11-27: fix it at its cause, with a
+    corrected copy of the one class in flat's tree. **Resolved (MOD-295, MOD-296):** flat carries a corrected
+    copy of the adapter's read-preference trait ([../notes/VENDORED.md](../notes/VENDORED.md)); the extension is
+    1.20.1, the newest that builds on PHP 7.4 (1.21 needs 8.1); all tests pass with no deprecation.
 
 54. **Should flat's root `composer.json` require `doctrine/annotations` (`^2.0`) for PHP below 8.0?** flat
     requires `authorizenet/authorizenet ^1.9`, which pulls in `jms/serializer` (any of `^1|^2|^3`). From
