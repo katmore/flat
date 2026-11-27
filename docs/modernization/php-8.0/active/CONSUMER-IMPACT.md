@@ -40,3 +40,11 @@
   PHP's embedded crypto is unchanged. Authentication, host pins and cleanup
   retain their contract; native OpenSSL error wording may follow the new tool.
 - Search consumer code for: `\flat\core\ssh`, `openssl`
+
+### MOD-363: Patched YAML release streams
+
+- Before: Composer on PHP 8.0 could select unpatched Symfony YAML 6.0.19.
+- After: PHP 8.0 selects patched 5.4.57; newer PHP hosts may select the allowed
+  patched 6.4, 7.4 or 8.1 streams. Explicit pins to vulnerable versions must change.
+- Inspect symfony/yaml constraints in application Composer manifests and locks.
+- Search consumer code for: `Symfony\Component\Yaml`

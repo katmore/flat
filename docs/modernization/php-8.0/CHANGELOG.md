@@ -222,3 +222,15 @@ An isolated key round trip succeeds between PHP's crypto and the new CLI.
 
 Full Docker suite: 1,718 tests, 8,103 assertions, no errors/failures/skips.
 Coverage is 100%: 332 classes, 1104 methods and 8867 lines.
+
+## MOD-363 — Select patched YAML release streams (2026-11-27)
+
+The final audit corrects MOD-360's selection: higher-numbered YAML 6.0.19 has
+five advisories that patched 5.4.57 does not. Return the PHP 8.0 lock to 5.4.57.
+Root and runtime manifests allow patched 5.4, 6.4, 7.4 and 8.1 streams, so newer
+PHP hosts can still select newer secure releases. This is a security constraint,
+not a hold for a consumer's old API. No advisory is ignored or dismissed.
+
+Composer now reports the original four AWS/MongoDB advisories; the five YAML
+advisories are gone. Full Docker suite: 1,718 tests, 8,112 assertions, no failures,
+errors or skips; 100% of 332 classes, 1,104 methods and 8,867 lines.

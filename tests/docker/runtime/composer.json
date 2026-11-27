@@ -6,7 +6,8 @@
     "php-amqplib/php-amqplib": "^3.7",
     "aws/aws-sdk-php": "^3.0",
     "azuyalabs/yasumi": "^2.4",
-    "doctrine/annotations": "^2.0"
+    "doctrine/annotations": "^2.0",
+    "symfony/yaml": "^5.4.57 || ^6.4.50 || ^7.4.23 || ^8.1.11"
   },
   "config": {
     "platform": {
