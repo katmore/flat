@@ -28,6 +28,26 @@ class EventTest extends TestCase
         $event->fire('input');
         $this->assertSame([['handler', 'input'], ['listener', 'result']], $calls);
     }
+    /** @dataProvider positionalHandlerInputs */
+    public function testHandlerArgumentsStayPositionalRegardlessOfPayloadKey($call, $data, $stored, $expected)
+    {
+        $received = null;
+        $event = new EventFixture('positional', function (...$arbitraryName) use (&$received) { $received = $arbitraryName; }, $data);
+        if ($stored) $event->set_data('key', 'stored');
+        $event->fire($call);
+        if ($stored) $expected[0] = (object) $expected[0];
+        $this->assertEquals($expected, $received);
+    }
+    public function positionalHandlerInputs()
+    {
+        return [
+            'none' => [null, null, false, []],
+            'call' => ['call', null, false, ['call']],
+            'event' => [null, 'event', false, ['event']],
+            'stored' => [null, null, true, [['key' => 'stored']]],
+            'aggregate' => ['call', 'event', false, [['call' => 'call', 'event' => 'event']]],
+        ];
+    }
     public function testFailureAbortsListeners()
     {
         $event = new EventFixture('failure', function () { return false; });

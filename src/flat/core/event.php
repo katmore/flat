@@ -152,7 +152,8 @@ abstract class event extends \flat\core {
        */
       $h_data = NULL;
       if (is_callable($this->handler)) {
-         $h_data = call_user_func_array($this->handler, $arr);
+         // PHP 8 treats string argument keys as parameter names; events deliver positionally.
+         $h_data = call_user_func_array($this->handler, array_values($arr));
          if (false === $h_data) {
             throw new event\exception\failure($this);
          }
