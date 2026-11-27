@@ -24,7 +24,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - The live documents that named PHP 7.2 now name PHP 7.3 (`README.md`, `docs/modernization/TESTING.md`,
   `AGENTS.md`), and the test image is called `flat-tests-php73` in them. `php-7.2/` and `history/`
   are left as written.
-- Decision D1 revised in [HANDOFF.md](HANDOFF.md): the root `php` requirement is the lower bound
+- Decision D1 revised in [HANDOFF.md](history/HANDOFF.md): the root `php` requirement is the lower bound
   `>=7.3.0`, not `7.3.*`, so PHP 7.4+ hosts can still install flat.
 - Verified: `docker/bin/check-docs`. Undo: revert the commits.
 
@@ -61,7 +61,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   `saveRegex()` sits in two nested switches, so it only ever left the inner one, like `break`.
   It is now written `break;`, with a comment. Output is identical by construction.
 - Cause fixed, nothing hidden. The question whether the author meant `continue 3` (a behavior
-  change) is Q37 in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+  change) is Q37 in [active/KNOWN-DEFECTS.md](history/KNOWN-DEFECTS.md).
 - Verified: the whole suite passes unchanged (1,429 tests).
 - Undo: change `break;` back to `continue;` (it fails again on 7.3).
 
@@ -91,7 +91,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   warning). Static searches for `compact()`, case-insensitive `define()`, `mb_ereg*` aliases,
   `fgetss` and heredoc markers in `src` found nothing to change.
 - API comparison with `v1.72.0`: no difference ([notes/API-COMPARISON.md](notes/API-COMPARISON.md)).
-- Mutation sample: 40 mutants, 80% caught ([active/MUTATION-PROBE.md](active/MUTATION-PROBE.md)).
+- Mutation sample: 40 mutants, 80% caught ([active/MUTATION-PROBE.md](history/MUTATION-PROBE.md)).
 - Consumer check on flat-webapp and its run on 7.3 ([notes/CONSUMER-CHECK.md](notes/CONSUMER-CHECK.md)).
 - Dependency audit of both locks: no change, no alert fixable on 7.3
   ([notes/DEPENDENCY-ALERTS.md](notes/DEPENDENCY-ALERTS.md)).
@@ -107,7 +107,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: documentation, by the maintainer (commit `da67d6c`). MOD-188 says the README states the
   retirement of `modernize-26`; since this change it does not. The README now only describes
   the live model (phase branches, `master` merged by the maintainer). The retirement stays
-  recorded in `AGENTS.md` and in [HANDOFF.md](HANDOFF.md).
+  recorded in `AGENTS.md` and in [HANDOFF.md](history/HANDOFF.md).
 - Nothing else changed.
 
 ## MOD-194 — Documentation: shorter READMEs, new rule against history in READMEs
@@ -132,7 +132,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Tests (`JsMinifierTest`): one expected value corrected (`function f(){return /'quoted'/;}`, it
   had pinned the lost `;`), three cases added (`.test(s)`, `;foo()`, `;}` before a newline). All four
   fail with the old code, pass with the fix.
-- Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). Verified:
+- Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md). Verified:
   `docker/bin/test all --coverage`.
 - Undo: put `break;` back (the four tests then fail).
 
@@ -154,7 +154,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: finding, nothing hidden or lowered by me, nothing changed yet. Found while checking a
   `strpos()` deprecation that the suite did not report. Corrects MOD-189 to MOD-192 and the handoff,
   which said no warning, notice or deprecation remained: that held for warnings and errors only.
-  Details and the 19 failing tests of a measured run: [active/HIDDEN-ERRORS.md](active/HIDDEN-ERRORS.md).
+  Details and the 19 failing tests of a measured run: [active/HIDDEN-ERRORS.md](history/HIDDEN-ERRORS.md).
   Question Q40 asks for the owner's decision.
 
 ## MOD-200 — Environment: report everything (answers Q40)
@@ -165,13 +165,13 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   (`error_reporting = E_ALL`), and the image build fails unless `error_reporting()` is `E_ALL`.
 - `phpunit.xml.dist`: `convertDeprecationsToExceptions`, `convertErrorsToExceptions`,
   `convertNoticesToExceptions` and `convertWarningsToExceptions` are all `true`.
-- Result: 20 tests failed at once ([active/HIDDEN-ERRORS.md](active/HIDDEN-ERRORS.md) has the
+- Result: 20 tests failed at once ([active/HIDDEN-ERRORS.md](history/HIDDEN-ERRORS.md) has the
   first measurement); MOD-201 to MOD-203 fix them. Rule added to `AGENTS.md` (flat and flat-webapp).
 
 ## MOD-201 — Runtime-compatibility fixes, no behavior change (KD-81, 82, 84, 86, 87)
 
 - Kind: runtime-compatibility fix. Each is a notice or deprecation fixed at its cause; callers see
-  nothing different. Detail per item in [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md).
+  nothing different. Detail per item in [active/KNOWN-DEFECTS.md](history/KNOWN-DEFECTS.md).
 - `core/html/encode.php` (`_option_to_param` static), `core/curl/request.php` (initialize
   `$fields_string`), `core/collection/controller.php` (`get()` and `is_exist()` check the index),
   `orm.php` (no `each()`), `vendor/tedious/JShrink/minifier.php` (guard the `strpos()` needle).
@@ -183,7 +183,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: behavior change (bug fix), owner's instruction to fix what can be fixed now.
 - `bad_dim` says why (`... width must be numeric.`); the mapper's `cannot_get_property` names the
   property. Tests assert the new messages (`DimTest` gained a message check; `MapperTest`'s
-  expected message changed). Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  expected message changed). Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 
 ## MOD-203 — Tests that relied on hidden notices
 
@@ -247,7 +247,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 
 - Kind: documentation; the code is in flat-webapp (its tests folder and its docker/bin/test script, Dockerfile.test and
   compose.test.yml). Owner's request, 2026-11-21. Overview and findings:
-  [active/WEBAPP-FUNCTIONAL.md](active/WEBAPP-FUNCTIONAL.md). Two findings in `app/` became questions
+  [active/WEBAPP-FUNCTIONAL.md](history/WEBAPP-FUNCTIONAL.md). Two findings in `app/` became questions
   Q43 and Q44. The handoff's "integration tests are on hold" sentence is replaced.
 
 ## MOD-211 — Decision recorded: `PATCH` support waits for v2.X
@@ -260,7 +260,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: documentation, owner's decision (2026-11-21). The application models what the one known
   consumer does, so it is not changed even for bugs. Q43 and Q44 are answered on that basis (the
   snippets they carried are not applied); the behaviors stay, documented in
-  [active/WEBAPP-FUNCTIONAL.md](active/WEBAPP-FUNCTIONAL.md). flat-webapp's `AGENTS.md` says so.
+  [active/WEBAPP-FUNCTIONAL.md](history/WEBAPP-FUNCTIONAL.md). flat-webapp's `AGENTS.md` says so.
 
 ## MOD-213 — Correction to MOD-212: `app/` changes for literal bugs only
 
@@ -281,7 +281,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 
 ## MOD-215 — Documentation: adversarial review handoff
 
-- Kind: documentation, owner's request. [active/ADVERSARIAL-REVIEW-HANDOFF.md](active/ADVERSARIAL-REVIEW-HANDOFF.md)
+- Kind: documentation, owner's request. [active/ADVERSARIAL-REVIEW-HANDOFF.md](history/ADVERSARIAL-REVIEW-HANDOFF.md)
   briefs a second agent to review the phase: frozen commit ranges, ground rules, the claims to try to
   break, and where the author expects weaknesses. No code change.
 
@@ -295,7 +295,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 
 - Kind: documentation, owner's request. Corrected the review handoff: v1.73.1 is unreleased
   and this review prepares it; removed the exclusion of v1.73.1 work. This clarifies MOD-216.
-- [Review](active/ADVERSARIAL-REVIEW.md) records eight findings from source inspection,
+- [Review](history/ADVERSARIAL-REVIEW.md) records eight findings from source inspection,
   test-assertion review and Docker experiments, with evidence and reproduction steps. No
   source, tests or locks changed. The full framework suite passes; the webapp HTTP run was
   blocked by dependency-download HTTP 403 responses. Fixes await owner review.
@@ -533,7 +533,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   matched count from it; the server's removed `getLastError` is asked only when no update went through the
   driver. Tests: two service tests pin today's behavior on a real server (an update that changes nothing
   still counts its match; no match is not modified), three unit tests prove the count does not call the
-  server; the unit ones fail without the fix. Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  server; the unit ones fail without the fix. Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Verified: `docker/bin/test all --coverage`, 1,476 tests, 100% (332 classes, 1,064 methods, 8,401 statements).
 
 ## MOD-243 — Tooling: the MongoDB test service moves to 9.0
@@ -551,7 +551,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   queue, and the documented-parameters test); two more pin that an explicit `exclusive` or `durable` choice is
   kept. The test's own direct declaration became durable. Checked against 3.13 as well: flat still declares
   non-durable there (the one test that assumes a 4.x broker fails with the broker's "inequivalent arg
-  'durable'" error). Consumer impact: [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  'durable'" error). Consumer impact: [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Verified: `docker/bin/test all --coverage`, 1,479 tests, 100% (332 classes, 1,065 methods, 8,409 statements).
 
 ## MOD-245 — Tooling: the RabbitMQ test service moves to 4.4
@@ -565,7 +565,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   with `AMQPConnection` where it exists and `AMQPStreamConnection` otherwise (php-amqplib 3 removed the alias).
   `RabbitMqTest` accepts the common base class and a new subprocess test, in which the legacy class is defined
   first, proves version 2 callers still get it (it fails when that branch is disabled). Consumer impact:
-  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Verified: rabbitmq tests on php-amqplib 2.12.3 and 3.7.5; `docker/bin/test all --coverage`, 1,480 tests, 100%.
 
 ## MOD-247 — Dependency upgrade: php-amqplib 3.7.5 in the test runtime lock
@@ -663,7 +663,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: bug fix (KD-99) and tests. The owner's first run of `docker/bin/test sandbox` (5 of 6 passed) failed the
   create test with `E00041`: `profile_Customer` dropped every field, so flat sent `<profile/>`. Fixed with
   `property_exists()`; the unit test that pinned the bug now asserts the email arrives, and one test covers all
-  three fields. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  three fields. See [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - The mock now answers `E00041` to an empty profile, as the sandbox did (one stub, verified by that run).
 - The real sandbox is contacted only by an explicit `docker/bin/test sandbox` (or `bin/test sandbox`), which sets
   `FLAT_TEST_ANET_SANDBOX=1`. Without that flag and without `FLAT_TEST_ANET_URL` the tests throw before any
@@ -674,7 +674,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: behavior change (owner's decision, 2026-11-23). New exception `flat\cloud\authorize\no_response`
   (extends `unexpected_response`); `flat\cloud\authorize\AuthorizeNetCIM` checks every reply, and a new
   `flat\cloud\authorize\AuthorizeNetARB` (used by `subscription` in place of the SDK's own class) does the same. See
-  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). Both new classes carry `@deprecated since v1.73.1`;
+  [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md). Both new classes carry `@deprecated since v1.73.1`;
   the deprecation test now expects 47 declarations. The sandbox test client no longer throws by itself.
 - Verified: new `AuthorizeNoResponseTest` fails without the fix; run live without the proxy CA, the sandbox test
   shows the new message. The release notes mention both Authorize.Net fixes.
@@ -700,7 +700,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   `SandboxArb` and `SandboxSubscription` in `tests/Sandbox/SandboxSupport.php`.
 - Fixed: KD-101 (the legacy ARB client's payload accumulated across calls; flat's client now empties it after each
   request) and KD-102 (`get_info()` read a list element the schema does not have). See
-  [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md). New `AuthorizeSubscriptionSdkTest` fails without both.
+  [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md). New `AuthorizeSubscriptionSdkTest` fails without both.
 - Limit: the mock matches on element names, so it cannot show KD-101; the unit test does. KD-102 is
   schema-based: the owner's sandbox run is its confirmation.
 - Verified: `docker/bin/test all --coverage`, 1,507 tests, 6,625 assertions, 100% (334 classes, 1,069 methods,
@@ -710,7 +710,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 
 - Kind: behavior change (owner's decision, 2026-11-23: option a). `flat\cloud\authorize\customer` converts the
   `payment` param into the SDK's `AuthorizeNetPaymentProfile` (private helpers in `customer.php`); `create_paymethod()`
-  and `update_paymethod()` require it. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  and `update_paymethod()` require it. See [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Tests: the three tests that pinned the broken behavior (MOD-260) are replaced by `AuthorizePaymentMethodTest`
   asserting the correct XML (`@group known-defect` removed); five older customer tests that pinned the old
   forwarding (the same object passed through, or a request without `payment`) now assert the conversion. The sandbox
@@ -724,7 +724,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 ## MOD-263 — Second real-sandbox result: KD-103 fixed, KD-104 open
 
 - Kind: bug fix and tests. The owner's run (6 of 10 passed) failed three tests with `E00013`: `create()` asked for
-  `liveMode` validation without a payment profile (KD-103, fixed; see [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)),
+  `liveMode` validation without a payment profile (KD-103, fixed; see [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md)),
   and one with `subscription\not_found` from `get_info()` right after `create()` (KD-104, open).
 - The mock answers `E00013` for a validation mode without payment profiles, as the sandbox did: with the fix removed
   the same three tests fail the same way, with it they pass. The subscription sandbox test now waits for the list
@@ -748,7 +748,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
   payment method is charged by `authcapture`, `authonly` and `captureonly` (approved), and the documented decline
   ZIP code 46282 gives a `response_error`. The mock has the transaction messages and the decline.
 - Fixed: KD-105 (`create_transaction()` skipped flat's own SDK adapters, so the request was invalid; `authonly` and
-  `captureonly` had no fields). See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  `captureonly` had no fields). See [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - Open until the owner's run: that the sandbox approves each kind and how it declines (E00027 is from the
   documentation). The mock cannot show either.
 - Verified: `docker/bin/test all --coverage`, 1,538 tests, 6,748 assertions, 100% (334 classes, 1,071 methods,
@@ -880,14 +880,14 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Behavior: `fixUTF8()` of a number, boolean or null now returns it unchanged (it returned `'42'`, `''`, `''`); found
   when the coverage of the new file dropped.
 - Tests: three new `EncodingTest` cases (the iconv option on `toISO8859()` and `toLatin1()`, `fixUTF8()` of non-text, and
-  no curly-brace string offsets); they fail on the old file. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  no curly-brace string offsets); they fail on the old file. See [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 \n
 - Verified: `docker/bin/test all --coverage`, 1,550 tests, 6,771 assertions, 100% (332 classes, 1,068 methods, 8,464
   statements); the test inventory is regenerated.
 
 ## MOD-277 — Vendored libraries: Parsedown 1.8.0 and ParsedownExtra 0.9.0
 
-- Kind: dependency, with a security fix and rendering changes (see [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)).
+- Kind: dependency, with a security fix and rendering changes (see [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md)).
   `src/flat/vendor/erusev/src/Parsedown/Parsedown.php` is upstream 1.8.0 (flat had 1.5.0 plus two small patches);
   `ParsedownExtra/ParsedownExtra.php` is 0.9.0 (flat had 0.6.x). The README, LICENSE and `composer.json` copies are
   upstream's too. ParsedownExtra 0.9.0 requires Parsedown 1.8.0, so they move together.
@@ -909,7 +909,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 
 ## MOD-278 — Vendored library: JShrink 1.8.1
 
-- Kind: dependency, with fixes for modern JavaScript (see [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md)).
+- Kind: dependency, with fixes for modern JavaScript (see [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md)).
   `src/flat/vendor/tedious/JShrink/minifier.php` is upstream 1.8.1 (flat had 1.1.0 plus local fixes). Upstream 1.8.1
   already contains the KD-80 fix (`continue 3`) and the PHP 7 guards, and handles template literals; it still has the KD-89
   bugs, so those three fixes are re-applied and commented (`flat (KD-89)`; list in [notes/VENDORED.md](notes/VENDORED.md)).
@@ -927,7 +927,7 @@ Baseline (before any change): `docker/bin/test all` on PHP 7.2.34 passed 1,428 t
 - Kind: behavior change (owner's decision, 2026-11-26: letting raw HTML through "seems weird"). `flat\core\md\convert`
   now uses Parsedown's safe mode by default, and takes an optional `array $options` (`['safe' => false]` restores the old
   behavior for trusted text) in `string_to_html()`, `convert::__construct()` and `convert\file::__construct()`. An unknown option throws
-  `InvalidArgumentException`. See [active/CONSUMER-IMPACT.md](active/CONSUMER-IMPACT.md).
+  `InvalidArgumentException`. See [active/CONSUMER-IMPACT.md](history/CONSUMER-IMPACT.md).
 - `flat\core\controller\tmpl` passes `['safe' => false]`: template files are the developer's own.
 - Safe mode shows typed entities literally (`&copy;`), which is Parsedown's behavior; tested and documented.
 - The API comparison against v1.73.1 shows only the three added optional parameters

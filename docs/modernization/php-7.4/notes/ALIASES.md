@@ -3,7 +3,7 @@
 The five `class_alias` calls that `src/flat` (outside `vendor`) had on 2026-11-27, kept as a record. **All five were removed**
 (MOD-306 to MOD-309, Q58); `AGENTS.md` now forbids `class_alias`. The paths below are as they were and several no longer exist. All five are written up in the php-7.2 change log, made in that phase by AI
 sessions while making the classes loadable and tested; whether the owner approved the pattern then is not recorded. The
-owner dislikes it (2026-11-27); the question is Q58 in [../active/KNOWN-DEFECTS.md](../active/KNOWN-DEFECTS.md). No
+owner dislikes it (2026-11-27); the question is Q58 in [../active/KNOWN-DEFECTS.md](../history/KNOWN-DEFECTS.md). No
 alias was added in this phase, and the MongoDB SSL classes were renamed without one (MOD-303).
 
 ## 1. `subscription\canceled`

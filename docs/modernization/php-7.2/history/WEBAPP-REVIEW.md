@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # flat-webapp review (2026-11-15)
 
 A read-through of `katmore/flat-webapp` (commit `7186607`, the tip of its

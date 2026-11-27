@@ -67,7 +67,7 @@ No GitHub alert was changed.
 
 - Revisit the older untriaged mutation survivors after repairing the runner.
   They are leads about test strength, not eight proven application bugs:
-  [../../php-7.3/active/MUTATION-PROBE.md](../../php-7.3/active/MUTATION-PROBE.md).
+  [archived mutation sample](../../php-7.3/history/MUTATION-PROBE.md).
 - The Mongo localcert subclasses' inheritance/passphrase oddity is already
   recorded under KD-107. The Mongo driver does not use those helpers. Do not
   silently redesign them as part of a PHP runtime upgrade.

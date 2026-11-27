@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Integration tests with flat-webapp (on hold)
 
 Status: on hold (owner, 2026-11-15 and 2026-11-19). These are integration

@@ -104,7 +104,7 @@ no service containers. Pass a known-defects file to label `@group known-defect`
 tests with their KD IDs, and redirect the output where it belongs:
 
 ```sh
-tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.2/active/KNOWN-DEFECTS.md > "$tmp" && chmod 644 "$tmp" && mv "$tmp" docs/modernization/php-7.2/TEST-INVENTORY.md
+tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-7.2/history/KNOWN-DEFECTS.md > "$tmp" && chmod 644 "$tmp" && mv "$tmp" docs/modernization/php-7.2/history/TEST-INVENTORY.md
 ```
 
 A redirect straight onto the inventory would empty it if the command fails (for

@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Adversarial review, PHP 7.3
 
 Review date: 2026-11-20 (America/Los_Angeles). Report only; no source, tests or locks changed.

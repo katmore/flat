@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Mutation probe, php-7.2
 
 Record of the TS-05 mutation probe: what it found, what was fixed, and what is

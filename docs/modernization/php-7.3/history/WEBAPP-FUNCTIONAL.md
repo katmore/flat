@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Tests in flat-webapp
 
 Run `docker/bin/test` in flat-webapp. It installs the tracked application lock, starts Apache

@@ -21,7 +21,7 @@ now work as documented. That is the point of the release, and it means a result 
 code used to get may be different. Most applications will not notice. To be sure,
 skim the list below, and if you want detail, every change is listed with what you saw
 before, what you see now, and what to search your own code for in
-`docs/modernization/php-7.2/active/CONSUMER-IMPACT.md`.
+`docs/modernization/php-7.2/history/CONSUMER-IMPACT.md`.
 
 - Composer's `^1.0` will pick this release up on the next `composer update`. That is
   intended: it is a drop-in replacement. To stay on the old version for now, require
@@ -54,7 +54,7 @@ before, what you see now, and what to search your own code for in
 ## What else is in it
 
 - 79 known defects found by the new test suite are resolved (fixed, already
-  fixed, or confirmed as intended): `docs/modernization/php-7.2/active/KNOWN-DEFECTS.md`.
+  fixed, or confirmed as intended): `docs/modernization/php-7.2/history/KNOWN-DEFECTS.md`.
 - 1,428 unit tests that pass on PHP 7.2.34 with 100% class, method and line
   coverage, and a mutation probe that checks the tests can fail.
 - A reproducible test setup: `docker/bin/test` runs everything in Docker from a

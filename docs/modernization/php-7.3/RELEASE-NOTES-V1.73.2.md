@@ -29,4 +29,4 @@ PHP 7.3 or newer. PHP 7.2 hosts keep installing v1.72.2.
 - Test environment: `symfony/yaml` 5.4.57, Composer 2.11.3, and a fix for the RabbitMQ startup failure.
 
 Each behavior change has a "before, after, what to search for" entry in
-`docs/modernization/php-7.3/active/CONSUMER-IMPACT.md`.
+`docs/modernization/php-7.3/history/CONSUMER-IMPACT.md`.

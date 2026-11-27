@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../active/SESSION-HANDOFF.md). The record below describes its original checkpoint.
+
 # Adversarial review of php-7.4
 
 Reviewed commit `34c638d`, including inherited framework behavior, on 2026-11-27.

@@ -1,6 +1,6 @@
 # Pending behavior questions
 
-> **Historical, kept for the record:** replaced by the owner questions in [../active/KNOWN-DEFECTS.md](../active/KNOWN-DEFECTS.md).
+> **Historical, kept for the record:** replaced by the owner questions in [../active/KNOWN-DEFECTS.md](KNOWN-DEFECTS.md).
 
 No owner answers have been inferred from silence. This document separates current
 coverage blockers from behavior changes that can wait while existing behavior is

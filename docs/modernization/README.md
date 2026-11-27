@@ -10,10 +10,10 @@ The phases are going to correspond with the major versions of PHP starting at PH
 Each phase has its own branch, i.e. **php-7.2** for php-7.2 (the last PHP version flat was using when development stalled in 2020). **master** carries the latest completed phase; the maintainer merges a phase into it when the phase is done.
 
 ### flat-webapp branches
-The sample application `katmore/flat-webapp` follows the same pattern: a **php-7.2** branch (created from its `master`, commit `7186607`), later phases in their own branches, and each finished phase merged to its `master` by the maintainer. Its `devel` branch is being retired. Integration tests against it: [php-7.2/active/WEBAPP-TESTS.md](./php-7.2/active/WEBAPP-TESTS.md).
+The sample application `katmore/flat-webapp` follows the same pattern: a **php-7.2** branch (created from its `master`, commit `7186607`), later phases in their own branches, and each finished phase merged to its `master` by the maintainer. Its `devel` branch is being retired. Current integration workflow: [TESTING.md](TESTING.md). The original plan is [archived](php-7.2/history/WEBAPP-TESTS.md).
 
 ### Releases
-Each finished phase is published as a GitHub Release whose tag is `v1.<PHP major><PHP minor>.0`: `v1.72.0` for PHP 7.2, then `v1.73.0`, `v1.74.0`, `v1.80.0`, and so on. The release notes for a phase are in its folder, for example [php-7.2/RELEASE-NOTES.md](./php-7.2/RELEASE-NOTES.md). Publishing a release needs the maintainer's explicit go-ahead.
+Each finished phase is published as a GitHub Release whose tag is `v1.<PHP major><PHP minor>.0`: `v1.72.0` for PHP 7.2, then `v1.73.0`, `v1.74.0`, `v1.80.0`, and so on. The release notes for a phase are in its folder, for example [php-7.2/RELEASE-NOTES.md](php-7.2/RELEASE-NOTES.md). Publishing a release needs the maintainer's explicit go-ahead.
 
 The major version follows semantic versioning. It stays at 1 while the public API is compatible (the bug fixes of the modernization are not API changes). It goes to 2, for example `v2.73.0` for PHP 7.3, only when a phase makes a change that breaks existing callers, and only on the maintainer's decision. The minor number keeps naming the PHP version.
 
@@ -24,9 +24,9 @@ The major version follows semantic versioning. It stays at 1 while the public AP
 - When the maintainer declares the whole project complete, the phase branches may be deleted: each finished phase's Release tag is the permanent record, so make sure every phase has its Release first. Only the maintainer decides this.
 
 ### Progress
- * php-7.2: complete (2026-11-20), released as `v1.72.0`, `v1.72.1` and `v1.72.2`, and merged to `master`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](./php-7.2/README.md); changes: [CHANGELOG.md](./php-7.2/CHANGELOG.md)
- * php-7.3: complete, released as `v1.73.0`, `v1.73.1` and `v1.73.2`, and merged to `master`; the `php-7.3` branch is kept permanently. Status: [php-7.3/README.md](./php-7.3/README.md); changes: [CHANGELOG.md](./php-7.3/CHANGELOG.md)
- * php-7.4: in progress. Status: [php-7.4/README.md](./php-7.4/README.md); changes: [CHANGELOG.md](./php-7.4/CHANGELOG.md)
+ * php-7.2: complete (2026-11-20), released as `v1.72.0`, `v1.72.1` and `v1.72.2`, and merged to `master`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](php-7.2/README.md); changes: [CHANGELOG.md](php-7.2/CHANGELOG.md)
+ * php-7.3: complete, released as `v1.73.0`, `v1.73.1` and `v1.73.2`, and merged to `master`; the `php-7.3` branch is kept permanently. Status: [php-7.3/README.md](php-7.3/README.md); changes: [CHANGELOG.md](php-7.3/CHANGELOG.md)
+ * php-7.4: in progress. Status: [php-7.4/README.md](php-7.4/README.md); changes: [CHANGELOG.md](php-7.4/CHANGELOG.md)
 
 ### Rules for every phase
  * Advance one PHP minor version at a time and skip none: 7.2, 7.3, 7.4, 8.0, 8.1, and onward.
@@ -47,5 +47,14 @@ The major version follows semantic versioning. It stays at 1 while the public AP
  * Folder names are lowercase.
  * `TEST-INVENTORY.md` is generated, never edited by hand: `docker/bin/test inventory <phase>/active/KNOWN-DEFECTS.md > <phase>/TEST-INVENTORY.md`.
  * Markdown is written to read well both rendered and as plain text: headings, short paragraphs and lists; tables only for short, regular data (a few short cells per row), never for sentences.
- * How to run the tests, for every phase: [TESTING.md](./TESTING.md).
- * Changes wanted but held back for the `v2.X` releases: [DEFERRED-V2.md](./DEFERRED-V2.md).
+ * How to run the tests, for every phase: [TESTING.md](TESTING.md).
+ * Changes wanted but held back for the `v2.X` releases: [DEFERRED-V2.md](DEFERRED-V2.md).
+
+### Archiving phase work
+
+Closed phases have empty active folders. Completed work and frozen test
+inventories move to history; source facts and generated inventory bodies are
+preserved under an archive banner. Current-phase active folders contain only
+open work and pending consumer-impact checks. Carry unresolved follow-ups into
+the current handoff before archiving their old reports. Historical wording and
+printed paths stay intact; link destinations follow moved documents.

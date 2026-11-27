@@ -4,7 +4,7 @@
 
 ## The scan
 
-`bin/consumer-check` with this phase's impact list ([../active/CONSUMER-IMPACT.md](../active/CONSUMER-IMPACT.md), 3
+`bin/consumer-check` with this phase's impact list ([../active/CONSUMER-IMPACT.md](../history/CONSUMER-IMPACT.md), 3
 entries) over `app/` and `web/`: 41 files scanned, no entry has a hit. The `php` entry is too generic to search; its
 meaning (flat now needs PHP 7.4 or newer) is a Composer matter and does not touch the application's code.
 

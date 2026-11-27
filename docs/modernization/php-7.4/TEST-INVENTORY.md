@@ -8,7 +8,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - 914 test methods in 110 files, running 1703 test cases.
 - 145 methods use a data provider (one case per data set).
-- 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/active/KNOWN-DEFECTS.md`.
+- 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-7.4/history/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
 - Groups `services`, `mongo` and `rabbitmq` mark tests that need those containers.
 

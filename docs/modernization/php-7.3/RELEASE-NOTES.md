@@ -26,7 +26,7 @@ PHP 7.2 host and installs `v1.72.x` there, so nothing breaks. On PHP 7.4 or late
 - One small modernization (`array_key_first()`), with no change a caller can see.
 
 Every entry has what you saw before, what you see now, and what to search for in
-`docs/modernization/php-7.3/active/CONSUMER-IMPACT.md`.
+`docs/modernization/php-7.3/history/CONSUMER-IMPACT.md`.
 
 ## Tests and tooling
 

@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Known defects to fix before the PHP 7.3 step
 
 Owner decision (2026-11): every known defect is fixed on `php-7.2` before the
@@ -26,7 +28,7 @@ Its test carries `@group known-defect` until the fix lands, so
 3. Add an entry to [CONSUMER-IMPACT.md](CONSUMER-IMPACT.md): every fix is a silent change for
    consumers that might have depended on, or worked around, the old behavior.
 4. Mark the entry here as fixed, with its change-log ID.
-5. Regenerate [../TEST-INVENTORY.md](../TEST-INVENTORY.md) with `docker/bin/test inventory`
+5. Regenerate [../TEST-INVENTORY.md](TEST-INVENTORY.md) with `docker/bin/test inventory`
    (see the phase README for the full command).
 
 ## Inventory

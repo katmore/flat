@@ -14,7 +14,7 @@ Only the maintainer decides to move an item into a release.
 resource that only implements `GET`) answers `500 Internal Server Error`, from
 `\flat\api\response\no_interface`. History: `v1.5.5` answered an empty `200`; `v1.72.0` and
 `v1.72.1` answered `405 Method Not Allowed` (MOD-165); `v1.72.2` answers 500 (MOD-186, decision
-Q36). See `docs/modernization/php-7.2/CHANGELOG.md` and `php-7.2/active/CONSUMER-IMPACT.md`.
+Q36). See `docs/modernization/php-7.2/CHANGELOG.md` and `php-7.2/history/CONSUMER-IMPACT.md`.
 
 **Why 500 for now.** A 405 must carry an `Allow` header that lists the supported methods
 (RFC 7231, 6.5.5). flat never sends HTTP headers itself: the consumer's response handler writes

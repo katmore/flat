@@ -1,3 +1,5 @@
+> Archived: completed phase material or a superseded work snapshot. Current status and work: [phase overview](../README.md). The record below describes its original checkpoint.
+
 # Errors the test environment hid (Q40)
 
 Status: all fixed (KD-80 to KD-87, MOD-196 and MOD-200 to MOD-203); this is the record of the
