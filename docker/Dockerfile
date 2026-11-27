@@ -47,7 +47,7 @@ RUN --mount=type=secret,id=proxy_ca \
     cd /tmp/mongodb; phpize; ./configure --with-mongodb-ssl=no; make -j2; make install; \
     docker-php-ext-enable mongodb; rm -rf /tmp/mongodb /tmp/mongodb.tar.gz /tmp/mongoc.tar.gz
 # SSH: OpenSSL, libssh2 and the PHP ssh2 extension (flat\core\ssh uses ssh2_connect, ssh2_auth_password, ssh2_auth_pubkey_file,
-# ssh2_fingerprint, ssh2_exec and ssh2_sftp), all from pinned sources: the base image's Debian 11 is end of life, so no apt. OpenSSL is
+# ssh2_fingerprint, ssh2_exec and ssh2_sftp), all from pinned sources without apt, keeping the archived PHP base reproducible. OpenSSL is
 # built static and position-independent, and so is libssh2, so that ssh2.so carries its own copy of both and the OpenSSL that PHP itself
 # uses stays untouched.
 RUN --mount=type=secret,id=proxy_ca \
@@ -70,7 +70,7 @@ RUN --mount=type=secret,id=proxy_ca \
 RUN --mount=type=secret,id=proxy_ca \
     set -eu; task_ca=/etc/ssl/certs/ca-certificates.crt; \
     if [ -f /run/secrets/proxy_ca ]; then task_ca=/run/secrets/proxy_ca; fi; \
-    curl --cacert "$task_ca" -fsSL https://codeload.github.com/php/pecl-networking-ssh2/tar.gz/65c0da1b18373e2286d1569a176101583225a2c0 -o /tmp/ssh2.tar.gz; \
+    curl --cacert "$task_ca" -fsSL https://codeload.github.com/php/pecl-networking-ssh2/tar.gz/e5d1333605d58805ea317f4349458201786dd1ca -o /tmp/ssh2.tar.gz; \
     mkdir /tmp/ssh2; tar -xzf /tmp/ssh2.tar.gz -C /tmp/ssh2 --strip-components=1; \
     cd /tmp/ssh2; phpize; \
     LIBS="-L/opt/openssl/lib -lssl -lcrypto -ldl -lpthread" ./configure --with-ssh2=/usr/local; \

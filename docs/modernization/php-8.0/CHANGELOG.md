@@ -130,3 +130,10 @@ conversion and every existing diagnostic assertion remain enabled.
 
 Validation: 57 SSH tests/199 assertions, then 1,712 full-suite tests/8,091
 assertions; 100% of 332 classes, 1,104 methods and 8,867 lines. No errors or skips.
+
+## MOD-351 — Upgrade ssh2 to 1.6.1 (2026-11-27)
+
+Pinned upstream e5d1333605d58805ea317f4349458201786dd1ca. This release requires
+PHP 8.0 and retains the existing libssh2 1.11.1/OpenSSL 3.6.5 builds. Full Docker
+suite passes 1,712 tests and 8,094 assertions with 100% coverage. Password and
+key logins, host pins, failed sessions, SFTP, process checks and cleanup pass.
