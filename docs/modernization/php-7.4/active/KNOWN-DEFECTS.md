@@ -36,6 +36,23 @@ the php-7.2 phase and written down there as "untested and unusable", but never r
 - Not fixed: pointing it at `member\validator` would need three methods whose behavior nobody has stated.
   See Q56.
 
+### KD-109 - Files whose declared class name differs from their path (sixteen in all, seven are KD-107)
+
+- Category: mixed. A check of every file in `src/flat` (outside `vendor`) against the name its path implies found sixteen
+  that declare something else; each was then loaded by name under PHP 7.4. The API tool lists them as "no declaration".
+  - Seven are the MongoDB SSL files of KD-107.
+  - Three are intended aliases that work: `subscription\canceled` (declares `cancelled`), `ssh ... bad_param` (declares
+    `badParam`) and `data\orm\driver\session`; each ends in `class_alias`.
+  - Four are stray files whose real class loads from its own file, so nothing is lost:
+    `api\response_header\exception`, `api\response_header\exception\missing_request_field` (declare `api\header\...`),
+    `cloud\authorize\customer\payment\bankAccount` and `...\creditCard` (declare `...\payment_profile\...`). Loading
+    their path name by hand while the real class is loaded is a fatal "Cannot declare class".
+  - **Two load under neither name:** `src/flat/fsm.php` declares the empty abstract class `flat\fsm\fsm` ("finite state
+    machine definition", version 0.1.0-alpha), and `src/flat/orm/invalid_field.php` declares `flat\orm\invalid_param`.
+    Neither is used in `src`; `LegacyFieldErrorTest` includes the second by hand.
+- Not fixed: which name was intended for the two (`fsm` or `fsm\fsm`; `invalid_field` or `invalid_param`) is not
+  stated anywhere. See Q57.
+
 ## Owner questions
 
 Each has a recommendation; "agree" is enough.
@@ -70,4 +87,9 @@ Each has a recommendation; "agree" is enough.
 56. **What was `flat\core\util\validate\collection` meant to be (KD-108)?** A collection that validates its members,
     implementing `member\validator`? Or dead code? Recommend: if you know what it was for, tell me and I implement it;
     if not, leave it as it is until v2.X (nothing can use it today, and removing a class changes flat's API list).
+    **Open.**
+
+57. **Which names were intended for `src/flat/fsm.php` (`flat\fsm` or `flat\fsm\fsm`) and `src/flat/orm/invalid_field.php`
+    (`flat\orm\invalid_field` or `invalid_param`) (KD-109)?** Recommend: the path names, with `class_alias` for the
+    declared names, as for `canceled`; for `fsm` that also means saying whether this alpha stub is still wanted.
     **Open.**

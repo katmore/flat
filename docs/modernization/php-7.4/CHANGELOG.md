@@ -284,3 +284,13 @@ continues from the php-7.3 phase.
   looked into one by one.
 - Behavior: none.
 - Undo: revert the commit.
+
+## MOD-301 — Correction to MOD-300: the other mismatched files
+
+- Kind: documentation (a correction; MOD-300 stays as written). MOD-300 said the nine other files whose declared name differs
+  from their path were "already handled ... or have no use". That was not checked. They were then loaded by name under
+  PHP 7.4: three are working aliases, four are stray duplicates of classes that load from their own files, and two
+  (`flat\fsm`, `flat\orm\invalid_field`) load under neither name. The result is KD-109 and Q57 in
+  [active/KNOWN-DEFECTS.md](active/KNOWN-DEFECTS.md). No code changed.
+- Behavior: none.
+- Undo: revert the commit.
