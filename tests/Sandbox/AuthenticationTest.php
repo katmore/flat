@@ -1,7 +1,5 @@
 <?php
 namespace flat\test\Sandbox;
-require_once __DIR__.'/SandboxSupport.php';
-require_once __DIR__.'/../Support/LegacyAuthorizeSdk.php';
 use PHPUnit\Framework\TestCase;
 use flat\cloud\authorize\response_error;
 

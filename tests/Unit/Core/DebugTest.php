@@ -3,7 +3,6 @@ namespace flat\test\Unit\Core;
 use flat\core\debug;
 use flat\core\config;
 use PHPUnit\Framework\TestCase;
-require_once __DIR__.'/../../Support/PhpSubprocess.php';
 class DebugCollectionProbe extends \flat\core\debug\display_data\collection
 {
     public function validateValue($data) { return $this->_validate($data); }

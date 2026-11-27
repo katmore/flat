@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Data\Orm;
-require_once __DIR__.'/../../../Support/PhpSubprocess.php';
 use PHPUnit\Framework\TestCase;
 class DispatchOrmFixture extends \flat\data\orm
 {

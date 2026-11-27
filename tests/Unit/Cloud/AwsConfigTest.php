@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Cloud;
-require_once __DIR__.'/../../Support/ConfigSandbox.php';
 use PHPUnit\Framework\TestCase;
 class AwsConfigTest extends TestCase
 {

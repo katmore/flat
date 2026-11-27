@@ -16,31 +16,31 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Sandbox/AuthenticationTest.php` (3)
 
-- `testInvalidCredentialsAreAnAuthorizeNetResponseError` (line 19): groups: sandbox, anet, services
-- `testTheSandboxAccountAuthenticatesThroughTheCurrentApi` (line 32): groups: sandbox, anet, services
-- `testTheLegacyClientTargetsTheSandboxOnly` (line 40): groups: sandbox, anet, services
+- `testInvalidCredentialsAreAnAuthorizeNetResponseError` (line 17): groups: sandbox, anet, services
+- `testTheSandboxAccountAuthenticatesThroughTheCurrentApi` (line 30): groups: sandbox, anet, services
+- `testTheLegacyClientTargetsTheSandboxOnly` (line 38): groups: sandbox, anet, services
 
 ### `tests/Sandbox/CustomerProfileTest.php` (3)
 
-- `testInvalidCredentialsComeBackThroughTheLegacyWrapperAsAResponseError` (line 38): groups: sandbox, anet, services
-- `testACustomerProfileCanBeCreatedReadAndUpdated` (line 49): groups: sandbox, anet, services
-- `testAnUnknownCustomerProfileIsAResponseError` (line 66): groups: sandbox, anet, services
+- `testInvalidCredentialsComeBackThroughTheLegacyWrapperAsAResponseError` (line 36): groups: sandbox, anet, services
+- `testACustomerProfileCanBeCreatedReadAndUpdated` (line 47): groups: sandbox, anet, services
+- `testAnUnknownCustomerProfileIsAResponseError` (line 64): groups: sandbox, anet, services
 
 ### `tests/Sandbox/PaymentMethodTest.php` (2)
 
-- `testAPaymentMethodCanBeAddedChangedAndRemoved` (line 65): groups: sandbox, anet, services
-- `testAnUnknownPaymentMethodIsAResponseError` (line 86): groups: sandbox, anet, services
+- `testAPaymentMethodCanBeAddedChangedAndRemoved` (line 63): groups: sandbox, anet, services
+- `testAnUnknownPaymentMethodIsAResponseError` (line 84): groups: sandbox, anet, services
 
 ### `tests/Sandbox/SubscriptionTest.php` (2)
 
-- `testASubscriptionCanBeCreatedChangedAndCancelled` (line 83): groups: sandbox, anet, services
-- `testAnUnknownSubscriptionIsAResponseError` (line 102): groups: sandbox, anet, services
+- `testASubscriptionCanBeCreatedChangedAndCancelled` (line 81): groups: sandbox, anet, services
+- `testAnUnknownSubscriptionIsAResponseError` (line 100): groups: sandbox, anet, services
 
 ### `tests/Sandbox/TransactionTest.php` (3)
 
-- `testAnAuthorizationAndCaptureIsApproved` (line 64): groups: sandbox, anet, services
-- `testAnAuthorizationOnlyIsApproved` (line 73): groups: sandbox, anet, services
-- `testADeclinedTransactionIsAResponseError` (line 81): groups: sandbox, anet, services
+- `testAnAuthorizationAndCaptureIsApproved` (line 62): groups: sandbox, anet, services
+- `testAnAuthorizationOnlyIsApproved` (line 71): groups: sandbox, anet, services
+- `testADeclinedTransactionIsAResponseError` (line 79): groups: sandbox, anet, services
 
 ### `tests/Unit/Api/ControllerTest.php` (16)
 
@@ -133,39 +133,39 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Cloud/AuthorizeCustomerTest.php` (17)
 
-- `testNativeLegacyClientIsPreparedAndCachedWhenSubclassProvidesTheHook` (line 62)
-- `testGetMapsProfileAndMissingProfileReturnsNull` (line 73)
-- `testProfileAliasDoesNotReplaceExplicitId` (line 84)
-- `testProfileFieldsReachTheSdkCustomer` (line 92)
-- `testCreateForwardsValidationMode` (line 103): 7 data-provider cases
-- `testWithoutAPaymentTheValidationModeIsAlwaysNone` (line 115): 7 data-provider cases
-- `testExplicitPaymentObjectIsConvertedForTheSdk` (line 129)
-- `testInvalidRequestsStopBeforeClientCalls` (line 141): 20 data-provider cases
-- `testCaptureOnlyIsGoneBecauseAuthorizeNetWithdrewIt` (line 152)
-- `testUpdateAndDeleteForwardIds` (line 177): 2 data-provider cases
-- `testClientRejectionBecomesResponseError` (line 189): 4 data-provider cases
-- `testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway` (line 203): 5 data-provider cases
-- `testPaymentMethodCreationAndUpdateForwardValidatedIds` (line 225)
-- `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` (line 239)
-- `testPaymentMethodRejectionUsesExistingResponseError` (line 250): 2 data-provider cases
-- `testTransactionSpecificationsNormalizeAndReachTheClient` (line 263): 10 data-provider cases
-- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 291)
+- `testNativeLegacyClientIsPreparedAndCachedWhenSubclassProvidesTheHook` (line 60)
+- `testGetMapsProfileAndMissingProfileReturnsNull` (line 71)
+- `testProfileAliasDoesNotReplaceExplicitId` (line 82)
+- `testProfileFieldsReachTheSdkCustomer` (line 90)
+- `testCreateForwardsValidationMode` (line 101): 7 data-provider cases
+- `testWithoutAPaymentTheValidationModeIsAlwaysNone` (line 113): 7 data-provider cases
+- `testExplicitPaymentObjectIsConvertedForTheSdk` (line 127)
+- `testInvalidRequestsStopBeforeClientCalls` (line 139): 20 data-provider cases
+- `testCaptureOnlyIsGoneBecauseAuthorizeNetWithdrewIt` (line 150)
+- `testUpdateAndDeleteForwardIds` (line 175): 2 data-provider cases
+- `testClientRejectionBecomesResponseError` (line 187): 4 data-provider cases
+- `testRetiredConvenienceOperationsFailClearlyWithoutCallingTheGateway` (line 201): 5 data-provider cases
+- `testPaymentMethodCreationAndUpdateForwardValidatedIds` (line 223)
+- `testMissingPaymentIdDoesNotRaiseAnIndexZeroNotice` (line 237)
+- `testPaymentMethodRejectionUsesExistingResponseError` (line 248): 2 data-provider cases
+- `testTransactionSpecificationsNormalizeAndReachTheClient` (line 261): 10 data-provider cases
+- `testTransactionClientRejectionIsPropagatedBeforeDecoding` (line 289)
 
 ### `tests/Unit/Cloud/AuthorizeDataTest.php` (13)
 
-- `testIntervalNormalizesScalarLengths` (line 17): 6 data-provider cases
-- `testScheduleDefaultsAndScalarOccurrenceNormalization` (line 24): 6 data-provider cases
-- `testNewScheduleUsesCurrentTimezoneAndInvalidTimezoneClearsDate` (line 33)
-- `testStartDateIsNormalizedToIsoFormat` (line 43)
-- `testValidTimezoneConversionUsesNativeDateTimeZone` (line 51)
-- `testSubscriptionCacheRetainsMappedMetadata` (line 56)
-- `testSubscriptionErrorsRetainTheirIdentifiers` (line 61)
-- `testSubscriptionPaymentAdaptersCopyFieldsIntoRealSdkDtos` (line 71)
-- `testResponseSubclassCanSupplyStatusInteger` (line 95): 6 data-provider cases
-- `testFailureDetailsComeFromSdkUnlessAlreadyProvided` (line 105)
-- `testUnexpectedResponseRetainsOptionalDetails` (line 117)
-- `testFactoryMapsActualSdkCodesToResponseKindsAndStatus` (line 125): 4 data-provider cases
-- `testUnknownSdkResponseCodeStillReturnsNull` (line 137)
+- `testIntervalNormalizesScalarLengths` (line 16): 6 data-provider cases
+- `testScheduleDefaultsAndScalarOccurrenceNormalization` (line 23): 6 data-provider cases
+- `testNewScheduleUsesCurrentTimezoneAndInvalidTimezoneClearsDate` (line 32)
+- `testStartDateIsNormalizedToIsoFormat` (line 42)
+- `testValidTimezoneConversionUsesNativeDateTimeZone` (line 50)
+- `testSubscriptionCacheRetainsMappedMetadata` (line 55)
+- `testSubscriptionErrorsRetainTheirIdentifiers` (line 60)
+- `testSubscriptionPaymentAdaptersCopyFieldsIntoRealSdkDtos` (line 70)
+- `testResponseSubclassCanSupplyStatusInteger` (line 94): 6 data-provider cases
+- `testFailureDetailsComeFromSdkUnlessAlreadyProvided` (line 104)
+- `testUnexpectedResponseRetainsOptionalDetails` (line 116)
+- `testFactoryMapsActualSdkCodesToResponseKindsAndStatus` (line 124): 4 data-provider cases
+- `testUnknownSdkResponseCodeStillReturnsNull` (line 136)
 
 ### `tests/Unit/Cloud/AuthorizeDeprecationTest.php` (1)
 
@@ -173,50 +173,50 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Cloud/AuthorizeNoResponseTest.php` (5)
 
-- `testAnAuthorizeNetResponseIsReturnedUnchanged` (line 39)
-- `testAnAuthorizeNetErrorIsStillAnAnswerNotNoResponse` (line 45)
-- `testNoUsableReplyRaisesNoResponseThatSaysWhatHappened` (line 54): 5 data-provider cases
-- `testBothFlatClientsRaiseNoResponse` (line 71)
-- `testAWrapperCallRaisesInsteadOfLookingSuccessful` (line 82)
+- `testAnAuthorizeNetResponseIsReturnedUnchanged` (line 38)
+- `testAnAuthorizeNetErrorIsStillAnAnswerNotNoResponse` (line 44)
+- `testNoUsableReplyRaisesNoResponseThatSaysWhatHappened` (line 53): 5 data-provider cases
+- `testBothFlatClientsRaiseNoResponse` (line 70)
+- `testAWrapperCallRaisesInsteadOfLookingSuccessful` (line 81)
 
 ### `tests/Unit/Cloud/AuthorizePaymentMethodTest.php` (8)
 
-- `testACardPaymentMethodBecomesTheXmlAuthorizeNetDefines` (line 95): 4 data-provider cases
-- `testACustomerTypeIsSent` (line 110)
-- `testBankAccountFieldsWithoutAWrapperAreRecognised` (line 117)
-- `testABankAccountPaymentMethodBecomesBankAccountXml` (line 124)
-- `testUpdatingAPaymentMethodNamesTheMethodInsideThePaymentProfile` (line 134)
-- `testAPaymentGivenToCreateAProfileIsPartOfTheProfile` (line 143)
-- `testAPaymentIsRequired` (line 152)
-- `testAnInvalidPaymentStopsBeforeAnyRequest` (line 162): 8 data-provider cases
+- `testACardPaymentMethodBecomesTheXmlAuthorizeNetDefines` (line 94): 4 data-provider cases
+- `testACustomerTypeIsSent` (line 109)
+- `testBankAccountFieldsWithoutAWrapperAreRecognised` (line 116)
+- `testABankAccountPaymentMethodBecomesBankAccountXml` (line 123)
+- `testUpdatingAPaymentMethodNamesTheMethodInsideThePaymentProfile` (line 133)
+- `testAPaymentGivenToCreateAProfileIsPartOfTheProfile` (line 142)
+- `testAPaymentIsRequired` (line 151)
+- `testAnInvalidPaymentStopsBeforeAnyRequest` (line 161): 8 data-provider cases
 
 ### `tests/Unit/Cloud/AuthorizeSubscriptionSdkTest.php` (3)
 
-- `testGetInfoReadsTheListResponseTheSchemaDescribes` (line 66)
-- `testASubscriptionMissingFromTheListIsNotFound` (line 76)
-- `testEachCallSendsOnlyItsOwnData` (line 86)
+- `testGetInfoReadsTheListResponseTheSchemaDescribes` (line 65)
+- `testASubscriptionMissingFromTheListIsNotFound` (line 75)
+- `testEachCallSendsOnlyItsOwnData` (line 85)
 
 ### `tests/Unit/Cloud/AuthorizeSubscriptionTest.php` (19)
 
-- `testNativeArbConstructionUsesTheApplicationPreparationHookAndCachesItsClient` (line 72)
-- `testExistingSubscriptionOperationsRequireTheirIdentifier` (line 80): 5 data-provider cases
-- `testUpdateAmountAndCancelPassValidatedIdentifiersToTheirClient` (line 86)
-- `testRetiredGetTransactionFailsClearlyWithoutCallingTheGateway` (line 95)
-- `testUpdateAmountRetainsItsExistingIntegerRestriction` (line 104): 2 data-provider cases
-- `testStatusAndUpdatabilityUseTheExistingStatusMethod` (line 110): 3 data-provider cases
-- `testGatewayRejectionsUseTheDeclaredResponseError` (line 118): 5 data-provider cases
-- `testPaymentFormsProduceRealSdkSubscriptionObjects` (line 129): 6 data-provider cases
-- `testInvalidPaymentShapesFailBeforeClientTransmission` (line 146): 4 data-provider cases
-- `testCreateMapsItsFieldsAndReturnsTheSubscriptionId` (line 159)
-- `testCreateRejectsMissingOrMalformedDocumentedFields` (line 171): 5 data-provider cases
-- `testCreateAcceptsAnExistingScheduleObject` (line 182)
-- `testInfoSurfacesAListRejectionAfterSuccessfulStatusLookup` (line 188)
-- `testInfoStopsAfterFullPageExceedsDeclaredTotal` (line 194)
-- `testInfoCircuitBreakerBoundsRepeatedFullPages` (line 200)
-- `testInfoRequestsEachPageInTurn` (line 210)
-- `testInfoFindsASubscriptionInActualXmlDetails` (line 220)
-- `testInfoMissingTotalUsesUnexpectedResponseWithoutAnIndexZeroWarning` (line 227)
-- `testInactiveInfoWithoutAMatchUsesNotFound` (line 232)
+- `testNativeArbConstructionUsesTheApplicationPreparationHookAndCachesItsClient` (line 71)
+- `testExistingSubscriptionOperationsRequireTheirIdentifier` (line 79): 5 data-provider cases
+- `testUpdateAmountAndCancelPassValidatedIdentifiersToTheirClient` (line 85)
+- `testRetiredGetTransactionFailsClearlyWithoutCallingTheGateway` (line 94)
+- `testUpdateAmountRetainsItsExistingIntegerRestriction` (line 103): 2 data-provider cases
+- `testStatusAndUpdatabilityUseTheExistingStatusMethod` (line 109): 3 data-provider cases
+- `testGatewayRejectionsUseTheDeclaredResponseError` (line 117): 5 data-provider cases
+- `testPaymentFormsProduceRealSdkSubscriptionObjects` (line 128): 6 data-provider cases
+- `testInvalidPaymentShapesFailBeforeClientTransmission` (line 145): 4 data-provider cases
+- `testCreateMapsItsFieldsAndReturnsTheSubscriptionId` (line 158)
+- `testCreateRejectsMissingOrMalformedDocumentedFields` (line 170): 5 data-provider cases
+- `testCreateAcceptsAnExistingScheduleObject` (line 181)
+- `testInfoSurfacesAListRejectionAfterSuccessfulStatusLookup` (line 187)
+- `testInfoStopsAfterFullPageExceedsDeclaredTotal` (line 193)
+- `testInfoCircuitBreakerBoundsRepeatedFullPages` (line 199)
+- `testInfoRequestsEachPageInTurn` (line 209)
+- `testInfoFindsASubscriptionInActualXmlDetails` (line 219)
+- `testInfoMissingTotalUsesUnexpectedResponseWithoutAnIndexZeroWarning` (line 226)
+- `testInactiveInfoWithoutAMatchUsesNotFound` (line 231)
 
 ### `tests/Unit/Cloud/AuthorizeTest.php` (7)
 
@@ -230,9 +230,9 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Cloud/AuthorizeTransactionRequestTest.php` (3)
 
-- `testEachKindBecomesTheXmlAuthorizeNetDefines` (line 80): 2 data-provider cases
-- `testADeclinedAnswerIsAFailureWithItsReason` (line 99)
-- `testAnAmountIsRequiredByTheKindOfTransactionItself` (line 109)
+- `testEachKindBecomesTheXmlAuthorizeNetDefines` (line 79): 2 data-provider cases
+- `testADeclinedAnswerIsAFailureWithItsReason` (line 98)
+- `testAnAmountIsRequiredByTheKindOfTransactionItself` (line 108)
 
 ### `tests/Unit/Cloud/AuthorizeTransactionTest.php` (6)
 
@@ -245,7 +245,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Cloud/AwsConfigTest.php` (1)
 
-- `testS3ClientConfigurationUsesRealSdkWithoutMakingRequests` (line 27)
+- `testS3ClientConfigurationUsesRealSdkWithoutMakingRequests` (line 26)
 
 ### `tests/Unit/Cloud/AwsTest.php` (8)
 
@@ -287,8 +287,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Core/AlertDefaultsTest.php` (2)
 
-- `testDefaultBrokerLoadsItsConfigurationAndUsesTheRealLocalRabbitService` (line 42): groups: services, rabbitmq
-- `testSubscriptionStorageRequiresAnExplicitProvider` (line 47)
+- `testDefaultBrokerLoadsItsConfigurationAndUsesTheRealLocalRabbitService` (line 41): groups: services, rabbitmq
+- `testSubscriptionStorageRequiresAnExplicitProvider` (line 46)
 
 ### `tests/Unit/Core/AlertTest.php` (6)
 
@@ -430,19 +430,19 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Core/DebugTest.php` (13)
 
-- `testDisplayCollectionHelperAcceptsOnlyDisplayData` (line 17)
-- `testDefaultKillHandlerExitsWithConfiguredStatus` (line 54)
-- `testDisplayIsNotSuppressedByDefault` (line 62)
-- `testKillHonorsAPlainExitStatus` (line 67)
-- `testKillSanitizesInvalidNestedExitStatusAndEmptyMessage` (line 75)
-- `testReturningCustomKillHandlerReachesTheFinalExit` (line 81)
-- `testWebDisplayFormattingInAnIsolatedPlatformBranch` (line 88)
-- `testSuppressionAndInactiveConfigurationPreventDisplay` (line 100)
-- `testDisplayDumpAndMessageEventsCarryCallerAndCreationTime` (line 114)
-- `testDisplayAndDumpTriggerOnlySupportedUserErrors` (line 132)
-- `testDefaultCliHandlerDisplaysStructuredData` (line 148)
-- `testDataDescriptionsUseTheMatchingFormat` (line 156)
-- `testCustomKillHandlerReceivesCallerAndConvertedMessage` (line 171)
+- `testDisplayCollectionHelperAcceptsOnlyDisplayData` (line 16)
+- `testDefaultKillHandlerExitsWithConfiguredStatus` (line 53)
+- `testDisplayIsNotSuppressedByDefault` (line 61)
+- `testKillHonorsAPlainExitStatus` (line 66)
+- `testKillSanitizesInvalidNestedExitStatusAndEmptyMessage` (line 74)
+- `testReturningCustomKillHandlerReachesTheFinalExit` (line 80)
+- `testWebDisplayFormattingInAnIsolatedPlatformBranch` (line 87)
+- `testSuppressionAndInactiveConfigurationPreventDisplay` (line 99)
+- `testDisplayDumpAndMessageEventsCarryCallerAndCreationTime` (line 113)
+- `testDisplayAndDumpTriggerOnlySupportedUserErrors` (line 131)
+- `testDefaultCliHandlerDisplaysStructuredData` (line 147)
+- `testDataDescriptionsUseTheMatchingFormat` (line 155)
+- `testCustomKillHandlerReceivesCallerAndConvertedMessage` (line 170)
 
 ### `tests/Unit/Core/Encode/CsvTest.php` (6)
 
@@ -645,54 +645,54 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Core/ShutdownTest.php` (11)
 
-- `testNamedPrioritiesRunInDocumentedOrderAndHandlesAreUnique` (line 23)
-- `testZeroIsAWeightAndEmptyValuesJoinTheDefaultQueue` (line 34)
-- `testOutOfRangeWeightsAreRejected` (line 45): 3 data-provider cases
-- `testDistinctWeightsRunBeforeDefaultAndAfterFirst` (line 52)
-- `testEachCallbackRunsOnlyOnceAcrossRepeatedInvocation` (line 61)
-- `testExplicitInvocationIsNotRepeatedAtPhpShutdown` (line 75)
-- `testCallbackRegisteredDuringInvocationRunsAtPhpShutdown` (line 84)
-- `testEqualWeightsRunNewestFirstWithoutLosingCallbacks` (line 94)
-- `testRegisteredCallbackRunsAtActualPhpShutdown` (line 101)
-- `testWeightCeilingStopsUnboundedInsertion` (line 106)
-- `testWeightCeilingAllowsExactlyTheRemainingSlots` (line 111)
+- `testNamedPrioritiesRunInDocumentedOrderAndHandlesAreUnique` (line 22)
+- `testZeroIsAWeightAndEmptyValuesJoinTheDefaultQueue` (line 33)
+- `testOutOfRangeWeightsAreRejected` (line 44): 3 data-provider cases
+- `testDistinctWeightsRunBeforeDefaultAndAfterFirst` (line 51)
+- `testEachCallbackRunsOnlyOnceAcrossRepeatedInvocation` (line 60)
+- `testExplicitInvocationIsNotRepeatedAtPhpShutdown` (line 74)
+- `testCallbackRegisteredDuringInvocationRunsAtPhpShutdown` (line 83)
+- `testEqualWeightsRunNewestFirstWithoutLosingCallbacks` (line 93)
+- `testRegisteredCallbackRunsAtActualPhpShutdown` (line 100)
+- `testWeightCeilingStopsUnboundedInsertion` (line 105)
+- `testWeightCeilingAllowsExactlyTheRemainingSlots` (line 110)
 
 ### `tests/Unit/Core/SshTest.php` (34)
 
-- `testUnavailableExtensionIsReported` (line 33)
-- `testRequiredConfigurationIsChecked` (line 39): 3 data-provider cases
-- `testAuthenticationConfigurationMustBePresent` (line 45)
-- `testPublicKeyConfigurationNeedsPrivateKey` (line 49)
-- `testDeferredSubclassReportsUninitializedAuthentication` (line 53)
-- `testPasswordConnectionAndExecutionUseTheirMatchingTransport` (line 58)
-- `testRepeatedConnectIsRejected` (line 66)
-- `testConnectionFailureIsReported` (line 70)
-- `testPasswordFailureUsesTheExistingFrameworkException` (line 75)
-- `testPublicKeyPathRunsRealOpenSslAndRemovesItsTemporaryFiles` (line 81): 2 data-provider cases
-- `testProvidedFingerprintIsChecked` (line 93)
-- `testFingerprintMismatchIsReported` (line 98)
-- `testPublicKeyAuthenticationFailureIsReported` (line 106)
-- `testLocalCryptoFailureBoundariesAreReported` (line 112): 4 data-provider cases
-- `testOperationsRequireAConnection` (line 127): 6 data-provider cases
-- `testFailedRemoteExecutionIsReported` (line 133)
-- `testDisconnectIgnoresMissingConnectionOnlyWhenRequested` (line 138)
-- `testProcessChecksPreserveZeroExitCodeSemanticsAndLegacyHooks` (line 145)
-- `testMissingRemoteProcessThrowsUnlessIgnored` (line 151)
-- `testInvalidPidUsesTheLegacyCompatibleParameterException` (line 156)
-- `testBackgroundExecutionReturnsPidAndChecksRequestedRuntime` (line 161): 3 data-provider cases
-- `testBackgroundExecutionNeedsAPid` (line 168)
-- `testKillArgumentsAreValidatedBeforeSendingSignals` (line 174): 11 data-provider cases
-- `testProcessCanExitAfterEitherSignal` (line 183)
-- `testKillWaitsForTheFirstSignalBeforeSendingTheSecond` (line 190)
-- `testAProcessThatNeverExitsReportsTheTimeWaited` (line 202)
-- `testSignalAndStillRunningFailuresAreReported` (line 212): 3 data-provider cases
-- `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` (line 218)
-- `testSftpLocalOpenFailureIsReported` (line 223)
-- `testLegacyParameterAliasAutoloadsInAFreshRuntime` (line 228)
-- `testSuccessfulReadsRestartTheIdleTimeoutAcrossALongerTransfer` (line 233)
-- `testAnIdleTimeoutStopsTheNextReadAndClosesBothStreams` (line 244)
-- `testNativeReadsHandleShortEmptyAndZeroBodies` (line 257): 5 data-provider cases
-- `testCallbackFailureStillClosesTheLocalAndRemoteStreams` (line 271)
+- `testUnavailableExtensionIsReported` (line 32)
+- `testRequiredConfigurationIsChecked` (line 38): 3 data-provider cases
+- `testAuthenticationConfigurationMustBePresent` (line 44)
+- `testPublicKeyConfigurationNeedsPrivateKey` (line 48)
+- `testDeferredSubclassReportsUninitializedAuthentication` (line 52)
+- `testPasswordConnectionAndExecutionUseTheirMatchingTransport` (line 57)
+- `testRepeatedConnectIsRejected` (line 65)
+- `testConnectionFailureIsReported` (line 69)
+- `testPasswordFailureUsesTheExistingFrameworkException` (line 74)
+- `testPublicKeyPathRunsRealOpenSslAndRemovesItsTemporaryFiles` (line 80): 2 data-provider cases
+- `testProvidedFingerprintIsChecked` (line 92)
+- `testFingerprintMismatchIsReported` (line 97)
+- `testPublicKeyAuthenticationFailureIsReported` (line 105)
+- `testLocalCryptoFailureBoundariesAreReported` (line 111): 4 data-provider cases
+- `testOperationsRequireAConnection` (line 126): 6 data-provider cases
+- `testFailedRemoteExecutionIsReported` (line 132)
+- `testDisconnectIgnoresMissingConnectionOnlyWhenRequested` (line 137)
+- `testProcessChecksPreserveZeroExitCodeSemanticsAndLegacyHooks` (line 144)
+- `testMissingRemoteProcessThrowsUnlessIgnored` (line 150)
+- `testInvalidPidUsesTheLegacyCompatibleParameterException` (line 155)
+- `testBackgroundExecutionReturnsPidAndChecksRequestedRuntime` (line 160): 3 data-provider cases
+- `testBackgroundExecutionNeedsAPid` (line 167)
+- `testKillArgumentsAreValidatedBeforeSendingSignals` (line 173): 11 data-provider cases
+- `testProcessCanExitAfterEitherSignal` (line 182)
+- `testKillWaitsForTheFirstSignalBeforeSendingTheSecond` (line 189)
+- `testAProcessThatNeverExitsReportsTheTimeWaited` (line 201)
+- `testSignalAndStillRunningFailuresAreReported` (line 211): 3 data-provider cases
+- `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` (line 217)
+- `testSftpLocalOpenFailureIsReported` (line 222)
+- `testLegacyParameterAliasAutoloadsInAFreshRuntime` (line 227)
+- `testSuccessfulReadsRestartTheIdleTimeoutAcrossALongerTransfer` (line 232)
+- `testAnIdleTimeoutStopsTheNextReadAndClosesBothStreams` (line 243)
+- `testNativeReadsHandleShortEmptyAndZeroBodies` (line 256): 5 data-provider cases
+- `testCallbackFailureStillClosesTheLocalAndRemoteStreams` (line 270)
 
 ### `tests/Unit/Core/Template/ControllerTest.php` (17)
 
@@ -722,7 +722,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Core/Template/ViewTest.php` (1)
 
-- `testResourceSearchTriggersEventsForMatchingAncestorFiles` (line 19)
+- `testResourceSearchTriggersEventsForMatchingAncestorFiles` (line 18)
 
 ### `tests/Unit/Core/Text/EncodeTest.php` (8)
 
@@ -784,20 +784,20 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Core/Util/ValidationTest.php` (14)
 
-- `testOnlyStrictTruePassesAndStoredStringsAreAvailable` (line 27)
-- `testValidationOptions` (line 39)
-- `testExplicitRegexConstructorKeepsItsExistingArrayPayload` (line 52)
-- `testFactoryInterfaceFailureHasItsMessage` (line 57)
-- `testFactoryExceptionAutoloadsInAFreshProcess` (line 63)
-- `testRegexMatchingAndMultiplePatterns` (line 69)
-- `testRegexConfigurationFailures` (line 78): 4 data-provider cases
-- `testInvalidRegexSyntaxProducesItsDescriptiveException` (line 88)
-- `testPcreExecutionErrorRaisesPregError` (line 102)
-- `testPcreExceptionExplainsNativeEngineErrors` (line 112): 5 data-provider cases
-- `testInvalidPatternExceptionIncludesPatternAndNativeCodeName` (line 141)
-- `testHostnameDefinerSuppliesAValidPatternWithoutChangingItsRawConstant` (line 149): 8 data-provider cases
-- `testSupportedFilterIdsConstructSuccessfully` (line 160)
-- `testInvalidFilterUsesItsConcreteException` (line 166)
+- `testOnlyStrictTruePassesAndStoredStringsAreAvailable` (line 26)
+- `testValidationOptions` (line 38)
+- `testExplicitRegexConstructorKeepsItsExistingArrayPayload` (line 51)
+- `testFactoryInterfaceFailureHasItsMessage` (line 56)
+- `testFactoryExceptionAutoloadsInAFreshProcess` (line 62)
+- `testRegexMatchingAndMultiplePatterns` (line 68)
+- `testRegexConfigurationFailures` (line 77): 4 data-provider cases
+- `testInvalidRegexSyntaxProducesItsDescriptiveException` (line 87)
+- `testPcreExecutionErrorRaisesPregError` (line 101)
+- `testPcreExceptionExplainsNativeEngineErrors` (line 111): 5 data-provider cases
+- `testInvalidPatternExceptionIncludesPatternAndNativeCodeName` (line 140)
+- `testHostnameDefinerSuppliesAValidPatternWithoutChangingItsRawConstant` (line 148): 8 data-provider cases
+- `testSupportedFilterIdsConstructSuccessfully` (line 159)
+- `testInvalidFilterUsesItsConcreteException` (line 165)
 
 ### `tests/Unit/Core/Util/ValueTest.php` (4)
 
@@ -903,21 +903,21 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Data/Orm/LegacyOrmTest.php` (4)
 
-- `testStaticFacadeCachesALegalSubclassAndReturnsItsResults` (line 35)
-- `testConstructorArrayConfiguresTheDriver` (line 42)
-- `testADriverNeedsBothGetAndSet` (line 56)
-- `testDefaultFacadeUsesRealNativeSessionsAndReturnsStoredData` (line 63)
+- `testStaticFacadeCachesALegalSubclassAndReturnsItsResults` (line 34)
+- `testConstructorArrayConfiguresTheDriver` (line 41)
+- `testADriverNeedsBothGetAndSet` (line 55)
+- `testDefaultFacadeUsesRealNativeSessionsAndReturnsStoredData` (line 62)
 
 ### `tests/Unit/Data/Orm/SessionDriverTest.php` (8)
 
-- `testHandlerObjectIsUsedDirectlyAndReturnsItsResults` (line 45)
-- `testHandlerClassReceivesItsConstructorParameters` (line 54)
-- `testInvalidExplicitHandlersFallBackToConfiguration` (line 64): 5 data-provider cases
-- `testNativeOrmKeyOptionsAndConfiguration` (line 71)
-- `testInvalidKeysThrowTheDeclaredParameterError` (line 78): 4 data-provider cases
-- `testDisabledSessionStatusUsesItsFrameworkFailure` (line 84)
-- `testRealNativeSessionPersistsAcrossSeparateProcesses` (line 94)
-- `testDestroyEndsTheSessionAndRemovesItsData` (line 103)
+- `testHandlerObjectIsUsedDirectlyAndReturnsItsResults` (line 43)
+- `testHandlerClassReceivesItsConstructorParameters` (line 52)
+- `testInvalidExplicitHandlersFallBackToConfiguration` (line 62): 5 data-provider cases
+- `testNativeOrmKeyOptionsAndConfiguration` (line 69)
+- `testInvalidKeysThrowTheDeclaredParameterError` (line 76): 4 data-provider cases
+- `testDisabledSessionStatusUsesItsFrameworkFailure` (line 82)
+- `testRealNativeSessionPersistsAcrossSeparateProcesses` (line 92)
+- `testDestroyEndsTheSessionAndRemovesItsData` (line 101)
 
 ### `tests/Unit/Data/OrmMapTest.php` (3)
 
@@ -953,8 +953,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Db/ConfigProvidersTest.php` (2)
 
-- `testMongoConfigurationAndOptionalDefaults` (line 23)
-- `testPdoConfigurationValues` (line 32)
+- `testMongoConfigurationAndOptionalDefaults` (line 22)
+- `testPdoConfigurationValues` (line 31)
 
 ### `tests/Unit/Db/LegacyControllerTest.php` (2)
 
@@ -963,11 +963,11 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Db/Mongo/CaFileTest.php` (5)
 
-- `testFileAdapterCallsItsDeclaredPathHook` (line 17)
-- `testLiteralContentUsesRequestedPathAndReusesWrittenFile` (line 28)
-- `testTemporaryCertificateIsRemovedAtNativePhpShutdown` (line 42)
-- `testFailedFileWriteRaisesAnError` (line 50)
-- `testEverySslClassLoadsByNameWithoutIncludingFiles` (line 66)
+- `testFileAdapterCallsItsDeclaredPathHook` (line 16)
+- `testLiteralContentUsesRequestedPathAndReusesWrittenFile` (line 27)
+- `testTemporaryCertificateIsRemovedAtNativePhpShutdown` (line 41)
+- `testFailedFileWriteRaisesAnError` (line 49)
+- `testEverySslClassLoadsByNameWithoutIncludingFiles` (line 65)
 
 ### `tests/Unit/Db/Mongo/CachedClientFailureTest.php` (1)
 
@@ -1050,7 +1050,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Db/Pdo/FileConfigTest.php` (1)
 
-- `testConfiguredSqlRootAndDriverOptionOverloadUseRealSqlite` (line 21)
+- `testConfiguredSqlRootAndDriverOptionOverloadUseRealSqlite` (line 20)
 
 ### `tests/Unit/Db/Pdo/PdoTest.php` (7)
 
@@ -1079,21 +1079,21 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Db/RabbitMqTest.php` (15)
 
-- `testInitialConnectionAndChannelAreReturnedAndReused` (line 57): groups: services, rabbitmq
-- `testChannelCanEstablishItsOwnConnection` (line 73): groups: services, rabbitmq
-- `testQueueDeclarationAndPublishUseDocumentedParameters` (line 83): groups: services, rabbitmq
-- `testPhpAmqpLib2CallersStillGetTheLegacyConnectionClass` (line 101): groups: services, rabbitmq
-- `testTheDefaultQueueIsDurableOnRabbitMq4` (line 124): groups: services, rabbitmq
-- `testAnExplicitExclusiveQueueKeepsItsTransientDefault` (line 136): groups: services, rabbitmq
-- `testAnExplicitDurableChoiceIsNeverOverridden` (line 148): groups: services, rabbitmq
-- `testExplicitRoutingMessageAndCommandPaths` (line 159): groups: services, rabbitmq
-- `testProviderOverridesDefaultsAndTrimsStringParameters` (line 174): groups: services, rabbitmq
-- `testMissingConnectionParametersAreRejected` (line 181): 2 data-provider cases
-- `testMissingHostIsRejectedBeforeNetworkConnection` (line 188)
-- `testEmptyMessageIsRejected` (line 193)
-- `testConnectionCacheKeyDependsOnTheConnectionParameters` (line 198)
-- `testMissingQueueIsRejected` (line 212): groups: services, rabbitmq
-- `testConfigNamespaceSuppliesPresentKeysAndKeepsDefaults` (line 218)
+- `testInitialConnectionAndChannelAreReturnedAndReused` (line 56): groups: services, rabbitmq
+- `testChannelCanEstablishItsOwnConnection` (line 72): groups: services, rabbitmq
+- `testQueueDeclarationAndPublishUseDocumentedParameters` (line 82): groups: services, rabbitmq
+- `testPhpAmqpLib2CallersStillGetTheLegacyConnectionClass` (line 100): groups: services, rabbitmq
+- `testTheDefaultQueueIsDurableOnRabbitMq4` (line 123): groups: services, rabbitmq
+- `testAnExplicitExclusiveQueueKeepsItsTransientDefault` (line 135): groups: services, rabbitmq
+- `testAnExplicitDurableChoiceIsNeverOverridden` (line 147): groups: services, rabbitmq
+- `testExplicitRoutingMessageAndCommandPaths` (line 158): groups: services, rabbitmq
+- `testProviderOverridesDefaultsAndTrimsStringParameters` (line 173): groups: services, rabbitmq
+- `testMissingConnectionParametersAreRejected` (line 180): 2 data-provider cases
+- `testMissingHostIsRejectedBeforeNetworkConnection` (line 187)
+- `testEmptyMessageIsRejected` (line 192)
+- `testConnectionCacheKeyDependsOnTheConnectionParameters` (line 197)
+- `testMissingQueueIsRejected` (line 211): groups: services, rabbitmq
+- `testConfigNamespaceSuppliesPresentKeysAndKeepsDefaults` (line 217)
 
 ### `tests/Unit/FsmTest.php` (1)
 
@@ -1125,7 +1125,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Orm/LegacyFieldErrorTest.php` (1)
 
-- `testFieldErrorLoadsByItsOwnName` (line 8)
+- `testFieldErrorLoadsByItsOwnName` (line 7)
 
 ### `tests/Unit/Orm/LifecycleTest.php` (6)
 
@@ -1190,14 +1190,14 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/Vendor/MarkdownTest.php` (8)
 
-- `testQuoteHandlerRejectsANonmatchingExtensionMarker` (line 9)
-- `testBothBundledLoadersWorkInAFreshPhpRuntime` (line 18)
-- `testSupportedBlockAndInlineSyntax` (line 25): 47 data-provider cases
-- `testRenderingThatChangedWithParsedown18` (line 35): 7 data-provider cases
-- `testAnImageAddressCannotBreakOutOfItsAttribute` (line 51)
-- `testConfigurationAndRepeatedParserInstances` (line 110)
-- `testHtmlMarkupPreservesCallerLibxmlStateAndBufferedErrors` (line 124): 2 data-provider cases
-- `testNestedHtml5MarkupReportsParserWarningsAndStillRenders` (line 137)
+- `testQuoteHandlerRejectsANonmatchingExtensionMarker` (line 8)
+- `testBothBundledLoadersWorkInAFreshPhpRuntime` (line 17)
+- `testSupportedBlockAndInlineSyntax` (line 24): 47 data-provider cases
+- `testRenderingThatChangedWithParsedown18` (line 34): 7 data-provider cases
+- `testAnImageAddressCannotBreakOutOfItsAttribute` (line 50)
+- `testConfigurationAndRepeatedParserInstances` (line 109)
+- `testHtmlMarkupPreservesCallerLibxmlStateAndBufferedErrors` (line 123): 2 data-provider cases
+- `testNestedHtml5MarkupReportsParserWarningsAndStillRenders` (line 136)
 
 ### `tests/Unit/Vendor/ParsedownApiTest.php` (12)
 

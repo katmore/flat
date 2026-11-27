@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Db;
-require_once __DIR__.'/../../Support/PhpSubprocess.php';
 use PHPUnit\Framework\TestCase;
 use flat\db\driver\rabbitmq;
 use PhpAmqpLib\Message\AMQPMessage;

@@ -1,6 +1,5 @@
 <?php
 namespace flat\test\Unit\Core\Util;
-require_once __DIR__.'/../../../Support/PhpSubprocess.php';
 use PHPUnit\Framework\TestCase;
 use flat\core\util\validate;
 use flat\core\util\validate\match\regexp;

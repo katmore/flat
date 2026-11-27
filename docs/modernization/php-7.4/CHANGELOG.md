@@ -473,3 +473,17 @@ continues from the php-7.3 phase.
   design (not one that needs the pthreads extension, which has no PHP 8 version).
 - Behavior: none.
 - Undo: nothing to undo.
+
+## MOD-319 — The tests no longer include their support traits by hand
+
+- Kind: test cleanup, asked for by the owner on 2026-11-27 ("get rid of the pointless ones"; "everything should rely on autoload"). 33
+  `require_once` lines in 27 test files are removed: the ones for the support traits `LegacyAuthorizeSdk`, `PhpSubprocess`,
+  `ConfigSandbox` and `SandboxSupport`, which the autoloader (`flat\test\` maps to `tests/`) already finds. No test name changed.
+- Left on purpose, for the owner to decide (the curl helper investigation): the includes of the four support files that define
+  namespaced PHP function overrides (`CurlDouble`, `AssetIoBoundary`, `SshBoundary`, `NativeSessionBoundary`), because PHP cannot
+  autoload functions; the two conditional includes inside `tests/Sandbox/SandboxSupport.php`; and the bootstraps of the child PHP
+  processes and the test environment.
+- Behavior: none (tests only).
+- Verified: `docker/bin/test all --coverage`: 1,644 tests, 7,248 assertions, all pass; 100% coverage; no PHP message. The test inventory is
+  regenerated (the removed lines moved the line numbers); the sandbox tests load.
+- Undo: revert the commit.
