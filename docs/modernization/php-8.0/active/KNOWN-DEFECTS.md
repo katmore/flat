@@ -1,6 +1,7 @@
 # Known defects
 
-No confirmed PHP 8.0 code defects yet. Next identifiers: KD-129 and Q64.
+No confirmed open defects or owner questions.
+KD-129/Q63 is fixed with the approved match_rule rename:
+[resolved record](../history/RESOLVED-DEFECTS.md).
 
-Record clear bugs separately from questions about intended behavior. Never suppress
-an error or weaken an assertion to pass the upgrade.
+Next identifiers: KD-130 and Q64.

@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 915 test methods in 110 files, running 1708 test cases.
+- 916 test methods in 110 files, running 1709 test cases.
 - 146 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-8.0/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -282,11 +282,12 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testKnownFieldsAreMappedAndExcludedFromExtraFields` (line 6)
 - `testFieldsAddedAfterConstructionReturnNamesOrValues` (line 14)
 
-### `tests/Unit/CodingRulesTest.php` (3)
+### `tests/Unit/CodingRulesTest.php` (4)
 
-- `testClassAliasIsNeverUsed` (line 51)
-- `testEveryClassIsDeclaredWhereItsPathSays` (line 62)
-- `testClassesAreLoadedByTheAutoloaderNeverByInclude` (line 74)
+- `testEverySourceFileParsesOnThisPhpRuntime` (line 51)
+- `testClassAliasIsNeverUsed` (line 63)
+- `testEveryClassIsDeclaredWhereItsPathSays` (line 74)
+- `testClassesAreLoadedByTheAutoloaderNeverByInclude` (line 86)
 
 ### `tests/Unit/Core/AlertDefaultsTest.php` (2)
 
@@ -429,17 +430,17 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testDomAndXPathResults` (line 235): groups: services, http
 - `testInvalidXPathReportsQuery` (line 245): groups: services, http
 - `testDomAndXPathPreserveCallerLibxmlStateAndBufferedErrors` (line 255): 2 data-provider cases; groups: services, http
-- `testXPathArgumentWarningRestoresCallerLibxmlState` (line 278): 2 data-provider cases; groups: services, http
-- `testHtmlParserWarningReachesCallerAndLeavesReportingEnabled` (line 295): groups: services, http
-- `testAServerThatIsNotListeningIsAConnectError` (line 311): groups: services, http
-- `testTransferFailureRetainsErrorDetails` (line 326): 3 data-provider cases; groups: services, http
-- `testErrorAfterFileTransferStillFails` (line 336): groups: services, http
-- `testRobotsRules` (line 346): 11 data-provider cases; groups: services, http
-- `testRobotsCheckCanDenyOrAllowConstructor` (line 365): groups: services, http
-- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 374): groups: services, http
-- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 381): groups: services, http
-- `testFalsyTextBodyInitializesDomOnDemand` (line 389): groups: services, http
-- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 396): groups: services, http
+- `testXPathArgumentTypeErrorRestoresCallerLibxmlState` (line 278): 2 data-provider cases; groups: services, http
+- `testHtmlParserWarningReachesCallerAndLeavesReportingEnabled` (line 289): groups: services, http
+- `testAServerThatIsNotListeningIsAConnectError` (line 305): groups: services, http
+- `testTransferFailureRetainsErrorDetails` (line 320): 3 data-provider cases; groups: services, http
+- `testErrorAfterFileTransferStillFails` (line 330): groups: services, http
+- `testRobotsRules` (line 340): 11 data-provider cases; groups: services, http
+- `testRobotsCheckCanDenyOrAllowConstructor` (line 359): groups: services, http
+- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 368): groups: services, http
+- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 375): groups: services, http
+- `testFalsyTextBodyInitializesDomOnDemand` (line 383): groups: services, http
+- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 390): groups: services, http
 
 ### `tests/Unit/Core/DebugTest.php` (13)
 
@@ -686,34 +687,34 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testAKeyLoginPrintsNothingToStandardError` (line 182): groups: services, ssh
 - `testTheTemporaryPassphraseMustBeGenerated` (line 188): groups: services, ssh
 - `testOpenSslMustBeUsable` (line 195): groups: services, ssh
-- `testOperationsNeedAConnectionAndAnUnavailableExtensionIsReported` (line 202): groups: services, ssh
-- `testFailedRemoteExecutionIsReported` (line 211): groups: services, ssh
-- `testDisconnectIgnoresMissingConnectionOnlyWhenRequested` (line 222): groups: services, ssh
-- `testPasswordFingerprintIsVerifiedBeforeAuthentication` (line 244): 4 data-provider cases; groups: services, ssh
-- `testAnEmptyFingerprintKeepsPasswordAuthenticationUnpinned` (line 254): groups: services, ssh
-- `testConstructorFingerprintWorksForPasswordAuthentication` (line 260): groups: services, ssh
-- `testConstructorFingerprintRejectsTheWrongHostForBothAuthenticationModes` (line 266): groups: services, ssh
-- `testProcessChecksSeeRealProcesses` (line 280): groups: services, ssh
-- `testMissingRemoteProcessThrowsUnlessIgnored` (line 289): groups: services, ssh
-- `testBackgroundExecutionReturnsThePidOfARunningProcess` (line 295): groups: services, ssh
-- `testBackgroundExecutionWaitsTheRequestedRuntimeBeforeChecking` (line 303): groups: services, ssh
-- `testBackgroundExecutionOfAProcessThatEndsEarlyFailsTheCheck` (line 312): groups: services, ssh
-- `testAnInvalidRuntimeFallsBackToThreeSeconds` (line 318): groups: services, ssh
-- `testBackgroundExecutionNeedsAPid` (line 326): groups: services, ssh
-- `testKillArgumentsAreValidatedBeforeSendingSignals` (line 334): 11 data-provider cases; groups: services, ssh
-- `testAProcessThatDiesOfTheFirstSignalIsKilledAtOnce` (line 341): groups: services, ssh
-- `testAProcessThatIgnoresTheFirstSignalIsKilledByTheSecond` (line 348): groups: services, ssh
-- `testKillWaitsForTheFirstSignalBeforeSendingTheSecond` (line 355): groups: services, ssh
-- `testAProcessThatNeverExitsReportsTheTimeWaited` (line 393): groups: services, ssh
-- `testASignalThatCannotBeSentIsReported` (line 401): groups: services, ssh
-- `testASecondSignalThatCannotBeSentIsReported` (line 407): groups: services, ssh
-- `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` (line 415): groups: services, ssh
-- `testSftpLocalOpenFailureIsReported` (line 421): groups: services, ssh
-- `testSftpDownloadsARealFileAndReportsProgress` (line 434): groups: services, ssh
-- `testShortAndEmptyFilesAreDownloadedWhole` (line 448): 3 data-provider cases; groups: services, ssh
-- `testAFileThatReportsSizeZeroIsStillDownloaded` (line 458): groups: services, ssh
-- `testALargeFileIsDownloadedInManyReads` (line 467): groups: services, ssh
-- `testCallbackFailureStillClosesTheLocalAndRemoteStreams` (line 476): groups: services, ssh
+- `testOperationsNeedAConnectionAndAnUnavailableExtensionIsReported` (line 201): groups: services, ssh
+- `testFailedRemoteExecutionIsReported` (line 210): groups: services, ssh
+- `testDisconnectIgnoresMissingConnectionOnlyWhenRequested` (line 221): groups: services, ssh
+- `testPasswordFingerprintIsVerifiedBeforeAuthentication` (line 243): 4 data-provider cases; groups: services, ssh
+- `testAnEmptyFingerprintKeepsPasswordAuthenticationUnpinned` (line 253): groups: services, ssh
+- `testConstructorFingerprintWorksForPasswordAuthentication` (line 259): groups: services, ssh
+- `testConstructorFingerprintRejectsTheWrongHostForBothAuthenticationModes` (line 265): groups: services, ssh
+- `testProcessChecksSeeRealProcesses` (line 279): groups: services, ssh
+- `testMissingRemoteProcessThrowsUnlessIgnored` (line 288): groups: services, ssh
+- `testBackgroundExecutionReturnsThePidOfARunningProcess` (line 294): groups: services, ssh
+- `testBackgroundExecutionWaitsTheRequestedRuntimeBeforeChecking` (line 302): groups: services, ssh
+- `testBackgroundExecutionOfAProcessThatEndsEarlyFailsTheCheck` (line 311): groups: services, ssh
+- `testAnInvalidRuntimeFallsBackToThreeSeconds` (line 317): groups: services, ssh
+- `testBackgroundExecutionNeedsAPid` (line 325): groups: services, ssh
+- `testKillArgumentsAreValidatedBeforeSendingSignals` (line 333): 11 data-provider cases; groups: services, ssh
+- `testAProcessThatDiesOfTheFirstSignalIsKilledAtOnce` (line 340): groups: services, ssh
+- `testAProcessThatIgnoresTheFirstSignalIsKilledByTheSecond` (line 347): groups: services, ssh
+- `testKillWaitsForTheFirstSignalBeforeSendingTheSecond` (line 354): groups: services, ssh
+- `testAProcessThatNeverExitsReportsTheTimeWaited` (line 392): groups: services, ssh
+- `testASignalThatCannotBeSentIsReported` (line 400): groups: services, ssh
+- `testASecondSignalThatCannotBeSentIsReported` (line 406): groups: services, ssh
+- `testSftpOpenFailuresAreReportedBeforeTheMissingHelper` (line 414): groups: services, ssh
+- `testSftpLocalOpenFailureIsReported` (line 420): groups: services, ssh
+- `testSftpDownloadsARealFileAndReportsProgress` (line 433): groups: services, ssh
+- `testShortAndEmptyFilesAreDownloadedWhole` (line 447): 3 data-provider cases; groups: services, ssh
+- `testAFileThatReportsSizeZeroIsStillDownloaded` (line 457): groups: services, ssh
+- `testALargeFileIsDownloadedInManyReads` (line 466): groups: services, ssh
+- `testCallbackFailureStillClosesTheLocalAndRemoteStreams` (line 475): groups: services, ssh
 
 ### `tests/Unit/Core/SshTest.php` (8)
 
@@ -1181,7 +1182,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 ### `tests/Unit/PhpVersionTest.php` (1)
 
-- `testSuiteRunsOnPhp74` (line 10)
+- `testSuiteRunsOnPhp80` (line 10)
 
 ### `tests/Unit/Tmpl/DataTest.php` (4)
 

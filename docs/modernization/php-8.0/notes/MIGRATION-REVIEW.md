@@ -14,8 +14,10 @@ The upstream documentation source was read during this review.
   positional behavior does not need a migration workaround.
 - cURL handles become CurlHandle objects. flat keeps its handles untyped and
   does not test them with is_resource. Process and stream resource checks remain valid.
-- PHP 8.0 lint of source and tests found no parse errors. The full runtime suite
-  remains necessary for inheritance checks and stricter internal argument handling.
+- The complete PHP 8.0 lint and API dump find a reserved class name: the empty
+  validate\match base class. Q63 records the required owner decision. The initial
+  clean-lint report was premature; the command was still running. Loaded-code
+  coverage alone does not establish that every source file parses.
 - Source searches found no removed each/create_function calls, curly string offsets,
   libxml_disable_entity_loader or deprecated OpenSSL free calls.
 - Nullable array parameters preceding required arguments use the documented

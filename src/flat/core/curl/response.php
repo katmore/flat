@@ -106,7 +106,7 @@ class response {
       } else {
          $robotstxt = false;
       }
-      curl_close($handle);
+      $handle = null; // CurlHandle closes when its last reference is released.
       
       
       // if there isn't a robots, then we're allowed in
@@ -152,7 +152,8 @@ class response {
    private $_purge_save = false;
    public function __destruct() {
       
-      curl_close($this->_ch);
+      // Release the handle before unlinking: its destructor flushes the cookie jar.
+      $this->_ch = null;
       
       if ($this->_tmp_cookie_file) {
          unlink($this->_tmp_cookie_file);

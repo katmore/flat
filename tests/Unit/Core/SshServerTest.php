@@ -195,8 +195,7 @@ class SshServerTest extends TestCase
     public function testOpenSslMustBeUsable()
     {
         list($out) = $this->keyLoginInAFreshProcess(['disable_functions'=>'proc_open'], getenv());
-        $this->assertStringContainsString('proc_open() has been disabled', $out);
-        $this->assertStringContainsString('flat\core\ssh\exception\syserror: system error: could not use openssl', $out);
+        $this->assertSame('flat\core\ssh\exception\syserror: system error: could not use openssl', $out);
         $this->assertSame($this->keyFilesBefore, $this->keyFiles());
     }
     public function testOperationsNeedAConnectionAndAnUnavailableExtensionIsReported()

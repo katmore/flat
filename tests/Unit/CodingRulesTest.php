@@ -32,7 +32,7 @@ class CodingRulesTest extends TestCase
             if (!is_array($tokens[$i])) continue;
             if ($tokens[$i][0] === T_NAMESPACE) {
                 $namespace = ''; $j = $i + 1;
-                while ($j < $count && is_array($tokens[$j]) && in_array($tokens[$j][0], [T_WHITESPACE, T_STRING, T_NS_SEPARATOR], true)) {
+                while ($j < $count && is_array($tokens[$j]) && in_array($tokens[$j][0], [T_WHITESPACE, T_STRING, T_NS_SEPARATOR, T_NAME_QUALIFIED], true)) {
                     if ($tokens[$j][0] !== T_WHITESPACE) $namespace .= $tokens[$j][1];
                     $j++;
                 }
@@ -46,6 +46,18 @@ class CodingRulesTest extends TestCase
             }
         }
         return $names;
+    }
+
+    public function testEverySourceFileParsesOnThisPhpRuntime()
+    {
+        foreach (self::phpFiles('src') as $file) {
+            try {
+                $tokens = token_get_all(file_get_contents(dirname(__DIR__, 2).'/'.$file), TOKEN_PARSE);
+            } catch (\ParseError $error) {
+                $this->fail($file.': '.$error->getMessage());
+            }
+            $this->assertNotEmpty($tokens, $file);
+        }
     }
 
     public function testClassAliasIsNeverUsed()

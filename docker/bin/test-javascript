@@ -12,7 +12,7 @@ test_uid=$(id -u)
 test_gid=$(id -g)
 if [ "$test_uid" = 0 ]; then test_uid=1000; test_gid=1000; fi
 docker run --rm --user "$test_uid:$test_gid" --network none --entrypoint php \
-    -v "$repo_dir:/app:ro" -w /app flat-tests-php74 \
+    -v "$repo_dir:/app:ro" -w /app flat-tests-php80 \
     tests/tools/minifier-cases.php > "$cases"
 docker run --rm -i --user "$test_uid:$test_gid" --network none \
     -v "$repo_dir/tests/tools/minifier-check.js:/check.js:ro" \

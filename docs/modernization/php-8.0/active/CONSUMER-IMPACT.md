@@ -14,3 +14,20 @@
 - After: the PHP 7.4 positional contract is preserved on PHP 8. Aggregate payload
   keys are retained. No consumer code change is needed.
 - Search consumer code for: `\flat\core\event`, `\flat\event`, `set_handler`
+
+### MOD-346: Native error handling and resource lifetime
+
+- Before on PHP 7: invalid XPath argument types raised a warning; disabled
+  proc_open raised a warning before flat's SSH syserror.
+- After on PHP 8: XPath propagates native TypeError while restoring libxml state.
+  SSH retains its syserror for unavailable proc_open; PHP's obsolete disabled-function
+  warning is absent. Temporary cURL cookie jars are still deleted correctly.
+- Search consumer code for: `simplexpath`, `proc_open`, `disable_functions`
+
+### MOD-347: Reserved class renamed (Q63)
+
+- Before: the empty abstract `flat\core\util\validate\match` base class existed.
+- After: it is `flat\core\util\validate\match_rule`, because PHP 8 reserves match.
+  External subclasses must update their parent name. No alias exists. Classes
+  within the `flat\core\util\validate\match\...` namespace keep their names.
+- Search consumer code for: `\flat\core\util\validate\match`

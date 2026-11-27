@@ -1,7 +1,7 @@
 <?php
 /**
  * File:
- *    match.php
+ *    match_rule.php
  * 
  * Purpose:
  *    parent class for match validation
@@ -42,6 +42,6 @@
  * 
  */
 namespace flat\core\util\validate;
-abstract class match {
+abstract class match_rule {
 
 }

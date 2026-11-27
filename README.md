@@ -16,12 +16,12 @@ Architecturally, it facilitates a broad swathe of design patterns using a client
 
 There are two entry points with the same arguments:
 
-* `bin/test` runs the PHPUnit suite natively, on a machine with PHP 7.4 and the
+* `bin/test` runs the PHPUnit suite natively, on a machine with PHP 8.0 and the
   Composer dev dependencies installed (`composer install`).
 * `docker/bin/test` needs only Docker. It runs `bin/test` inside the pinned
-  PHP 7.4 container and starts and other service containers as required.  
+  PHP 8.0 container and starts other service containers as required.
 
-From the repository root, run `docker/bin/test`. It builds the pinned PHP 7.4 image,
+From the repository root, run `docker/bin/test`. It builds the pinned PHP 8.0 image,
 starts the required service containers, runs the tests, then removes the
 containers and their test data. Only Docker Engine and Docker Compose are needed.
 

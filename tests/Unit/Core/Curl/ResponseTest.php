@@ -275,22 +275,16 @@ class ResponseTest extends TestCase
     }
     public function libxmlModes() { return [[false], [true]]; }
     /** @dataProvider libxmlModes */
-    public function testXPathArgumentWarningRestoresCallerLibxmlState($internal)
+    public function testXPathArgumentTypeErrorRestoresCallerLibxmlState($internal)
     {
         $this->page();
         libxml_use_internal_errors($internal);
         $response = new response($this->config(), ['use_dom']);
-        set_error_handler(function ($level, $message, $file, $line) {
-            throw new \ErrorException($message, 0, $level, $file, $line);
-        });
-        try {
-            try { $response->simplexpath([]); $this->fail('Expected XPath argument warning'); }
-            catch (\ErrorException $error) {
-                $this->assertSame(E_WARNING, $error->getSeverity());
-                $this->assertStringContainsString('SimpleXMLElement::xpath() expects parameter 1 to be string', $error->getMessage());
-                $this->assertSame($internal, libxml_use_internal_errors());
-            }
-        } finally { restore_error_handler(); }
+        try { $response->simplexpath([]); $this->fail('Expected XPath argument TypeError'); }
+        catch (\TypeError $error) {
+            $this->assertStringContainsString('SimpleXMLElement::xpath(): Argument #1 ($expression) must be of type string, array given', $error->getMessage());
+            $this->assertSame($internal, libxml_use_internal_errors());
+        }
     }
     public function testHtmlParserWarningReachesCallerAndLeavesReportingEnabled()
     {

@@ -35,3 +35,53 @@ The event/debug/facade regression selection passes unchanged on both PHP 7.4.33
 and PHP 8.0.30: 43 tests, 116 assertions. The inherited PHP 7.4 unit baseline,
 before the fix, passed 1,496 tests and 6,823 assertions. A fresh API baseline
 contains 602 loadable entries. The inventory was regenerated for the five new cases.
+
+### MOD-343 compatibility checks
+
+The PHP 7.4 full baseline plus the positional-callback regression passes:
+1,708 tests, 7,495 assertions. PHP 8.0 needs three harness adaptations: recognize
+T_NAME_QUALIFIED for namespace declarations, assert the new native warning
+capitalization, and require PHP 8.0 in the runtime guard. No checks are removed.
+FLAT_TEST_IMAGE optionally selects a generic explicit comparison image; the
+committed default remains the pinned PHP 8.0 image.
+
+## MOD-345 — Complete source-load review (2026-11-27)
+
+Correction to the initial migration review: the first lint report was inspected
+before its command finished. Its completed output and the full API dump find
+that validate\match is a reserved class name on PHP 8. KD-129/Q63 records the
+required public-rename decision. Native PHP 8 also adds Stringable interfaces
+and inferred __toString return metadata; those are runtime reflection changes.
+
+## MOD-346 — Adapt native PHP 8 resource and error handling (2026-11-27)
+
+The first full PHP 8 run exposed a real cookie cleanup regression: curl_close
+is now a no-op, so releasing the handle after unlinking recreated its cookie
+jar. Release the private CurlHandle before deleting temporary files. Release
+the robots handle at its previous close point too.
+
+Disabled proc_open is undefined on PHP 8. Check availability before invocation
+so SSH still raises its existing syserror and cleans key files. The subprocess
+test now asserts that complete framework error rather than PHP 7's warning.
+Invalid XPath argument types now raise native TypeError; the test verifies
+that precise error and both libxml state-restoration paths. No diagnostics are hidden.
+
+## MOD-347 — Rename the reserved match base class (2026-11-27)
+
+Owner approved Q63: rename the unused empty abstract validate\match class to
+validate\match_rule. Source path map:
+`src/flat/core/util/validate/match.php` → `src/flat/core/util/validate/match_rule.php`.
+No repository code references the old class. The child namespace match remains
+valid on PHP 8 and retains every existing class name. No alias or shim is added.
+A syntax guard parses every framework file with TOKEN_PARSE, including classes
+not reached by execution coverage. KD-129/Q63 is archived in history/RESOLVED-DEFECTS.md.
+
+### Runtime checkpoint validation (MOD-343, MOD-346, MOD-347)
+
+PHP 8.0.30 full Docker suite: 1,709 tests, 8,098 assertions, no errors, failures
+or skips. Coverage: 100% of 332 classes, 1,105 methods and 8,878 executable lines.
+The full API dump has 602 loadable entries. The intentional class rename is the
+only source API rename; PHP itself adds Stringable on 302 classes and infers
+string returns on 16 __toString methods. Both platform locks retain their
+previous package versions at this checkpoint. Source syntax guard and inventory
+are included. Documentation validation reports zero problems.

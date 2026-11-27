@@ -26,7 +26,9 @@ The major version follows semantic versioning. It stays at 1 while the public AP
 ### Progress
  * php-7.2: complete (2026-11-20), released as `v1.72.0`, `v1.72.1` and `v1.72.2`, and merged to `master`; the `php-7.2` branch is kept permanently. Status: [php-7.2/README.md](php-7.2/README.md); changes: [CHANGELOG.md](php-7.2/CHANGELOG.md)
  * php-7.3: complete, released as `v1.73.0`, `v1.73.1` and `v1.73.2`, and merged to `master`; the `php-7.3` branch is kept permanently. Status: [php-7.3/README.md](php-7.3/README.md); changes: [CHANGELOG.md](php-7.3/CHANGELOG.md)
- * php-7.4: in progress. Status: [php-7.4/README.md](php-7.4/README.md); changes: [CHANGELOG.md](php-7.4/CHANGELOG.md)
+ * php-7.4: implementation inherited by the PHP 8.0 branch. Status: [php-7.4/README.md](php-7.4/README.md); changes: [CHANGELOG.md](php-7.4/CHANGELOG.md)
+
+ * php-8.0: in progress. Status: [php-8.0/README.md](php-8.0/README.md).
 
 ### Rules for every phase
  * Advance one PHP minor version at a time and skip none: 7.2, 7.3, 7.4, 8.0, 8.1, and onward.

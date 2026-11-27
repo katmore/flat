@@ -97,7 +97,7 @@ class ConvertTest extends TestCase
             try { new convert\file(sys_get_temp_dir().'/flat-md-absent-'.bin2hex(random_bytes(8))); }
             catch (convert\exception\invalid_source $e) {
                 $this->assertStringContainsString('could not be read', $e->getMessage());
-                $this->assertStringContainsString('failed to open stream', $warning);
+                $this->assertStringContainsString('Failed to open stream', $warning);
                 return;
             }
         } finally { restore_error_handler(); }

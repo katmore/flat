@@ -290,6 +290,8 @@ class ssh {
             1 => array("pipe", "w"), 
             2 => array("pipe", "w") 
          );
+         // Disabled functions are undefined on PHP 8; preserve the framework error.
+         if (!function_exists("proc_open")) throw new exception\syserror("could not use openssl");
          $process = proc_open($openssl_cmd, $descriptorspec, $pipes, null, null);
          if (!is_resource($process)) throw new exception\syserror("could not use openssl");
          stream_set_blocking($pipes[2], 0);
