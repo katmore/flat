@@ -23,3 +23,9 @@ The owner's release decision must account for the approved public base-class ren
 
 Final generated snapshot: [API-PHP80.json](API-PHP80.json). The final dependency
 and crypto refresh leaves this 602-entry snapshot identical to the post-modernization dump.
+
+## Reviewed behavior fixes
+
+MOD-366 expands reserved::keywords to include PHP 8.0 reserved identifiers.
+This is the only reflected API difference from the preceding phase snapshot;
+all 602 entries still load and public/protected signatures remain unchanged.

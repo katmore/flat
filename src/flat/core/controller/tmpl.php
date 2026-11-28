@@ -179,7 +179,7 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
         }
 
 
-        if ($flags && (false !== ($idx = array_search('silent_fail', $flags)))) {
+        if ($flags && (false !== ($idx = array_search('silent_fail', $flags, true)))) {
             try {
                 $sflags = $flags;
                 array_splice($sflags, $idx, 1);
@@ -206,21 +206,21 @@ abstract class tmpl implements \flat\core\controller, \flat\core\resolver\prepar
          * $var string strip_tags should be first
          * @todo replace
          */
-        if ($flags && in_array('strip_tags', $flags)) $ob = strip_tags($ob);
+        if ($flags && in_array('strip_tags', $flags, true)) $ob = strip_tags($ob);
 
         /*
          * nl2br should be after strip_tags, or else could have no effect
          */
-        if ($flags && in_array('nl2br', $flags)) $ob = nl2br($ob);
+        if ($flags && in_array('nl2br', $flags, true)) $ob = nl2br($ob);
 
-        if ($flags && in_array('htmlescape', $flags)) $ob = htmlentities($ob);
+        if ($flags && in_array('htmlescape', $flags, true)) $ob = htmlentities($ob);
 
         if ($params && isset($params['replace']) && is_array($params['replace'])) {
             foreach ($params['replace'] as $find => $replace) {
                 $ob = str_replace($find, $replace, $ob);
             }
         }
-        if ($flags && in_array('no_display', $flags)) return $ob;
+        if ($flags && in_array('no_display', $flags, true)) return $ob;
 
         echo $ob;
     }

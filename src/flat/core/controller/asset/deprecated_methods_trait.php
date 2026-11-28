@@ -27,7 +27,7 @@ trait deprecated_methods_trait {
       if (!is_scalar($flag))
          return NULL;
       if (is_array($param) && !empty($param['flag']) && is_array($param['flag'])) {
-         if (in_array($flag,$param['flag']) || array_key_exists($flag,$param['flag'])) {
+         if (in_array($flag,$param['flag'],true) || array_key_exists($flag,$param['flag'])) {
             return true;
          }
       }

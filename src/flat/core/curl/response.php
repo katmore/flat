@@ -151,6 +151,9 @@ class response {
    
    private $_purge_save = false;
    public function __destruct() {
+      $this->_cleanup();
+   }
+   private function _cleanup() {
       
       // Release the handle before unlinking: its destructor flushes the cookie jar.
       $this->_ch = null;
@@ -258,116 +261,130 @@ class response {
       }
       $request = $config->request;
       
-      if (in_array('save',$flags)) {
+      if (in_array('save',$flags,true)) {
          $save = true;
       }
       
-      if (in_array('use_dom',$flags)) {
+      if (in_array('use_dom',$flags,true)) {
          $use_dom=true;
       }
-      if (!in_array('use_robots',$flags)) {
+      if (!in_array('use_robots',$flags,true)) {
          $use_robots=false;
       }
       
       
       
       $provide_cookies = false;
-      if (in_array('provide_cookies',$flags)) {
+      if (in_array('provide_cookies',$flags,true)) {
          $provide_cookies=true;
       }
       $save_cookies = false;
-      if (in_array('save_cookies',$flags)) {
+      if (in_array('save_cookies',$flags,true)) {
          $save_cookies=true;
       }
       $accept_cookies = false;
-      if (in_array('accept_cookies',$flags)) {
+      if (in_array('accept_cookies',$flags,true)) {
          $accept_cookies=true;
       }
       
-      if ($accept_cookies) {
-         if (empty($cookie_file)) {
-            $this->_tmp_cookie_file = $cookie_file = tempnam ( sys_get_temp_dir(),"flat_curl_cookie_");
-         } else {
-            if (!is_string($cookie_file)) throw new exception\bad_param("cookie_file","must be string");
-            if (!is_writable($cookie_file)) throw new exception\bad_param("cookie_file","must be writable file if provided");
+      try {
+         if ($accept_cookies) {
+            if (empty($cookie_file)) {
+               $this->_tmp_cookie_file = $cookie_file = tempnam ( sys_get_temp_dir(),"flat_curl_cookie_");
+            } else {
+               if (!is_string($cookie_file)) throw new exception\bad_param("cookie_file","must be string");
+               if (!is_writable($cookie_file)) throw new exception\bad_param("cookie_file","must be writable file if provided");
+            }
          }
-      }
       
       
-      //var_dump($config->request->url);die('core curl response');
-      if ($use_robots) self::_check_robots_allowed(
-            $config->request->url_string,
-            $config->user_agent
-            );
-      
-      //var_dump($request->url);die('curl response (die)');
-      $url = $request->url_string;
-      
-      $this->_ch = $ch = curl_init($url);
-      
-      curl_setopt($ch, \CURLOPT_USERAGENT, $config->user_agent);
-      // without this, CURLINFO_FILETIME (the filetime property) is always -1
-      curl_setopt($ch, \CURLOPT_FILETIME, true);
-      if ($save_cookies) {
-         curl_setopt($ch, \CURLOPT_COOKIEJAR, $cookie_file);
-      }
-      if ($provide_cookies) {
-         curl_setopt($ch, \CURLOPT_COOKIEFILE, $cookie_file);
-      }
-      
-      if ($request->data !== null) {
-         curl_setopt($ch, \CURLOPT_POSTFIELDS, $request->data);
-         curl_setopt($ch, \CURLOPT_HTTPHEADER, array(
-            'Content-Type: '.$request->content_type,
-            'Content-Length: ' . strlen($request->data))
+         //var_dump($config->request->url);die('core curl response');
+         if ($use_robots) self::_check_robots_allowed(
+               $config->request->url_string,
+               $config->user_agent
                );
-      }
       
-      if ($config->request_method !== null) {
-         curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, $config->request_method);
-         if (strtoupper($config->request_method) === 'HEAD') curl_setopt($ch, \CURLOPT_NOBODY, true);
-      }
-      curl_setopt($ch, \CURLOPT_CONNECTTIMEOUT ,5);
-      curl_setopt($ch, \CURLOPT_TIMEOUT, $config->timeout);
+         //var_dump($request->url);die('curl response (die)');
+         $url = $request->url_string;
       
-      curl_setopt($ch, \CURLOPT_FOLLOWLOCATION, true);
+         $this->_ch = $ch = curl_init($url);
       
-      if (!empty($save)) {
-         $use_dom=false;
-         if (!empty($save_file)) {
-            $path = $save_file;
+         curl_setopt($ch, \CURLOPT_USERAGENT, $config->user_agent);
+         // without this, CURLINFO_FILETIME (the filetime property) is always -1
+         curl_setopt($ch, \CURLOPT_FILETIME, true);
+         if ($save_cookies) {
+            curl_setopt($ch, \CURLOPT_COOKIEJAR, $cookie_file);
+         }
+         if ($provide_cookies) {
+            curl_setopt($ch, \CURLOPT_COOKIEFILE, $cookie_file);
+         }
+      
+         if ($request->data !== null) {
+            curl_setopt($ch, \CURLOPT_POSTFIELDS, $request->data);
+            curl_setopt($ch, \CURLOPT_HTTPHEADER, array(
+               'Content-Type: '.$request->content_type,
+               'Content-Length: ' . strlen($request->data))
+                  );
+         }
+      
+         if ($config->request_method !== null) {
+            curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, $config->request_method);
+            if (strtoupper($config->request_method) === 'HEAD') curl_setopt($ch, \CURLOPT_NOBODY, true);
+         }
+         curl_setopt($ch, \CURLOPT_CONNECTTIMEOUT ,5);
+         curl_setopt($ch, \CURLOPT_TIMEOUT, $config->timeout);
+      
+         curl_setopt($ch, \CURLOPT_FOLLOWLOCATION, true);
+      
+         if (!empty($save)) {
+            $use_dom=false;
+            if (!empty($save_file)) {
+               $path = $save_file;
+            } else {
+               $path = tempnam(sys_get_temp_dir(), "flat-curl-");
+               $this->_purge_save = true;
+            }
+            $this->_save = $path;
+            if (!($fh = fopen($path,"wb"))) {
+               throw new exception\system_error("error opening file: $path");
+            }
+            try {
+               curl_setopt($ch, \CURLOPT_FILE, $fh);
+               curl_exec($ch);
+            } finally {
+               fclose($fh);
+            }
          } else {
-            $path = tempnam(sys_get_temp_dir(), "flat-curl-");
-            $this->_purge_save = true;
+            curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true);
+            if (false === ($this->_doc = curl_exec($ch))) {
+               throw new exception\curlexec_error($ch,$request->url_string);
+            }
          }
-         if (!($fh = fopen($path,"wb"))) {
-            throw new exception\system_error("error opening file: $path");
-         }
-         curl_setopt($ch, \CURLOPT_FILE, $fh);
-         curl_exec($ch);
-         fclose($fh);
-         $this->_save = $path;
-      } else {
-         curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true);
-         if (false === ($this->_doc = curl_exec($ch))) {
+         $this->filetime = curl_getinfo($ch, \CURLINFO_FILETIME);
+         if (curl_errno($ch)!=0) {
             throw new exception\curlexec_error($ch,$request->url_string);
          }
-      }
-      $this->filetime = curl_getinfo($ch, \CURLINFO_FILETIME);
-      if (curl_errno($ch)!=0) {
-         throw new exception\curlexec_error($ch,$request->url_string);
-      }
-      $this->info = curl_getinfo($ch);
-      $this->status_code = $this->info['http_code'];
+         $this->info = curl_getinfo($ch);
+         $this->status_code = $this->info['http_code'];
       
-      /*
-       * if usedom indicated
-       */
-      if ($use_dom) {
-         $this->_init_dom();
-      }
+         /*
+          * if usedom indicated
+          */
+         if ($use_dom) {
+            $this->_init_dom();
+         }
       
-      $this->request = $request;
+         $this->request = $request;
+      } catch (\Throwable $error) {
+         // Exception traces can retain CurlHandle arguments beyond this catch.
+         // Disable writing our private jar before removing it, even in that case.
+         if ($this->_tmp_cookie_file && $this->_ch) {
+            curl_setopt($this->_ch, \CURLOPT_COOKIEJAR, null);
+         }
+         $ch = null;
+         $this->_cleanup();
+         throw $error;
+      }
    }
    private function _init_dom() {
       // Leave HTML diagnostics and the error buffer under the caller's control.

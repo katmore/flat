@@ -274,3 +274,26 @@ PHP 8.0), KD-131/Q65 (PHP 8 comparisons change non-strict flag lookups),
 KD-132/Q66 (make_safe_classname misses reserved words) and KD-133, a
 pre-existing cookie-jar leak. It also found that assertion totals vary with
 coverage mode and polling. Details: active/ADVERSARIAL-REVIEW.md.
+
+## MOD-366 — Resolve reviewed flag, reserved-name and cleanup defects (2026-11-28)
+
+The owner approved Q65 and Q66. Named flags now use strict string membership;
+associative settings keep their behavior, and general data membership is not
+changed. Regression tests cover rendering, template failures, data fallback,
+PDO execution, sessions, XML attributes and cURL options. KD-131 is fixed.
+
+The reserved-name table adds PHP 8.0 match/mixed, missing earlier keywords and
+types, and the eight reserved magic constants. Each escaped table entry is
+actually declared as a class in a regression test. KD-132 is fixed.
+
+Failed cURL construction now releases owned temporary cookie/download files on
+transfer, robots-check or parser failures, preserving caller-owned paths.
+Private cookie output is disabled first because exception traces can retain a
+handle and otherwise recreate the jar later. Tests check failure cleanup while
+exceptions remain alive, after release, and with caller-owned cookies. KD-133
+is fixed. Consumer changes and resolved records accompany these repairs.
+
+Validation: 1,728 tests pass with no errors/failures/skips and 100% configured
+coverage (332 classes, 1,105 methods, 8,874 lines). Current status reports stop
+using assertion totals as checkpoints: subprocess coverage and signal polling
+make those totals vary. Historical totals remain the observations of each run.

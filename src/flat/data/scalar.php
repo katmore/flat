@@ -46,10 +46,10 @@ class scalar extends \flat\data implements \flat\core\serializer {
    }
    public function display(array $encoding=NULL) {
       $value = $this->value;
-      if (in_array('html',$encoding)) $value = htmlentities($value);
-      if (in_array('html_comment',$encoding)) echo "<!-- begin display ".get_called_class();
+      if (in_array('html',$encoding,true)) $value = htmlentities($value);
+      if (in_array('html_comment',$encoding,true)) echo "<!-- begin display ".get_called_class();
       echo $value;
-      if (in_array('html_comment',$encoding)) echo " end display -->\n";
+      if (in_array('html_comment',$encoding,true)) echo " end display -->\n";
    }
    public static function serialize($data,array $options=NULL) {
       return (string) $data->value;

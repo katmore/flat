@@ -290,17 +290,63 @@ class ResponseTest extends TestCase
     {
         libxml_use_internal_errors(false);
         $this->page('<html><body><widget>text</widget></body></html>');
+        $cookies = $this->cookieFiles();
         set_error_handler(function ($level, $message, $file, $line) {
             throw new \ErrorException($message, 0, $level, $file, $line);
         });
         try {
-            try { new response($this->config(), ['use_dom']); $this->fail('Expected HTML parser warning'); }
+            try { new response($this->config(), ['use_dom', 'accept_cookies', 'save_cookies']); $this->fail('Expected HTML parser warning'); }
             catch (\ErrorException $error) {
                 $this->assertSame(E_WARNING, $error->getSeverity());
                 $this->assertStringContainsString('DOMDocument::loadHTML(): Tag widget invalid', $error->getMessage());
+                $this->assertSame($cookies, $this->cookieFiles());
                 $this->assertFalse(libxml_use_internal_errors());
             }
         } finally { restore_error_handler(); }
+    }
+    public function testNonStringFlagsDoNotCreateFilesOrEnableDom()
+    {
+        $this->page();
+        $before = $this->cookieFiles();
+        $response = new response($this->config(), [0, true, false, null]);
+        $this->assertSame(self::PAGE, $response->get_response_data());
+        $this->assertSame($before, $this->cookieFiles());
+        $dom = new \ReflectionProperty(response::class, '_dom');
+        $dom->setAccessible(true);
+        $this->assertNull($dom->getValue($response));
+    }
+    public function testFailedConstructionRemovesItsOwnFilesWhileTheExceptionIsAlive()
+    {
+        $cookies = $this->cookieFiles();
+        $saved = glob(sys_get_temp_dir().'/flat-curl-*');
+        $errors = [];
+        foreach ([['accept_cookies'], ['accept_cookies', 'save_cookies', 'save']] as $flags) {
+            try {
+                new response('http://127.0.0.1:1/page', $flags);
+                $this->fail('Expected transfer error');
+            } catch (\flat\core\curl\exception\curlexec_error $error) {
+                $errors[] = $error;
+                $this->assertSame(7, $error->get_curl_errno());
+                $this->assertSame($cookies, $this->cookieFiles());
+                $this->assertSame($saved, glob(sys_get_temp_dir().'/flat-curl-*'));
+            }
+        }
+        unset($error, $errors);
+        gc_collect_cycles();
+        $this->assertSame($cookies, $this->cookieFiles());
+    }
+    public function testFailedConstructionPreservesCallerCookieFile()
+    {
+        $path = tempnam(sys_get_temp_dir(), 'flat-cookie-');
+        file_put_contents($path, 'caller cookies');
+        try {
+            try {
+                new response('http://127.0.0.1:1/page', ['accept_cookies'], $path);
+                $this->fail('Expected transfer error');
+            } catch (\flat\core\curl\exception\curlexec_error $error) {
+                $this->assertSame('caller cookies', file_get_contents($path));
+            }
+        } finally { unlink($path); }
     }
     public function testAServerThatIsNotListeningIsAConnectError()
     {

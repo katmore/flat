@@ -2,8 +2,9 @@
 
 The PHP 8.0 implementation, compatible dependency refresh and ordinary Docker
 suite are validated. Current results and commands: [phase overview](../README.md).
-An adversarial review (2026-11-28) opened KD-130 to KD-133 and Q64 to Q66;
-see the [defect index](KNOWN-DEFECTS.md). Q64 affects the release itself.
+The reviewed runtime defects KD-131 to KD-133 are fixed (MOD-366).
+KD-130/Q64 consumer-install documentation and validation remain in progress;
+see the [defect index](KNOWN-DEFECTS.md).
 
 ## Project follow-ups
 

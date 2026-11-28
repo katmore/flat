@@ -82,6 +82,23 @@ class ControllerTest extends TestCase
         foreach ($files as $file) { if ($file->isDir()) rmdir($file->getPathname()); else unlink($file->getPathname()); }
         rmdir($this->root);
     }
+    public function testNonStringFlagsDoNotSilenceMissingDesigns()
+    {
+        foreach ([0, true, false, null] as $value) {
+            try {
+                TemplateController::format('missing', [$value]);
+                $this->fail('A non-string flag must not enable silent_fail');
+            } catch (\flat\core\controller\tmpl\exception\bad_design $error) {
+                $this->assertStringContainsString('missing', $error->getMessage());
+            }
+        }
+        $this->assertSame('', TemplateController::format('missing', ['silent_fail']));
+    }
+    public function testNonStringFlagsDoNotTransformTemplateOutput()
+    {
+        $this->expectOutputString("<b>safe</b>\n");
+        tmpl::format(new OutputDesign, [0, true, false, null], ['data'=>['title'=>'safe']]);
+    }
     private function file($name, $contents) { file_put_contents($this->root.'/'.$name, $contents); }
     private function render($design, $values = null, $class = TemplateController::class)
     {

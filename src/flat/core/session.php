@@ -293,7 +293,7 @@ class session {
    public static function start(array $flags=['refresh'], string $session_id="") {
       
       
-      if (in_array('no-cookies',$flags)) {
+      if (in_array('no-cookies',$flags,true)) {
          
          if (empty($session_id)) {
             throw new session\exception\bad_config("'session_id' cannot be empty when 'no-cookies' flag is specified");
@@ -304,11 +304,11 @@ class session {
          ini_set("session.cache_limiter", "");
       }
       
-      if (in_array('destroy',$flags)) self::destroy();
+      if (in_array('destroy',$flags,true)) self::destroy();
 
 
       if (self::_start($session_id)) {
-         if (in_array('refresh',$flags)) {
+         if (in_array('refresh',$flags,true)) {
             self::refresh();
          }
       }

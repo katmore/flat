@@ -330,7 +330,7 @@ implements
     */
    public function html(array $flags=NULL) {
       $orig = true;
-      if (in_array('no_attributes',$flags)) {
+      if (in_array('no_attributes',$flags,true)) {
          /**
             The RegExp broken down:
             

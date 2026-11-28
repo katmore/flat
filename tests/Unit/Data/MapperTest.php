@@ -40,6 +40,18 @@ class MapperTest extends TestCase
         $p->setAccessible(true); $p->setValue(null, null);
     }
     protected function tearDown(): void { $this->setUp(); }
+    public function testOnlyLiteralFlagsTransformFieldValues()
+    {
+        $data = new DataFixture(['first'=>'<script>x</script>Hello']);
+        foreach ([0, true, false, null] as $value) {
+            $this->assertSame('<script>x</script>Hello', $data->first(['on_empty'=>$value]));
+            $this->assertStringContainsString('<script>', $data->dump('human', [$value])->value);
+            $data->map(['first'=>''], null, ['first'=>'fallback'], [$value]);
+            $this->assertSame('', $data->first);
+            $data->first = '<script>x</script>Hello';
+        }
+        $this->assertSame('xHello', $data->first(['strip']));
+    }
     public function testWebviewDataIsHtmlEncodedOnConstruction()
     {
         $data = new WebFixture(['first' => '<tag>&']);

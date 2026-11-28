@@ -219,7 +219,7 @@ class pdo extends \PDO {
          return;
       }
       
-      if ((!empty($param['execute']) || in_array('execute',$param) || !empty($param['exec']) || in_array('exec',$param) ) && !$executed && ($stmt instanceof \PDOStatement)) {
+      if ((!empty($param['execute']) || in_array('execute',$param,true) || !empty($param['exec']) || in_array('exec',$param,true) ) && !$executed && ($stmt instanceof \PDOStatement)) {
          $stmt->execute();
       }
       

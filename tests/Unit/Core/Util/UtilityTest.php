@@ -116,6 +116,26 @@ class UtilityTest extends TestCase
         $this->assertSame('class_/new_/user', reserved::make_safe_classname('class/new/user', '/'));
         $this->assertSame('', reserved::make_safe_classname(''));
     }
+    public function testEveryReservedNameEscapesToADeclarableClass()
+    {
+        $missing = ['fn', 'yield', 'match', 'mixed', 'self', 'parent', 'int', 'float',
+            'bool', 'string', 'true', 'false', 'null', 'void', 'iterable', 'object',
+            '__class__', '__trait__', '__namespace__', '__method__', '__function__',
+            '__line__', '__file__', '__dir__'];
+        foreach ($missing as $word) {
+            $this->assertSame(strtoupper($word).'_', reserved::make_safe_classname(strtoupper($word)));
+        }
+        foreach (reserved::keywords as $word) {
+            $safe = reserved::make_safe_classname($word);
+            $this->assertSame($word.'_', $safe);
+            // eval checks semantic restrictions (e.g. class mixed) as well as syntax.
+            $namespace = 'flat_test_reserved_'.bin2hex(random_bytes(8));
+            eval('namespace '.$namespace.'; class '.$safe.' {}');
+            $this->assertTrue(class_exists($namespace.'\\'.$safe, false));
+        }
+        $this->assertSame('App\\MATCH_\\mixed_', reserved::make_safe_classname('App\\MATCH\\mixed'));
+        $this->assertSame('Match_/mixed_', reserved::make_safe_classname('Match/mixed', '/'));
+    }
     public function testCustomRelativeTimeTableMayHaveNoMatchingUnit()
     {
         $this->assertNull(CustomTimeUnits::withoutMatchingUnit());

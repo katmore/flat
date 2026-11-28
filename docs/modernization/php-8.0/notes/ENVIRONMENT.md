@@ -46,8 +46,12 @@ fixture mirror. Fresh checkouts need no private paths or prebuilt images.
 
 ## Result
 
-Final full suite: 1,718 tests, 8,112 assertions; 100% of the configured loaded-code
-coverage: 332 classes, 1,104 methods and 8,867 lines. All 602 framework API entries
+Full suite: 1,728 tests, no errors/failures/skips; 100% of the configured loaded-code
+coverage: 332 classes, 1,105 methods and 8,874 lines. All 602 framework API entries
 load, all source/test PHP files pass syntax checks, and all 45 minifier programs
 preserve their JavaScript results. Lock audits: four inherited runtime advisories;
 tools clean. No YAML advisory remains. The owner controls phase completion and releases.
+
+Assertion totals vary with subprocess coverage mode and signal polling. Use
+test/failure counts and coverage as checkpoints; historical assertion counts
+remain per-run observations.

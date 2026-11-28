@@ -5,10 +5,10 @@
 Requires PHP 8.0 or later; tested on pinned PHP 8.0.30. The owner declares phase
 completion and publishes releases. Work branch: php-8.0.
 
-- Full Docker suite: 1,718 tests, 8,112 assertions, 100% configured loaded-code coverage.
+- Full Docker suite: 1,728 tests, no errors/failures/skips, 100% configured loaded-code coverage.
 - All 602 framework API entries load. The approved match base-class rename is
   the source API change; syntax modernization leaves the reflected API unchanged.
-- Open: KD-130 to KD-133 and owner questions Q64 to Q66
+- Open: KD-130/Q64 consumer-install documentation and validation
   ([defect index](active/KNOWN-DEFECTS.md)).
 - Current compatible tools/dependencies are installed. Four inherited advisories
   require PHP 8.1 fixes; no new YAML advisory is accepted.

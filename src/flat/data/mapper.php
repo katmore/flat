@@ -29,7 +29,7 @@ trait mapper {
             /*
              * apply 'strip' operation
              */
-            if (isset($param['strip'])||in_array('strip',$param)) {
+            if (isset($param['strip'])||in_array('strip',$param,true)) {
                $allowed=NULL;
                if (isset($param['strip']) && is_string($param['strip'])) {
                   $allowed=$param['strip'];
@@ -76,7 +76,7 @@ trait mapper {
          // Assigning the nonempty literal is always true. Keep the existing
          // human dump fallback for every type other than 'var'.
          $dump=\flat\core\util\deepcopy::data($this);
-         if (in_array('htmlencode',$flags)) {
+         if (in_array('htmlencode',$flags,true)) {
             $dump = $dump->htmlentities();
          }
          //$dump->remove_non_visible();
@@ -728,7 +728,7 @@ trait mapper {
          /*
           * apply 'default_on_empty' flag
           */
-         if ($rule->flags && in_array('default_on_empty',$rule->flags))
+         if ($rule->flags && in_array('default_on_empty',$rule->flags,true))
          foreach($map as $k=>&$v) if (empty($v) && isset($default[$k]) ) $v=$default[$k];
       }
           

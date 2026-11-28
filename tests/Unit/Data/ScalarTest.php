@@ -42,6 +42,11 @@ class ScalarTest extends TestCase
         $this->expectOutputString('<text>');
         (new scalar('<text>'))->display([]);
     }
+    public function testNonStringEncodingOptionsDoNotEnableHtmlOrComments()
+    {
+        $this->expectOutputString('<text>');
+        (new scalar('<text>'))->display([0, true, false, null]);
+    }
     public function testHtmlAndCommentDisplay()
     {
         $this->expectOutputString('<!-- begin display flat\\data\\scalar&lt;text&gt; end display -->' . "\n");

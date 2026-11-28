@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 918 test methods in 110 files, running 1718 test cases.
+- 928 test methods in 110 files, running 1728 test cases.
 - 148 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-8.0/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -407,7 +407,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` (line 147)
 - `testEmptyUrlencodedQueryStringIsRejected` (line 155)
 
-### `tests/Unit/Core/Curl/ResponseTest.php` (33)
+### `tests/Unit/Core/Curl/ResponseTest.php` (36)
 
 - `testDefaultRequestsSendTheFlatUserAgent` (line 38): groups: services, http
 - `testFacadeAcceptsUrlsAndConfigurationObjects` (line 48): groups: services, http
@@ -433,15 +433,18 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testDomAndXPathPreserveCallerLibxmlStateAndBufferedErrors` (line 255): 2 data-provider cases; groups: services, http
 - `testXPathArgumentTypeErrorRestoresCallerLibxmlState` (line 278): 2 data-provider cases; groups: services, http
 - `testHtmlParserWarningReachesCallerAndLeavesReportingEnabled` (line 289): groups: services, http
-- `testAServerThatIsNotListeningIsAConnectError` (line 305): groups: services, http
-- `testTransferFailureRetainsErrorDetails` (line 320): 3 data-provider cases; groups: services, http
-- `testErrorAfterFileTransferStillFails` (line 330): groups: services, http
-- `testRobotsRules` (line 340): 11 data-provider cases; groups: services, http
-- `testRobotsCheckCanDenyOrAllowConstructor` (line 359): groups: services, http
-- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 368): groups: services, http
-- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 375): groups: services, http
-- `testFalsyTextBodyInitializesDomOnDemand` (line 383): groups: services, http
-- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 390): groups: services, http
+- `testNonStringFlagsDoNotCreateFilesOrEnableDom` (line 307): groups: services, http
+- `testFailedConstructionRemovesItsOwnFilesWhileTheExceptionIsAlive` (line 318): groups: services, http
+- `testFailedConstructionPreservesCallerCookieFile` (line 338): groups: services, http
+- `testAServerThatIsNotListeningIsAConnectError` (line 351): groups: services, http
+- `testTransferFailureRetainsErrorDetails` (line 366): 3 data-provider cases; groups: services, http
+- `testErrorAfterFileTransferStillFails` (line 376): groups: services, http
+- `testRobotsRules` (line 386): 11 data-provider cases; groups: services, http
+- `testRobotsCheckCanDenyOrAllowConstructor` (line 405): groups: services, http
+- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 414): groups: services, http
+- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 421): groups: services, http
+- `testFalsyTextBodyInitializesDomOnDemand` (line 429): groups: services, http
+- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 436): groups: services, http
 
 ### `tests/Unit/Core/DebugTest.php` (13)
 
@@ -638,26 +641,27 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testReservedNodesAndCustomSetsAreCachedSeparately` (line 163)
 - `testInvalidControllerParameters` (line 172): 4 data-provider cases
 
-### `tests/Unit/Core/Session/SessionTest.php` (18)
+### `tests/Unit/Core/Session/SessionTest.php` (19)
 
 - `testStartRefreshIdAndSnapshot` (line 33)
-- `testStoredValuesCanBeReadAndRemoved` (line 49)
-- `testNonceCanBeConsumedOnlyOnce` (line 58)
-- `testNonceWithoutDataOrExpiryAndFalsyData` (line 66)
-- `testMissingNonceIsRejected` (line 75)
-- `testExpiredNonceIsRejectedWithoutSleeping` (line 80)
-- `testNonceIsAcceptedAtExactlyItsTtl` (line 91)
-- `testNonceIsExpiredOneSecondAfterItsTtl` (line 111)
-- `testCorruptNonceTtlIsRejected` (line 119)
-- `testInvalidNonceParameters` (line 127): 3 data-provider cases
-- `testWeakRandomnessIsRejected` (line 137)
-- `testInvalidSessionKey` (line 143)
-- `testInvalidRefreshKey` (line 149): 2 data-provider cases
-- `testNoCookieStartRequiresExplicitId` (line 154)
-- `testDestroyNotifiesListenersAndCanRestart` (line 159)
-- `testCookieSessionDestroyReportsCookieCleanup` (line 169)
-- `testMissingSessionGlobalIsRejectedEvenWhenActive` (line 179)
-- `testFailedStorageRetriesAndReturnsNoId` (line 187)
+- `testNonStringFlagsPreserveExistingSessionWithoutRefreshing` (line 49)
+- `testStoredValuesCanBeReadAndRemoved` (line 59)
+- `testNonceCanBeConsumedOnlyOnce` (line 68)
+- `testNonceWithoutDataOrExpiryAndFalsyData` (line 76)
+- `testMissingNonceIsRejected` (line 85)
+- `testExpiredNonceIsRejectedWithoutSleeping` (line 90)
+- `testNonceIsAcceptedAtExactlyItsTtl` (line 101)
+- `testNonceIsExpiredOneSecondAfterItsTtl` (line 121)
+- `testCorruptNonceTtlIsRejected` (line 129)
+- `testInvalidNonceParameters` (line 137): 3 data-provider cases
+- `testWeakRandomnessIsRejected` (line 147)
+- `testInvalidSessionKey` (line 153)
+- `testInvalidRefreshKey` (line 159): 2 data-provider cases
+- `testNoCookieStartRequiresExplicitId` (line 164)
+- `testDestroyNotifiesListenersAndCanRestart` (line 169)
+- `testCookieSessionDestroyReportsCookieCleanup` (line 179)
+- `testMissingSessionGlobalIsRejectedEvenWhenActive` (line 189)
+- `testFailedStorageRetriesAndReturnsNoId` (line 197)
 
 ### `tests/Unit/Core/ShutdownTest.php` (11)
 
@@ -728,25 +732,27 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testInvalidPidUsesTheLegacyCompatibleParameterException` (line 50)
 - `testTheParameterExceptionAutoloadsInAFreshRuntime` (line 54)
 
-### `tests/Unit/Core/Template/ControllerTest.php` (17)
+### `tests/Unit/Core/Template/ControllerTest.php` (19)
 
-- `testFailingTemplatesCloseTheirOutputBuffers` (line 90)
-- `testDesignRootUsesConfigurationOrItsDocumentedFallback` (line 102)
-- `testMarkdownReadFailureIsCaughtByTemplateResolver` (line 127)
-- `testAbsolutePhpFileAndDisplayClass` (line 132)
-- `testFileReadFailuresReportLibraryExceptions` (line 140): 4 data-provider cases
-- `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` (line 154)
-- `testUnusablePhpDesignsFallBackToHtml` (line 170)
-- `testCheckingADesignNeverPrintsIt` (line 182)
-- `testTemplatesWrittenByTheDeveloperKeepTheirRawHtml` (line 190)
-- `testMarkdownAndGeneratedMarkdownFiles` (line 198)
-- `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` (line 214)
-- `testInvalidDesignsAreRejected` (line 228): 4 data-provider cases
-- `testDesignBasesPrefixesAndSeparators` (line 234)
-- `testFormattingFlagsReplacementsAndOutput` (line 242)
-- `testLoggerWritesDesignKindAndNormalizedName` (line 251)
-- `testConstructorAndPreparedInterfacesControlDisplayTiming` (line 262)
-- `testDefaultDisplayCallbackDelegatesToTemplateRendering` (line 281)
+- `testNonStringFlagsDoNotSilenceMissingDesigns` (line 85)
+- `testNonStringFlagsDoNotTransformTemplateOutput` (line 97)
+- `testFailingTemplatesCloseTheirOutputBuffers` (line 107)
+- `testDesignRootUsesConfigurationOrItsDocumentedFallback` (line 119)
+- `testMarkdownReadFailureIsCaughtByTemplateResolver` (line 144)
+- `testAbsolutePhpFileAndDisplayClass` (line 149)
+- `testFileReadFailuresReportLibraryExceptions` (line 157): 4 data-provider cases
+- `testPhpAndPlainHtmlFilesRenderAndCheckWithoutOutput` (line 171)
+- `testUnusablePhpDesignsFallBackToHtml` (line 187)
+- `testCheckingADesignNeverPrintsIt` (line 199)
+- `testTemplatesWrittenByTheDeveloperKeepTheirRawHtml` (line 207)
+- `testMarkdownAndGeneratedMarkdownFiles` (line 215)
+- `testObjectAndClassDesignsReceiveDataAndCheckOnlyFlag` (line 231)
+- `testInvalidDesignsAreRejected` (line 245): 4 data-provider cases
+- `testDesignBasesPrefixesAndSeparators` (line 251)
+- `testFormattingFlagsReplacementsAndOutput` (line 259)
+- `testLoggerWritesDesignKindAndNormalizedName` (line 268)
+- `testConstructorAndPreparedInterfacesControlDisplayTiming` (line 279)
+- `testDefaultDisplayCallbackDelegatesToTemplateRendering` (line 298)
 
 ### `tests/Unit/Core/Template/ValidateControllerTest.php` (3)
 
@@ -797,7 +803,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testLatinOneAndAlreadyValidUtf8` (line 7)
 - `testEmptyValueAndArrayResultAreNotExposedAsString` (line 15)
 
-### `tests/Unit/Core/Util/UtilityTest.php` (11)
+### `tests/Unit/Core/Util/UtilityTest.php` (12)
 
 - `testBooleanOptionsAreStrict` (line 27): 6 data-provider cases
 - `testMissingOptionsAndScalarModes` (line 36)
@@ -809,7 +815,8 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testRelativeTimeUnits` (line 94): 14 data-provider cases
 - `testRelativeTimeParsingDefaultsAndInvalidValues` (line 102)
 - `testReservedSegmentsAndCustomDelimiter` (line 113)
-- `testCustomRelativeTimeTableMayHaveNoMatchingUnit` (line 119)
+- `testEveryReservedNameEscapesToADeclarableClass` (line 119)
+- `testCustomRelativeTimeTableMayHaveNoMatchingUnit` (line 139)
 
 ### `tests/Unit/Core/Util/ValidationFactoryTest.php` (2)
 
@@ -868,12 +875,12 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testEmptyDomAndXmlStringConstructor` (line 70)
 - `testXmlFileConstructor` (line 77)
 - `testHtmlLoadingAndAttributeStripping` (line 85)
-- `testMalformedXmlRaisesLibraryException` (line 95)
-- `testXPathResultsSupportIterationAndChildAccess` (line 100)
-- `testEncoderRejectsUnrelatedXmlFormat` (line 120)
-- `testObjectConversionGroupsRepeatedNodesPreservesEmptyFirstValue` (line 124)
-- `testObjectConversionUsesNameAndIndexAttributes` (line 132)
-- `testObjectConversionCanPreserveMixedParentText` (line 138)
+- `testMalformedXmlRaisesLibraryException` (line 96)
+- `testXPathResultsSupportIterationAndChildAccess` (line 101)
+- `testEncoderRejectsUnrelatedXmlFormat` (line 121)
+- `testObjectConversionGroupsRepeatedNodesPreservesEmptyFirstValue` (line 125)
+- `testObjectConversionUsesNameAndIndexAttributes` (line 133)
+- `testObjectConversionCanPreserveMixedParentText` (line 139)
 
 ### `tests/Unit/Core/Xml/EncodeTest.php` (21)
 
@@ -908,32 +915,33 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testCliErrorExposesStatusUsageFlagAndData` (line 42)
 - `testCloudErrorsExposeParameterAndChildClass` (line 53)
 
-### `tests/Unit/Data/MapperTest.php` (24)
+### `tests/Unit/Data/MapperTest.php` (25)
 
 - `testBaseFieldListIsAbsentAndUnknownDumpTypesUseHumanFallback` (line 31)
-- `testWebviewDataIsHtmlEncodedOnConstruction` (line 43)
-- `testRuleConsumerReceivesConstructedAndExplicitRules` (line 52)
-- `testFieldListUsesTheInstanceAndCachesPerClass` (line 60)
-- `testConstructorsMapNamedAndPositionalDataAndIgnoreUnknownFields` (line 68)
-- `testFieldInspectionAndCallbacks` (line 78)
-- `testInvalidFieldName` (line 98)
-- `testMissingField` (line 103)
-- `testMagicFieldAccessStrippingAndFallbacks` (line 108)
-- `testEachFieldAndScalarConversions` (line 124)
-- `testRecursiveHtmlEncodingClonesTheData` (line 141)
-- `testTypeAndLifecycleInterfaces` (line 152)
-- `testStringRepresentations` (line 161)
-- `testInvalidStringifierThrows` (line 178): 3 data-provider cases
-- `testKeyPrefixMappingPreservesUnmatchedKeysAndExistingMap` (line 184)
-- `testInvalidPrefixThrows` (line 192)
-- `testEmptyMappingKeyThrows` (line 198)
-- `testNumericConversionPreservesNonNumericStrings` (line 205): 4 data-provider cases
-- `testDumpFormatsAndStringFailureRecovery` (line 213)
-- `testHtmlEncodingPlainObjectsAndUnsupportedResources` (line 231)
-- `testUtf8FixOnlyTouchesSelectedStringFields` (line 243)
-- `testMapAppliesMissingDefaultsAndOptionalEmptyDefaults` (line 251)
-- `testRuleObjectConstructorAndRemapping` (line 264)
-- `testInvalidMappingRules` (line 273): 3 data-provider cases
+- `testOnlyLiteralFlagsTransformFieldValues` (line 43)
+- `testWebviewDataIsHtmlEncodedOnConstruction` (line 55)
+- `testRuleConsumerReceivesConstructedAndExplicitRules` (line 64)
+- `testFieldListUsesTheInstanceAndCachesPerClass` (line 72)
+- `testConstructorsMapNamedAndPositionalDataAndIgnoreUnknownFields` (line 80)
+- `testFieldInspectionAndCallbacks` (line 90)
+- `testInvalidFieldName` (line 110)
+- `testMissingField` (line 115)
+- `testMagicFieldAccessStrippingAndFallbacks` (line 120)
+- `testEachFieldAndScalarConversions` (line 136)
+- `testRecursiveHtmlEncodingClonesTheData` (line 153)
+- `testTypeAndLifecycleInterfaces` (line 164)
+- `testStringRepresentations` (line 173)
+- `testInvalidStringifierThrows` (line 190): 3 data-provider cases
+- `testKeyPrefixMappingPreservesUnmatchedKeysAndExistingMap` (line 196)
+- `testInvalidPrefixThrows` (line 204)
+- `testEmptyMappingKeyThrows` (line 210)
+- `testNumericConversionPreservesNonNumericStrings` (line 217): 4 data-provider cases
+- `testDumpFormatsAndStringFailureRecovery` (line 225)
+- `testHtmlEncodingPlainObjectsAndUnsupportedResources` (line 243)
+- `testUtf8FixOnlyTouchesSelectedStringFields` (line 255)
+- `testMapAppliesMissingDefaultsAndOptionalEmptyDefaults` (line 263)
+- `testRuleObjectConstructorAndRemapping` (line 276)
+- `testInvalidMappingRules` (line 285): 3 data-provider cases
 
 ### `tests/Unit/Data/Orm/LegacyOrmTest.php` (4)
 
@@ -967,14 +975,15 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testInternationalNumbersGetTheirCountryCode` (line 47): 41 data-provider cases
 - `testInternationalDialingPrefixAndExistingFormattedMetadata` (line 68)
 
-### `tests/Unit/Data/ScalarTest.php` (6)
+### `tests/Unit/Data/ScalarTest.php` (7)
 
 - `testScalarValuesAndType` (line 9): 4 data-provider cases
 - `testNestedScalarAndUnserialization` (line 17)
 - `testArrayAndRuleInputForms` (line 25)
 - `testEmptyInputsUseFallbackAndUnsupportedInputsRemainNull` (line 32)
 - `testPlainDisplay` (line 40)
-- `testHtmlAndCommentDisplay` (line 45)
+- `testNonStringEncodingOptionsDoNotEnableHtmlOrComments` (line 45)
+- `testHtmlAndCommentDisplay` (line 50)
 
 ### `tests/Unit/Data/TypedTest.php` (6)
 
@@ -1086,17 +1095,18 @@ PHPUnit's `--list-tests-xml` and converts it with
 
 - `testConfiguredSqlRootAndDriverOptionOverloadUseRealSqlite` (line 20)
 
-### `tests/Unit/Db/Pdo/PdoTest.php` (9)
+### `tests/Unit/Db/Pdo/PdoTest.php` (10)
 
 - `testBareRecordFlagsMapRowsToGenericData` (line 8)
 - `testPreparedStatementsRemainUnexecutedUnlessRequested` (line 32)
-- `testAliasesBindingAndExecuteFlags` (line 40)
-- `testDistinctBoundParametersKeepTheirValuesAfterPrepareReturns` (line 53)
-- `testBothBindingModesPreserveScalarTypes` (line 61)
-- `testInvalidMapParameters` (line 70): 5 data-provider cases
-- `testSqlFilesWithExplicitRootOrNoRoot` (line 81)
-- `testBadSqlPathsReportPathAndReason` (line 94): 5 data-provider cases
-- `testRecordsAndCallbacksUseNativeSqliteResults` (line 118)
+- `testUnrelatedOptionValuesDoNotExecuteStatements` (line 40)
+- `testAliasesBindingAndExecuteFlags` (line 50)
+- `testDistinctBoundParametersKeepTheirValuesAfterPrepareReturns` (line 63)
+- `testBothBindingModesPreserveScalarTypes` (line 71)
+- `testInvalidMapParameters` (line 80): 5 data-provider cases
+- `testSqlFilesWithExplicitRootOrNoRoot` (line 91)
+- `testBadSqlPathsReportPathAndReason` (line 104): 5 data-provider cases
+- `testRecordsAndCallbacksUseNativeSqliteResults` (line 128)
 
 ### `tests/Unit/Db/Pdo/StatementTest.php` (15)
 

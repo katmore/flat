@@ -46,6 +46,16 @@ namespace flat\test\Unit\Core\Session {
             $_SESSION['zero'] = 1;
             $this->assertSame(0, $snapshot->data->zero);
         }
+        public function testNonStringFlagsPreserveExistingSessionWithoutRefreshing()
+        {
+            session::start([], 'literal-flag-test');
+            $_SESSION['kept'] = 'value';
+            foreach ([0, true, false, null] as $value) {
+                $this->assertSame('literal-flag-test', session::start([$value]));
+                $this->assertSame('value', $_SESSION['kept']);
+                $this->assertArrayNotHasKey(session::root_ns.'/refresh', $_SESSION);
+            }
+        }
         public function testStoredValuesCanBeReadAndRemoved()
         {
             foreach (['text', 0, false, []] as $value) {

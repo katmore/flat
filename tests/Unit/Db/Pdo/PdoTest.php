@@ -37,6 +37,16 @@ class PdoTest extends TestCase
         $this->assertTrue($statement->execute());
         $this->assertSame('first', $statement->fetchColumn());
     }
+    public function testUnrelatedOptionValuesDoNotExecuteStatements()
+    {
+        foreach ([0, true, false, null] as $value) {
+            $statement = $this->pdo->prepare_map(['stmt'=>'SELECT name FROM items', 'unrelated'=>$value]);
+            $this->assertInstanceOf(\PDOStatement::class, $statement);
+            $this->assertFalse($statement->fetch());
+            $this->assertTrue($statement->execute());
+            $this->assertSame('first', $statement->fetchColumn());
+        }
+    }
     public function testAliasesBindingAndExecuteFlags()
     {
         foreach ([['execute'=>true], ['exec'=>true], ['execute'], ['exec']] as $flag) {

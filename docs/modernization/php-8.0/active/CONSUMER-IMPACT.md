@@ -48,3 +48,27 @@
   patched 6.4, 7.4 or 8.1 streams. Explicit pins to vulnerable versions must change.
 - Inspect symfony/yaml constraints in application Composer manifests and locks.
 - Search consumer code for: `Symfony\Component\Yaml`
+
+### MOD-366: Literal flags and safe class names (Q65, Q66)
+
+- Before on PHP 7: a `0` option value matched any nonnumeric string flag;
+  booleans could also match flags on PHP 7 and PHP 8. This could unexpectedly
+  strip HTML, silence template errors, execute statements or destroy sessions.
+- After: only the exact string enables a bare named flag. An associative
+  setting such as `['execute'=>true]` keeps its documented behavior; an
+  unrelated setting such as `['on_empty'=>0]` does not enable `strip`.
+- Search for option/flag arrays passed to `prepare_map`, `start`, `format`,
+  `display`, `html`, field accessors, data `map`/`dump`, asset flag helpers and
+  `curl\response`. Replace accidental coercion with the intended string flag.
+- Before: make_safe_classname returned unescaped match, mixed, several earlier
+  reserved names and magic constants, which could not declare PHP 8.0 classes.
+- After: those names receive the existing underscore suffix, preserving case.
+- Search for `make_safe_classname`, generated class names and persisted names.
+
+### MOD-366: Failed cURL construction
+
+- Before: a constructor failure leaked its temporary cookie jar (and, for
+  saved responses, its temporary download).
+- After: temporary files are removed before rethrowing the original failure;
+  caller-owned cookie and download files remain caller-owned.
+- Search for `curl\response`, `accept_cookies`, `save_cookies`, `save`.

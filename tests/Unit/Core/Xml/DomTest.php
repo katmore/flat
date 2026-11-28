@@ -89,6 +89,7 @@ class DomTest extends TestCase
         $this->assertSame($before, libxml_use_internal_errors());
         $this->assertSame('UTF-8', $dom->get_DOMDocument()->encoding);
         $this->assertStringContainsString('id="sample"', $dom->html([]));
+        $this->assertStringContainsString('id="sample"', $dom->html([0, true, false, null]));
         $this->assertStringNotContainsString('id="sample"', $dom->html(['no_attributes']));
         $this->assertSame('p', dom::load('<p>text</p>')->get_DOMDocument()->getElementsByTagName('p')->item(0)->nodeName);
     }
