@@ -41,7 +41,8 @@ All approved reporting exceptions remain exactly where AGENTS.md lists them.
 
 Pinned source builds share one layer to reduce VFS snapshot space. imagick's
 release version is stamped into the git archive's packaging placeholder and
-verified. Proxy CA trust is an optional build secret, including the HTTPS SSH
+verified. Every downloaded source archive is SHA-256 checked before extraction.
+Proxy CA trust is an optional build secret, including the HTTPS SSH
 fixture mirror. Fresh checkouts need no private paths or prebuilt images.
 
 ## Result

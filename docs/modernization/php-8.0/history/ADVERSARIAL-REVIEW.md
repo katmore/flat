@@ -1,4 +1,4 @@
-> Archived: findings resolved by MOD-366 and MOD-367. Current status and remaining
+> Archived: defect findings resolved by MOD-366 and MOD-367. Current status and remaining
 > project checks: [handoff](../active/SESSION-HANDOFF.md). Original review follows.
 
 # Adversarial review

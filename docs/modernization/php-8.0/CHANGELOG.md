@@ -337,3 +337,19 @@ direct-dependency addition. Four accepted AWS/MongoDB advisories remain.
 Validation: all 1,728 tests pass with 100% configured coverage; fresh consumer
 and runtime resolution pass with the four approved exceptions, audits retain
 all four, and documentation checks report 0 problems.
+
+## MOD-369 — Verify all downloaded build sources (2026-11-28)
+
+Docker now checks SHA-256 before extracting the pinned Xdebug, ImageMagick,
+imagick, MongoDB PHP driver, MongoDB C driver and SSH2 extension archives.
+OpenSSL and libssh2 already had checksum checks, so every downloaded build
+source is covered. Source URLs, commits and versions remain unchanged. The
+hashes were calculated from the pinned upstream archives and are verified by
+the rebuild. The only smaller review follow-up left is optional source-header
+normalization, carried explicitly in the current handoff.
+
+Validation: the rebuilt image passes all eight archive checksum checks, pinned
+PHP/extension version checks and E_ALL verification. Its full suite passes all
+1,728 tests with no errors/failures/skips and 100% configured coverage (332
+classes, 1,105 methods, 8,874 lines). The new resolution checker also lints on
+PHP 8.0.30. Fresh-resolution checks and both lock audits are recorded in MOD-367/368.

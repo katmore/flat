@@ -6,8 +6,9 @@ Requires PHP 8.0 or later; tested on pinned PHP 8.0.30. The owner declares phase
 completion and publishes releases. Work branch: php-8.0.
 
 - Full Docker suite: 1,728 tests, no errors/failures/skips, 100% configured loaded-code coverage.
-- All 602 framework API entries load. The approved match base-class rename is
-  the source API change; syntax modernization leaves the reflected API unchanged.
+- All 602 framework API entries load. API changes are the approved match
+  base-class rename and reserved-word table expansion. Syntax modernization
+  leaves public signatures unchanged.
 - No open adversarial-review defects ([defect index](active/KNOWN-DEFECTS.md)).
   PHP 8.0 consumers must apply the four approved Composer advisory exceptions
   described in [consumer impact](active/CONSUMER-IMPACT.md#mod-367-php-80-composer-resolution-q64).

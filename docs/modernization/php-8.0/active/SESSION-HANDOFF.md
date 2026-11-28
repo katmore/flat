@@ -20,6 +20,8 @@ The packages remain vulnerable until PHP 8.1 permits patched dependencies.
   the owner's environment. The ordinary suite uses the documented local mock.
 - Triage the eight older [PHP 7.3 mutation survivors](../../php-7.3/history/MUTATION-PROBE.md).
   The new CLI sample's assertion gap is closed in [its record](../history/MUTATION-CHECK.md).
+- Optional cosmetic cleanup: untouched source headers still name PHP 7.x;
+  the package requirement and test runtime are PHP 8.0.
 - Revisit the four AWS/MongoDB advisories on PHP 8.1 and remove the approved
   AWS minimum-PHP deprecation exception then. Do not advance runtimes on your own.
 
