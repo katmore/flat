@@ -1,0 +1,11 @@
+#!/bin/sh
+# Composer runs in the same pinned image used by docker/Dockerfile.
+set -eu
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+set -- --rm -v "$repo_dir:/app:ro" -w /app -e COMPOSER_ALLOW_SUPERUSER=1
+if [ -n "${FLAT_TEST_CA_FILE:-}" ]; then
+    set -- "$@" -v "$FLAT_TEST_CA_FILE:/run/proxy-ca.pem:ro" -e COMPOSER_CAFILE=/run/proxy-ca.pem
+fi
+exec docker run "$@" --entrypoint sh \
+    composer:2.11@sha256:5b2137f112f939a92788ceb5e55f54859d9dbf467a44037cf7760bdda949f365 \
+    -c 'cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"; exec bin/check-resolution'

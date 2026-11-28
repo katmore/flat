@@ -8,8 +8,9 @@ completion and publishes releases. Work branch: php-8.0.
 - Full Docker suite: 1,728 tests, no errors/failures/skips, 100% configured loaded-code coverage.
 - All 602 framework API entries load. The approved match base-class rename is
   the source API change; syntax modernization leaves the reflected API unchanged.
-- Open: KD-130/Q64 consumer-install documentation and validation
-  ([defect index](active/KNOWN-DEFECTS.md)).
+- No open adversarial-review defects ([defect index](active/KNOWN-DEFECTS.md)).
+  PHP 8.0 consumers must apply the four approved Composer advisory exceptions
+  described in [consumer impact](active/CONSUMER-IMPACT.md#mod-367-php-80-composer-resolution-q64).
 - Current compatible tools/dependencies are installed. Four inherited advisories
   require PHP 8.1 fixes; no new YAML advisory is accepted.
 
@@ -19,6 +20,7 @@ completion and publishes releases. Work branch: php-8.0.
 docker/bin/test all --coverage
 docker/bin/test-javascript
 docker/bin/check-docs
+docker/bin/check-resolution # online: fresh PHP 8.0 resolution and advisory checks
 ```
 
 After tests change, regenerate the inventory safely:
@@ -30,7 +32,7 @@ tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-8.0/active/KNO
 ## Records
 
 [Current handoff](active/SESSION-HANDOFF.md), [defect index](active/KNOWN-DEFECTS.md),
-[adversarial review](active/ADVERSARIAL-REVIEW.md),
+[adversarial review](history/ADVERSARIAL-REVIEW.md),
 [consumer impact](active/CONSUMER-IMPACT.md), [change log](CHANGELOG.md),
 [test inventory](TEST-INVENTORY.md), [environment](notes/ENVIRONMENT.md),
 [API comparison](notes/API-COMPARISON.md), [modernizations](notes/MODERNIZATIONS.md),

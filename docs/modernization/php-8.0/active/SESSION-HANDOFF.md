@@ -2,9 +2,11 @@
 
 The PHP 8.0 implementation, compatible dependency refresh and ordinary Docker
 suite are validated. Current results and commands: [phase overview](../README.md).
-The reviewed runtime defects KD-131 to KD-133 are fixed (MOD-366).
-KD-130/Q64 consumer-install documentation and validation remain in progress;
-see the [defect index](KNOWN-DEFECTS.md).
+All findings KD-130 to KD-133 are resolved with the approved Q64–Q66 decisions
+(MOD-366/367); [review evidence](../history/ADVERSARIAL-REVIEW.md). PHP 8.0
+consumers must configure the four advisory exceptions in their root manifest;
+see [consumer impact](CONSUMER-IMPACT.md#mod-367-php-80-composer-resolution-q64).
+The packages remain vulnerable until PHP 8.1 permits patched dependencies.
 
 ## Project follow-ups
 

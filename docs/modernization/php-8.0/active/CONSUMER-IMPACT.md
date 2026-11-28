@@ -72,3 +72,19 @@
 - After: temporary files are removed before rethrowing the original failure;
   caller-owned cookie and download files remain caller-owned.
 - Search for `curl\response`, `accept_cookies`, `save_cookies`, `save`.
+
+### MOD-367: PHP 8.0 Composer resolution (Q64)
+
+- Before: a fresh PHP 8.0 resolution with Composer's default security policy
+  fails: every compatible AWS/MongoDB version has one of four advisories.
+  An existing lock install or a dismissed GitHub alert does not solve this.
+- After: the owner accepts only those four advisory IDs for this phase. The
+  runtime harness applies them to resolution blocking only; audits still report
+  all four. Other advisories continue to block installation.
+- Consumers must add the same exception to their **root** composer.json.
+  A library cannot impose its security policy on the consuming application.
+- Copy the config fragment in [dependency alerts](../notes/DEPENDENCY-ALERTS.md)
+  into the application's existing config; preserve its other settings. Review
+  and remove these exceptions when moving to PHP 8.1 and patched dependencies.
+- Search for `config.audit`, `aws/aws-sdk-php`, `mongodb/mongodb` and locked
+  package versions. Existing locks must still be audited.

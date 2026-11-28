@@ -297,3 +297,30 @@ Validation: 1,728 tests pass with no errors/failures/skips and 100% configured
 coverage (332 classes, 1,105 methods, 8,874 lines). Current status reports stop
 using assertion totals as checkpoints: subprocess coverage and signal polling
 make those totals vary. Historical totals remain the observations of each run.
+
+## MOD-367 — Permit only the approved PHP 8.0 advisory exceptions (2026-11-28)
+
+The owner approved Q64's four advisory IDs. The runtime manifest uses narrowly
+scoped config.audit.ignore entries with apply=block: fresh resolution succeeds,
+other advisory blocking remains enabled, and audits still show the accepted
+AWS/MongoDB advisories. The consumer-impact record and dependency note give the
+application-root configuration; a dependency's config cannot enforce it.
+
+New repository-owned bin/check-resolution and docker/bin/check-resolution
+compare default and approved fresh consumer resolution, resolve the runtime
+without locks/vendors, and verify the four advisories remain visible to audits.
+The Docker wrapper uses the same pinned Composer image as the build. No PHP
+reporting setting is changed and no global security bypass is introduced.
+KD-130/Q64 is resolved by the approved documented workaround, not by patched
+packages; the PHP 8.1 remediation remains in the work list.
+
+All four review defects are now resolved; the report is archived in this change.
+Path map: php-8.0/active/ADVERSARIAL-REVIEW.md →
+php-8.0/history/ADVERSARIAL-REVIEW.md. Current indexes link to the archived
+review and preserve the remaining release, consumer and PHP 8.1 follow-ups.
+
+Validation: default fresh consumer resolution is blocked; approved consumer and
+runtime resolution pass, and all four advisories remain visible in the lock
+audit. The separate tools audit is clean. Documentation checks report 0 problems.
+Current project/PHP 7.4 indexes now record the published v1.74.0/v1.74.1 releases
+and completed master merge; historical reports are preserved.

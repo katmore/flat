@@ -12,9 +12,9 @@ PHP 7.4.33: 1,703 tests, 7,470 assertions, 100% class/method/line coverage.
 ## Release records
 
 [Published v1.74.0 notes](RELEASE-NOTES.md),
-[draft v1.74.1 notes](RELEASE-NOTES-V1.74.1.md),
+[Published v1.74.1 notes](RELEASE-NOTES-V1.74.1.md),
 [exit review](history/EXIT-REVIEW.md). Releases remain the owner's responsibility.
-Pending release, private-consumer and mutation follow-ups are carried forward
+Pending consumer and mutation follow-ups are carried forward
 in the [current work list](../php-8.0/active/SESSION-HANDOFF.md).
 
 ## Archive

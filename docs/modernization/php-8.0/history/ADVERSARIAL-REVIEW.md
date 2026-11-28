@@ -1,8 +1,11 @@
+> Archived: findings resolved by MOD-366 and MOD-367. Current status and remaining
+> project checks: [handoff](../active/SESSION-HANDOFF.md). Original review follows.
+
 # Adversarial review
 
 Independent review of php-8.0 at b8dc3b5 (2026-11-28). Everything was rerun
 from a fresh container; the handoff was read but not trusted. Open items are
-tracked in the [defect index](KNOWN-DEFECTS.md).
+tracked in the [defect index](../active/KNOWN-DEFECTS.md).
 
 ## Findings
 

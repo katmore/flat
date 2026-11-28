@@ -1,0 +1,5 @@
+#!/bin/sh
+# Resolve both PHP 8.0 dependency graphs without using existing locks or vendors.
+set -eu
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+exec "${FLAT_TEST_PHP:-php}" "$repo_dir/tests/tools/check-resolution.php"
