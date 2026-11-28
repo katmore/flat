@@ -6,7 +6,7 @@ Regenerate with `bin/test inventory [KNOWN-DEFECTS.md] > TEST-INVENTORY.md` (or
 PHPUnit's `--list-tests-xml` and converts it with
 `tests/tools/inventory.php`.
 
-- 928 test methods in 110 files, running 1728 test cases.
+- 929 test methods in 110 files, running 1729 test cases.
 - 148 methods use a data provider (one case per data set).
 - 0 methods still assert defective behavior (`@group known-defect`); KD IDs are from `docs/modernization/php-8.0/active/KNOWN-DEFECTS.md`.
 - Each entry is a test method with its line in the file; the method name is the test's claim.
@@ -407,7 +407,7 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testNullRemainsTheNoBodyDefaultForJsonAndRawModes` (line 147)
 - `testEmptyUrlencodedQueryStringIsRejected` (line 155)
 
-### `tests/Unit/Core/Curl/ResponseTest.php` (36)
+### `tests/Unit/Core/Curl/ResponseTest.php` (37)
 
 - `testDefaultRequestsSendTheFlatUserAgent` (line 38): groups: services, http
 - `testFacadeAcceptsUrlsAndConfigurationObjects` (line 48): groups: services, http
@@ -433,18 +433,19 @@ PHPUnit's `--list-tests-xml` and converts it with
 - `testDomAndXPathPreserveCallerLibxmlStateAndBufferedErrors` (line 255): 2 data-provider cases; groups: services, http
 - `testXPathArgumentTypeErrorRestoresCallerLibxmlState` (line 278): 2 data-provider cases; groups: services, http
 - `testHtmlParserWarningReachesCallerAndLeavesReportingEnabled` (line 289): groups: services, http
-- `testNonStringFlagsDoNotCreateFilesOrEnableDom` (line 307): groups: services, http
-- `testFailedConstructionRemovesItsOwnFilesWhileTheExceptionIsAlive` (line 318): groups: services, http
-- `testFailedConstructionPreservesCallerCookieFile` (line 338): groups: services, http
-- `testAServerThatIsNotListeningIsAConnectError` (line 351): groups: services, http
-- `testTransferFailureRetainsErrorDetails` (line 366): 3 data-provider cases; groups: services, http
-- `testErrorAfterFileTransferStillFails` (line 376): groups: services, http
-- `testRobotsRules` (line 386): 11 data-provider cases; groups: services, http
-- `testRobotsCheckCanDenyOrAllowConstructor` (line 405): groups: services, http
-- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 414): groups: services, http
-- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 421): groups: services, http
-- `testFalsyTextBodyInitializesDomOnDemand` (line 429): groups: services, http
-- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 436): groups: services, http
+- `testFailureAfterTheServerSetsACookieLeavesNoTemporaryJar` (line 312): groups: services, http
+- `testNonStringFlagsDoNotCreateFilesOrEnableDom` (line 333): groups: services, http
+- `testFailedConstructionRemovesItsOwnFilesWhileTheExceptionIsAlive` (line 344): groups: services, http
+- `testFailedConstructionPreservesCallerCookieFile` (line 364): groups: services, http
+- `testAServerThatIsNotListeningIsAConnectError` (line 377): groups: services, http
+- `testTransferFailureRetainsErrorDetails` (line 392): 3 data-provider cases; groups: services, http
+- `testErrorAfterFileTransferStillFails` (line 402): groups: services, http
+- `testRobotsRules` (line 412): 11 data-provider cases; groups: services, http
+- `testRobotsCheckCanDenyOrAllowConstructor` (line 431): groups: services, http
+- `testRobotsRulesForAnotherAgentIgnoreTheUserAgentLabel` (line 440): groups: services, http
+- `testNoCookieFileIsCreatedUnlessCookiesAreAccepted` (line 447): groups: services, http
+- `testFalsyTextBodyInitializesDomOnDemand` (line 455): groups: services, http
+- `testUnavailableSavePathRaisesSystemErrorAfterWarning` (line 462): groups: services, http
 
 ### `tests/Unit/Core/DebugTest.php` (13)
 

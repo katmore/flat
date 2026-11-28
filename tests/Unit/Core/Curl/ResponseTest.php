@@ -304,6 +304,32 @@ class ResponseTest extends TestCase
             }
         } finally { restore_error_handler(); }
     }
+    /**
+     * Review finding (MOD-370): the other failure tests use an unreachable host, where
+     * libcurl never writes a jar. Here the server sets a cookie, so the jar would be
+     * written when the handle is released unless the failure path disables it first.
+     */
+    public function testFailureAfterTheServerSetsACookieLeavesNoTemporaryJar()
+    {
+        libxml_use_internal_errors(false);
+        $this->page('<html><body><widget>text</widget></body></html>', ['headers'=>['Set-Cookie'=>'flat_session=abc123; Path=/']]);
+        $cookies = $this->cookieFiles();
+        $kept = null;
+        set_error_handler(function ($level, $message, $file, $line) {
+            throw new \ErrorException($message, 0, $level, $file, $line);
+        });
+        try {
+            try { new response($this->config(), ['use_dom', 'accept_cookies', 'save_cookies']); $this->fail('Expected HTML parser warning'); }
+            catch (\ErrorException $error) {
+                $kept = $error;
+                $this->assertStringContainsString('DOMDocument::loadHTML(): Tag widget invalid', $error->getMessage());
+                $this->assertSame($cookies, $this->cookieFiles(), 'no jar while the failure is still referenced');
+            }
+        } finally { restore_error_handler(); }
+        unset($error, $kept);
+        gc_collect_cycles();
+        $this->assertSame($cookies, $this->cookieFiles(), 'no jar recreated after the failure is released');
+    }
     public function testNonStringFlagsDoNotCreateFilesOrEnableDom()
     {
         $this->page();

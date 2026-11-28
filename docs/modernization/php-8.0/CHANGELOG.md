@@ -353,3 +353,14 @@ PHP/extension version checks and E_ALL verification. Its full suite passes all
 1,728 tests with no errors/failures/skips and 100% configured coverage (332
 classes, 1,105 methods, 8,874 lines). The new resolution checker also lints on
 PHP 8.0.30. Fresh-resolution checks and both lock audits are recorded in MOD-367/368.
+
+## MOD-370 — Verify the review fixes and cover a cookie-setting failure (2026-11-28)
+
+Test and documentation only; no source change. An independent check of
+MOD-366 to MOD-369 confirmed the suite, coverage, checksums, fresh resolution
+and strict flags. The existing failure tests used only an unreachable host,
+where libcurl never writes a jar. A new test covers the case where the server
+sets a cookie and HTML parsing then fails, while the failure is held and after
+it is released. The test fails when the failure-path cleanup is removed. The
+failure path's cookie-jar reset proved unobservable. Details:
+history/REVIEW-VERIFICATION.md.

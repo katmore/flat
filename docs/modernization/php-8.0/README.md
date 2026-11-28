@@ -33,7 +33,7 @@ tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-8.0/active/KNO
 ## Records
 
 [Current handoff](active/SESSION-HANDOFF.md), [defect index](active/KNOWN-DEFECTS.md),
-[adversarial review](history/ADVERSARIAL-REVIEW.md),
+[adversarial review](history/ADVERSARIAL-REVIEW.md), [fix verification](history/REVIEW-VERIFICATION.md),
 [consumer impact](active/CONSUMER-IMPACT.md), [change log](CHANGELOG.md),
 [test inventory](TEST-INVENTORY.md), [environment](notes/ENVIRONMENT.md),
 [API comparison](notes/API-COMPARISON.md), [modernizations](notes/MODERNIZATIONS.md),
