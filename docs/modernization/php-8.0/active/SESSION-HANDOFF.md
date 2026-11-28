@@ -2,15 +2,15 @@
 
 The PHP 8.0 implementation, compatible dependency refresh and ordinary Docker
 suite are validated. Current results and commands: [phase overview](../README.md).
-No confirmed open code defects or owner questions remain.
+An adversarial review (2026-11-28) opened KD-130 to KD-133 and Q64 to Q66;
+see the [defect index](KNOWN-DEFECTS.md). Q64 affects the release itself.
 
 ## Project follow-ups
 
 - The owner declares the phase complete, chooses the release version in light
   of the approved public base-class rename, and handles releases and master.
-- Verify the earlier PHP 7.4 patch publication and sample-app release-lock
-  follow-ups from the [archived exit review](../../php-7.4/history/EXIT-REVIEW.md).
-  The reviewed source fixes are already inherited by this branch.
+- v1.74.1 is published and inherited. The sample-app release-lock follow-up from
+  the [archived exit review](../../php-7.4/history/EXIT-REVIEW.md) remains.
 - Public sample-app HTTP integration follows its PHP 8 runtime update. This
   phase's consumer review is a static API-impact scan, not that runtime test.
 - The private consumer scan and live Authorize.Net approval/decline checks need
@@ -20,4 +20,4 @@ No confirmed open code defects or owner questions remain.
 - Revisit the four AWS/MongoDB advisories on PHP 8.1 and remove the approved
   AWS minimum-PHP deprecation exception then. Do not advance runtimes on your own.
 
-Work and push only on php-8.0. Next identifiers: KD-130 and Q64.
+Work and push only on php-8.0. Next identifiers: KD-134 and Q67.

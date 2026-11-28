@@ -264,3 +264,13 @@ Archived path map:
 Link destinations are updated while historical labels and narrative remain.
 Closed-phase active folders contain only .gitkeep; current active files describe
 remaining work and pending release/consumer decisions. The inventory is regenerated.
+
+## MOD-365 — Record an independent adversarial review (2026-11-28)
+
+Documentation only; no source, test or dependency change. A fresh-container
+review of b8dc3b5 reproduced the suite, coverage, API snapshot, inventory and
+lock audits. It opened KD-130/Q64 (the default Composer cannot resolve flat on
+PHP 8.0), KD-131/Q65 (PHP 8 comparisons change non-strict flag lookups),
+KD-132/Q66 (make_safe_classname misses reserved words) and KD-133, a
+pre-existing cookie-jar leak. It also found that assertion totals vary with
+coverage mode and polling. Details: active/ADVERSARIAL-REVIEW.md.

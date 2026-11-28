@@ -1,6 +1,6 @@
 # PHP 8.0 phase
 
-## Status: validated implementation
+## Status: implementation under review
 
 Requires PHP 8.0 or later; tested on pinned PHP 8.0.30. The owner declares phase
 completion and publishes releases. Work branch: php-8.0.
@@ -8,6 +8,8 @@ completion and publishes releases. Work branch: php-8.0.
 - Full Docker suite: 1,718 tests, 8,112 assertions, 100% configured loaded-code coverage.
 - All 602 framework API entries load. The approved match base-class rename is
   the source API change; syntax modernization leaves the reflected API unchanged.
+- Open: KD-130 to KD-133 and owner questions Q64 to Q66
+  ([defect index](active/KNOWN-DEFECTS.md)).
 - Current compatible tools/dependencies are installed. Four inherited advisories
   require PHP 8.1 fixes; no new YAML advisory is accepted.
 
@@ -28,6 +30,7 @@ tmp=$(mktemp) && docker/bin/test inventory docs/modernization/php-8.0/active/KNO
 ## Records
 
 [Current handoff](active/SESSION-HANDOFF.md), [defect index](active/KNOWN-DEFECTS.md),
+[adversarial review](active/ADVERSARIAL-REVIEW.md),
 [consumer impact](active/CONSUMER-IMPACT.md), [change log](CHANGELOG.md),
 [test inventory](TEST-INVENTORY.md), [environment](notes/ENVIRONMENT.md),
 [API comparison](notes/API-COMPARISON.md), [modernizations](notes/MODERNIZATIONS.md),
