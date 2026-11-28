@@ -324,3 +324,16 @@ runtime resolution pass, and all four advisories remain visible in the lock
 audit. The separate tools audit is clean. Documentation checks report 0 problems.
 Current project/PHP 7.4 indexes now record the published v1.74.0/v1.74.1 releases
 and completed master merge; historical reports are preserved.
+
+## MOD-368 — Keep YAML transitive while rejecting vulnerable versions (2026-11-28)
+
+The root and runtime manifests replace MOD-363's direct YAML requirement with
+conflict constraints for the known vulnerable ranges. This retains the security
+bounds without introducing a direct dependency. Composer refreshes only the
+runtime lock's content hash; every package/version remains identical, including
+patched YAML 5.4.57. The consumer-impact record explicitly corrects the earlier
+direct-dependency addition. Four accepted AWS/MongoDB advisories remain.
+
+Validation: all 1,728 tests pass with 100% configured coverage; fresh consumer
+and runtime resolution pass with the four approved exceptions, audits retain
+all four, and documentation checks report 0 problems.

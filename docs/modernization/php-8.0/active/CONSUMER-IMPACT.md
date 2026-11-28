@@ -88,3 +88,11 @@
   and remove these exceptions when moving to PHP 8.1 and patched dependencies.
 - Search for `config.audit`, `aws/aws-sdk-php`, `mongodb/mongodb` and locked
   package versions. Existing locks must still be audited.
+
+### MOD-368: YAML remains transitive
+
+- MOD-363 added a direct symfony/yaml requirement to block vulnerable releases.
+- Now: known vulnerable YAML versions are excluded through Composer `conflict`
+  constraints instead. YAML remains a transitive Authorize.Net dependency; flat
+  does not add it as a direct dependency. The lock stays at patched 5.4.57.
+- Search root manifests/locks for `symfony/yaml`; vulnerable pins remain rejected.

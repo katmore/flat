@@ -23,7 +23,8 @@ Removing the requirement would reintroduce a diagnostic, so it is retained.
 The solver's highest PHP 8.0 version, 6.0.19, introduced five advisories. The
 security-maintained 5.4.57 release avoids all five. MOD-363 restores that release
 and constrains both manifests to patched release streams while allowing newer
-streams on newer PHP hosts. The final runtime audit is back to four advisories;
+streams on newer PHP hosts. MOD-368 expresses the vulnerable-version bounds as
+conflicts, preserving YAML as a transitive Authorize.Net dependency. The final runtime audit is back to four advisories;
 the tools audit is clean. No new YAML risk was accepted.
 
 ## PHP 8.0 consumer installation (Q64)

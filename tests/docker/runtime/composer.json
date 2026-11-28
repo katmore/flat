@@ -6,8 +6,7 @@
     "php-amqplib/php-amqplib": "^3.7",
     "aws/aws-sdk-php": "^3.0",
     "azuyalabs/yasumi": "^2.4",
-    "doctrine/annotations": "^2.0",
-    "symfony/yaml": "^5.4.57 || ^6.4.50 || ^7.4.23 || ^8.1.11"
+    "doctrine/annotations": "^2.0"
   },
   "config": {
     "platform": {
@@ -40,5 +39,8 @@
     "psr-4": {
       "Alcaeus\\MongoDbAdapter\\Helper\\": "/app/src/flat/vendor/alcaeus/mongo-php-adapter/Helper/"
     }
+  },
+  "conflict": {
+    "symfony/yaml": "<5.4.57 || >=6.0 <6.4.50 || >=7.0 <7.4.23 || >=8.0 <8.1.11"
   }
 }
